@@ -3,7 +3,7 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.job import Job
 from jenkinsapi.view import View
 from jenkinsapi.node import Node
-from jenkinsapi.exceptions import UnknownJob
+from jenkinsapi.exceptions import UnknownJob, NotAuthorized
 from utils.urlopener import mkurlopener
 import logging
 import time
@@ -38,7 +38,7 @@ class Jenkins(JenkinsBase):
         self.proxyport = proxyport
         self.proxyuser = proxyuser
         self.proxypass = proxypass
-        JenkinsBase.__init__( self, baseurl )
+        JenkinsBase.__init__(self, baseurl)
 
     def get_proxy_auth(self):
         return self.proxyhost, self.proxyport, self.proxyuser, self.proxypass
@@ -53,22 +53,31 @@ class Jenkins(JenkinsBase):
         log.debug("args: %s" % auth_args)
         return auth_args
 
-    def get_opener( self ):
+    def get_opener(self):
         return mkurlopener(*self.get_auth())
 
-    def validate_fingerprint( self, id ):
+    def validate_fingerprint(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
         obj_fingerprint.validate()
         log.info("Jenkins says %s is valid" % id)
+
+    def reload(self):
+        '''Try and reload the configuration from disk'''
+        try:
+            self.hit_url("%(baseurl)s/reload" % self.__dict__)
+        except urllib2.HTTPError, e:
+            if e.code == 403:
+                raise NotAuthorized("You are not authorized to reload this server")
+            raise
 
     def get_artifact_data(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
         obj_fingerprint.validate()
         return obj_fingerprint.get_info()
 
-    def validate_fingerprint_for_build(self, digest, filename, job, build ):
-        obj_fingerprint = Fingerprint( self.baseurl, digest, jenkins_obj=self )
-        return obj_fingerprint.validate_for_build( filename, job, build )
+    def validate_fingerprint_for_build(self, digest, filename, job, build):
+        obj_fingerprint = Fingerprint(self.baseurl, digest, jenkins_obj=self)
+        return obj_fingerprint.validate_for_build(filename, job, build)
 
     def get_jenkins_obj(self):
         return self
@@ -78,7 +87,7 @@ class Jenkins(JenkinsBase):
         Fetch all the build-names on this Jenkins server.
         """
         for info in self._data["jobs"]:
-            yield info["name"], Job( info["url"], info["name"], jenkins_obj=self)
+            yield info["name"], Job(info["url"], info["name"], jenkins_obj=self)
 
     def get_job(self, jobname):
         """
@@ -101,28 +110,28 @@ class Jenkins(JenkinsBase):
     def __str__(self):
         return "Jenkins server at %s" % self.baseurl
 
-    def _get_views( self ):
-        if not self._data.has_key( "views" ):
+    def _get_views(self):
+        if not self._data.has_key("views"):
             pass
         else:
             for viewdict in self._data["views"]:
                 yield viewdict["name"], viewdict["url"]
 
     def get_view_dict(self):
-        return dict( self._get_views() )
+        return dict(self._get_views())
 
-    def get_view_url( self, str_view_name ):
+    def get_view_url(self, str_view_name):
         try:
             view_dict = self.get_view_dict()
             return view_dict[ str_view_name ]
         except KeyError:
             #noinspection PyUnboundLocalVariable
-            all_views = ", ".join( view_dict.keys() )
-            raise KeyError("View %s is not known - available: %s" % ( str_view_name, all_views ) )
+            all_views = ", ".join(view_dict.keys())
+            raise KeyError("View %s is not known - available: %s" % (str_view_name, all_views))
 
-    def get_view(self, str_view_name ):
-        view_url = self.get_view_url( str_view_name )
-        view_api_url = self.python_api_url( view_url )
+    def get_view(self, str_view_name):
+        view_url = self.get_view_url(str_view_name)
+        view_api_url = self.python_api_url(view_url)
         return View(view_api_url , str_view_name, jenkins_obj=self)
 
     def __getitem__(self, jobname):

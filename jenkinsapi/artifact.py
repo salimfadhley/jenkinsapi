@@ -16,20 +16,20 @@ import hashlib
 from jenkinsapi.exceptions import ArtifactBroken
 from jenkinsapi.fingerprint import Fingerprint
 
-log = logging.getLogger( __name__ )
+log = logging.getLogger(__name__)
 
 class Artifact(object):
     """
     Represents a single Jenkins artifact, usually some kind of file 
     generated as a by-product of executing a Jenkins build.
     """
-    
-    def __init__( self, filename, url, build=None ):
+
+    def __init__(self, filename, url, build=None):
         self.filename = filename
         self.url = url
         self.build = build
-    
-    def save( self, fspath ):
+
+    def save(self, fspath):
         """
         Save the artifact to an explicit path. The containing directory must exist.
         Returns a reference to the file which has just been writen to.
@@ -37,14 +37,14 @@ class Artifact(object):
         :param fspath: full pathname including the filename, str
         :return: filepath
         """
-        log.info( "Saving artifact @ %s to %s" % (self.url, fspath) )
-        if not fspath.endswith( self.filename ):
-            log.warn( "Attempt to change the filename of artifact %s on save." % self.filename )
+        log.info("Saving artifact @ %s to %s" % (self.url, fspath))
+        if not fspath.endswith(self.filename):
+            log.warn("Attempt to change the filename of artifact %s on save." % self.filename)
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath):
-                        log.info( "Local copy of %s is already up to date." % self.filename)
+                        log.info("Local copy of %s is already up to date." % self.filename)
                         return fspath
                 except ArtifactBroken:
                     log.info("Jenkins artifact could not be identified.")
@@ -58,7 +58,7 @@ class Artifact(object):
         except ArtifactBroken:
             log.warning("fingerprint of the downloaded artifact could not be verified")
         return filename
-    
+
     def _do_download(self, fspath):
         """
         Download the the artifact to a path.
@@ -88,21 +88,21 @@ class Artifact(object):
             raise
         return md5.hexdigest()
 
-    def savetodir( self, dirpath ):
+    def savetodir(self, dirpath):
         """
         Save the artifact to a folder. The containing directory must be exist, but use the artifact's
         default filename.
         """
-        assert os.path.exists( dirpath )
-        assert os.path.isdir( dirpath )
-        outputfilepath = os.path.join( dirpath, self.filename )
-        return self.save( outputfilepath )
+        assert os.path.exists(dirpath)
+        assert os.path.isdir(dirpath)
+        outputfilepath = os.path.join(dirpath, self.filename)
+        return self.save(outputfilepath)
 
 
-    def __repr__( self ):
+    def __repr__(self):
         """
         Produce a handy repr-string.
         """
-        return """<%s.%s %s>""" % ( self.__class__.__module__,
+        return """<%s.%s %s>""" % (self.__class__.__module__,
                                     self.__class__.__name__,
-                                    self.url )
+                                    self.url)

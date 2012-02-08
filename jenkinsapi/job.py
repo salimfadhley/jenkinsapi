@@ -1,8 +1,9 @@
 import logging
 import urlparse
 import urllib2
+import urllib
 from collections import defaultdict
-from datetime import time
+from time import sleep
 from jenkinsapi.build import Build
 from jenkinsapi.jenkinsbase import JenkinsBase
 
@@ -30,52 +31,42 @@ class Job(JenkinsBase):
     def get_jenkins_obj(self):
         return self.jenkins
 
-    def get_build_triggerurl( self, token=None ):
-        if token is None:
+    def get_build_triggerurl( self, token=None, params={} ):
+        if token is None and not params:
             extra = "build"
+        elif params:
+            if token:
+                assert isinstance(token, str ), "token if provided should be a string."
+                params['token'] = token
+            extra = "buildWithParameters?" + urllib.urlencode(params)
         else:
             assert isinstance(token, str ), "token if provided should be a string."
-            extra = "build?token=%s" % token
+            extra = "build?" + urllib.urlencode({'token':token})
         buildurl = urlparse.urljoin( self.baseurl, extra )
         return buildurl
 
-    def hit_url(self, url ):
-        fn_urlopen = self.get_jenkins_obj().get_opener()
-        try:
-            stream = fn_urlopen( url )
-            html_result = stream.read()
-        except urllib2.HTTPError, e:
-            log.debug( "Error reading %s" % url )
-            log.exception(e)
-            raise
-        return html_result
-
-    def invoke( self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15 ):
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params={}):
         assert isinstance( invoke_pre_check_delay, (int, float) )
         assert isinstance( invoke_block_delay, (int, float) )
         assert isinstance( block, bool )
         assert isinstance( skip_if_running, bool )
-        skip_build = False
         if self.is_queued():
             log.warn( "Will not request new build because %s is already queued" % self.id() )
-            skip_build = True
+            pass
         elif self.is_running():
             if skip_if_running:
                 log.warn( "Will not request new build because %s is already running" % self.id() )
-                skip_build = True
+                pass
             else:
                 log.warn("Will re-schedule %s even though it is already running" % self.id() )
         original_build_no = self.get_last_buildnumber()
-        if skip_build:
-            pass
-        else:
-            log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
-            url = self.get_build_triggerurl( securitytoken )
-            html_result = self.hit_url( url )
-            assert len( html_result ) > 0
+        log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
+        url = self.get_build_triggerurl( securitytoken, params)
+        html_result = self.hit_url(url)
+        assert len( html_result ) > 0
         if invoke_pre_check_delay > 0:
             log.info("Waiting for %is to allow Jenkins to catch up" % invoke_pre_check_delay )
-            time.sleep( invoke_pre_check_delay )
+            sleep( invoke_pre_check_delay )
         if block:
             total_wait = 0
             while self.is_queued():
@@ -205,3 +196,7 @@ class Job(JenkinsBase):
         except NoBuildData:
             log.info("No build info available for %s, assuming not running." % str(self) )
             return False
+
+    def get_config(self):
+        '''Returns the config.xml from the job'''
+        return self.hit_url("%(baseurl)s/config.xml" % self.__dict__)

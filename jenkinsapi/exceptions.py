@@ -47,3 +47,7 @@ class NotFound(Exception):
     """
     Resource cannot be found
     """
+
+class NotAuthorized(Exception):
+    """Not Authorized to access resource"""
+    # Usually thrown when we get a 403 returned
