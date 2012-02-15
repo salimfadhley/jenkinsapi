@@ -1,5 +1,20 @@
 from setuptools import setup
-from setup_config import DESCRIPTION, VERSION, PROJECT_NAME, PROJECT_AUTHORS, GLOBAL_ENTRY_POINTS, PROJECT_EMAILS, PROJECT_URL, SHORT_DESCRIPTION
+import os
+
+PROJECT_ROOT, _ = os.path.split(__file__) 
+DESCRIPTION = open( os.path.join(PROJECT_ROOT, "README") ).read()
+VERSION = REVISION = '0.1.1'
+PROJECT_NAME = 'JenkinsAPI'
+PROJECT_AUTHORS = "Salim Fadhley, Ramon van Alteren, Ruslan Lutsenko"
+PROJECT_EMAILS = 'salimfadhley@gmail.com, ramon@vanalteren.nl, ruslan.lutcenko@gmail.com'
+PROJECT_URL = "https://github.com/salimfadhley/jenkinsapi"
+SHORT_DESCRIPTION = 'A Python API for accessing resources on a Jenkins continuous-integration server.'
+
+GLOBAL_ENTRY_POINTS = {
+        "console_scripts":[ "jenkins_invoke=jenkinsapi.command_line.jenkins_invoke:main"]
+        }
+
+# Actual setup
 
 setup(name=PROJECT_NAME.lower(),
       version=VERSION,
@@ -11,5 +26,5 @@ setup(name=PROJECT_NAME.lower(),
       entry_points = GLOBAL_ENTRY_POINTS,
       url=PROJECT_URL,
       description=SHORT_DESCRIPTION,
-      long_description=DESCRIPTION
+      long_description=DESCRIPTION,
       )

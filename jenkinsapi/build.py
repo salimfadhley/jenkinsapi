@@ -110,3 +110,5 @@ class Build(JenkinsBase):
             all_actions.update( dct_action )
         return all_actions
 
+    def get_timestamp(self):
+        return self._data['timestamp']
