@@ -34,8 +34,10 @@ class Build(JenkinsBase):
         return self._data["result"]
 
     def get_revision(self):
-        for set in self._data["changeSet"]["revisions"]:
-            return set["revision"]
+        maxRevision = 0
+        for repoPathSet in self._data["changeSet"]["revisions"]:
+            maxRevision = max(repoPathSet["revision"], maxRevision)
+        return maxRevision
 
     def get_duration(self):
         return self._data["duration"]
