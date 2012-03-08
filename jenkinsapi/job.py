@@ -93,6 +93,8 @@ class Job(JenkinsBase):
         """Gets a buildid for a given type of build"""
         KNOWNBUILDTYPES=["lastSuccessfulBuild", "lastBuild", "lastCompletedBuild"]
         assert buildtype in KNOWNBUILDTYPES
+        if self._data[buildtype] == None:
+            return None
         buildid = self._data[buildtype]["number"]
         assert type(buildid) == int, "Build ID should be an integer, got %s" % repr( buildid )
         return buildid
