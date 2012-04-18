@@ -71,7 +71,7 @@ class Job(JenkinsBase):
             total_wait = 0
             while self.is_queued():
                 log.info( "Waited %is for %s to begin..." % ( total_wait, self.id() ) )
-                time.sleep( invoke_block_delay )
+                sleep( invoke_block_delay )
                 total_wait += invoke_block_delay
             if self.is_running():
                 running_build = self.get_last_build()
