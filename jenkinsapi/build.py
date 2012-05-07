@@ -5,7 +5,7 @@ from jenkinsapi.exceptions import NoResults, FailedNoResults
 from jenkinsapi.constants import STATUS_FAIL, STATUS_ABORTED, RESULTSTATUS_FAILURE
 from jenkinsapi.result_set import ResultSet
 
-from datetime import time
+from time import sleep
 import logging
 
 log = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ class Build(JenkinsBase):
         while self.is_running():
             total_wait = delay * count
             log.info("Waited %is for %s #%s to complete" % ( total_wait, self.job.id(), self.id() ) )
-            time.sleep( delay )
+            sleep( delay )
             count += 1
 
     def get_jenkins_obj(self):
