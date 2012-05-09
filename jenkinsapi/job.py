@@ -200,3 +200,7 @@ class Job(JenkinsBase):
     def get_config(self):
         '''Returns the config.xml from the job'''
         return self.hit_url("%(baseurl)s/config.xml" % self.__dict__)
+
+    def update_config(self, config):
+        '''Update the config.xml to the job'''
+        return self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)

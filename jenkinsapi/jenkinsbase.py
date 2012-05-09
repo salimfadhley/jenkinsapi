@@ -72,6 +72,11 @@ class JenkinsBase(object):
             raise
         return result
 
+    def post_data(self, url, content):
+        request = urllib2.Request(url, content)
+        result = urllib2.urlopen(request).read().strip()
+        return result
+
     def hit_url(self, url ):
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
