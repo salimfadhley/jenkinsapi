@@ -73,8 +73,13 @@ class JenkinsBase(object):
         return result
 
     def post_data(self, url, content):
-        request = urllib2.Request(url, content)
-        result = urllib2.urlopen(request).read().strip()
+        try:
+            request = urllib2.Request(url, content)
+            result = urllib2.urlopen(request).read().strip()
+        except urllib2.HTTPError, e:
+            log.warn("Error post data %s" % url)
+            log.exception(e)
+            raise
         return result
 
     def hit_url(self, url ):
