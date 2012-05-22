@@ -112,10 +112,11 @@ class Jenkins(JenkinsBase):
         """
         Delete a job by name
         :param jobname: name of a exist job, str
+        :return: new jenkins_obj
         """
-        delete_job_url = "%sdoDelete" % self[jobname].baseurl
+        delete_job_url = "%sdoDelete" % Jenkins(self.baseurl).get_job(jobname).baseurl
         self.post_data(delete_job_url, '')
-        return self
+        return Jenkins(self.baseurl)
 
     def iteritems(self):
         return self.get_jobs()
@@ -153,6 +154,17 @@ class Jenkins(JenkinsBase):
         view_url = self.get_view_url(str_view_name)
         view_api_url = self.python_api_url(view_url)
         return View(view_api_url , str_view_name, jenkins_obj=self)
+
+    def get_view_by_url(self, str_url):
+        view_url = str_url
+        view_api_url = "%s/api/python/" % str_url
+        str_view_name = view_url.replace(self.baseurl, '')
+        return View(view_api_url, str_view_name, jenkins_obj=self)
+
+    def delete_view_by_url(self, str_url):
+        url = "%s/doDelete" %str_url
+        self.post_data(url, '')
+        return Jenkins(self.baseurl)
 
     def __getitem__(self, jobname):
         """
