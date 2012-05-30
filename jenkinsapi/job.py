@@ -146,10 +146,18 @@ class Job(JenkinsBase):
 
     def get_last_build( self ):
         """
-        Get the last good build
+        Get the last build
         """
         bn = self.get_last_buildnumber()
         return self.get_build( bn )
+
+    def get_last_build_or_none(self):
+        """
+        Get the last build or None if there is no builds
+        """
+        bn = self.get_last_buildnumber()
+        if bn is not None:
+            return self.get_build(bn)
 
     def get_last_completed_build( self ):
         """
@@ -192,10 +200,12 @@ class Job(JenkinsBase):
     def is_running(self):
         self.poll()
         try:
-            return self.get_last_build().is_running()
+            build = self.get_last_build_or_none()
+            if build is not None:
+                return build.is_running()
         except NoBuildData:
             log.info("No build info available for %s, assuming not running." % str(self) )
-            return False
+        return False
 
     def get_config(self):
         '''Returns the config.xml from the job'''
