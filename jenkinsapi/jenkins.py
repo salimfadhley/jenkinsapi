@@ -89,6 +89,15 @@ class Jenkins(JenkinsBase):
         for info in self._data["jobs"]:
             yield info["name"], Job(info["url"], info["name"], jenkins_obj=self)
 
+    def get_jobs_list(self):
+        """
+        return jobs dict,'name:url'
+        """
+        jobs = []
+        for info in self._data["jobs"]:
+            jobs.append(info["name"])
+        return jobs
+
     def get_job(self, jobname):
         """
         Get a job by name
@@ -96,6 +105,14 @@ class Jenkins(JenkinsBase):
         :return: Job obj
         """
         return self[jobname]
+
+    def has_job(self, jobname):
+        """
+        Does a job by the name specified exist
+        :param jobname: string
+        :return: boolean
+        """
+        return jobname in self.get_jobs_list()
 
     def copy_job(self, jobname, newjobname):
         """
@@ -153,18 +170,51 @@ class Jenkins(JenkinsBase):
     def get_view(self, str_view_name):
         view_url = self.get_view_url(str_view_name)
         view_api_url = self.python_api_url(view_url)
-        return View(view_api_url , str_view_name, jenkins_obj=self)
+        return View(view_url , str_view_name, jenkins_obj=self)
 
-    def get_view_by_url(self, str_url):
-        view_url = str_url
-        view_api_url = "%s/api/python/" % str_url
-        str_view_name = view_url.replace(self.baseurl, '')
-        return View(view_api_url, str_view_name, jenkins_obj=self)
+    def get_view_by_url(self, str_view_url):
+        #for nested view
+        str_view_name = str_view_url.split('/view/')[-1].replace('/', '')
+        return View(str_view_url , str_view_name, jenkins_obj=self)
 
     def delete_view_by_url(self, str_url):
         url = "%s/doDelete" %str_url
         self.post_data(url, '')
         return Jenkins(self.baseurl)
+
+    def create_view(self, str_view_name, people=None):
+        """
+        Create a view, viewExistsCheck
+        :param str_view_name: name of new view, str
+        :return: new view obj
+        """
+        
+        if people:
+            url = "%s/user/%s/my-views" %(self.baseurl, people)
+        else:
+            url = self.baseurl
+        viewExistsCheck_url = "%s/viewExistsCheck?value=%s" %(url, str_view_name)
+        fn_urlopen = self.get_jenkins_obj().get_opener()
+        try:
+            r = fn_urlopen(viewExistsCheck_url).read()
+        except urllib2.HTTPError, e:
+            log.debug("Error reading %s" % url)
+            log.exception(e)
+            raise
+        """<div/>"""
+        if len(r) > 7: 
+            return 'A view already exists with the name "%s"' % (str_view_name)
+        else:
+            data = {"mode":"hudson.model.ListView", "Submit": "OK"}
+            data['name']=str_view_name
+            data['json'] = data.copy()
+            params = urllib.urlencode(data)
+            try:
+                result = self.post_data('%s/createView' % url, params)
+            except urllib2.HTTPError, e:
+                log.debug("Error post_data %s" % url)
+                log.exception(e)
+            return url
 
     def __getitem__(self, jobname):
         """

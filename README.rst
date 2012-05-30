@@ -55,3 +55,4 @@ Project Authors
  * Ramon van Alteren (ramon@vanalteren.nl) 
  * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
  * Cleber J Santos (cleber@simplesconsultoria.com.br)
+ * William Zhang (jollychang@douban.com)
