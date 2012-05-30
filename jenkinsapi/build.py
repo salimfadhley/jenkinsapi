@@ -52,6 +52,66 @@ class Build(JenkinsBase):
     def get_artifact_dict(self):
         return dict( (a.filename, a) for a in self.get_artifacts() )
 
+    def get_upstream_job_name(self):
+        """
+        Get the upstream job name if it exist, None otherwise
+        :return: String or None
+        """
+        try:
+            return self.get_actions()['causes'][0]['upstreamProject']
+        except KeyError:
+            return None
+
+    def get_upstream_job(self):
+        """
+        Get the upstream job object if it exist, None otherwise
+        :return: Job or None
+        """
+        if self.get_upstream_job_name():
+            return self.get_jenkins_obj().get_job(self.get_upstream_job_name())
+        else:
+            return None
+
+    def get_upstream_build_number(self):
+        """
+        Get the upstream build number if it exist, None otherwise
+        :return: int or None
+        """
+        try:
+            return int(self.get_actions()['causes'][0]['upstreamBuild'])
+        except KeyError:
+            return None
+
+    def get_master_job_name(self):
+        """
+        Get the master job name if it exist, None otherwise
+        :return: String or None
+        """
+        try:
+            return self.get_actions()['parameters'][0]['value']
+        except KeyError:
+            return None
+
+    def get_master_job(self):
+        """
+        Get the master job object if it exist, None otherwise
+        :return: Job or None
+        """
+        if self.get_master_job_name():
+            return self.get_jenkins_obj().get_job(self.get_master_job_name())
+        else:
+            return None
+
+    def get_master_build_number(self):
+        """
+        Get the master build number if it exist, None otherwise
+        :return: int or None
+        """
+        try:
+            return int(self.get_actions()['parameters'][1]['value'])
+        except KeyError:
+            return None
+
     def is_running( self ):
         """
         Return a bool if running.
