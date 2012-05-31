@@ -48,6 +48,10 @@ def mkurlopener( jenkinsuser, jenkinspass, jenkinsurl, proxyhost, proxyport, pro
     opener = urllib2.build_opener(*handlers)
     return opener.open
 
+def mkopener(*handlers):
+    opener = urllib2.build_opener(*handlers)
+    return opener.open
+
 def get_jenkins_auth_handler(jenkinsuser, jenkinspass, jenkinsurl):
     """
     Get a basic authentification handler for jenkins
@@ -91,4 +95,9 @@ def get_proxy_handler(proxyhost, proxyport, proxyuser, proxypass):
     proxy_auth_handler = urllib2.HTTPBasicAuthHandler()
     proxy_auth_handler.add_password( None, proxyhost, proxyuser, proxypass )
     return [proxy_handler, proxy_auth_handler]
+
+
+class NoAuto302Handler(urllib2.HTTPRedirectHandler):
+    def http_error_302(self, req, fp, code, msg, hdrs):
+        return fp
 

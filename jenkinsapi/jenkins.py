@@ -4,11 +4,13 @@ from jenkinsapi.job import Job
 from jenkinsapi.view import View
 from jenkinsapi.node import Node
 from jenkinsapi.exceptions import UnknownJob, NotAuthorized
-from utils.urlopener import mkurlopener
+from utils.urlopener import mkurlopener, mkopener, NoAuto302Handler
 import logging
 import time
 import urllib2
 import urllib
+import urlparse
+import cookielib
 try:
     import json
 except ImportError:
@@ -20,7 +22,7 @@ class Jenkins(JenkinsBase):
     """
     Represents a jenkins environment.
     """
-    def __init__(self, baseurl, username=None, password=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None):
+    def __init__(self, baseurl, username=None, password=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None, formauth=False):
         """
 
         :param baseurl: baseurl for jenkins instance including port, str
@@ -38,7 +40,7 @@ class Jenkins(JenkinsBase):
         self.proxyport = proxyport
         self.proxyuser = proxyuser
         self.proxypass = proxypass
-        JenkinsBase.__init__(self, baseurl)
+        JenkinsBase.__init__(self, baseurl, formauth=formauth)
 
     def get_proxy_auth(self):
         return self.proxyhost, self.proxyport, self.proxyuser, self.proxypass
@@ -54,7 +56,33 @@ class Jenkins(JenkinsBase):
         return auth_args
 
     def get_opener(self):
+        if self.formauth:
+            return self.get_login_opener()
         return mkurlopener(*self.get_auth())
+
+    def get_login_opener(self):
+        hdrs = []
+        if getattr(self, '_cookies', False):
+            mcj = cookielib.MozillaCookieJar()
+            for c in self._cookies:
+                mcj.set_cookie(c)
+            hdrs.append(urllib2.HTTPCookieProcessor(mcj))
+        return mkopener(*hdrs)
+
+    def login(self):
+        formdata = dict(j_username=self.username, j_password=self.password,
+                        remember_me=True, form='/')
+        formdata.update(dict(json=json.dumps(formdata), Submit='log in'))
+        formdata = urllib.urlencode(formdata)
+
+        loginurl = urlparse.urljoin(self.baseurl, 'j_acegi_security_check')
+        mcj = cookielib.MozillaCookieJar()
+        cookiehandler = urllib2.HTTPCookieProcessor(mcj)
+
+        urlopen = mkopener(NoAuto302Handler, cookiehandler)
+        res = urlopen(loginurl, data=formdata)
+        self._cookies = [c for c in mcj]
+        return res.getcode() == 302
 
     def validate_fingerprint(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
@@ -121,7 +149,10 @@ class Jenkins(JenkinsBase):
         :param newjobname: name of new job, str
         :return: new Job obj
         """
-        copy_job_url = "%screateItem?name=%s&mode=copy&from=%s" % (self.baseurl, newjobname, jobname)
+        qs = urllib.urlencode({'name': newjobname,
+                               'mode': 'copy',
+                               'from': jobname})
+        copy_job_url = urlparse.urljoin(self.baseurl, "createItem?%s" % qs)
         self.post_data(copy_job_url, '')
         return Jenkins(self.baseurl).get_job(newjobname)
 
@@ -131,7 +162,7 @@ class Jenkins(JenkinsBase):
         :param jobname: name of a exist job, str
         :return: new jenkins_obj
         """
-        delete_job_url = "%sdoDelete" % Jenkins(self.baseurl).get_job(jobname).baseurl
+        delete_job_url = urlparse.urljoin(Jenkins(self.baseurl).get_job(jobname).baseurl, "sdoDelete" )
         self.post_data(delete_job_url, '')
         return Jenkins(self.baseurl)
 
@@ -190,10 +221,11 @@ class Jenkins(JenkinsBase):
         """
         
         if people:
-            url = "%s/user/%s/my-views" %(self.baseurl, people)
+            url = urlparse.urljoin(self.baseurl, "user/%s/my-views" % people)
         else:
             url = self.baseurl
-        viewExistsCheck_url = "%s/viewExistsCheck?value=%s" %(url, str_view_name)
+        qs = urllib.urlencode({'value': str_view_name})
+        viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             r = fn_urlopen(viewExistsCheck_url).read()
@@ -210,11 +242,12 @@ class Jenkins(JenkinsBase):
             data['json'] = data.copy()
             params = urllib.urlencode(data)
             try:
-                result = self.post_data('%s/createView' % url, params)
+                createView_url = urlparse.urljoin(url, "createView")
+                result = self.post_data(createView_url, params)
             except urllib2.HTTPError, e:
                 log.debug("Error post_data %s" % url)
                 log.exception(e)
-            return url
+            return urlparse.urljoin(url, "view/%s" % str_view_name)
 
     def __getitem__(self, jobname):
         """

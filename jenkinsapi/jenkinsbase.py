@@ -23,12 +23,13 @@ class JenkinsBase(object):
     def __str__(self):
         raise NotImplemented
 
-    def __init__(self, baseurl, poll=True):
+    def __init__(self, baseurl, poll=True, formauth=False):
         """
         Initialize a jenkins connection
         """
         self.baseurl = baseurl
-        if poll:
+        self.formauth = formauth
+        if poll and not self.formauth:
             try:
                 self.poll()
             except urllib2.HTTPError, hte:
@@ -74,8 +75,8 @@ class JenkinsBase(object):
 
     def post_data(self, url, content):
         try:
-            request = urllib2.Request(url, content)
-            result = urllib2.urlopen(request).read().strip()
+            urlopen = self.get_jenkins_obj().get_opener()
+            return urlopen(url, data=content).read().strip()
         except urllib2.HTTPError, e:
             log.warn("Error post data %s" % url)
             log.exception(e)
