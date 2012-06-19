@@ -34,10 +34,27 @@ class Build(JenkinsBase):
         return self._data["result"]
 
     def get_revision(self):
+        vcs = self._data['changeSet']['kind'] or 'git'
+        return getattr(self, '_get_%s_rev' % vcs, lambda: None)()
+
+    def _get_svn_rev(self):
         maxRevision = 0
         for repoPathSet in self._data["changeSet"]["revisions"]:
             maxRevision = max(repoPathSet["revision"], maxRevision)
         return maxRevision
+
+    def _get_git_rev(self):
+        for item in self._data['actions']:
+            branch = item.get('buildsByBranchName')
+            head = branch and branch.get('origin/HEAD')
+            if head:
+                return head['revision']['SHA1']
+
+    def _get_hg_rev(self):
+        revs = [(item['date'], item['node'])
+                for item in self._data['changeSet']['items']]
+        revs = sorted(revs, key=lambda tup: float(tup[0].split('-')[0]))
+        return revs[-1][1] # get last commit revision
 
     def get_duration(self):
         return self._data["duration"]

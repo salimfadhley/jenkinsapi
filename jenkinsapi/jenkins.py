@@ -231,18 +231,14 @@ class Jenkins(JenkinsBase):
         :param str_view_name: name of new view, str
         :return: new view obj
         """
-        
-        if people:
-            url = urlparse.urljoin(self.baseurl, "user/%s/my-views" % people)
-        else:
-            url = self.baseurl
+        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % people) if people else self.baseurl
         qs = urllib.urlencode({'value': str_view_name})
         viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             r = fn_urlopen(viewExistsCheck_url).read()
         except urllib2.HTTPError, e:
-            log.debug("Error reading %s" % url)
+            log.debug("Error reading %s" % viewExistsCheck_url)
             log.exception(e)
             raise
         """<div/>"""
@@ -257,9 +253,9 @@ class Jenkins(JenkinsBase):
                 createView_url = urlparse.urljoin(url, "createView")
                 result = self.post_data(createView_url, params)
             except urllib2.HTTPError, e:
-                log.debug("Error post_data %s" % url)
+                log.debug("Error post_data %s" % createView_url)
                 log.exception(e)
-            return urlparse.urljoin(url, "view/%s" % str_view_name)
+            return urlparse.urljoin(url, "view/%s/" % str_view_name)
 
     def __getitem__(self, jobname):
         """

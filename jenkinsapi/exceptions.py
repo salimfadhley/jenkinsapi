@@ -51,3 +51,8 @@ class NotFound(Exception):
 class NotAuthorized(Exception):
     """Not Authorized to access resource"""
     # Usually thrown when we get a 403 returned
+
+class NotSupportVCS(Exception):
+    """
+    It's a job that doesn't support vcs
+    """
