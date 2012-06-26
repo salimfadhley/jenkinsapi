@@ -117,6 +117,14 @@ class Jenkins(JenkinsBase):
         for info in self._data["jobs"]:
             yield info["name"], Job(info["url"], info["name"], jenkins_obj=self)
 
+    def get_jobs_info(self):
+        """
+        Get the jobs information
+        :return url, name
+        """
+        for info in self._data["jobs"]:
+            yield info["url"], info["name"]
+
     def get_jobs_list(self):
         """
         return jobs dict,'name:url'
@@ -263,9 +271,9 @@ class Jenkins(JenkinsBase):
         :param jobname: name of job, str
         :return: Job obj
         """
-        for name, job in self.get_jobs():
+        for url, name in self.get_jobs_info():
             if name == jobname:
-                return job
+                return Job(url, name, jenkins_obj=self)
         raise UnknownJob(jobname)
 
     def get_node_dict(self):

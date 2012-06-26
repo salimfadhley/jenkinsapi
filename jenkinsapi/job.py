@@ -231,3 +231,55 @@ class Job(JenkinsBase):
     def update_config(self, config):
         '''Update the config.xml to the job'''
         return self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
+
+    def get_downstream_jobs(self):
+        """
+        Get all the possible downstream jobs
+        :return List of Job
+        """
+        downstream_jobs = []
+        try:
+            for j in self._data['downstreamProjects']:
+                downstream_jobs.append(self.get_jenkins_obj().get_job(j['name']))
+        except KeyError:
+            return []
+        return downstream_jobs
+
+    def get_downstream_job_names(self):
+        """
+        Get all the possible downstream job names
+        :return List of String
+        """
+        downstream_jobs = []
+        try:
+            for j in self._data['downstreamProjects']:
+                downstream_jobs.append(j['name'])
+        except KeyError:
+            return []
+        return downstream_jobs
+
+    def get_upstream_job_names(self):
+        """
+        Get all the possible upstream job names
+        :return List of String
+        """
+        upstream_jobs = []
+        try:
+            for j in self._data['upstreamProjects']:
+                upstream_jobs.append(j['name'])
+        except KeyError:
+            return []
+        return upstream_jobs
+
+    def get_upstream_jobs(self):
+        """
+        Get all the possible upstream jobs
+        :return List of Job
+        """
+        upstream_jobs = []
+        try:
+            for j in self._data['upstreamProjects']:
+                upstream_jobs.append(self.get_jenkins_obj().get_job(j['name']))
+        except KeyError:
+            return []
+        return upstream_jobs

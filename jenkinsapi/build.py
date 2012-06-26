@@ -99,6 +99,17 @@ class Build(JenkinsBase):
         except KeyError:
             return None
 
+    def get_upstream_build(self):
+        """
+        Get the upstream build if it exist, None otherwise
+        :return Build or None
+        """
+        upstream_job = self.get_upstream_job()
+        if upstream_job:
+            return upstream_job.get_build(self.get_upstream_build_number())
+        else:
+            return None
+
     def get_master_job_name(self):
         """
         Get the master job name if it exist, None otherwise
@@ -127,6 +138,68 @@ class Build(JenkinsBase):
         try:
             return int(self.get_actions()['parameters'][1]['value'])
         except KeyError:
+            return None
+
+    def get_master_build(self):
+        """
+        Get the master build if it exist, None otherwise
+        :return Build or None
+        """
+        master_job = self.get_master_job()
+        if master_job:
+            return master_job.get_build(self.get_master_build_number())
+        else:
+            return None
+
+    def get_downstream_jobs(self):
+        """
+        Get the downstream jobs for this build
+        :return List of jobs or None
+        """
+        downstream_jobs_names = self.job.get_downstream_job_names()
+        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name]]" % self.python_api_url(self.baseurl))
+        downstream_jobs = []
+        try:
+            fingerprints = fingerprint_data['fingerprint'][0]
+            for f in fingerprints['usage']:
+                if f['name'] in downstream_jobs_names:
+                    downstream_jobs.append(self.get_jenkins_obj().get_job(f['name']))
+            return downstream_jobs
+        except (IndexError, KeyError):
+            return None
+
+    def get_downstream_job_names(self):
+        """
+        Get the downstream job names for this build
+        :return List of string or None
+        """
+        downstream_jobs_names = self.job.get_downstream_job_names()
+        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name]]" % self.python_api_url(self.baseurl))
+        downstream_names = []
+        try:
+            fingerprints = fingerprint_data['fingerprint'][0]
+            for f in fingerprints['usage']:
+                if f['name'] in downstream_jobs_names:
+                    downstream_names.append(f['name'])
+            return downstream_names
+        except (IndexError, KeyError):
+            return None
+
+    def get_downstream_builds(self):
+        """
+        Get the downstream builds for this build
+        :return List of Build or None
+        """
+        downstream_jobs_names = self.job.get_downstream_job_names()
+        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name,ranges[ranges[end,start]]]]" % self.python_api_url(self.baseurl))
+        downstream_builds = []
+        try:
+            fingerprints = fingerprint_data['fingerprint'][0]
+            for f in fingerprints['usage']:
+                if f['name'] in downstream_jobs_names:
+                    downstream_builds.append(self.get_jenkins_obj().get_job(f['name']).get_build(f['ranges']['ranges'][0]['start']))
+            return downstream_builds
+        except (IndexError, KeyError):
             return None
 
     def is_running( self ):
