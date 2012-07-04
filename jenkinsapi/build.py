@@ -243,8 +243,6 @@ class Build(JenkinsBase):
         if self.STR_TOTALCOUNT not in self.get_actions():
             raise NoResults( "%s does not have any published results" % str(self) )
         buildstatus = self.get_status()
-        if buildstatus in [ STATUS_FAIL, RESULTSTATUS_FAILURE, STATUS_ABORTED ]:
-            raise FailedNoResults( self.STR_TPL_NOTESTS_ERR % ( str(self), buildstatus ) )
         if not self.get_actions()[self.STR_TOTALCOUNT]:
             raise NoResults( self.STR_TPL_NOTESTS_ERR % ( str(self), buildstatus ) )
         obj_results = ResultSet( result_url, build=self )
