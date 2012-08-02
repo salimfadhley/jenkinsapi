@@ -76,7 +76,7 @@ class JenkinsBase(object):
     def post_data(self, url, content):
         try:
             urlopen = self.get_jenkins_obj().get_opener()
-            return urlopen(url, data=content).read().strip()
+            result = urlopen(url, data=content).read().strip()
         except urllib2.HTTPError, e:
             log.warn("Error post data %s" % url)
             log.exception(e)
