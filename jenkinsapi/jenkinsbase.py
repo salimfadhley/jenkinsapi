@@ -1,6 +1,7 @@
 import urllib2
 import logging
 import pprint
+import json
 from jenkinsapi import config
 from jenkinsapi.utils.retry import retry_function
 
@@ -66,7 +67,7 @@ class JenkinsBase(object):
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             stream = fn_urlopen(url)
-            result = eval(stream.read())
+            result = json.load(stream)
         except urllib2.HTTPError, e:
             log.warn("Error reading %s" % url)
             log.exception(e)
