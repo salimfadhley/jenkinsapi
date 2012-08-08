@@ -34,7 +34,7 @@ class JenkinsBase(object):
                 self.poll()
             except urllib2.HTTPError, hte:
                 log.exception(hte)
-                log.warn( "Failed to conenct to %s" % baseurl )
+                log.warn( "Failed to connect to %s" % baseurl )
                 raise
 
     def poll(self):
