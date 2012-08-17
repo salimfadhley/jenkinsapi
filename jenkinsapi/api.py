@@ -34,11 +34,19 @@ def get_latest_complete_build(jenkinsurl, jobname):
     job = jenkinsci[jobname]
     return job.get_last_completed_build()
 
-def get_artifacts( jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None ):
+def get_artifacts( jenkinsurl, jobid=None, build_no=None, 
+                   proxyhost=None, proxyport=None, 
+                   proxyuser=None, proxypass=None,
+                   username=None, password=None ):
     """
     Find all the artifacts for the latest build of a job.
+
+    NB Is reflecting the call of jenkins.Jenkins 
+    :params: TBC
+
     """
-    jenkinsci = Jenkins(jenkinsurl, proxyhost, proxyport, proxyuser, proxypass)
+    jenkinsci = Jenkins(jenkinsurl, proxyhost=proxyhost, proxyport=proxyport,                                    proxyuser=proxyuser, proxypass=proxypass
+                                    username=username, password=password)
     job = jenkinsci[jobid]
     if build_no:
         build = job.get_build( build_no )
