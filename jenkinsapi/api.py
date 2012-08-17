@@ -10,43 +10,41 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def get_latest_test_results( jenkinsurl, jobname ):
+def get_latest_test_results( jenkinsurl, jobname, **kwds ):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    latestbuild = get_latest_build( jenkinsurl, jobname )
+    latestbuild = get_latest_build( jenkinsurl, jobname, **kwds )
     res = latestbuild.get_resultset()
     return res
 
-def get_latest_build(jenkinsurl, jobname):
+def get_latest_build(jenkinsurl, jobname, **kwds):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    jenkinsci = Jenkins(jenkinsurl)
+    jenkinsci = Jenkins(jenkinsurl, **kwds)
     job = jenkinsci[jobname]
     return job.get_last_build()
 
-def get_latest_complete_build(jenkinsurl, jobname):
+def get_latest_complete_build(jenkinsurl, jobname, **kwds):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    jenkinsci = Jenkins(jenkinsurl)
+    jenkinsci = Jenkins(jenkinsurl, **kwds)
     job = jenkinsci[jobname]
     return job.get_last_completed_build()
 
 def get_artifacts( jenkinsurl, jobid=None, build_no=None, 
-                   proxyhost=None, proxyport=None, 
-                   proxyuser=None, proxypass=None,
-                   username=None, password=None ):
+                   **kwds):
     """
     Find all the artifacts for the latest build of a job.
 
-    NB Is reflecting the call of jenkins.Jenkins 
-    :params: TBC
+
+    security related params are sent as "passthrough" to Jenkins constructor 
+    :params: see jenkins.Jenkins
 
     """
-    jenkinsci = Jenkins(jenkinsurl, proxyhost=proxyhost, proxyport=proxyport,                                    proxyuser=proxyuser, proxypass=proxypass
-                                    username=username, password=password)
+    jenkinsci = Jenkins(jenkinsurl, **kwds)
     job = jenkinsci[jobid]
     if build_no:
         build = job.get_build( build_no )
@@ -56,7 +54,7 @@ def get_artifacts( jenkinsurl, jobid=None, build_no=None,
     log.info("Found %i artifacts in '%s'" % ( len(artifacts.keys() ), build_no ))
     return artifacts
 
-def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
+def search_artifacts(jenkinsurl, jobid, artifact_ids=None, **kwds):
     """
     Search the entire history of a jenkins job for a list of artifact names. If same_build
     is true then ensure that all artifacts come from the same build of the job
@@ -64,7 +62,7 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
     if len(artifact_ids) == 0 or artifact_ids is None:
         return []
     
-    jenkinsci = Jenkins( jenkinsurl )
+    jenkinsci = Jenkins( jenkinsurl, **kwds )
     job = jenkinsci[ jobid ]
     build_ids = job.get_build_ids()
     for build_id in build_ids:
@@ -77,18 +75,18 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
     #noinspection PyUnboundLocalVariable
     raise ArtifactsMissing( missing_artifacts )
 
-def grab_artifact(jenkinsurl, jobid, artifactid, targetdir):
+def grab_artifact(jenkinsurl, jobid, artifactid, targetdir, **kwds):
     """
     Convenience method to find the latest good version of an artifact and save it
     to a target directory. Directory is made automatically if not exists.
     """
-    artifacts = get_artifacts( jenkinsurl, jobid )
+    artifacts = get_artifacts( jenkinsurl, jobid, **kwds )
     artifact = artifacts[ artifactid ]
     if not os.path.exists( targetdir ):
         os.makedirs( targetdir )
     artifact.savetodir( targetdir)
 
-def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_timeout=True):
+def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_timeout=True, **kwds):
     """
     Wait until all of the jobs in the list are complete.
     """
@@ -96,7 +94,7 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
     assert maxwait > interval
     assert interval > 0
 
-    obj_jenkins = Jenkins(jenkinsurl)
+    obj_jenkins = Jenkins(jenkinsurl, **kwds)
     obj_jobs = [obj_jenkins[jid] for jid in jobs]
     for time_left in xrange(maxwait, 0, -interval):
         still_running = [j for j in obj_jobs if j.is_queued_or_running()]
@@ -109,7 +107,7 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
         #noinspection PyUnboundLocalVariable
         raise TimeOut("Waited too long for these jobs to complete: %s" % str_still_running)
 
-def get_view_from_url(url):
+def get_view_from_url(url, **kwds):
     """
     Factory method
     """
@@ -117,7 +115,7 @@ def get_view_from_url(url):
     if not matched:
         raise BadURL("Cannot parse URL %s" % url)
     jenkinsurl, view_name = matched.groups()
-    jenkinsci = Jenkins(jenkinsurl)
+    jenkinsci = Jenkins(jenkinsurl, **kwds)
     return jenkinsci.get_view(view_name)
 
 def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
@@ -146,7 +144,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
                 installed.append(destpath)
         return installed
     
-def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ): 
+def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp, **kwds): 
     '''
     @param jenkinsurl: The base URL of the jenkins server
     @param jobid: The name of the job we are to search through
@@ -156,7 +154,7 @@ def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ):
     Search the entire history of a hudson job for a build which has an artifact whose
     name matches a supplied regular expression. Return only that artifact.
     """
-    J = Jenkins( jenkinsurl )
+    J = Jenkins( jenkinsurl, **kwds )
     j = J[ jobid ] 
     
     build_ids = j.getBuildIds()
