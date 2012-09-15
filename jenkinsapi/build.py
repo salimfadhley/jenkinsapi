@@ -67,7 +67,7 @@ class Build(JenkinsBase):
             del af, url
 
     def get_artifact_dict(self):
-        return dict( (a.filename, a) for a in self.get_artifacts() )
+        return dict( (a.url[len(a.build.baseurl + "artifact/"):], a) for a in self.get_artifacts() )
 
     def get_upstream_job_name(self):
         """

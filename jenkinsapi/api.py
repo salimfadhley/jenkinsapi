@@ -44,7 +44,7 @@ def get_artifacts( jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyp
         build = job.get_build( build_no )
     else:
         build = job.get_last_good_build()
-    artifacts = dict((artifact.filename, artifact) for artifact in build.get_artifacts())
+    artifacts = build.get_artifact_dict()
     log.info("Found %i artifacts in '%s'" % ( len(artifacts.keys() ), build_no ))
     return artifacts
 
@@ -151,12 +151,12 @@ def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ):
     J = Jenkins( jenkinsurl )
     j = J[ jobid ] 
     
-    build_ids = j.getBuildIds()
+    build_ids = j.get_build_ids()
     
     for build_id in build_ids:
-        build = j.getBuild( build_id )
+        build = j.get_build( build_id )
         
-        artifacts = build.getArtifactDict()
+        artifacts = build.get_artifact_dict()
         
         for name, art in artifacts.iteritems():
             md_match = artifactRegExp.search( name )
