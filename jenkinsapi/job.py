@@ -228,6 +228,20 @@ class Job(JenkinsBase):
             }
         return vcsmap.get(bs.project.scm.attrs['class'])
 
+    def get_vcs_url(self):
+        if self._config is None:
+            self.load_config()
+
+        bs = BeautifulSoup(self._config, 'xml') 
+        vcsurlmap = {
+            'svn' : lambda : bs.project.scm.find("hudson.scm.SubversionSCM_-ModuleLocation").remote.text, 
+            'git' : lambda : bs.project.scm.userRemoteConfigs.find('hudson.plugins.git.UserRemoteConfig').url.text, 
+            'hg' : lambda : bs.project.scm.source.text,
+            None : lambda: 'vcs is None'
+        }
+        vcs = self.get_vcs()
+        return vcsurlmap[vcs]()
+
     def update_config(self, config):
         '''Update the config.xml to the job'''
         return self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
