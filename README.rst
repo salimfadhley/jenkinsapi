@@ -57,6 +57,7 @@ Project Authors
  * Cleber J Santos (cleber@simplesconsultoria.com.br)
  * William Zhang (jollychang@douban.com)
  * Victor Garcia (bravejolie@gmail.com)
+ * Bradley Harris (bradley@ninelb.com)
  
 License
 --------

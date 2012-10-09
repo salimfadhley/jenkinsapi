@@ -150,8 +150,9 @@ class Job(JenkinsBase):
         """
         Get the last build
         """
-        bn = self.get_last_buildnumber()
-        return self.get_build( bn )
+        buildinfo = self._data["lastBuild"]
+        return Build( buildinfo["url"], buildinfo["number"], job=self )
+
 
     def get_last_build_or_none(self):
         """
@@ -159,7 +160,7 @@ class Job(JenkinsBase):
         """
         bn = self.get_last_buildnumber()
         if bn is not None:
-            return self.get_build(bn)
+            return self.get_last_build()
 
     def get_last_completed_build( self ):
         """
