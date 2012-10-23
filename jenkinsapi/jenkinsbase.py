@@ -68,6 +68,8 @@ class JenkinsBase(object):
             stream = fn_urlopen(url)
             result = eval(stream.read())
         except urllib2.HTTPError, e:
+            if e.code == 404:
+                raise
             log.warn("Error reading %s" % url)
             log.exception(e)
             raise

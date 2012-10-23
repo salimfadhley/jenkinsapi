@@ -30,11 +30,24 @@ class Fingerprint(JenkinsBase):
 
     def valid(self):
         """
-        Return True / False if valid
+        Return True / False if valid. If returns True, self.unknown is
+        set to either True or False, and can be checked if we have
+        positive validity (fingerprint known at server) or negative
+        validity (fingerprint not known at server, but not really an
+        error).
         """
         try:
             self.poll()
-        except urllib2.HTTPError:
+            self.unknown = False
+        except urllib2.HTTPError, e:
+            # We can't really say anything about the validity of
+            # fingerprints not found -- but the artifact can still
+            # exist, so it is not possible to definitely say they are
+            # valid or not.
+            if e.code == 404:
+                self.unknown = True
+                return True
+
             return False
         return True
 
@@ -42,6 +55,9 @@ class Fingerprint(JenkinsBase):
         if not self.valid():
             log.info("Unknown to jenkins.")
             return False
+        if self.unknown:
+            # not request error, but unknown to jenkins
+            return True
         if not self._data["original"] is None:
             if self._data["original"]["name"] == job:
                 if self._data["original"]["number"] == build:
