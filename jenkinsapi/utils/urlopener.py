@@ -27,6 +27,9 @@ class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
         req.add_unredirected_header('Authorization', auth)
         return req
 
+    def https_request(self,req):
+        return self.http_request(req)
+
 def mkurlopener( jenkinsuser, jenkinspass, jenkinsurl, proxyhost, proxyport, proxyuser, proxypass ):
     """
      Creates an url opener that works with both jenkins auth and proxy auth
