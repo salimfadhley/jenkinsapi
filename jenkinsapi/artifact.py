@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 class Artifact(object):
     """
-    Represents a single Jenkins artifact, usually some kind of file 
+    Represents a single Jenkins artifact, usually some kind of file
     generated as a by-product of executing a Jenkins build.
     """
 
@@ -63,8 +63,16 @@ class Artifact(object):
         """
         Download the the artifact to a path.
         """
-        filename, _ = urllib.urlretrieve(self.url, filename=fspath)
-        return filename
+        if self.build:
+            opener = self.build.get_jenkins_obj().get_opener()
+            f = opener(self.url)
+            with open(fspath, "wb") as out:
+                out.write(f.read())
+
+            return fspath
+        else:
+            filename, _ = urllib.urlretrieve(self.url, filename=fspath)
+            return filename
 
     def _verify_download(self, fspath):
         """
