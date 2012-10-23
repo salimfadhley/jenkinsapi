@@ -34,6 +34,14 @@ def get_latest_complete_build(jenkinsurl, jobname):
     job = jenkinsci[jobname]
     return job.get_last_completed_build()
 
+def get_build(jenkinsurl, jobname, build_no):
+    """
+    A convenience function to fetch down the test results from a jenkins job by build number.
+    """
+    jenkinsci = Jenkins(jenkinsurl)
+    job = jenkinsci[jobname]
+    return job.get_build( build_no )
+
 def get_artifacts( jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None ):
     """
     Find all the artifacts for the latest build of a job.
