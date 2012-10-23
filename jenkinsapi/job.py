@@ -22,6 +22,7 @@ class Job(JenkinsBase):
         self.jenkins = jenkins_obj
         self._revmap = None
         self._config = None
+        self.bs = None
         JenkinsBase.__init__( self, url )
 
     def id( self ):
@@ -32,6 +33,17 @@ class Job(JenkinsBase):
 
     def get_jenkins_obj(self):
         return self.jenkins
+
+    def _get_beautiful_soup(self):
+        """
+        The BeautifulSoup objects creation is unnecessary, it can be a singleton per job
+        """
+        if self._config is None:
+            self.load_config()
+
+        if not self.bs:
+            self.bs = BeautifulSoup(self._config, 'xml')
+        return self.bs
 
     def get_build_triggerurl( self, token=None, params={} ):
         if token is None and not params:
@@ -218,10 +230,7 @@ class Job(JenkinsBase):
         self._config = self.get_config()
 
     def get_vcs(self):
-        if self._config is None:
-            self.load_config()
-
-        bs = BeautifulSoup(self._config, 'xml')
+        bs = self._get_beautiful_soup()
         vcsmap = {
             'hudson.scm.SubversionSCM': 'svn',
             'hudson.plugins.git.GitSCM': 'git',
@@ -230,10 +239,7 @@ class Job(JenkinsBase):
         return vcsmap.get(bs.project.scm.attrs['class'])
 
     def get_vcs_url(self):
-        if self._config is None:
-            self.load_config()
-
-        bs = BeautifulSoup(self._config, 'xml') 
+        bs = self._get_beautiful_soup()
         vcsurlmap = {
             'svn' : lambda : bs.project.scm.find("hudson.scm.SubversionSCM_-ModuleLocation").remote.text, 
             'git' : lambda : bs.project.scm.userRemoteConfigs.find('hudson.plugins.git.UserRemoteConfig').url.text, 
@@ -244,8 +250,13 @@ class Job(JenkinsBase):
         return vcsurlmap[vcs]()
 
     def update_config(self, config):
-        '''Update the config.xml to the job'''
-        return self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
+        """
+        Update the config.xml to the job
+        Also refresh the BeautifulSoup object since the config has changed
+        """
+        post_data = self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
+        self.bs = BeautifulSoup(self._config, 'xml')
+        return post_data
 
     def get_downstream_jobs(self):
         """
@@ -299,6 +310,24 @@ class Job(JenkinsBase):
             return []
         return upstream_jobs
 
+    def get_scm_branch(self):
+        bs = self._get_beautiful_soup()
+        return bs.project.scm.branch.contents
+
+    def set_scm_branch(self, new_branch):
+        bs = self._get_beautiful_soup()
+        bs.project.scm.branch.contents[0].replaceWith(new_branch)
+        self.update_config(bs.renderContents())
+
+    def get_scm_source(self):
+        bs = self._get_beautiful_soup()
+        return bs.project.scm.source.contents
+
+    def set_scm_source(self, new_source):
+        bs = self._get_beautiful_soup()
+        bs.project.scm.source.contents[0].replaceWith(new_source)
+        self.update_config(bs.renderContents())
+
     def disable(self):
         '''Disable job'''
         disableurl = urlparse.urljoin( self.baseurl, 'disable' )
@@ -308,4 +337,3 @@ class Job(JenkinsBase):
         '''Enable job'''
         enableurl = urlparse.urljoin( self.baseurl, 'enable' )
         return self.post_data(enableurl, '')
-
