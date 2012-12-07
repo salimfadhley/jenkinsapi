@@ -182,6 +182,19 @@ class Jenkins(JenkinsBase):
         newjk = self._clone()
         return newjk
 
+    def rename_job(self, jobname, newjobname):
+        """
+        Rename a job
+        :param jobname: name of a exist job, str
+        :param newjobname: name of new job, str
+        :return: new Job obj
+        """
+        qs = urllib.urlencode({'newName': newjobname})
+        rename_job_url = urlparse.urljoin(self._clone().get_job(jobname).baseurl, "doRename?%s" % qs)
+        self.post_data(rename_job_url, '')
+        newjk = self._clone()
+        return newjk.get_job(newjobname)
+
     def iteritems(self):
         return self.get_jobs()
 
