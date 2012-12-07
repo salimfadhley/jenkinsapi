@@ -255,7 +255,7 @@ class Job(JenkinsBase):
         Also refresh the BeautifulSoup object since the config has changed
         """
         post_data = self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
-        self.bs = BeautifulSoup(self._config, 'xml')
+        self.bs = BeautifulSoup(config, 'xml')
         return post_data
 
     def get_downstream_jobs(self):
