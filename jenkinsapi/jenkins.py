@@ -156,9 +156,24 @@ class Jenkins(JenkinsBase):
         """
         return jobname in self.get_jobs_list()
 
+    def create_job(self, jobname, config):
+        """
+        Create a job
+        :param jobname: name of new job, str
+        :param config: configuration of new job, xml
+        :return: new Job obj
+        """
+        headers = {'Content-Type': 'text/xml'}
+        qs = urllib.urlencode({'name': jobname})
+        url = urlparse.urljoin(self.baseurl, "createItem?%s" % qs)
+        request = urllib2.Request(url, config, headers)
+        self.post_data(request, None)
+        newjk = self._clone()
+        return newjk.get_job(jobname)
+
     def copy_job(self, jobname, newjobname):
         """
-        Copy a job 
+        Copy a job
         :param jobname: name of a exist job, str
         :param newjobname: name of new job, str
         :return: new Job obj
