@@ -4,7 +4,7 @@ from jenkinsapi.job import Job
 from jenkinsapi.view import View
 from jenkinsapi.node import Node
 from jenkinsapi.exceptions import UnknownJob, NotAuthorized
-from utils.urlopener import mkurlopener, mkopener, NoAuto302Handler
+from utils.urlopener import mkurlopener, mkkrbopener, mkopener, NoAuto302Handler
 import logging
 import time
 import urllib2
@@ -22,7 +22,7 @@ class Jenkins(JenkinsBase):
     """
     Represents a jenkins environment.
     """
-    def __init__(self, baseurl, username=None, password=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None, formauth=False):
+    def __init__(self, baseurl, username=None, password=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None, formauth=False, krbauth=False):
         """
 
         :param baseurl: baseurl for jenkins instance including port, str
@@ -40,13 +40,13 @@ class Jenkins(JenkinsBase):
         self.proxyport = proxyport
         self.proxyuser = proxyuser
         self.proxypass = proxypass
-        JenkinsBase.__init__(self, baseurl, formauth=formauth)
+        JenkinsBase.__init__(self, baseurl, formauth=formauth, krbauth=krbauth)
 
     def _clone(self):
         return Jenkins(self.baseurl, username=self.username,
                        password=self.password, proxyhost=self.proxyhost,
                        proxyport=self.proxyport, proxyuser=self.proxyuser,
-                       proxypass=self.proxypass, formauth=self.formauth)
+                       proxypass=self.proxypass, formauth=self.formauth, krbauth=self.krbauth)
 
     def get_proxy_auth(self):
         return self.proxyhost, self.proxyport, self.proxyuser, self.proxypass
@@ -64,6 +64,8 @@ class Jenkins(JenkinsBase):
     def get_opener(self):
         if self.formauth:
             return self.get_login_opener()
+        if self.krbauth:
+            return self.get_krb_opener()
         return mkurlopener(*self.get_auth())
 
     def get_login_opener(self):
@@ -74,6 +76,9 @@ class Jenkins(JenkinsBase):
                 mcj.set_cookie(c)
             hdrs.append(urllib2.HTTPCookieProcessor(mcj))
         return mkopener(*hdrs)
+
+    def get_krb_opener(self):
+        return mkkrbopener(self.baseurl)
 
     def login(self):
         formdata = dict(j_username=self.username, j_password=self.password,

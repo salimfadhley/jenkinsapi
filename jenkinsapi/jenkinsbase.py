@@ -23,12 +23,13 @@ class JenkinsBase(object):
     def __str__(self):
         raise NotImplemented
 
-    def __init__(self, baseurl, poll=True, formauth=False):
+    def __init__(self, baseurl, poll=True, formauth=False, krbauth=False):
         """
         Initialize a jenkins connection
         """
         self.baseurl = baseurl
         self.formauth = formauth
+        self.krbauth = krbauth
         if poll and not self.formauth:
             try:
                 self.poll()
