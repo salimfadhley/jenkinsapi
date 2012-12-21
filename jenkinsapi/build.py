@@ -51,10 +51,7 @@ class Build(JenkinsBase):
                 return head['revision']['SHA1']
 
     def _get_hg_rev(self):
-        revs = [(item['date'], item['node'])
-                for item in self._data['changeSet']['items']]
-        revs = sorted(revs, key=lambda tup: float(tup[0].split('-')[0]))
-        return revs[-1][1] # get last commit revision
+        return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
 
     def get_duration(self):
         return self._data["duration"]
