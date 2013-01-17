@@ -2,11 +2,12 @@ import logging
 import urlparse
 import urllib2
 import urllib
-from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from time import sleep
 from jenkinsapi.build import Build
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi import exceptions
 
 from exceptions import NoBuildData, NotFound
 
@@ -22,7 +23,25 @@ class Job(JenkinsBase):
         self.jenkins = jenkins_obj
         self._revmap = None
         self._config = None
-        self.bs = None
+        self._element_tree = None
+        self._scm_map = {
+            'hudson.scm.SubversionSCM': 'svn',
+            'hudson.plugins.git.GitSCM': 'git',
+            'hudson.plugins.mercurial.MercurialSCM': 'hg',
+            'hudson.scm.NullSCM': 'NullSCM'
+            }
+        self._scmurlmap = {
+            'svn' : lambda element_tree: [element for element in element_tree.findall('./scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote')],
+            'git' : lambda element_tree: [element for element in element_tree.findall('./scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url')],
+            'hg' : lambda element_tree: [element_tree.find('./scm/source')],
+            None : lambda element_tree: []
+            }
+        self._scmbranchmap = {
+            'svn' : lambda element_tree: [],
+            'git' : lambda element_tree: [element for element in element_tree.findall('./scm/branches/hudson.plugins.git.BranchSpec/name')],
+            'hg' : lambda  element_tree: [element_tree.find('./scm/branch')],
+            None : lambda element_tree: []
+            }
         JenkinsBase.__init__( self, url )
 
     def id( self ):
@@ -34,16 +53,16 @@ class Job(JenkinsBase):
     def get_jenkins_obj(self):
         return self.jenkins
 
-    def _get_beautiful_soup(self):
+    def _get_config_element_tree(self):
         """
-        The BeautifulSoup objects creation is unnecessary, it can be a singleton per job
+        The ElementTree objects creation is unnecessary, it can be a singleton per job
         """
         if self._config is None:
             self.load_config()
 
-        if not self.bs:
-            self.bs = BeautifulSoup(self._config, 'xml')
-        return self.bs
+        if self._element_tree is None:
+            self._element_tree = ET.fromstring(self._config)
+        return self._element_tree
 
     def get_build_triggerurl( self, token=None, params={} ):
         if token is None and not params:
@@ -188,7 +207,7 @@ class Job(JenkinsBase):
         :param refresh: boolean, whether or not to refresh the revision -> buildnumber map
         :return: list of buildnumbers, [int]
         """
-        if self.get_vcs() == 'svn' and not isinstance(revision, int):
+        if self.get_scm_type() == 'svn' and not isinstance(revision, int):
             revision = int(revision)
         if self._revmap is None or refresh:
             self._revmap = self.get_revision_dict()
@@ -229,25 +248,79 @@ class Job(JenkinsBase):
     def load_config(self):
         self._config = self.get_config()
 
-    def get_vcs(self):
-        bs = self._get_beautiful_soup()
-        vcsmap = {
-            'hudson.scm.SubversionSCM': 'svn',
-            'hudson.plugins.git.GitSCM': 'git',
-            'hudson.plugins.mercurial.MercurialSCM': 'hg',
-            }
-        return vcsmap.get(bs.project.scm.attrs['class'])
+    def get_scm_type(self):
+        element_tree = self._get_config_element_tree()
+        scm_class = element_tree.find('scm').get('class')
+        scm = self._scm_map.get(scm_class)
+        if not scm:
+            raise exceptions.NotSupportSCM("SCM class \"%s\" not supported by API, job \"%s\"" % (scm_class, self.name))
+        if scm == 'NullSCM':
+            raise exceptions.NotConfiguredSCM("SCM does not configured, job \"%s\"" % self.name)
+        return scm 
 
-    def get_vcs_url(self):
-        bs = self._get_beautiful_soup()
-        vcsurlmap = {
-            'svn' : lambda : bs.project.scm.find("hudson.scm.SubversionSCM_-ModuleLocation").remote.text, 
-            'git' : lambda : bs.project.scm.userRemoteConfigs.find('hudson.plugins.git.UserRemoteConfig').url.text, 
-            'hg' : lambda : bs.project.scm.source.text,
-            None : lambda: 'vcs is None'
-        }
-        vcs = self.get_vcs()
-        return vcsurlmap[vcs]()
+    def get_scm_url(self):
+        """
+        Get list of project SCM urls
+        For some SCM's jenkins allow to configure and use number of SCM url's 
+        : return: list of SCM urls
+        """
+        element_tree = self._get_config_element_tree()
+        scm = self.get_scm_type()
+        scm_url_list = [scm_url.text for scm_url in self._scmurlmap[scm](element_tree)]
+        return scm_url_list
+
+    def get_scm_branch(self):
+        """
+        Get list of SCM branches
+        : return: list of SCM branches
+        """
+        element_tree = self._get_config_element_tree()
+        scm = self.get_scm_type()
+        return [scm_branch.text for scm_branch in self._scmbranchmap[scm](element_tree)]
+
+    def modify_scm_branch(self, new_branch, old_branch=None):
+        """
+        Modify SCM ("Source Code Management") branch name for configured job.
+        :param new_branch : new repository branch name to set. 
+                            If job has multiple branches configured and "old_branch" 
+                            not provided - method will allways modify first url.
+        :param old_branch (optional): exact value of branch name to be replaced. 
+                            For some SCM's jenkins allow set multiple branches per job
+                            this parameter intended to indicate which branch need to be modified
+        """
+        element_tree = self._get_config_element_tree()
+        scm = self.get_scm_type()
+        scm_branch_list = self._scmbranchmap[scm](element_tree)
+        if scm_branch_list and not old_branch:
+            scm_branch_list[0].text = new_branch
+            self.update_config(ET.tostring(element_tree))
+        else:
+            for scm_branch in scm_branch_list:
+                if scm_branch.text == old_branch:
+                    scm_branch.text = new_branch
+                    self.update_config(ET.tostring(element_tree))
+
+
+    def modify_scm_url(self, new_source_url, old_source_url=None):
+        """
+        Modify SCM ("Source Code Management") url for configured job.
+        :param new_source_url : new repository url to set. 
+                                If job has multiple repositories configured and "old_source_url" 
+                                not provided - method will allways modify first url.
+        :param old_source_url (optional): for some SCM's jenkins allow set multiple repositories per job
+                                this parameter intended to indicate which repository need to be modified
+        """
+        element_tree = self._get_config_element_tree()
+        scm = self.get_scm_type()
+        scm_url_list = self._scmurlmap[scm](element_tree)
+        if scm_url_list and not old_source_url:
+            scm_url_list[0].text = new_source_url
+            self.update_config(ET.tostring(element_tree))
+        else:
+            for scm_url in scm_url_list:
+                if scm_url.text == old_source_url: 
+                    scm_url.text = new_source_url
+                    self.update_config(ET.tostring(element_tree))
 
     def update_config(self, config):
         """
@@ -255,7 +328,7 @@ class Job(JenkinsBase):
         Also refresh the BeautifulSoup object since the config has changed
         """
         post_data = self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
-        self.bs = BeautifulSoup(config, 'xml')
+        self._element_tree = ET.fromstring(config)
         return post_data
 
     def get_downstream_jobs(self):
@@ -309,24 +382,6 @@ class Job(JenkinsBase):
         except KeyError:
             return []
         return upstream_jobs
-
-    def get_scm_branch(self):
-        bs = self._get_beautiful_soup()
-        return bs.project.scm.branch.contents
-
-    def set_scm_branch(self, new_branch):
-        bs = self._get_beautiful_soup()
-        bs.project.scm.branch.contents[0].replaceWith(new_branch)
-        self.update_config(bs.renderContents())
-
-    def get_scm_source(self):
-        bs = self._get_beautiful_soup()
-        return bs.project.scm.source.contents
-
-    def set_scm_source(self, new_source):
-        bs = self._get_beautiful_soup()
-        bs.project.scm.source.contents[0].replaceWith(new_source)
-        self.update_config(bs.renderContents())
 
     def disable(self):
         '''Disable job'''

@@ -52,7 +52,13 @@ class NotAuthorized(Exception):
     """Not Authorized to access resource"""
     # Usually thrown when we get a 403 returned
 
-class NotSupportVCS(Exception):
+class NotSupportSCM(Exception):
     """
-    It's a job that doesn't support vcs
+    It's a SCM that does not supported by current version of jenkinsapi
     """
+
+class NotConfiguredSCM(Exception):
+    """
+    It's a job that doesn't have configured SCM
+    """
+
