@@ -316,7 +316,7 @@ class Jenkins(JenkinsBase):
 
     def get_node(self, nodename):
         """Get a node object for a specific node"""
-        node_url = self.python_api_url(self.get_node_url(nodename))
+        node_url = self.get_node_url(nodename)
         return Node(node_url, nodename, jenkins_obj=self)
 
     def get_node_url(self, nodename=""):
