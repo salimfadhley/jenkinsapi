@@ -254,6 +254,7 @@ class Build(JenkinsBase):
     def get_actions(self):
         all_actions = {}
         for dct_action in self._data["actions"]:
+            if dct_action is None: continue
             all_actions.update( dct_action )
         return all_actions
 
