@@ -64,7 +64,7 @@ class Job(JenkinsBase):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_build_triggerurl( self, token=None, params={} ):
+    def get_build_triggerurl(self, token=None, params=None):
         if token is None and not params:
             extra = "build"
         elif params:
@@ -78,7 +78,7 @@ class Job(JenkinsBase):
         buildurl = urlparse.urljoin( self.baseurl, extra )
         return buildurl
 
-    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params={}):
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None):
         assert isinstance( invoke_pre_check_delay, (int, float) )
         assert isinstance( invoke_block_delay, (int, float) )
         assert isinstance( block, bool )
@@ -94,7 +94,7 @@ class Job(JenkinsBase):
                 log.warn("Will re-schedule %s even though it is already running" % self.id() )
         original_build_no = self.get_last_buildnumber()
         log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
-        url = self.get_build_triggerurl( securitytoken, params)
+        url = self.get_build_triggerurl(securitytoken, params)
         html_result = self.hit_url(url)
         assert len( html_result ) > 0
         if invoke_pre_check_delay > 0:
@@ -325,7 +325,7 @@ class Job(JenkinsBase):
     def update_config(self, config):
         """
         Update the config.xml to the job
-        Also refresh the BeautifulSoup object since the config has changed
+        Also refresh the ElementTree object since the config has changed
         """
         post_data = self.post_data("%(baseurl)s/config.xml" % self.__dict__, config)
         self._element_tree = ET.fromstring(config)

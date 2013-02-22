@@ -2,7 +2,7 @@ from jenkinsapi.artifact import Artifact
 from jenkinsapi import config
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.exceptions import NoResults, FailedNoResults
-from jenkinsapi.constants import STATUS_FAIL, STATUS_ABORTED, RESULTSTATUS_FAILURE
+from jenkinsapi.constants import STATUS_FAIL, STATUS_ABORTED, RESULTSTATUS_FAILURE, STATUS_SUCCESS
 from jenkinsapi.result_set import ResultSet
 
 from time import sleep
@@ -211,7 +211,7 @@ class Build(JenkinsBase):
         Return a bool, true if the build was good.
         If the build is still running, return False.
         """
-        return ( not self.is_running() ) and self._data["result"] == 'SUCCESS'
+        return ( not self.is_running() ) and self._data["result"] == STATUS_SUCCESS
 
     def block_until_complete(self, delay=15):
         assert isinstance( delay, int )
