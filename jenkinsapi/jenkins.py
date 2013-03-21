@@ -3,6 +3,7 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.job import Job
 from jenkinsapi.node import Node
+from jenkinsapi.queue import Queue
 from jenkinsapi.view import View
 from jenkinsapi import config
 from utils.urlopener import mkurlopener, mkopener, NoAuto302Handler
@@ -337,6 +338,14 @@ class Jenkins(JenkinsBase):
         """Return the url for nodes"""
         url = "%(baseurl)s/computer/%(nodename)s" % {'baseurl': self.baseurl, 'nodename': urllib.quote(nodename)}
         return url
+
+    def get_queue_url(self):
+        url = "%(baseurl)s/queue/" % {'baseurl': self.get_base_server_url()}
+        return url
+
+    def get_queue(self):
+        queue_url = self.get_queue_url()
+        return Queue(queue_url, self)
 
     def has_node(self, nodename):
         """

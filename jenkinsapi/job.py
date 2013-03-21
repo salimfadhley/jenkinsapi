@@ -401,8 +401,8 @@ class Job(JenkinsBase):
         if not self.is_queued():
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
-        cancelurl = urlparse.urljoin(self.get_jenkins_obj().get_base_server_url(),
-                                     'queue/cancelItem?id=%s' % queue_id)
+        cancelurl = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
+                                     'cancelItem?id=%s' % queue_id)
         try:
             self.post_data(cancelurl, '')
         except urllib2.HTTPError:
