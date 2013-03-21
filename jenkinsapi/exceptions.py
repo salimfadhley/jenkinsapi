@@ -61,4 +61,7 @@ class NotConfiguredSCM(Exception):
     """
     It's a job that doesn't have configured SCM
     """
-
+class NotInQueue(Exception):
+    """
+    It's a job that is not in the queue
+    """

@@ -1,3 +1,5 @@
+import urlparse
+import urllib2
 from jenkinsapi.artifact import Artifact
 from jenkinsapi import config
 from jenkinsapi.jenkinsbase import JenkinsBase
@@ -260,3 +262,20 @@ class Build(JenkinsBase):
 
     def get_timestamp(self):
         return self._data['timestamp']
+
+    def stop(self):
+        """
+        Stops the build execution if it's running
+        :return boolean True if succeded False otherwise or the build is not running
+        """
+        if not self.is_running():
+            return False
+
+        stopbuildurl = urlparse.urljoin(self.baseurl, 'stop')
+        try:
+            self.post_data(stopbuildurl, '')
+        except urllib2.HTTPError:
+            # The request doesn't have a response, so it returns 404,
+            # it's the expected behaviour
+            pass
+        return True

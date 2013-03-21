@@ -4,6 +4,7 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.job import Job
 from jenkinsapi.node import Node
 from jenkinsapi.view import View
+from jenkinsapi import config
 from utils.urlopener import mkurlopener, mkopener, NoAuto302Handler
 import cookielib
 import logging
@@ -68,6 +69,9 @@ class Jenkins(JenkinsBase):
         auth_args.extend(self.get_proxy_auth())
         log.debug("args: %s" % auth_args)
         return auth_args
+
+    def get_base_server_url(self):
+        return self.baseurl[:-(len(config.JENKINS_API))] 
 
     def get_opener(self):
         if self.formauth:
