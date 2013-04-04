@@ -1,3 +1,4 @@
+import urllib
 import urllib2
 import logging
 import pprint
@@ -86,10 +87,11 @@ class JenkinsBase(object):
             raise
         return result
 
-    def hit_url(self, url ):
+    def hit_url(self, url, params = None):
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
-            stream = fn_urlopen( url )
+            if params: stream = fn_urlopen( url, urllib.urlencode(params) )
+            else: stream = fn_urlopen( url )
             html_result = stream.read()
         except urllib2.HTTPError, e:
             log.debug( "Error reading %s" % url )

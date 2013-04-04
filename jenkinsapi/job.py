@@ -65,18 +65,20 @@ class Job(JenkinsBase):
         return self._element_tree
 
     def get_build_triggerurl(self, token=None, params=None):
-        if token is None and not params:
+        if token is None and params is None:
             extra = "build"
         elif params:
             if token:
                 assert isinstance(token, str ), "token if provided should be a string."
                 params['token'] = token
-            extra = "buildWithParameters?" + urllib.urlencode(params)
+            extra = "buildWithParameters"
         else:
             assert isinstance(token, str ), "token if provided should be a string."
-            extra = "build?" + urllib.urlencode({'token':token})
+            params = dict()
+            params['token'] = token
+            extra = "build"
         buildurl = urlparse.urljoin( self.baseurl, extra )
-        return buildurl
+        return buildurl, params
 
     def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None):
         assert isinstance( invoke_pre_check_delay, (int, float) )
@@ -94,8 +96,8 @@ class Job(JenkinsBase):
                 log.warn("Will re-schedule %s even though it is already running" % self.id() )
         original_build_no = self.get_last_buildnumber()
         log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
-        url = self.get_build_triggerurl(securitytoken, params)
-        html_result = self.hit_url(url)
+        url, params = self.get_build_triggerurl( securitytoken, params)
+        html_result = self.hit_url(url, params)
         assert len( html_result ) > 0
         if invoke_pre_check_delay > 0:
             log.info("Waiting for %is to allow Jenkins to catch up" % invoke_pre_check_delay )
