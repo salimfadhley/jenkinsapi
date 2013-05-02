@@ -413,3 +413,29 @@ class Job(JenkinsBase):
             pass
         return True
 
+    def get_params(self):
+        """
+        Get the parameters for this job. Format varies by parameter type. Here
+        is an example string parameter:
+            {
+                'type': 'StringParameterDefinition',
+                'description': 'Parameter description',
+                'defaultParameterValue': {'value': 'default value'},
+                'name': 'FOO_BAR'
+            }
+        """
+        for action in self._data['actions']:
+            try:
+                for param in action['parameterDefinitions']:
+                    yield param
+            except KeyError:
+                continue
+
+    def get_params_list(self):
+        """
+        Gets the list of parameter names for this job.
+        """
+        params = []
+        for param in self.get_params():
+            params.append(param['name'])
+        return params
