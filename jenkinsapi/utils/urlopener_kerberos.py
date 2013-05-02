@@ -1,5 +1,6 @@
 import urllib2
 import kerberos as krb
+from urlparse import urlparse
 
 class KerberosAuthHandler(urllib2.BaseHandler):
     """
