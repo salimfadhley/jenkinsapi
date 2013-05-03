@@ -318,7 +318,10 @@ class Jenkins(JenkinsBase):
         """
         for url, name in self.get_jobs_info():
             if name == jobname:
-                return Job(url, name, jenkins_obj=self)
+                preferred_scheme = urlparse.urlsplit(self.baseurl).scheme
+                url_split = urlparse.urlsplit(url)
+                preffered_url = urlparse.urlunsplit([preferred_scheme, url_split.netloc, url_split.path, url_split.query, url_split.fragment])
+                return Job(preferred_url, name, jenkins_obj=self)
         raise UnknownJob(jobname)
 
     def get_node_dict(self):
