@@ -320,7 +320,7 @@ class Jenkins(JenkinsBase):
             if name == jobname:
                 preferred_scheme = urlparse.urlsplit(self.baseurl).scheme
                 url_split = urlparse.urlsplit(url)
-                preffered_url = urlparse.urlunsplit([preferred_scheme, url_split.netloc, url_split.path, url_split.query, url_split.fragment])
+                preferred_url = urlparse.urlunsplit([preferred_scheme, url_split.netloc, url_split.path, url_split.query, url_split.fragment])
                 return Job(preferred_url, name, jenkins_obj=self)
         raise UnknownJob(jobname)
 
