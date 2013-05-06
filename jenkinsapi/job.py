@@ -80,7 +80,7 @@ class Job(JenkinsBase):
         buildurl = urlparse.urljoin( self.baseurl, extra )
         return buildurl, params
 
-    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None):
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None, cause=None):
         assert isinstance( invoke_pre_check_delay, (int, float) )
         assert isinstance( invoke_block_delay, (int, float) )
         assert isinstance( block, bool )
@@ -97,6 +97,8 @@ class Job(JenkinsBase):
         original_build_no = self.get_last_buildnumber()
         log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
         url, params = self.get_build_triggerurl( securitytoken, params)
+        if cause:
+            params['cause'] = cause
         html_result = self.hit_url(url, params)
         assert len( html_result ) > 0
         if invoke_pre_check_delay > 0:
