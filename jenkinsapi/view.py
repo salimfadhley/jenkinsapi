@@ -84,6 +84,16 @@ class View(JenkinsBase):
             self.post_data('%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
             return "Job %s is add in View %s successful" % (str_job_name, self.baseurl)
 
+    def _get_nested_views(self):
+        if not self._data.has_key( "views" ):
+            pass
+        else:
+            for viewdict in self._data["views"]:
+                yield viewdict["name"], viewdict["url"]
+                
+    def get_nested_view_dict(self):
+        return dict( self._get_nested_views() )
+
     def id(self):
         """
         Calculate an ID for this object.
