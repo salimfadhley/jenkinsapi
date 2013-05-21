@@ -29,7 +29,7 @@ Important Links
 
 Project source code: github: https://github.com/salimfadhley/jenkinsapi
 
-Project documentation: http://packages.python.org/jenkinsapi/
+Project documentation: http://pythonhosted.org/jenkinsapi/
 
 Releases: http://pypi.python.org/pypi/jenkinsapi
 
