@@ -1,7 +1,5 @@
 import logging
-import urlparse
-import urllib2
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from time import sleep
@@ -9,7 +7,7 @@ from jenkinsapi.build import Build
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi import exceptions
 
-from exceptions import NoBuildData, NotFound, NotInQueue
+from .exceptions import NoBuildData, NotFound, NotInQueue
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +16,7 @@ class Job(JenkinsBase):
     Represents a jenkins job
     A job can hold N builds which are the actual execution environments
     """
-    def __init__( self, url, name, jenkins_obj ):
+    def __init__(self, url, name, jenkins_obj):
         self.name = name
         self.jenkins = jenkins_obj
         self._revmap = None
@@ -42,9 +40,9 @@ class Job(JenkinsBase):
             'hg' : lambda  element_tree: [element_tree.find('./scm/branch')],
             None : lambda element_tree: []
             }
-        JenkinsBase.__init__( self, url )
+        JenkinsBase.__init__(self, url)
 
-    def id( self ):
+    def id(self):
         return self._data["name"]
 
     def __str__(self):
@@ -69,33 +67,33 @@ class Job(JenkinsBase):
             extra = "build"
         elif params:
             if token:
-                assert isinstance(token, str ), "token if provided should be a string."
+                assert isinstance(token, str), "token if provided should be a string."
                 params['token'] = token
             extra = "buildWithParameters"
         else:
-            assert isinstance(token, str ), "token if provided should be a string."
+            assert isinstance(token, str), "token if provided should be a string."
             params = dict()
             params['token'] = token
             extra = "build"
-        buildurl = urlparse.urljoin( self.baseurl, extra )
+        buildurl = urllib.parse.urljoin(self.baseurl, extra)
         return buildurl, params
 
     def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None, cause=None):
-        assert isinstance( invoke_pre_check_delay, (int, float) )
-        assert isinstance( invoke_block_delay, (int, float) )
-        assert isinstance( block, bool )
-        assert isinstance( skip_if_running, bool )
+        assert isinstance(invoke_pre_check_delay, (int, float))
+        assert isinstance(invoke_block_delay, (int, float))
+        assert isinstance(block, bool)
+        assert isinstance(skip_if_running, bool)
         if self.is_queued():
-            log.warn( "Will not request new build because %s is already queued" % self.id() )
+            log.warn("Will not request new build because {} is already queued".format(self.id()))
             pass
         elif self.is_running():
             if skip_if_running:
-                log.warn( "Will not request new build because %s is already running" % self.id() )
+                log.warn("Will not request new build because {} is already running".format(self.id()))
                 pass
             else:
-                log.warn("Will re-schedule %s even though it is already running" % self.id() )
+                log.warn("Will re-schedule {} even though it is already running".format(self.id()))
         original_build_no = self.get_last_buildnumber()
-        log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj()) ) )
+        log.info( "Attempting to start %s on %s" % ( self.id(), repr(self.get_jenkins_obj())))
         url, params = self.get_build_triggerurl( securitytoken, params)
         if cause:
             params['cause'] = cause
@@ -134,27 +132,27 @@ class Job(JenkinsBase):
         assert type(buildid) == int, "Build ID should be an integer, got %s" % repr( buildid )
         return buildid
 
-    def get_last_good_buildnumber( self ):
+    def get_last_good_buildnumber(self):
         """
         Get the numerical ID of the last good build.
         """
         return self._buildid_for_type(buildtype="lastSuccessfulBuild")
 
-    def get_last_buildnumber( self ):
+    def get_last_buildnumber(self):
         """
         Get the numerical ID of the last build.
         """
         return self._buildid_for_type(buildtype="lastBuild")
 
-    def get_last_completed_buildnumber( self ):
+    def get_last_completed_buildnumber(self):
         """
         Get the numerical ID of the last complete build.
         """
         return self._buildid_for_type(buildtype="lastCompletedBuild")
 
     def get_build_dict(self):
-        if not self._data.has_key( "builds" ):
-            raise NoBuildData( repr(self) )
+        if "builds" not in self._data:
+            raise NoBuildData(repr(self))
         return dict( ( a["number"], a["url"] ) for a in self._data["builds"] )
 
     def get_revision_dict(self):
@@ -163,7 +161,7 @@ class Job(JenkinsBase):
         """
         revs = defaultdict(list)
         if 'builds' not in self._data:
-            raise NoBuildData( repr(self))
+            raise NoBuildData(repr(self))
         for buildnumber in self.get_build_ids():
             revs[self.get_build(buildnumber).get_revision()].append(buildnumber)
         return revs
@@ -172,7 +170,7 @@ class Job(JenkinsBase):
         """
         Return a sorted list of all good builds as ints.
         """
-        return reversed( sorted( self.get_build_dict().keys() ) )
+        return reversed(sorted(self.get_build_dict().keys() ) )
 
     def get_last_good_build( self ):
         """
@@ -389,12 +387,12 @@ class Job(JenkinsBase):
 
     def disable(self):
         '''Disable job'''
-        disableurl = urlparse.urljoin(self.baseurl, 'disable' )
+        disableurl = urllib.parse.urljoin(self.baseurl, 'disable' )
         return self.post_data(disableurl, '')
 
     def enable(self):
         '''Enable job'''
-        enableurl = urlparse.urljoin(self.baseurl, 'enable' )
+        enableurl = urllib.parse.urljoin(self.baseurl, 'enable' )
         return self.post_data(enableurl, '')
 
     def delete_from_queue(self):
@@ -405,11 +403,11 @@ class Job(JenkinsBase):
         if not self.is_queued():
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
-        cancelurl = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
-                                     'cancelItem?id=%s' % queue_id)
+        cancelurl = urllib.parse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
+                                     'cancelItem?id={}'.format(queue_id))
         try:
             self.post_data(cancelurl, '')
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             # The request doesn't have a response, so it returns 404,
             # it's the expected behaviour
             pass

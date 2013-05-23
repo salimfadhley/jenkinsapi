@@ -1,5 +1,4 @@
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
 import logging
 import pprint
 from jenkinsapi import config
@@ -7,16 +6,16 @@ from jenkinsapi.utils.retry import retry_function
 
 log = logging.getLogger(__name__)
 
-class JenkinsBase(object):
+class JenkinsBase():
     """
-    This appears to be the base object that all other jenkins objects are inherited from
+    An object that describes how to connect and interact with Jenkins.
     """
     RETRY_ATTEMPTS = 5
 
     def __repr__(self):
         return """<%s.%s %s>""" % (self.__class__.__module__,
                                    self.__class__.__name__,
-                                   str( self ))
+                                   str(self))
 
     def print_data(self):
         pprint.pprint(self._data)
@@ -34,9 +33,9 @@ class JenkinsBase(object):
         if poll and not self.formauth:
             try:
                 self.poll()
-            except urllib2.HTTPError, hte:
+            except urllib.error.HTTPError as hte:
                 log.exception(hte)
-                log.warn( "Failed to connect to %s" % baseurl )
+                log.warn("Failed to connect to {}".format(baseurl))
                 raise
 
     def poll(self):
@@ -69,10 +68,10 @@ class JenkinsBase(object):
         try:
             stream = fn_urlopen(url)
             result = eval(stream.read())
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             if e.code == 404:
                 raise
-            log.warn("Error reading %s" % url)
+            log.warn("Error reading {}".format(url))
             log.exception(e)
             raise
         return result
@@ -81,8 +80,8 @@ class JenkinsBase(object):
         try:
             urlopen = self.get_jenkins_obj().get_opener()
             result = urlopen(url, data=content).read().strip()
-        except urllib2.HTTPError, e:
-            log.warn("Error post data %s" % url)
+        except urllib.error.HTTPError as e:
+            log.warn("Error post data {}".format(url))
             log.exception(e)
             raise
         return result
@@ -90,11 +89,11 @@ class JenkinsBase(object):
     def hit_url(self, url, params = None):
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
-            if params: stream = fn_urlopen( url, urllib.urlencode(params) )
-            else: stream = fn_urlopen( url )
+            if params: stream = fn_urlopen(url, urllib.parse.urlencode(params))
+            else: stream = fn_urlopen(url)
             html_result = stream.read()
-        except urllib2.HTTPError, e:
-            log.debug( "Error reading %s" % url )
+        except urllib.error.HTTPError as e:
+            log.debug("Error reading {}".format(url))
             log.exception(e)
             raise
         return html_result

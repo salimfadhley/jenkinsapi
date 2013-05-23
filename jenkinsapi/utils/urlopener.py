@@ -1,12 +1,12 @@
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import base64
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 import logging
 
 log = logging.getLogger( __name__ )
 
-class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
+class PreemptiveBasicAuthHandler(urllib.request.BaseHandler):
     """
     A BasicAuthHandler class that will add Basic Auth headers to a request
     even when there is no basic auth challenge from the server
@@ -14,7 +14,7 @@ class PreemptiveBasicAuthHandler(urllib2.BaseHandler):
     """
     def __init__(self, password_mgr=None):
         if password_mgr is None:
-            password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
         self.passwd = password_mgr
         self.add_password = self.passwd.add_password
 
@@ -52,11 +52,11 @@ def mkurlopener( jenkinsuser, jenkinspass, jenkinsurl, proxyhost, proxyport, pro
         handlers.append(handler)
     for handler in get_proxy_handler(proxyhost, proxyport, proxyuser, proxypass):
         handlers.append(handler)
-    opener = urllib2.build_opener(*handlers)
+    opener = urllib.request.build_opener(*handlers)
     return opener.open
 
 def mkopener(*handlers):
-    opener = urllib2.build_opener(*handlers)
+    opener = urllib.request.build_opener(*handlers)
     return opener.open
 
 def get_jenkins_auth_handler(jenkinsuser, jenkinspass, jenkinsurl):
@@ -98,15 +98,15 @@ def get_proxy_handler(proxyhost, proxyport, proxyuser, proxypass):
     proxy_spec = { 'http': 'http://%s:%i/' % (proxyhost, proxyport),
                    'https': 'http://%s:%i/' % (proxyhost, proxyport) }
 
-    proxy_handler = urllib2.ProxyHandler( proxy_spec )
-    proxy_auth_handler = urllib2.HTTPBasicAuthHandler()
+    proxy_handler = urllib.request.ProxyHandler( proxy_spec )
+    proxy_auth_handler = urllib.request.HTTPBasicAuthHandler()
     proxy_auth_handler.add_password( None, proxyhost, proxyuser, proxypass )
     return [proxy_handler, proxy_auth_handler]
 
 
 
 
-class NoAuto302Handler(urllib2.HTTPRedirectHandler):
+class NoAuto302Handler(urllib.request.HTTPRedirectHandler):
     def http_error_302(self, req, fp, code, msg, hdrs):
         return fp
 

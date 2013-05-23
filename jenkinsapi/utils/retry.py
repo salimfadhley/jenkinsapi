@@ -1,6 +1,6 @@
 import logging
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 log = logging.getLogger( __name__ )
 
@@ -26,11 +26,11 @@ def retry_function( tries, fn, *args, **kwargs ):
             if attempt > 0:
                 log.info( "Result obtained after attempt %i" % attemptno )
             return result
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             if e.code == 404:
                 raise
             log.exception(e)
-        except Exception, e:
+        except Exception as e:
             if type(e) in IGNORE_EXCEPTIONS:
                 # Immediatly raise in some cases.
                 raise

@@ -7,8 +7,8 @@ artifacts associated with it.
 This module provides a class called Artifact which allows you to download objects from the server
 and also access them as a stream.
 """
-from __future__ import with_statement
-import urllib
+
+import urllib.request, urllib.parse, urllib.error
 import os
 import logging
 import hashlib
@@ -18,7 +18,7 @@ from jenkinsapi.fingerprint import Fingerprint
 
 log = logging.getLogger(__name__)
 
-class Artifact(object):
+class Artifact():
     """
     Represents a single Jenkins artifact, usually some kind of file
     generated as a by-product of executing a Jenkins build.
@@ -37,14 +37,14 @@ class Artifact(object):
         :param fspath: full pathname including the filename, str
         :return: filepath
         """
-        log.info("Saving artifact @ %s to %s" % (self.url, fspath))
+        log.info("Saving artifact @ {} to {}".format(self.url, fspath))
         if not fspath.endswith(self.filename):
-            log.warn("Attempt to change the filename of artifact %s on save." % self.filename)
+            log.warn("Attempt to change the filename of artifact {} on save.".format(self.filename))
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath):
-                        log.info("Local copy of %s is already up to date." % self.filename)
+                        log.info("Local copy of {} is already up to date.".format(self.filename))
                         return fspath
                 except ArtifactBroken:
                     log.info("Jenkins artifact could not be identified.")
@@ -71,7 +71,7 @@ class Artifact(object):
 
             return fspath
         else:
-            filename, _ = urllib.urlretrieve(self.url, filename=fspath)
+            filename, _ = urllib.request.urlretrieve(self.url, filename=fspath)
             return filename
 
     def _verify_download(self, fspath):
@@ -111,6 +111,6 @@ class Artifact(object):
         """
         Produce a handy repr-string.
         """
-        return """<%s.%s %s>""" % (self.__class__.__module__,
+        return """<{}.{} {}>""".format(self.__class__.__module__,
                                     self.__class__.__name__,
                                     self.url)
