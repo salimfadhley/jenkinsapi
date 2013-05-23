@@ -10,11 +10,11 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def get_latest_test_results(jenkinsurl, obname ):
+def get_latest_test_results(jenkinsurl, obname):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    latestbuild = get_latest_build( jenkinsurl, jobname )
+    latestbuild = get_latest_build(jenkinsurl, jobname)
     res = latestbuild.get_resultset()
     return res
 
@@ -40,7 +40,7 @@ def get_build(jenkinsurl, jobname, build_no):
     """
     jenkinsci = Jenkins(jenkinsurl)
     job = jenkinsci[jobname]
-    return job.get_build( build_no )
+    return job.get_build(build_no)
 
 def get_artifacts(jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None):
     """
@@ -53,7 +53,7 @@ def get_artifacts(jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxypo
     else:
         build = job.get_last_good_build()
     artifacts = build.get_artifact_dict()
-    log.info("Found %i artifacts in '%s'" % (len(list(artifacts.keys()) ), build_no))
+    log.info("Found {} artifacts in '{}'".format(len(list(artifacts.keys())), build_no))
     return artifacts
 
 def search_artifacts(jenkinsurl, jobid, artifact_ids=None):

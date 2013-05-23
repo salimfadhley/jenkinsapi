@@ -131,9 +131,6 @@ class Jenkins(JenkinsBase):
         obj_fingerprint = Fingerprint(self.baseurl, digest, jenkins_obj=self)
         return obj_fingerprint.validate_for_build(filename, job, build)
 
-    def get_jenkins_obj(self):
-        return self
-
     def get_jobs(self):
         """
         Fetch all the build-names on this Jenkins server.
@@ -285,7 +282,7 @@ class Jenkins(JenkinsBase):
         url = urllib.parse.urljoin(self.baseurl, "user/{}/my-views/".format(people)) if people else self.baseurl
         qs = urllib.parse.urlencode({'value': str_view_name})
         viewExistsCheck_url = urllib.parse.urljoin(url, "viewExistsCheck?{}".format(qs))
-        fn_urlopen = self.get_jenkins_obj().get_opener()
+        fn_urlopen = self.get_opener()
         try:
             r = fn_urlopen(viewExistsCheck_url).read()
         except urllib.error.HTTPError as e:
@@ -367,7 +364,7 @@ class Jenkins(JenkinsBase):
         assert self.has_node(nodename), "This node: {} is not registered as a slave".format(nodename)
         assert nodename != "master", "you cannot delete the master node"
         url = "{}/doDelete".format(self.get_node_url(nodename))
-        fn_urlopen = self.get_jenkins_obj().get_opener()
+        fn_urlopen = self.get_opener()
         try:
             fn_urlopen(url).read()
         except urllib.error.HTTPError as e:
@@ -411,7 +408,7 @@ class Jenkins(JenkinsBase):
                 'launcher'          : {'stapler-class' : 'hudson.slaves.JNLPLauncher'}})}
         url = "{}doCreateItem?{}".format(self.get_node_url(), urllib.parse.urlencode(params))
 
-        fn_urlopen = self.get_jenkins_obj().get_opener()
+        fn_urlopen = self.get_opener()
         try:
             fn_urlopen(url).read()
         except urllib.error.HTTPError as e:

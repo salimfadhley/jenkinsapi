@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class JenkinsBase():
     """
-    This appears to be the base object that all other jenkins objects are inherited from
+    This is the base object that all other jenkins objects are inherited from
     """
     RETRY_ATTEMPTS = 5
 
