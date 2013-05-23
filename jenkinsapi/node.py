@@ -1,6 +1,6 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 log = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class Node(JenkinsBase):
         : param message: optional string can be used to explain why you are taking this node offline
         """
         initial_state = self.is_temporarily_offline()
-        url = self.baseurl + "/toggleOffline?offlineMessage=" + urllib.quote(message)
+        url = self.baseurl + "/toggleOffline?offlineMessage=" + urllib.parse.quote(message)
         html_result = self.hit_url(url)
         log.debug(html_result)
         if initial_state == self.is_temporarily_offline():

@@ -1,7 +1,5 @@
 import logging
-import urlparse
-import urllib2
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from time import sleep
@@ -9,7 +7,7 @@ from jenkinsapi.build import Build
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi import exceptions
 
-from exceptions import NoBuildData, NotFound, NotInQueue
+from .exceptions import NoBuildData, NotFound, NotInQueue
 
 log = logging.getLogger(__name__)
 
@@ -77,7 +75,7 @@ class Job(JenkinsBase):
             params = dict()
             params['token'] = token
             extra = "build"
-        buildurl = urlparse.urljoin( self.baseurl, extra )
+        buildurl = urllib.parse.urljoin( self.baseurl, extra )
         return buildurl, params
 
     def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None, cause=None):
@@ -153,7 +151,7 @@ class Job(JenkinsBase):
         return self._buildid_for_type(buildtype="lastCompletedBuild")
 
     def get_build_dict(self):
-        if not self._data.has_key( "builds" ):
+        if "builds" not in self._data:
             raise NoBuildData( repr(self) )
         return dict( ( a["number"], a["url"] ) for a in self._data["builds"] )
 
@@ -389,12 +387,12 @@ class Job(JenkinsBase):
 
     def disable(self):
         '''Disable job'''
-        disableurl = urlparse.urljoin(self.baseurl, 'disable' )
+        disableurl = urllib.parse.urljoin(self.baseurl, 'disable' )
         return self.post_data(disableurl, '')
 
     def enable(self):
         '''Enable job'''
-        enableurl = urlparse.urljoin(self.baseurl, 'enable' )
+        enableurl = urllib.parse.urljoin(self.baseurl, 'enable' )
         return self.post_data(enableurl, '')
 
     def delete_from_queue(self):
@@ -405,11 +403,11 @@ class Job(JenkinsBase):
         if not self.is_queued():
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
-        cancelurl = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
+        cancelurl = urllib.parse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
                                      'cancelItem?id=%s' % queue_id)
         try:
             self.post_data(cancelurl, '')
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             # The request doesn't have a response, so it returns 404,
             # it's the expected behaviour
             pass

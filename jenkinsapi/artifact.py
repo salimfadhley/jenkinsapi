@@ -7,8 +7,8 @@ artifacts associated with it.
 This module provides a class called Artifact which allows you to download objects from the server
 and also access them as a stream.
 """
-from __future__ import with_statement
-import urllib
+
+import urllib.request, urllib.parse, urllib.error
 import os
 import logging
 import hashlib
@@ -71,7 +71,7 @@ class Artifact(object):
 
             return fspath
         else:
-            filename, _ = urllib.urlretrieve(self.url, filename=fspath)
+            filename, _ = urllib.request.urlretrieve(self.url, filename=fspath)
             return filename
 
     def _verify_download(self, fspath):

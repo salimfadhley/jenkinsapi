@@ -1,7 +1,6 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
 import logging
-import urlparse
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 log = logging.getLogger(__name__)
 
@@ -33,11 +32,11 @@ class Queue(JenkinsBase):
         self.delete_item_by_id(queue_item.id)
 
     def delete_item_by_id(self, item_id):
-        deleteurl = urlparse.urljoin(self.baseurl,
+        deleteurl = urllib.parse.urljoin(self.baseurl,
                                      'cancelItem?id=%s' % item_id)
         try:
             self.post_data(deleteurl, '')
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             # The request doesn't have a response, so it returns 404,
             # it's the expected behaviour
             pass

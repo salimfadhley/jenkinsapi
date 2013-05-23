@@ -53,7 +53,7 @@ def get_artifacts( jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyp
     else:
         build = job.get_last_good_build()
     artifacts = build.get_artifact_dict()
-    log.info("Found %i artifacts in '%s'" % ( len(artifacts.keys() ), build_no ))
+    log.info("Found %i artifacts in '%s'" % ( len(list(artifacts.keys()) ), build_no ))
     return artifacts
 
 def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
@@ -98,7 +98,7 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
 
     obj_jenkins = Jenkins(jenkinsurl)
     obj_jobs = [obj_jenkins[jid] for jid in jobs]
-    for time_left in xrange(maxwait, 0, -interval):
+    for time_left in range(maxwait, 0, -interval):
         still_running = [j for j in obj_jobs if j.is_queued_or_running()]
         if not still_running:
             return
@@ -126,7 +126,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
         """
         assert basestaticurl.endswith("/"), "Basestaticurl should end with /"
         installed = []
-        for reldir, artifactnames in dirstruct.items():
+        for reldir, artifactnames in list(dirstruct.items()):
             destdir = os.path.join(installdir, reldir)
             if not os.path.exists(destdir):
                 log.warn("Making install directory %s" % destdir)
@@ -135,7 +135,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
                 assert os.path.isdir(destdir)
             for artifactname in artifactnames:
                 destpath = os.path.abspath(os.path.join( destdir, artifactname))
-                if artifactname in artifacts.keys():
+                if artifactname in list(artifacts.keys()):
                     # The artifact must be loaded from jenkins
                     theartifact = artifacts[artifactname]
                 else:
@@ -166,7 +166,7 @@ def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ):
         
         artifacts = build.get_artifact_dict()
         
-        for name, art in artifacts.iteritems():
+        for name, art in artifacts.items():
             md_match = artifactRegExp.search( name )
             
             if md_match:

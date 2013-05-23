@@ -1,7 +1,7 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.exceptions import ArtifactBroken
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 
 import logging
@@ -39,7 +39,7 @@ class Fingerprint(JenkinsBase):
         try:
             self.poll()
             self.unknown = False
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             # We can't really say anything about the validity of
             # fingerprints not found -- but the artifact can still
             # exist, so it is not possible to definitely say they are
@@ -78,7 +78,7 @@ class Fingerprint(JenkinsBase):
             assert self.valid()
         except AssertionError:
             raise ArtifactBroken( "Artifact %s seems to be broken, check %s" % ( self.id, self.baseurl ) )
-        except urllib2.HTTPError:
+        except urllib.error.HTTPError:
             raise ArtifactBroken( "Unable to validate artifact id %s using %s" % ( self.id, self.baseurl ) )
         return True
 
