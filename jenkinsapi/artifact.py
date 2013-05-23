@@ -18,7 +18,7 @@ from jenkinsapi.fingerprint import Fingerprint
 
 log = logging.getLogger(__name__)
 
-class Artifact(object):
+class Artifact():
     """
     Represents a single Jenkins artifact, usually some kind of file
     generated as a by-product of executing a Jenkins build.

@@ -10,7 +10,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def get_latest_test_results( jenkinsurl, jobname ):
+def get_latest_test_results(jenkinsurl, obname ):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
@@ -42,21 +42,21 @@ def get_build(jenkinsurl, jobname, build_no):
     job = jenkinsci[jobname]
     return job.get_build( build_no )
 
-def get_artifacts( jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None ):
+def get_artifacts(jenkinsurl, jobid=None, build_no=None, proxyhost=None, proxyport=None, proxyuser=None, proxypass=None):
     """
     Find all the artifacts for the latest build of a job.
     """
     jenkinsci = Jenkins(jenkinsurl, proxyhost, proxyport, proxyuser, proxypass)
     job = jenkinsci[jobid]
     if build_no:
-        build = job.get_build( build_no )
+        build = job.get_build(build_no)
     else:
         build = job.get_last_good_build()
     artifacts = build.get_artifact_dict()
-    log.info("Found %i artifacts in '%s'" % ( len(list(artifacts.keys()) ), build_no ))
+    log.info("Found %i artifacts in '%s'" % (len(list(artifacts.keys()) ), build_no))
     return artifacts
 
-def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
+def search_artifacts(jenkinsurl, jobid, artifact_ids=None):
     """
     Search the entire history of a jenkins job for a list of artifact names. If same_build
     is true then ensure that all artifacts come from the same build of the job
@@ -64,29 +64,29 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None ):
     if len(artifact_ids) == 0 or artifact_ids is None:
         return []
     
-    jenkinsci = Jenkins( jenkinsurl )
+    jenkinsci = Jenkins(jenkinsurl)
     job = jenkinsci[ jobid ]
     build_ids = job.get_build_ids()
     for build_id in build_ids:
-        build = job.get_build( build_id )
+        build = job.get_build(build_id)
         artifacts = build.get_artifact_dict()
-        if set( artifact_ids ).issubset( set( artifacts.keys() ) ):
-            return dict( ( a,artifacts[a] ) for a in artifact_ids )
-        missing_artifacts =  set( artifact_ids ) - set( artifacts.keys() )
-        log.debug("Artifacts %s missing from %s #%i" % ( ", ".join( missing_artifacts ), jobid, build_id ))
+        if set(artifact_ids).issubset(set(artifacts.keys())):
+            return dict((a,artifacts[a]) for a in artifact_ids)
+        missing_artifacts = set(artifact_ids) - set(artifacts.keys())
+        log.debug("Artifacts {} missing from {} #{}".format(", ".join(missing_artifacts), jobid, build_id)))
     #noinspection PyUnboundLocalVariable
-    raise ArtifactsMissing( missing_artifacts )
+    raise ArtifactsMissing(missing_artifacts)
 
 def grab_artifact(jenkinsurl, jobid, artifactid, targetdir):
     """
     Convenience method to find the latest good version of an artifact and save it
     to a target directory. Directory is made automatically if not exists.
     """
-    artifacts = get_artifacts( jenkinsurl, jobid )
-    artifact = artifacts[ artifactid ]
-    if not os.path.exists( targetdir ):
-        os.makedirs( targetdir )
-    artifact.savetodir( targetdir)
+    artifacts = get_artifacts(jenkinsurl, jobid)
+    artifact = artifacts[artifactid]
+    if not os.path.exists(targetdir):
+        os.makedirs(targetdir)
+    artifact.savetodir(targetdir)
 
 def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_timeout=True):
     """
@@ -103,11 +103,11 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
         if not still_running:
             return
         str_still_running = ", ".join('"%s"' % str(a) for a in still_running)
-        log.warn( "Waiting for jobs %s to complete. Will wait another %is" % (str_still_running, time_left ))
+        log.warn("Waiting for jobs {} to complete. Will wait another {}".format(str_still_running, time_left))
         time.sleep(interval)
     if raise_on_timeout:
         #noinspection PyUnboundLocalVariable
-        raise TimeOut("Waited too long for these jobs to complete: %s" % str_still_running)
+        raise TimeOut("Waited too long for these jobs to complete: {}".format(str_still_running))
 
 def get_view_from_url(url):
     """
@@ -115,7 +115,7 @@ def get_view_from_url(url):
     """
     matched = constants.RE_SPLIT_VIEW_URL.search(url)
     if not matched:
-        raise BadURL("Cannot parse URL %s" % url)
+        raise BadURL("Cannot parse URL {}".format(url))
     jenkinsurl, view_name = matched.groups()
     jenkinsci = Jenkins(jenkinsurl)
     return jenkinsci.get_view(view_name)
@@ -129,7 +129,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
         for reldir, artifactnames in list(dirstruct.items()):
             destdir = os.path.join(installdir, reldir)
             if not os.path.exists(destdir):
-                log.warn("Making install directory %s" % destdir)
+                log.warn("Making install directory {}".format(destdir))
                 os.makedirs(destdir)
             else:
                 assert os.path.isdir(destdir)
@@ -146,7 +146,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
                 installed.append(destpath)
         return installed
     
-def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ): 
+def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp): 
     '''
     @param jenkinsurl: The base URL of the jenkins server
     @param jobid: The name of the job we are to search through
@@ -156,20 +156,16 @@ def search_artifact_by_regexp( jenkinsurl, jobid, artifactRegExp ):
     Search the entire history of a hudson job for a build which has an artifact whose
     name matches a supplied regular expression. Return only that artifact.
     """
-    J = Jenkins( jenkinsurl )
-    j = J[ jobid ] 
+    J = Jenkins(jenkinsurl)
+    j = J[jobid] 
     
     build_ids = j.get_build_ids()
     
     for build_id in build_ids:
-        build = j.get_build( build_id )
-        
+        build = j.get_build(build_id)
         artifacts = build.get_artifact_dict()
-        
         for name, art in artifacts.items():
-            md_match = artifactRegExp.search( name )
-            
+            md_match = artifactRegExp.search(name)
             if md_match:
                 return art
-        
-    raise ArtifactsMissing( )
+    raise ArtifactsMissing()

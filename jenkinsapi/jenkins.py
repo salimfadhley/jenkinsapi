@@ -48,7 +48,7 @@ class Jenkins(JenkinsBase):
         self.proxyport = proxyport
         self.proxyuser = proxyuser
         self.proxypass = proxypass
-        JenkinsBase.__init__(self, baseurl, formauth=formauth, krbauth=krbauth)
+        super().__init__(self, baseurl, formauth=formauth, krbauth=krbauth)
 
     def _clone(self):
         return Jenkins(self.baseurl, username=self.username,
@@ -66,7 +66,7 @@ class Jenkins(JenkinsBase):
         auth_args = []
         auth_args.extend(self.get_jenkins_auth())
         auth_args.extend(self.get_proxy_auth())
-        log.debug("args: %s" % auth_args)
+        log.debug("args: {}".format(auth_args))
         return auth_args
 
     def get_base_server_url(self):
@@ -111,7 +111,7 @@ class Jenkins(JenkinsBase):
     def validate_fingerprint(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
         obj_fingerprint.validate()
-        log.info("Jenkins says %s is valid" % id)
+        log.info("Jenkins says {} is valid".format(id))
 
     def reload(self):
         '''Try and reload the configuration from disk'''
@@ -236,7 +236,7 @@ class Jenkins(JenkinsBase):
             yield info["name"]
 
     def keys(self):
-        return [ a for a in self.keys() ]
+        return [a for a in self.keys()]
 
     def __str__(self):
         return "Jenkins server at %s" % self.baseurl
@@ -258,7 +258,7 @@ class Jenkins(JenkinsBase):
         except KeyError:
             #noinspection PyUnboundLocalVariable
             all_views = ", ".join(list(view_dict.keys()))
-            raise KeyError("View %s is not known - available: %s" % (str_view_name, all_views))
+            raise KeyError("View {} is not known - available: {}".format(str_view_name, all_views))
 
     def get_view(self, str_view_name):
         view_url = self.get_view_url(str_view_name)
@@ -271,7 +271,7 @@ class Jenkins(JenkinsBase):
         return View(str_view_url , str_view_name, jenkins_obj=self)
 
     def delete_view_by_url(self, str_url):
-        url = "%s/doDelete" %str_url
+        url = "{}/doDelete".format(str_url)
         self.post_data(url, '')
         newjk = self._clone()
         return newjk
@@ -282,9 +282,9 @@ class Jenkins(JenkinsBase):
         :param str_view_name: name of new view, str
         :return: new view obj
         """
-        url = urllib.parse.urljoin(self.baseurl, "user/%s/my-views/" % people) if people else self.baseurl
+        url = urllib.parse.urljoin(self.baseurl, "user/{}/my-views/".format(people)) if people else self.baseurl
         qs = urllib.parse.urlencode({'value': str_view_name})
-        viewExistsCheck_url = urllib.parse.urljoin(url, "viewExistsCheck?%s" % qs)
+        viewExistsCheck_url = urllib.parse.urljoin(url, "viewExistsCheck?{}".format(qs))
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             r = fn_urlopen(viewExistsCheck_url).read()
@@ -294,7 +294,7 @@ class Jenkins(JenkinsBase):
             raise
         """<div/>"""
         if len(r) > 7: 
-            return 'A view already exists with the name "%s"' % (str_view_name)
+            return 'A view already exists with the name "{}"'.format(str_view_name)
         else:
             data = {"mode":"hudson.model.ListView", "Submit": "OK"}
             data['name']=str_view_name
@@ -304,9 +304,9 @@ class Jenkins(JenkinsBase):
                 createView_url = urllib.parse.urljoin(url, "createView")
                 result = self.post_data(createView_url, params)
             except urllib.error.HTTPError as e:
-                log.debug("Error post_data %s" % createView_url)
+                log.debug("Error post_data {}".format(createView_url))
                 log.exception(e)
-            return urllib.parse.urljoin(url, "view/%s/" % str_view_name)
+            return urllib.parse.urljoin(url, "view/{}/".format(str_view_name))
 
     def __getitem__(self, jobname):
         """
@@ -337,11 +337,11 @@ class Jenkins(JenkinsBase):
 
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
-        url = "%(baseurl)s/computer/%(nodename)s" % {'baseurl': self.baseurl, 'nodename': urllib.parse.quote(nodename)}
+        url = "{}/computer/{}".format(self.baseurl,urllib.parse.quote(nodename))
         return url
 
     def get_queue_url(self):
-        url = "%(baseurl)s/queue/" % {'baseurl': self.get_base_server_url()}
+        url = "{}/queue/".format(self.get_base_server_url())
         return url
 
     def get_queue(self):
@@ -364,14 +364,14 @@ class Jenkins(JenkinsBase):
         :param nodename: string holding a hostname
         :return: None
         """
-        assert self.has_node(nodename), "This node: %s is not registered as a slave" % nodename
+        assert self.has_node(nodename), "This node: {} is not registered as a slave".format(nodename)
         assert nodename != "master", "you cannot delete the master node"
-        url = "%s/doDelete" % self.get_node_url(nodename)
+        url = "{}/doDelete".format(self.get_node_url(nodename))
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             fn_urlopen(url).read()
         except urllib.error.HTTPError as e:
-            log.debug("Error reading %s" % url)
+            log.debug("Error reading {}".format(url))
             log.exception(e)
             raise
         return not self.has_node(nodename)
@@ -406,18 +406,16 @@ class Jenkins(JenkinsBase):
                 'labelString'     : labels,
                 'mode'            : MODE,
                 'type'            : NODE_TYPE,
-                'retentionStrategy' : { 'stapler-class'  : 'hudson.slaves.RetentionStrategy$Always' },
-                'nodeProperties'    : { 'stapler-class-bag' : 'true' },
-                'launcher'          : { 'stapler-class' : 'hudson.slaves.JNLPLauncher' }
-            })
-        }
-        url = self.get_node_url() + "doCreateItem?%s" % urllib.parse.urlencode(params)
+                'retentionStrategy' : {'stapler-class'  : 'hudson.slaves.RetentionStrategy$Always'},
+                'nodeProperties'    : {'stapler-class-bag' : 'true'},
+                'launcher'          : {'stapler-class' : 'hudson.slaves.JNLPLauncher'}})}
+        url = "{}doCreateItem?{}".format(self.get_node_url(), urllib.parse.urlencode(params))
 
         fn_urlopen = self.get_jenkins_obj().get_opener()
         try:
             fn_urlopen(url).read()
         except urllib.error.HTTPError as e:
-            log.debug("Error reading %s" % url)
+            log.debug("Error reading {}".format(url))
             log.exception(e)
             raise
         return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)

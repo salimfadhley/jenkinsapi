@@ -3,7 +3,7 @@ class ArtifactsMissing(Exception):
     Cannot find a build with all of the required artifacts.
     """
 
-class UnknownJob( KeyError ):
+class UnknownJob(KeyError):
     """
     Jenkins does not recognize the job requested.
     """
@@ -13,7 +13,7 @@ class ArtifactBroken(Exception):
     An artifact is broken, wrong
     """
 
-class TimeOut( Exception ):
+class TimeOut(Exception):
     """
     Some jobs have taken too long to complete.
     """
