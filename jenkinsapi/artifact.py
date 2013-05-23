@@ -37,14 +37,14 @@ class Artifact():
         :param fspath: full pathname including the filename, str
         :return: filepath
         """
-        log.info("Saving artifact @ %s to %s" % (self.url, fspath))
+        log.info("Saving artifact @ {} to {}".format(self.url, fspath))
         if not fspath.endswith(self.filename):
-            log.warn("Attempt to change the filename of artifact %s on save." % self.filename)
+            log.warn("Attempt to change the filename of artifact {} on save.".format(self.filename))
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath):
-                        log.info("Local copy of %s is already up to date." % self.filename)
+                        log.info("Local copy of {} is already up to date.".format(self.filename))
                         return fspath
                 except ArtifactBroken:
                     log.info("Jenkins artifact could not be identified.")
@@ -111,6 +111,6 @@ class Artifact():
         """
         Produce a handy repr-string.
         """
-        return """<%s.%s %s>""" % (self.__class__.__module__,
+        return """<{}.{} {}>""".format(self.__class__.__module__,
                                     self.__class__.__name__,
                                     self.url)

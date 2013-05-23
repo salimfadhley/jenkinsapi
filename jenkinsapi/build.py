@@ -59,8 +59,8 @@ class Build(JenkinsBase):
 
     def get_artifacts(self):
         for afinfo in self._data["artifacts"]:
-            url = "%sartifact/%s" % ( self.baseurl, afinfo["relativePath"] )
-            af = Artifact( afinfo["fileName"], url, self )
+            url = "{}artifact/{}".format(self.baseurl, afinfo["relativePath"])
+            af = Artifact(afinfo["fileName"], url, self)
             yield af
             del af, url
 

@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class JenkinsBase():
     """
-    This is the base object that all other jenkins objects are inherited from
+    An object that describes how to connect and interact with Jenkins.
     """
     RETRY_ATTEMPTS = 5
 
@@ -93,7 +93,7 @@ class JenkinsBase():
             else: stream = fn_urlopen(url)
             html_result = stream.read()
         except urllib.error.HTTPError as e:
-            log.debug( "Error reading {}".format(url))
+            log.debug("Error reading {}".format(url))
             log.exception(e)
             raise
         return html_result
