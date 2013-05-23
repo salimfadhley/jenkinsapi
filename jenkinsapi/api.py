@@ -10,7 +10,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def get_latest_test_results(jenkinsurl, obname):
+def get_latest_test_results(jenkinsurl, jobname):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
