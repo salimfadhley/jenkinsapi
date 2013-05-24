@@ -50,6 +50,9 @@ class Job(JenkinsBase):
     def __str__(self):
         return self._data["name"]
 
+    def get_description(self):
+        return self._data["description"]
+
     def get_jenkins_obj(self):
         return self.jenkins
 
