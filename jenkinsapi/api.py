@@ -120,6 +120,16 @@ def get_view_from_url(url):
     jenkinsci = Jenkins(jenkinsurl)
     return jenkinsci.get_view(view_name)
 
+def get_nested_view_from_url(url):
+    """
+    Returns View based on provided URL. Convenient for nested views.
+    """
+    matched = constants.RE_SPLIT_VIEW_URL.search(url)
+    if not matched:
+        raise BadURL("Cannot parse URL %s" % url)
+    jenkinsci = Jenkins(matched.group(0))
+    return jenkinsci.get_view_by_url(url)
+
 def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
         """
         Install the artifacts.
