@@ -62,6 +62,10 @@ class View(JenkinsBase):
         elif not self.get_jenkins_obj().has_job(str_job_name):
             return "Job %s is not known - available: %s" % ( str_job_name, ", ".join(self.get_jenkins_obj().get_jobs_list()))
         else:
+            def get_job_url(name):
+                return self.jenkins_obj.get_job(name).baseurl
+            jobs = self._data.setdefault('jobs', [])
+            jobs.append({'name': str_job_name, 'url': get_job_url(str_job_name)})
             data = {
                 "description":"",
                 "statusFilter":"",
@@ -79,7 +83,6 @@ class View(JenkinsBase):
             data["name"] = self.name
             for job in self.get_job_dict().keys():
                 data[job]='on'
-            data[str_job_name] = "on"
             data['json'] = data.copy()
             self.post_data('%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
             return "Job %s is add in View %s successful" % (str_job_name, self.baseurl)
