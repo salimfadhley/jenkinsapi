@@ -174,7 +174,7 @@ class Jenkins(JenkinsBase):
         :param jobname: string
         :return: boolean
         """
-        return jobname in self.get_jobs_list()
+        return jobname in self
 
     def create_job(self, jobname, config):
         """
@@ -323,6 +323,14 @@ class Jenkins(JenkinsBase):
                 preferred_url = urlparse.urlunsplit([preferred_scheme, url_split.netloc, url_split.path, url_split.query, url_split.fragment])
                 return Job(preferred_url, name, jenkins_obj=self)
         raise UnknownJob(jobname)
+
+    def __contains__(self, jobname):
+        """
+        Does a job by the name specified exist
+        :param jobname: string
+        :return: boolean
+        """
+        return jobname in self.get_jobs_list()
 
     def get_node_dict(self):
         """Get registered slave nodes on this instance"""

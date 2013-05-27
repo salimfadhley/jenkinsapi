@@ -7,3 +7,4 @@
 /dist
 .settings
 *.DS_Store
+jenkins.war
