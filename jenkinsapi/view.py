@@ -1,6 +1,9 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.job import Job
+import logging
 import urllib
+
+log = logging.getLogger(__name__)
 
 class View(JenkinsBase):
 
@@ -56,36 +59,57 @@ class View(JenkinsBase):
     def get_jenkins_obj(self):
         return self.jenkins_obj
 
-    def add_job(self, str_job_name):
-        if str_job_name in self.get_job_dict():
-            return "Job %s has in View %s" %(str_job_name, self.name)
-        elif not self.get_jenkins_obj().has_job(str_job_name):
-            return "Job %s is not known - available: %s" % ( str_job_name, ", ".join(self.get_jenkins_obj().get_jobs_list()))
-        else:
-            def get_job_url(name):
-                return self.jenkins_obj.get_job(name).baseurl
-            jobs = self._data.setdefault('jobs', [])
-            jobs.append({'name': str_job_name, 'url': get_job_url(str_job_name)})
-            data = {
-                "description":"",
-                "statusFilter":"",
-                "useincluderegex":"on",
-                "includeRegex":"",
-                "columns": [{"stapler-class": "hudson.views.StatusColumn", "kind": "hudson.views.StatusColumn"}, 
-                            {"stapler-class": "hudson.views.WeatherColumn", "kind": "hudson.views.WeatherColumn"}, 
-                            {"stapler-class": "hudson.views.JobColumn", "kind": "hudson.views.JobColumn"}, 
-                            {"stapler-class": "hudson.views.LastSuccessColumn", "kind": "hudson.views.LastSuccessColumn"}, 
-                            {"stapler-class": "hudson.views.LastFailureColumn", "kind": "hudson.views.LastFailureColumn"}, 
-                            {"stapler-class": "hudson.views.LastDurationColumn", "kind": "hudson.views.LastDurationColumn"}, 
-                            {"stapler-class": "hudson.views.BuildButtonColumn", "kind": "hudson.views.BuildButtonColumn"}],
-                "Submit":"OK",
-                }
-            data["name"] = self.name
-            for job in self.get_job_dict().keys():
-                data[job]='on'
-            data['json'] = data.copy()
-            self.post_data('%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
-            return "Job %s is add in View %s successful" % (str_job_name, self.baseurl)
+    def add_job(self, str_job_name, job=None):
+        """
+        Add job to a view
+        
+        :param str_job_name: name of the job to be added
+        :param job: Job object to be added
+        :return: True if job has been added, False if job already exists or
+         job not known to Jenkins
+        """
+        if not job:
+            if str_job_name in self.get_job_dict():
+                log.error('Job %s is already in the view %s' %
+                        (str_job_name, self.name))
+                return False
+            elif not self.get_jenkins_obj().has_job(str_job_name):
+                log.error('Job "%s" is not known to Jenkins' % str_job_name)
+                return False
+
+        job = self.jenkins_obj.get_job(str_job_name)
+        
+        jobs = self._data.setdefault('jobs', [])
+        jobs.append({'name': job.name, 'url': job.baseurl})
+        data = {
+            "description":"",
+            "statusFilter":"",
+            "useincluderegex":"on",
+            "includeRegex":"",
+            "columns": [{"stapler-class": "hudson.views.StatusColumn",
+                        "kind": "hudson.views.StatusColumn"},
+                        {"stapler-class": "hudson.views.WeatherColumn",
+                        "kind": "hudson.views.WeatherColumn"},
+                        {"stapler-class": "hudson.views.JobColumn",
+                        "kind": "hudson.views.JobColumn"},
+                        {"stapler-class": "hudson.views.LastSuccessColumn",
+                        "kind": "hudson.views.LastSuccessColumn"},
+                        {"stapler-class": "hudson.views.LastFailureColumn",
+                        "kind": "hudson.views.LastFailureColumn"},
+                        {"stapler-class": "hudson.views.LastDurationColumn",
+                        "kind": "hudson.views.LastDurationColumn"},
+                        {"stapler-class": "hudson.views.BuildButtonColumn",
+                        "kind": "hudson.views.BuildButtonColumn"}],
+            "Submit":"OK",
+            }
+        data["name"] = self.name
+        for job_name in self.get_job_dict().keys():
+            data[job_name]='on'
+        data['json'] = data.copy()
+        self.post_data('%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
+        log.debug('Job "%s" has been added to a view "%s"' %
+                     (job.name, self.name))
+        return True
 
     def _get_nested_views(self):
         if not self._data.has_key( "views" ):

@@ -68,7 +68,7 @@ class Jenkins(JenkinsBase):
         auth_args = []
         auth_args.extend(self.get_jenkins_auth())
         auth_args.extend(self.get_proxy_auth())
-        log.debug("args: %s" % auth_args)
+        log.debug("auth_args: %s" % auth_args)
         return auth_args
 
     def get_base_server_url(self):
@@ -275,40 +275,68 @@ class Jenkins(JenkinsBase):
     def delete_view_by_url(self, str_url):
         url = "%s/doDelete" %str_url
         self.post_data(url, '')
-        newjk = self._clone()
-        return newjk
+        self.poll()
+        return self
 
-    def create_view(self, str_view_name, people=None):
+    def create_view(self, str_view_name, person=None):
         """
-        Create a view, viewExistsCheck
+        Create a view
         :param str_view_name: name of new view, str
-        :return: new view obj
+        :param person: Person name (to create personal view), str
+        :return: new View obj or None if view was not created
         """
-        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % people) if people else self.baseurl
+        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % person) if person else self.baseurl
         qs = urllib.urlencode({'value': str_view_name})
         viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
-        fn_urlopen = self.get_jenkins_obj().get_opener()
-        try:
-            r = fn_urlopen(viewExistsCheck_url).read()
-        except urllib2.HTTPError, e:
-            log.debug("Error reading %s" % viewExistsCheck_url)
-            log.exception(e)
-            raise
-        """<div/>"""
-        if len(r) > 7: 
-            return 'A view already exists with the name "%s"' % (str_view_name)
+        log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
+        result = self.hit_url(viewExistsCheck_url)
+        log.debug('result=%s' % result)
+        # Jenkins returns "<div/>" if view does not exist
+        if len(result) > len('<div/>'): 
+            log.error('A view "%s" already exists' % (str_view_name))
+            return None
         else:
             data = {"mode":"hudson.model.ListView", "Submit": "OK"}
-            data['name']=str_view_name
+            data['name'] = str_view_name
             data['json'] = data.copy()
+            log.debug('json data=%s' % data)
             params = urllib.urlencode(data)
             try:
                 createView_url = urlparse.urljoin(url, "createView")
+                log.debug('createView_url=%s' % createView_url)
                 result = self.post_data(createView_url, params)
             except urllib2.HTTPError, e:
                 log.debug("Error post_data %s" % createView_url)
                 log.exception(e)
-            return urlparse.urljoin(url, "view/%s/" % str_view_name)
+            # We changed Jenkins config - need to update ourself
+            self.poll()
+            new_view_obj = self.get_view(str_view_name)
+            assert isinstance(new_view_obj, View)
+            return new_view_obj
+
+    def delete_view(self, str_view_name, view=None, person=None):
+        """
+        Delete a view
+        :param str_view_name: name of the view, str
+        :param view: View object to be deleted, jenkinsapi.View
+        :param person: Person name (to create personal view), str
+        :return: True if view has been deleted, False if view does not exist
+        """
+        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % person) if person else self.baseurl
+        qs = urllib.urlencode({'value': str_view_name})
+        viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
+        log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
+        result = self.hit_url(viewExistsCheck_url)
+        log.debug('result=%s' % result)
+        # Jenkins returns "<div/>" if view does not exist
+        if len(result) == len('<div/>'): 
+            log.error('A view the name "%s" does not exist' % (str_view_name))
+            return False 
+        else:
+            self.delete_view_by_url(urlparse.urljoin(url, 'view/%s' % str_view_name))
+            # We changed Jenkins config - need to update ourself
+            self.poll()
+            return True
 
     def __getitem__(self, jobname):
         """
