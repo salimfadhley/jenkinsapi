@@ -261,7 +261,7 @@ class Build(JenkinsBase):
         return all_actions
 
     def get_timestamp(self):
-        return self._data['timestamp']
+        return (self._data['timestamp'] / 1000)
 
     def stop(self):
         """
