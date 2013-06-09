@@ -192,7 +192,7 @@ class Job(JenkinsBase):
         Get the last failed build
         """
         bn = self.get_last_failed_buildnumber()
-        if(bn):
+        if bn is not None:
             return self.get_build( bn )
            
 
