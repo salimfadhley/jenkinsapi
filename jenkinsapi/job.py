@@ -127,7 +127,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def _buildid_for_type(self, buildtype):
         """Gets a buildid for a given type of build"""
-        KNOWNBUILDTYPES=["lastSuccessfulBuild", "lastBuild", "lastCompletedBuild"]
+        KNOWNBUILDTYPES=["lastSuccessfulBuild", "lastBuild", "lastCompletedBuild", "lastFailedBuild"]
         assert buildtype in KNOWNBUILDTYPES
         if self._data[buildtype] == None:
             return None
@@ -141,6 +141,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         return self._buildid_for_type(buildtype="lastSuccessfulBuild")
 
+    def get_last_failed_buildnumber( self ):
+        """
+        Get the numerical ID of the last failed build.
+        """
+        return self._buildid_for_type(buildtype="lastFailedBuild")
+       
     def get_last_buildnumber( self ):
         """
         Get the numerical ID of the last build.
@@ -181,6 +187,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         bn = self.get_last_good_buildnumber()
         return self.get_build( bn )
+
+    def get_last_failed_build( self ):
+        """
+        Get the last failed build
+        """
+        bn = self.get_last_failed_buildnumber()
+        if bn is not None:
+            return self.get_build( bn )
+           
 
     def get_last_build( self ):
         """
