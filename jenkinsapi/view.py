@@ -77,7 +77,7 @@ class View(JenkinsBase):
                 log.error('Job "%s" is not known to Jenkins' % str_job_name)
                 return False
 
-        job = self.jenkins_obj.get_job(str_job_name)
+            job = self.jenkins_obj.get_job(str_job_name)
         
         jobs = self._data.setdefault('jobs', [])
         jobs.append({'name': job.name, 'url': job.baseurl})
