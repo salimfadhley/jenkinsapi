@@ -62,7 +62,7 @@ class Jenkins(JenkinsBase):
     def reload(self):
         '''Try and reload the configuration from disk'''
         try:
-            self.hit_url("%(baseurl)s/reload" % self.__dict__)
+            self.requester.get_url("%(baseurl)s/reload" % self.__dict__)
         except urllib2.HTTPError, e:
             if e.code == 403:
                 raise NotAuthorized("You are not authorized to reload this server")
@@ -210,6 +210,8 @@ class Jenkins(JenkinsBase):
         return "Jenkins server at %s" % self.baseurl
 
     def _get_views(self):
+        log.debug('_get_views: self._data.has_key[views] %s' % 
+                self._data.has_key('views'))
         if not self._data.has_key("views"):
             pass
         else:
@@ -222,6 +224,7 @@ class Jenkins(JenkinsBase):
     def get_view_url(self, str_view_name):
         try:
             view_dict = self.get_view_dict()
+            log.debug('view_dict=%s' % view_dict)
             return view_dict[ str_view_name ]
         except KeyError:
             #noinspection PyUnboundLocalVariable
@@ -240,8 +243,8 @@ class Jenkins(JenkinsBase):
 
     def delete_view_by_url(self, str_url):
         url = "%s/doDelete" % str_url
-        response = self.requester.post_xml_and_confirm_status(self.url, params=params, data='')
-        self._poll
+        response = self.requester.get_url(url, data='')
+        self.poll()
         return self
 
     def create_view(self, str_view_name, person=None):
@@ -255,7 +258,7 @@ class Jenkins(JenkinsBase):
         qs = urllib.urlencode({'value': str_view_name})
         viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
         log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
-        result = self.hit_url(viewExistsCheck_url)
+        result = self.requester.get_url(viewExistsCheck_url)
         log.debug('result=%s' % result)
         # Jenkins returns "<div/>" if view does not exist
         if len(result) > len('<div/>'):
@@ -264,13 +267,13 @@ class Jenkins(JenkinsBase):
         else:
             data = {"mode":"hudson.model.ListView", "Submit": "OK"}
             data['name'] = str_view_name
-            data['json'] = data.copy()
-            log.debug('json data=%s' % data)
-            params = urllib.urlencode(data)
+            # data['json'] = data.copy()
+            # log.debug('json data=%s' % data)
+            # params = urllib.urlencode(data)
             try:
                 createView_url = urlparse.urljoin(url, "createView")
                 log.debug('createView_url=%s' % createView_url)
-                result = self.post_data(createView_url, params)
+                result = self.requester.post_url(createView_url, data)
             except urllib2.HTTPError, e:
                 log.debug("Error post_data %s" % createView_url)
                 log.exception(e)
@@ -292,7 +295,7 @@ class Jenkins(JenkinsBase):
         qs = urllib.urlencode({'value': str_view_name})
         viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
         log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
-        result = self.hit_url(viewExistsCheck_url)
+        result = self.requester.get_url(viewExistsCheck_url)
         log.debug('result=%s' % result)
         # Jenkins returns "<div/>" if view does not exist
         if len(result) == len('<div/>'):
@@ -302,6 +305,7 @@ class Jenkins(JenkinsBase):
             self.delete_view_by_url(urlparse.urljoin(url, 'view/%s' % str_view_name))
             # We changed Jenkins config - need to update ourself
             self.poll()
+            # TODO: add check here that the view actually been deleted
             return True
 
     def __getitem__(self, jobname):
