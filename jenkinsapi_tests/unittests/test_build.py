@@ -23,7 +23,7 @@ class TestTimestamps(unittest.TestCase):
 			 'keepLog': False,
 			 'number': 1,
 			 'result': 'SUCCESS',
-			 'timestamp': 1370038540938,
+			 'timestamp': 1370042140000,
 			 'url': 'http://localhost:8080/job/foo/1/'}
 
 	@mock.patch.object(Build, '_poll')
