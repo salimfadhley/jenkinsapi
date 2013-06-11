@@ -119,8 +119,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 log.info( "%s is running.", self.name )
             elif original_build_no < self.get_last_buildnumber():
                 log.info( "%s has completed.", self.name )
+            elif not response.ok :
+                response.raise_for_status()
             else:
-                raise AssertionError("The job did not schedule.")
+                raise AssertionError("The job did not schedule. REASON:%s" % response.reason)
 
     def _buildid_for_type(self, buildtype):
         """Gets a buildid for a given type of build"""
