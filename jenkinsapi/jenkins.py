@@ -53,7 +53,10 @@ class Jenkins(JenkinsBase):
         return Jenkins(self.baseurl, username=self.username, password=self.password, requester=self.requester)
 
     def get_base_server_url(self):
-        return self.baseurl[:-(len(config.JENKINS_API))]
+        if config.JENKINS_API in self.baseurl:
+            return self.baseurl[:-(len(config.JENKINS_API))]
+        else:
+            return self.baseurl
 
     def validate_fingerprint(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
@@ -136,11 +139,9 @@ class Jenkins(JenkinsBase):
         :param config: configuration of new job, xml
         :return: new Job obj
         """
-        try:
-            job = self[jobname]
+        if self.has_job(jobname):
             raise JenkinsAPIException('Job %s already exists!' % jobname)
-        except KeyError:
-            pass
+
         params = {'name': jobname}
         self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config, params=params)
         self.poll()
