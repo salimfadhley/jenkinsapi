@@ -268,8 +268,11 @@ class Build(JenkinsBase):
         return all_actions
 
     def get_timestamp(self):
+        '''
+        Returns build timestamp in UTC
+        '''
         # Java timestamps are given in miliseconds since the epoch start!
-        return datetime.datetime(*time.localtime(self._data['timestamp']/1000.0)[:6])
+        return datetime.datetime(*time.gmtime(self._data['timestamp']/1000.0)[:6])
 
     def stop(self):
         """
