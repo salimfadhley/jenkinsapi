@@ -75,6 +75,7 @@ Project Authors
  * William Zhang (jollychang@douban.com)
  * Victor Garcia (bravejolie@gmail.com)
  * Bradley Harris (bradley@ninelb.com)
+ * Aleksey Maksimov (ctpeko3a@gmail.com)
  
 License
 --------
