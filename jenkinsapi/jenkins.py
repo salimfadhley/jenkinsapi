@@ -112,6 +112,7 @@ class Jenkins(JenkinsBase):
         return jobs dict,'name:url'
         """
         jobs = []
+        print "_data[jobs]=%s" % self._data["jobs"]
         for info in self._data["jobs"]:
             jobs.append(info["name"])
         return jobs
@@ -140,11 +141,13 @@ class Jenkins(JenkinsBase):
         :return: new Job obj
         """
         if self.has_job(jobname):
-            raise JenkinsAPIException('Job %s already exists!' % jobname)
+            return self[jobname]
 
         params = {'name': jobname}
         self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config, params=params)
         self.poll()
+        if not self.has_job(jobname):
+            raise JenkinsAPIException('Cannot create job %s' % jobname)
         return self[jobname]
 
     def copy_job(self, jobname, newjobname):

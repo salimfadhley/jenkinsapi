@@ -41,7 +41,9 @@ class TestJenkins(unittest.TestCase):
     @mock.patch.object(Jenkins, '_poll')
     def test_unauthorised_reload(self, _poll):
         def fail_get_url(url):
-            raise NotAuthorized('You are not authorized to reload this server')
+            raise urllib2.HTTPError(url=url, code=403, 
+                msg='You are not authorized to reload this server',
+                hdrs=None, fp=None)
 
         _poll.return_value = {}
         mock_requester = Requester(username='foouser', password='foopassword')
@@ -204,11 +206,85 @@ class TestJenkins(unittest.TestCase):
         _job_poll.return_value = {}
         J = Jenkins('http://localhost:8080/',
                     username='foouser', password='foopassword')
-        with self.assertRaises(JenkinsAPIException) as ja:
-            J.create_job('job_one', None)
+        job = J.create_job('job_one', None)
+        self.assertTrue(isinstance(job, Job))
+        self.assertTrue(job.baseurl=='http://localhost:8080/job_one')
+        self.assertTrue(job.name=='job_one')
 
-        self.assertEquals(ja.exception.message, 
-                'Job job_one already exists!')
+    # Here we're going to test function, which is going to modify
+    # Jenkins internal data. It calls for data once to check 
+    # if job already there, then calls again to see if job hs been created.
+    # So we need to create mock function, which
+    # will return different value per each call
+
+    # Define what we will return
+    create_job_returns = [
+            # This will be returned when job is not yet created
+                {'jobs': [
+                        {'name': 'job_one', 
+                         'url': 'http://localhost:8080/job_one'},
+                        {'name': 'job_one', 
+                         'url': 'http://localhost:8080/job_one'},
+                        ]},
+            # This to simulate that the job has been created
+              {'jobs': [
+                        {'name': 'job_one', 
+                         'url': 'http://localhost:8080/job_one'},
+                        {'name': 'job_two', 
+                         'url': 'http://localhost:8080/job_two'},
+                        {'name': 'job_new', 
+                         'url': 'http://localhost:8080/job_new'},
+                        ]}
+              ]
+
+    # Mock function
+    def second_call_poll():
+        return TestJenkins.create_job_returns.pop(0)
+
+    # Patch Jenkins with mock function
+    @mock.patch.object(Jenkins, '_poll', side_effect=second_call_poll)
+    @mock.patch.object(Job, '_poll')
+    def test_create_new_job(self, _poll, _job_poll):
+        _job_poll.return_value = {}
+
+        mock_requester = Requester(username='foouser', password='foopassword')
+        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
+                return_value='')
+
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword',
+                    requester=mock_requester)
+
+        job = J.create_job('job_new', None)
+        self.assertTrue(isinstance(job, Job))
+        self.assertTrue(job.baseurl=='http://localhost:8080/job_new')
+        self.assertTrue(job.name=='job_new')
+
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(Jenkins, '_poll')
+    @mock.patch.object(Job, '_poll')
+    def test_create_new_job_fail(self, _base_poll, _poll, _job_poll):
+        _job_poll.return_value = {}
+        _poll.return_value = {'jobs': [
+                        {'name': 'job_one', 
+                         'url': 'http://localhost:8080/job_one'},
+                        {'name': 'job_one', 
+                         'url': 'http://localhost:8080/job_one'},
+                        ]}
+        _base_poll.return_value = _poll.return_value
+
+        mock_requester = Requester(username='foouser', password='foopassword')
+        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
+                return_value='')
+
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword',
+                    requester=mock_requester)
+
+        with self.assertRaises(JenkinsAPIException) as ar:
+            job = J.create_job('job_new', None)
+
+        self.assertEquals(ar.exception.message, 'Cannot create job job_new')
 
 class TestJenkinsURLs(unittest.TestCase):
 
