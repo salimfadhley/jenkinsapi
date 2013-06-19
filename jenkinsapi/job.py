@@ -112,11 +112,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
         if securitytoken:
             params['token'] = securitytoken
 
+<<<<<<< HEAD
+        response = self.jenkins.requester.post_url(url, **params)
+=======
         response = self.jenkins.requester.post_and_confirm_status(
             url,
             data={'json':self.mk_json_from_build_parameters(build_params)}, # See above - build params have to be JSON encoded & posted.
             params=params
         )
+>>>>>>> upstream_remote/master
 
         assert len( response.text ) > 0
         if invoke_pre_check_delay > 0:
