@@ -8,3 +8,7 @@
 .settings
 *.DS_Store
 jenkins.war
+.coverage/
+.coverage
+nosetests.xml
+coverage*/

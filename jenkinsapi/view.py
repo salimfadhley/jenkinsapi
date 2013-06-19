@@ -11,6 +11,7 @@ class View(JenkinsBase):
         self.name = name
         self.jenkins_obj = jenkins_obj
         JenkinsBase.__init__(self, url)
+        self.deleted = False
 
     def __str__(self):
         return self.name
@@ -19,6 +20,15 @@ class View(JenkinsBase):
         assert isinstance( str_job_id, str )
         api_url = self.python_api_url( self.get_job_url( str_job_id ) )
         return Job( api_url, str_job_id, self.jenkins_obj )
+
+    def delete(self):
+        """
+        Remove this view object
+        """
+        url = "%s/doDelete" % self.baseurl
+        self.jenkins_obj.requester.post_and_confirm_status(url, data='')
+        self.jenkins_obj.poll()
+        self.deleted = True
 
     def keys(self):
         return self.get_job_dict().keys()
@@ -62,7 +72,7 @@ class View(JenkinsBase):
     def add_job(self, str_job_name, job=None):
         """
         Add job to a view
-        
+
         :param str_job_name: name of the job to be added
         :param job: Job object to be added
         :return: True if job has been added, False if job already exists or
@@ -78,7 +88,7 @@ class View(JenkinsBase):
                 return False
 
             job = self.jenkins_obj.get_job(str_job_name)
-        
+
         jobs = self._data.setdefault('jobs', [])
         jobs.append({'name': job.name, 'url': job.baseurl})
         data = {
@@ -117,6 +127,6 @@ class View(JenkinsBase):
         else:
             for viewdict in self._data["views"]:
                 yield viewdict["name"], viewdict["url"]
-                
+
     def get_nested_view_dict(self):
         return dict( self._get_nested_views() )

@@ -1,4 +1,3 @@
-import StringIO
 import requests
 from jenkinsapi.exceptions import JenkinsAPIException
 
@@ -36,7 +35,7 @@ class Requester(object):
                 headers, dict), 'headers must be a dict, got %s' % repr(headers)
             requestKwargs['headers'] = headers
 
-        if not data==None:
+        if not data == None:
             # It may seem odd, but some Jenkins operations require posting
             # an empty string.
             requestKwargs['data'] = data
@@ -45,6 +44,7 @@ class Requester(object):
     def get_url(self, url, params=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, None, headers)
         return requests.get(url, **requestKwargs)
+
 
     def post_url(self, url, params=None, data=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, data, headers)
@@ -55,7 +55,8 @@ class Requester(object):
         return self.post_and_confirm_status(url, params, data, headers)
 
     def post_and_confirm_status(self, url, params=None, data=None, headers=None):
-        assert isinstance(data, str)
+        assert isinstance(data, (
+            str, dict)), "Unexpected data type: %s" % repr(data)
 
         if not headers:
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -65,7 +66,6 @@ class Requester(object):
             raise JenkinsAPIException('Operation failed. url={0}, data={1}, headers={2}, status={3}, text={4}'.format(
                 response.url, data, headers, response.status_code, response.text.encode('UTF-8')))
         return response
-
 
     def get_and_confirm_status(self, url, params=None, headers=None):
         response = self.get_url(url, params, headers)

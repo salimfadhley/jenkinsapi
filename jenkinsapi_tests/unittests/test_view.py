@@ -1,9 +1,7 @@
 import mock
 import unittest
-import datetime
 
 from jenkinsapi.view import View
-
 
 class TestView(unittest.TestCase):
 
@@ -34,3 +32,6 @@ class TestView(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.v.id()
         self.assertEquals(self.v.name, 'FodFanFo')
+
+if __name__ == '__main__':
+    unittest.main()

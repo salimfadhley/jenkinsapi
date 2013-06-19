@@ -1,13 +1,13 @@
 {
-	"folders":
-	[
-		{
-			"path": "src",
-			"file_exclude_patterns": ["*.pyc"]
-		}
-	],
+    "folders":
+    [
+        {
+            "path": "src",
+            "file_exclude_patterns": ["*.pyc"]
+        }
+    ],
 
-	"settings":
+    "settings":
     {
         "python_test_runner":
         {
@@ -19,56 +19,56 @@
         },
         "pylinter":
         {
-        	"ignore":["C"],
+            "ignore":["C"],
             "use_icons":true
         }
 
     },
 
-	"build_systems":
-	[
-		{
+    "build_systems":
+    [
+        {
 
-			"name":"Virtualenv 2.7",
-			//"working_dir": "${project_path:${folder}}/src",
-			"cmd":
-			[
-				"${project_path}/bin/python2.7",
-				"$file"
-			]
-		},
-		{
+            "name":"Virtualenv 2.7",
+            //"working_dir": "${project_path:${folder}}/src",
+            "cmd":
+            [
+                "${project_path}/bin/python2.7",
+                "$file"
+            ]
+        },
+        {
 
-			"name":"Nose 2.7 Unittests",
-			"working_dir": "${project_path:${folder}}/src",
-			"cmd":
-			[
-				"${project_path}/bin/nosetests", "${project_path}/src/jenkinsapi_tests/unittests"
-			]
-		},
-		{
+            "name":"Nose 2.7 Unittests",
+            "working_dir": "${project_path:${folder}}/src",
+            "cmd":
+            [
+                "${project_path}/bin/nosetests", "${project_path}/src/jenkinsapi_tests/unittests"
+            ]
+        },
+        {
 
-			"name":"Nose 2.7 All tests",
-			"working_dir": "${project_path:${folder}}/src",
-			"cmd":
-			[
-				"${project_path}/bin/nosetests", "${project_path}/src/jenkinsapi_tests"
-			]
-		},
-		{
+            "name":"Nose 2.7 All tests",
+            "working_dir": "${project_path:${folder}}/src",
+            "cmd":
+            [
+                "${project_path}/bin/nosetests", "${project_path}/src/jenkinsapi_tests"
+            ]
+        },
+        {
 
-			"name":"Virtualenv 3.3",
-			"working_dir": "${project_path:${folder}}/src",
-			"cmd":
-			[
-				"source", "${project_path}/bin/activate"
-			],
-			"cmd":
-			[
-				"${project_path}/bin/python3.3",
-				"-u",
-				"$file"
-			]
-		}
-	]
+            "name":"Virtualenv 3.3",
+            "working_dir": "${project_path:${folder}}/src",
+            "cmd":
+            [
+                "source", "${project_path}/bin/activate"
+            ],
+            "cmd":
+            [
+                "${project_path}/bin/python3.3",
+                "-u",
+                "$file"
+            ]
+        }
+    ]
 }

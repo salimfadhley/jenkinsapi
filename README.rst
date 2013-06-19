@@ -2,14 +2,10 @@
 jenkinsapi
 ============
 
-.. contents:: Table of Contents
-   :depth: 2
-
-
 About this library
 -------------------
 
-Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi. 
+Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi.
 
 Jenkins (and It's predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make many Jenkins oriented tasks easier to automate.
 
@@ -25,12 +21,20 @@ This library can help you:
  * Ability to add/remove/query Jenkins slaves
  * Ability to add/remove/modify Jenkins views
 
+Known bugs
+----------
+ [ ] Currently incompatible with Jenkins > 1.518. Job deletion operations fail unless Cross-Site scripting protection is disabled.
+
+ For other issues, please refer to the support URL below.
+
 Important Links
-----------------
+---------------
+
+Support & bug-reportst: https://github.com/salimfadhley/jenkinsapi/issues?direction=desc&sort=comments&state=open
 
 Project source code: github: https://github.com/salimfadhley/jenkinsapi
 
-Project documentation: http://pythonhosted.org/jenkinsapi/
+Project documentation: https://jenkinsapi.readthedocs.org/en/latest/
 
 Releases: http://pypi.python.org/pypi/jenkinsapi
 
@@ -52,13 +56,13 @@ Example
 
 JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
 
-	Python 2.7.4 (default, Apr 19 2013, 18:28:01) 
+	Python 2.7.4 (default, Apr 19 2013, 18:28:01)
 	[GCC 4.7.3] on linux2
 	Type "help", "copyright", "credits" or "license" for more information.
 	>>> import jenkinsapi
 	>>> from jenkinsapi.jenkins import Jenkins
 	>>> J = Jenkins('http://localhost:8080')
-	>>> J.keys() # Jenkins objects appear to be dict-like, mapping keys (job-names) to 
+	>>> J.keys() # Jenkins objects appear to be dict-like, mapping keys (job-names) to
 	['foo', 'test_jenkinsapi']
 	>>> J['test_jenkinsapi']
 	<jenkinsapi.job.Job test_jenkinsapi>
@@ -68,17 +72,18 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 Project Authors
 ----------------
 
- * Salim Fadhley (sal@stodge.org) 
- * Ramon van Alteren (ramon@vanalteren.nl) 
+ * Salim Fadhley (sal@stodge.org)
+ * Ramon van Alteren (ramon@vanalteren.nl)
  * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
  * Cleber J Santos (cleber@simplesconsultoria.com.br)
  * William Zhang (jollychang@douban.com)
  * Victor Garcia (bravejolie@gmail.com)
  * Bradley Harris (bradley@ninelb.com)
- 
+ * Aleksey Maksimov (ctpeko3a@gmail.com)
+
 License
 --------
- 
+
 The MIT License (MIT): Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.

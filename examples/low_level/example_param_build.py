@@ -3,10 +3,8 @@ import requests
 
 def foo():
     """
-    A low level example of how to run a parameterized build in Jenkins
-    from Python.
+    A low level example of how JenkinsAPI runs a parameterized build
     """
-    data={'B':'abc'}
     toJson = {'parameter':[{'name':'B', 'value':'xyz'}]}
     url = 'http://localhost:8080/job/ddd/build'
     #url = 'http://localhost:8000'

@@ -1,0 +1,12 @@
+language: python
+python:
+  - "2.7"
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+    - "python setup.py develop"
+    - "easy_install mock"
+    - "easy_install nose"
+# command to run tests, e.g. python setup.py test
+script:
+    - "nosetests jenkinsapi_tests"
+#    - "nosetests jenkinsapi_tests/systests"

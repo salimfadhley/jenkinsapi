@@ -1,35 +1,20 @@
-import time
+import json
 import urllib
-import urllib2
 import logging
-import urlparse
-import requests
-import StringIO
-import cookielib
-from utils.urlopener import mkurlopener, mkopener, NoAuto302Handler
 
 from jenkinsapi import config
 from jenkinsapi.job import Job
-from jenkinsapi.nodes import Nodes
 from jenkinsapi.node import Node
-from jenkinsapi.queue import Queue
 from jenkinsapi.view import View
+from jenkinsapi.nodes import Nodes
+from jenkinsapi.views import Views
+from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
-from jenkinsapi.exceptions import UnknownJob, NotAuthorized, JenkinsAPIException
+from jenkinsapi.exceptions import UnknownJob, JenkinsAPIException
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
 
-try:
-    # Kerberos is now an extras_require - please see
-    # http://pythonhosted.org/distribute/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies
-    from utils.urlopener_kerberos import mkkrbopener
-except ImportError:
-    mkkrbopener = None
 
 log = logging.getLogger(__name__)
 
@@ -52,22 +37,20 @@ class Jenkins(JenkinsBase):
     def _clone(self):
         return Jenkins(self.baseurl, username=self.username, password=self.password, requester=self.requester)
 
-    def get_base_server_url(self):
-        return self.baseurl[:-(len(config.JENKINS_API))]
+    def base_server_url(self):
+        if config.JENKINS_API in self.baseurl:
+            return self.baseurl[:-(len(config.JENKINS_API))]
+        else:
+            return self.baseurl
 
     def validate_fingerprint(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
         obj_fingerprint.validate()
         log.info("Jenkins says %s is valid" % id)
 
-    def reload(self):
-        '''Try and reload the configuration from disk'''
-        try:
-            self.requester.get_url("%(baseurl)s/reload" % self.__dict__)
-        except urllib2.HTTPError, e:
-            if e.code == 403:
-                raise NotAuthorized("You are not authorized to reload this server")
-            raise
+    # def reload(self):
+    #     '''Try and reload the configuration from disk'''
+    #     self.requester.get_url("%(baseurl)s/reload" % self.__dict__)
 
     def get_artifact_data(self, id):
         obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
@@ -136,14 +119,14 @@ class Jenkins(JenkinsBase):
         :param config: configuration of new job, xml
         :return: new Job obj
         """
-        try:
-            job = self[jobname]
-            raise JenkinsAPIException('Job %s already exists!' % jobname)
-        except KeyError:
-            pass
+        if self.has_job(jobname):
+            return self[jobname]
+
         params = {'name': jobname}
         self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config, params=params)
         self.poll()
+        if not self.has_job(jobname):
+            raise JenkinsAPIException('Cannot create job %s' % jobname)
         return self[jobname]
 
     def copy_job(self, jobname, newjobname):
@@ -163,7 +146,7 @@ class Jenkins(JenkinsBase):
             data='')
         self.poll()
         return self[jobname]
-    
+
     def build_job(self, jobname, params={}):
         """
         Invoke a build by job name
@@ -181,7 +164,7 @@ class Jenkins(JenkinsBase):
         :return: new jenkins_obj
         """
         delete_job_url = self[jobname].get_delete_url()
-        response = self.requester.post_and_confirm_status(
+        self.requester.post_and_confirm_status(
             delete_job_url,
             data='some random bytes...'
         )
@@ -197,7 +180,7 @@ class Jenkins(JenkinsBase):
         """
         params = {'newName': newjobname}
         rename_job_url = self[jobname].get_rename_url()
-        response = self.requester.post_and_confirm_status(
+        self.requester.post_and_confirm_status(
             rename_job_url, params=params, data='')
         self.poll()
         return self[newjobname]
@@ -224,108 +207,13 @@ class Jenkins(JenkinsBase):
     def __str__(self):
         return "Jenkins server at %s" % self.baseurl
 
-    def _get_views(self):
-        log.debug('_get_views: self._data.has_key[views] %s' % 
-                self._data.has_key('views'))
-        if not self._data.has_key("views"):
-            pass
-        else:
-            for viewdict in self._data["views"]:
-                yield viewdict["name"], viewdict["url"]
-
-    def get_view_dict(self):
-        return dict(self._get_views())
-
-    def get_view_url(self, str_view_name):
-        try:
-            view_dict = self.get_view_dict()
-            log.debug('view_dict=%s' % view_dict)
-            return view_dict[ str_view_name ]
-        except KeyError:
-            #noinspection PyUnboundLocalVariable
-            all_views = ", ".join(view_dict.keys())
-            raise KeyError("View %s is not known - available: %s" % (str_view_name, all_views))
-
-    def get_view(self, str_view_name):
-        view_url = self.get_view_url(str_view_name)
-        view_api_url = self.python_api_url(view_url)
-        return View(view_url , str_view_name, jenkins_obj=self)
+    def views(self):
+        return Views(self)
 
     def get_view_by_url(self, str_view_url):
         #for nested view
         str_view_name = str_view_url.split('/view/')[-1].replace('/', '')
         return View(str_view_url , str_view_name, jenkins_obj=self)
-
-    def delete_view_by_url(self, str_url):
-        url = "%s/doDelete" % str_url
-        response = self.requester.get_url(url, data='')
-        self.poll()
-        return self
-
-    def get_nodes(self):
-        url = self.get_nodes_url()
-        return Nodes(url, self)
-
-    def create_view(self, str_view_name, person=None):
-        """
-        Create a view
-        :param str_view_name: name of new view, str
-        :param person: Person name (to create personal view), str
-        :return: new View obj or None if view was not created
-        """
-        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % person) if person else self.baseurl
-        qs = urllib.urlencode({'value': str_view_name})
-        viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
-        log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
-        result = self.requester.get_url(viewExistsCheck_url)
-        log.debug('result=%s' % result)
-        # Jenkins returns "<div/>" if view does not exist
-        if len(result) > len('<div/>'):
-            log.error('A view "%s" already exists' % (str_view_name))
-            return None
-        else:
-            data = {"mode":"hudson.model.ListView", "Submit": "OK"}
-            data['name'] = str_view_name
-            # data['json'] = data.copy()
-            # log.debug('json data=%s' % data)
-            # params = urllib.urlencode(data)
-            try:
-                createView_url = urlparse.urljoin(url, "createView")
-                log.debug('createView_url=%s' % createView_url)
-                result = self.requester.post_url(createView_url, data)
-            except urllib2.HTTPError, e:
-                log.debug("Error post_data %s" % createView_url)
-                log.exception(e)
-            # We changed Jenkins config - need to update ourself
-            self.poll()
-            new_view_obj = self.get_view(str_view_name)
-            assert isinstance(new_view_obj, View)
-            return new_view_obj
-
-    def delete_view(self, str_view_name, view=None, person=None):
-        """
-        Delete a view
-        :param str_view_name: name of the view, str
-        :param view: View object to be deleted, jenkinsapi.View
-        :param person: Person name (to create personal view), str
-        :return: True if view has been deleted, False if view does not exist
-        """
-        url = urlparse.urljoin(self.baseurl, "user/%s/my-views/" % person) if person else self.baseurl
-        qs = urllib.urlencode({'value': str_view_name})
-        viewExistsCheck_url = urlparse.urljoin(url, "viewExistsCheck?%s" % qs)
-        log.debug('viewExistsCheck_url=%s' % viewExistsCheck_url)
-        result = self.requester.get_url(viewExistsCheck_url)
-        log.debug('result=%s' % result)
-        # Jenkins returns "<div/>" if view does not exist
-        if len(result) == len('<div/>'):
-            log.error('A view the name "%s" does not exist' % (str_view_name))
-            return False
-        else:
-            self.delete_view_by_url(urlparse.urljoin(url, 'view/%s' % str_view_name))
-            # We changed Jenkins config - need to update ourself
-            self.poll()
-            # TODO: add check here that the view actually been deleted
-            return True
 
     def __getitem__(self, jobname):
         """
@@ -333,12 +221,9 @@ class Jenkins(JenkinsBase):
         :param jobname: name of job, str
         :return: Job obj
         """
-        for url, name in self.get_jobs_info():
+        for name, job in self.get_jobs():
             if name == jobname:
-                preferred_scheme = urlparse.urlsplit(self.baseurl).scheme
-                url_split = urlparse.urlsplit(url)
-                preferred_url = urlparse.urlunsplit([preferred_scheme, url_split.netloc, url_split.path, url_split.query, url_split.fragment])
-                return Job(preferred_url, name, jenkins_obj=self)
+                return job
         raise UnknownJob(jobname)
 
     def __contains__(self, jobname):
@@ -349,18 +234,9 @@ class Jenkins(JenkinsBase):
         """
         return jobname in self.get_jobs_list()
 
-    def get_node_dict(self):
-        """Get registered slave nodes on this instance"""
-        url = self.python_api_url(self.get_node_url())
-        node_dict = dict(self.get_data(url))
-        return dict(
-            (node['displayName'], self.python_api_url(self.get_node_url(node['displayName'])))
-                for node in node_dict['computer'])
-
     def get_node(self, nodename):
         """Get a node object for a specific node"""
-        node_url = self.get_node_url(nodename)
-        return Node(node_url, nodename, jenkins_obj=self)
+        return self.get_nodes()[nodename]
 
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
@@ -368,12 +244,16 @@ class Jenkins(JenkinsBase):
         return url
 
     def get_queue_url(self):
-        url = "%(baseurl)s/queue/" % {'baseurl': self.get_base_server_url()}
+        url = "%(baseurl)s/queue/" % {'baseurl': self.baseurl}
         return url
 
     def get_queue(self):
         queue_url = self.get_queue_url()
         return Queue(queue_url, self)
+
+    def get_nodes(self):
+        url = self.get_nodes_url()
+        return Nodes(url, self)
 
     def has_node(self, nodename):
         """
@@ -381,7 +261,8 @@ class Jenkins(JenkinsBase):
         :param nodename: string, hostname
         :return: boolean
         """
-        return nodename in self.get_node_dict()
+        self.poll()
+        return nodename in self.get_nodes()
 
     def delete_node(self, nodename):
         """
@@ -394,14 +275,7 @@ class Jenkins(JenkinsBase):
         assert self.has_node(nodename), "This node: %s is not registered as a slave" % nodename
         assert nodename != "master", "you cannot delete the master node"
         url = "%s/doDelete" % self.get_node_url(nodename)
-        fn_urlopen = self.get_jenkins_obj().get_opener()
-        try:
-            fn_urlopen(url).read()
-        except urllib2.HTTPError, e:
-            log.debug("Error reading %s" % url)
-            log.exception(e)
-            raise
-        return not self.has_node(nodename)
+        self.requester.get_and_confirm_status(url)
 
     def create_node(self, name, num_executors=2, node_description=None,
                     remote_fs='/var/lib/jenkins', labels=None, exclusive=False):
@@ -439,12 +313,6 @@ class Jenkins(JenkinsBase):
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urllib.urlencode(params)
+        self.requester.get_and_confirm_status(url)
 
-        fn_urlopen = self.get_jenkins_obj().get_opener()
-        try:
-            fn_urlopen(url).read()
-        except urllib2.HTTPError, e:
-            log.debug("Error reading %s" % url)
-            log.exception(e)
-            raise
         return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)

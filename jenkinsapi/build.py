@@ -1,6 +1,7 @@
 import time
-import urlparse
+import pytz
 import urllib2
+import urlparse
 import datetime
 from jenkinsapi.artifact import Artifact
 from jenkinsapi import config
@@ -215,6 +216,10 @@ class Build(JenkinsBase):
         self.poll()
         return self._data["building"]
 
+    def block(self):
+        while self.is_running():
+            time.sleep(1)
+
     def is_good( self ):
         """
         Return a bool, true if the build was good.
@@ -268,8 +273,12 @@ class Build(JenkinsBase):
         return all_actions
 
     def get_timestamp(self):
+        '''
+        Returns build timestamp in UTC
+        '''
         # Java timestamps are given in miliseconds since the epoch start!
-        return datetime.datetime(*time.localtime(self._data['timestamp']/1000.0)[:6])
+        naive_timestamp = datetime.datetime(*time.gmtime(self._data['timestamp']/1000.0)[:6])
+        return pytz.utc.localize(naive_timestamp)
 
     def stop(self):
         """

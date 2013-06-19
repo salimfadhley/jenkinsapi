@@ -7,10 +7,10 @@ machine:
 ## Customize dependencies
 dependencies:
   post:
-    - easy_install mock
-    - easy_install nose
+    - python setup.py test --dry-run
+    - easy_install coverage
 
 ## Customize test commands
 test:
   override:
-    - nosetests jenkinsapi_tests/unittests --with-coverage --cover-html --with-xunit
+    - nosetests jenkinsapi_tests --with-coverage --cover-html --with-xunit

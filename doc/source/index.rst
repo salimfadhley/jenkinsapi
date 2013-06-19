@@ -16,30 +16,84 @@ This library can help you:
  * Search for builds by subversion revision
  * Add, remove and query jenkins slaves
 
-Important links
-===============
+Sections
+========
+.. toctree::
+   :maxdepth: 2
+
+   examples
+
+Known bugs
+----------
+ [ ] Currently incompatible with Jenkins > 1.518. Job deletion operations fail unless Cross-Site scripting protection is disabled.
+
+ For other issues, please refer to the support URL below.
+
+Important Links
+---------------
+
+Support & bug-reportst: https://github.com/salimfadhley/jenkinsapi/issues?direction=desc&sort=comments&state=open
 
 Project source code: github: https://github.com/salimfadhley/jenkinsapi
 
+Project documentation: https://jenkinsapi.readthedocs.org/en/latest/
+
 Releases: http://pypi.python.org/pypi/jenkinsapi
 
-This documentation: http://packages.python.org/jenkinsapi/
-
 Installation
-============
+-------------
 
-Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or distribute to automatically install this project.
+Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or setuptools to automatically install this project.
 
 Most users can do the following:
-
+::
     pip install jenkinsapi
+
+Or..
+::
+    easy_install jenkinsapi
+
+Examples
+--------
+
+JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
+
+    Python 2.7.4 (default, Apr 19 2013, 18:28:01)
+    [GCC 4.7.3] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import jenkinsapi
+    >>> from jenkinsapi.jenkins import Jenkins
+    >>> J = Jenkins('http://localhost:8080')
+    >>> J.keys() # Jenkins objects appear to be dict-like, mapping keys (job-names) to
+    ['foo', 'test_jenkinsapi']
+    >>> J['test_jenkinsapi']
+    <jenkinsapi.job.Job test_jenkinsapi>
+    >>> J['test_jenkinsapi'].get_last_good_build()
+    <jenkinsapi.build.Build test_jenkinsapi #77>
+
+JenkinsAPI lets you query the state of a running Jenkins server. It also allows you to change configuration and automate minor tasks on nodes and jobs.
+
+You can use Jenkins to get information about recently completed builds. For example, you can get the revision number of the last succsessful build in order to trigger some kind of release process.::
+
+    from jenkinsapi.jenkins import Jenkins
+
+    def getSCMInfroFromLatestGoodBuild(url, jobName, username=None, password=None):
+        J = Jenkins(url, username, password)
+        job = J[jobName]
+        lgb = job.get_last_good_build()
+        return lgb.get_revision()
+
+    if __name__ == '__main__':
+        print getSCMInfroFromLatestGoodBuild('http://localhost:8080', 'fooJob')
+
+When used with the Git source-control system line 20 will print out something like '8b4f4e6f6d0af609bb77f95d8fb82ff1ee2bba0d' - which looks suspiciously like a Git revision number.
 
 Project Authors
 ===============
 
- * Salim Fadhley (sal@stodge.org) 
- * Ramon van Alteren (ramon@vanalteren.nl) 
- * Ruslan Lutsenko (ruslan.lutcenko@gmail.com) 
+ * Salim Fadhley (sal@stodge.org)
+ * Ramon van Alteren (ramon@vanalteren.nl)
+ * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
 
 Plus many others, please see the README file for a more complete list of contributors and how to contact them.
 
@@ -48,7 +102,7 @@ Extending and Improving JenkinsAPI
 
 JenkinsAPI is a pure-python project and can be improved with almost any programmer's text-editor or IDE. I'd recomend the following project layout which has been shown to work with both SublimeText2 and Eclipse/PyDev
 
- * Make sure that pip and virtualenv are installed on your computer. On most Linux systems these can be installed directly by the OS package-manager. 
+ * Make sure that pip and virtualenv are installed on your computer. On most Linux systems these can be installed directly by the OS package-manager.
  * Create a new virtualenv for the project::
  	virtualenv jenkinsapi
  * Change to the new directory and check out the project code into the **src** subdirectory
@@ -81,7 +135,7 @@ Package Contents
    jenkinsapi.command_line
    jenkinsapi.utils
    modules
-	
+
 Indices and tables
 ==================
 

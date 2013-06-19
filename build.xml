@@ -30,11 +30,11 @@
 	<target name="test">
 		<exec executable="python">
 			<arg value="setup.py" />
-			<arg value="test" />
+			<arg value="nosetests" />
 		</exec>
 	</target>
 
-	<target name="sdist">
+	<target name="sdist" depends="test">
 		<exec executable="python">
 			<arg value="setup.py" />
 			<arg value="sdist" />
@@ -42,7 +42,7 @@
 		</exec>
 	</target>	
 
-	<target name="doc">
+	<target name="doc" depends="sdist">
 		<exec executable="python">
 			<arg value="setup.py" />
 			<arg value="build_sphinx" />

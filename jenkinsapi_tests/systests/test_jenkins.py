@@ -2,7 +2,6 @@
 System tests for `jenkinsapi.jenkins` module.
 '''
 import unittest
-from jenkinsapi.build import Build
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.base import BaseSystemTest, EMPTY_JOB_CONFIG
 
@@ -13,6 +12,19 @@ class JobTests(BaseSystemTest):
         job_name = 'create_%s' % random_string()
         self.jenkins.create_job(job_name, EMPTY_JOB_CONFIG)
         self.assertJobIsPresent(job_name)
+
+    def test_enable_disable_job(self):
+        job_name = 'create_%s' % random_string()
+        self.jenkins.create_job(job_name, EMPTY_JOB_CONFIG)
+        self.assertJobIsPresent(job_name)
+
+        j = self.jenkins[job_name]
+        j.invoke(block=True) # run this at least once
+
+        j.disable()
+        self.assertEquals(j.is_enabled(), False, 'A disabled job is reporting incorrectly')
+        j.enable()
+        self.assertEquals(j.is_enabled(), True, 'An enabled job is reporting incorrectly')
 
     def test_get_job_and_update_config(self):
         job_name = 'config_%s' % random_string()
@@ -61,14 +73,6 @@ class JobTests(BaseSystemTest):
         self.jenkins.copy_job(template_job_name, copied_job_name)
         self.assertJobIsPresent(template_job_name)
         self.assertJobIsPresent(copied_job_name)
-
-class NodeTests(BaseSystemTest):
-    """
-    """
-
-    # def test_get_node_dict(self):
-    #     self.assertEqual(self.jenkins.get_node_dict(), {
-    #         'master': 'http://localhost:8080/computer/master/api/python/'})
 
 if __name__ == '__main__':
     unittest.main()

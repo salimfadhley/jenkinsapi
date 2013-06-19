@@ -1,7 +1,6 @@
+import json
 import logging
 import urlparse
-import urllib2
-import urllib
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from time import sleep
@@ -68,14 +67,31 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_build_triggerurl(self):
         return "%s/build" % self.baseurl
 
-    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, params=None, cause=None):
+    @staticmethod
+    def _mk_json_from_build_parameters(build_params):
+        """
+        Build parameters must be submitted in a particular format - Key-Value pairs would be
+        far too simple, no no! Watch and read on and behold!
+        """
+        assert isinstance(build_params, dict), 'Build parameters must be a dict'
+        return {'parameter':[
+            {'name':k, 'value':v} for k,v in build_params.iteritems()
+            ]}
+
+    @staticmethod
+    def mk_json_from_build_parameters(build_params):
+        to_json_structure = Job._mk_json_from_build_parameters(build_params)
+        return json.dumps(to_json_structure)
+
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, build_params=None, cause=None):
         assert isinstance( invoke_pre_check_delay, (int, float) )
         assert isinstance( invoke_block_delay, (int, float) )
         assert isinstance( block, bool )
         assert isinstance( skip_if_running, bool )
 
         # Either copy the params dict or make a new one.
-        params = params and dict(params.items()) or {}
+        build_params = build_params and dict(build_params.items()) or {} # Via POSTed JSON
+        params = {} # Via Get string
 
         if self.is_queued():
             raise WillNotBuild('%s is already queued' % repr(self))
@@ -91,12 +107,20 @@ class Job(JenkinsBase, MutableJenkinsThing):
         url  = self.get_build_triggerurl()
 
         if cause:
-            params['cause'] = cause
+            build_params['cause'] = cause
 
         if securitytoken:
-            params['securitytoken'] = securitytoken
+            params['token'] = securitytoken
 
+<<<<<<< HEAD
         response = self.jenkins.requester.post_url(url, **params)
+=======
+        response = self.jenkins.requester.post_and_confirm_status(
+            url,
+            data={'json':self.mk_json_from_build_parameters(build_params)}, # See above - build params have to be JSON encoded & posted.
+            params=params
+        )
+>>>>>>> upstream_remote/master
 
         assert len( response.text ) > 0
         if invoke_pre_check_delay > 0:
@@ -104,6 +128,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             sleep( invoke_pre_check_delay )
         if block:
             total_wait = 0
+
             while self.is_queued():
                 log.info( "Waited %is for %s to begin...", total_wait, self.name  )
                 sleep( invoke_block_delay )
@@ -111,6 +136,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if self.is_running():
                 running_build = self.get_last_build()
                 running_build.block_until_complete( delay=invoke_pre_check_delay )
+
             assert self.get_last_buildnumber() > original_build_no, "Job does not appear to have run."
         else:
             if self.is_queued():
@@ -398,15 +424,19 @@ class Job(JenkinsBase, MutableJenkinsThing):
             return []
         return upstream_jobs
 
+    def is_enabled(self):
+        self.poll()
+        return self._data["color"] != 'disabled'
+
     def disable(self):
         '''Disable job'''
-        disableurl = urlparse.urljoin(self.baseurl, 'disable' )
-        return self.post_data(disableurl, '')
+        url = "%s/disable" % self.baseurl
+        return self.get_jenkins_obj().requester.post_url(url, data='')
 
     def enable(self):
         '''Enable job'''
-        enableurl = urlparse.urljoin(self.baseurl, 'enable' )
-        return self.post_data(enableurl, '')
+        url = "%s/enable" % self.baseurl
+        return self.get_jenkins_obj().requester.post_url(url, data='')
 
     def delete_from_queue(self):
         """
@@ -416,14 +446,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         if not self.is_queued():
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
-        cancelurl = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
+        url = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
                                      'cancelItem?id=%s' % queue_id)
-        try:
-            self.post_data(cancelurl, '')
-        except urllib2.HTTPError:
-            # The request doesn't have a response, so it returns 404,
-            # it's the expected behaviour
-            pass
+        self.get_jenkins_obj().requester.post_and_confirm_status(url, data='')
         return True
 
     def get_params(self):

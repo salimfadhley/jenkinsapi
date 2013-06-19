@@ -62,7 +62,7 @@ class Artifact(object):
     def get_jenkins_obj(self):
         return self.build.get_jenkins_obj()
 
-    def getData(self):
+    def get_data(self):
         """
         Grab the text of the artifact
         """
@@ -74,7 +74,7 @@ class Artifact(object):
         Download the the artifact to a path.
         """
         with open(fspath, "wb") as out:
-            out.write(self.getData())
+            out.write(self.get_data())
         return fspath
 
     def _verify_download(self, fspath):

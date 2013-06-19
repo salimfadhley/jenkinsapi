@@ -1,6 +1,5 @@
 import mock
 import unittest
-import datetime
 
 from jenkinsapi.result_set import ResultSet
 from jenkinsapi.result import Result

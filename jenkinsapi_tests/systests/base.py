@@ -27,14 +27,21 @@ class BaseSystemTest(unittest.TestCase):
 
     def setUp(self):
         self.jenkins = Jenkins('http://localhost:8080')
+        self._delete_all_jobs()
+        self._delete_all_views()
 
     def tearDown(self):
-        self._delete_all_jobs()
+        pass
 
     def _delete_all_jobs(self):
         self.jenkins.poll()
         for name in self.jenkins.get_jobs_list():
             self.jenkins.delete_job(name)
+
+    def _delete_all_views(self):
+        all_view_names = self.jenkins.views().keys()[1:]
+        for name in all_view_names:
+            del self.jenkins.views()[name]
 
     def _create_job(self, name='whatever', config=EMPTY_JOB_CONFIG):
         job = self.jenkins.create_job(name, config)

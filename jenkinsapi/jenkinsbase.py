@@ -1,5 +1,3 @@
-import urllib
-import urllib2
 import logging
 import pprint
 from jenkinsapi import config
@@ -21,20 +19,19 @@ class JenkinsBase(object):
         pprint.pprint(self._data)
 
     def __str__(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def __init__(self, baseurl, poll=True):
         """
         Initialize a jenkins connection
         """
+        self._data = None
         self.baseurl = self.strip_trailing_slash(baseurl)
         if poll:
-            try:
-                self.poll()
-            except urllib2.HTTPError, hte: #TODO: Wrong exception
-                log.exception(hte)
-                log.warn( "Failed to connect to %s" % baseurl )
-                raise
+            self.poll()
+
+    def get_jenkins_obj(self):
+        raise NotImplementedError('Please implement this method on %s' % self.__class__.__name__)
 
     def __eq__(self, other):
         """
@@ -57,13 +54,15 @@ class JenkinsBase(object):
 
     def _poll(self):
         url = self.python_api_url(self.baseurl)
+        return self.get_data(url)
 
+    def get_data(self, url):
         requester = self.get_jenkins_obj().requester
         response = requester.get_url(url)
         try:
             return eval(response.text)
         except Exception:
-            log.exception('Inappropriate content found at %s' % url)
+            log.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % url)
 
     @classmethod
