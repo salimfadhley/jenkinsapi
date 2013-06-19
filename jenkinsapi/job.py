@@ -96,7 +96,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         if securitytoken:
             params['securitytoken'] = securitytoken
 
-        response = self.jenkins.requester.post_url(url, params, data='')
+        response = self.jenkins.requester.post_url(url, **params)
 
         assert len( response.text ) > 0
         if invoke_pre_check_delay > 0:
