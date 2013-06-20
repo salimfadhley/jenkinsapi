@@ -154,7 +154,7 @@ class Jenkins(JenkinsBase):
         :param params: the job params, dict
         :return: none
         """
-        self[jobname].invoke(params=params)
+        self[jobname].invoke(build_params=params)
         return
 
     def delete_job(self, jobname):
