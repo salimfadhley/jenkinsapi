@@ -147,7 +147,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def _buildid_for_type(self, buildtype):
         """Gets a buildid for a given type of build"""
-        KNOWNBUILDTYPES=["lastSuccessfulBuild", "lastBuild", "lastCompletedBuild"]
+        KNOWNBUILDTYPES=["lastSuccessfulBuild", "lastBuild", 
+                "lastCompletedBuild", "lastFailedBuild"]
         assert buildtype in KNOWNBUILDTYPES
         if self._data[buildtype] == None:
             return None
@@ -160,6 +161,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Get the numerical ID of the last good build.
         """
         return self._buildid_for_type(buildtype="lastSuccessfulBuild")
+
+    def get_last_failed_buildnumber( self ):
+        """
+        Get the numerical ID of the last good build.
+        """
+        return self._buildid_for_type(buildtype="lastFailedBuild")
 
     def get_last_buildnumber( self ):
         """
@@ -174,9 +181,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._buildid_for_type(buildtype="lastCompletedBuild")
 
     def get_build_dict(self):
-        if not self._data.has_key( "builds" ):
-            raise NoBuildData( repr(self) )
-        return dict( ( a["number"], a["url"] ) for a in self._data["builds"] )
+        if not self._data.has_key("builds"):
+            raise NoBuildData(repr(self))
+        return dict((build["number"], build["url"]) 
+                        for build in self._data["builds"])
 
     def get_revision_dict(self):
         """
@@ -193,7 +201,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         Return a sorted list of all good builds as ints.
         """
-        return reversed( sorted( self.get_build_dict().keys() ) )
+        return reversed(sorted(self.get_build_dict().keys()))
 
     def get_next_build_number(self):
         """
@@ -201,12 +209,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         return self._data.get('nextBuildNumber', 0)
 
-    def get_last_good_build( self ):
+    def get_last_good_build(self):
         """
         Get the last good build
         """
         bn = self.get_last_good_buildnumber()
-        return self.get_build( bn )
+        return self.get_build(bn)
 
     def get_last_build( self ):
         """
@@ -249,10 +257,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_build( self, buildnumber ):
         assert type(buildnumber) == int
-        url = self.get_build_dict()[ buildnumber ]
-        return Build( url, buildnumber, job=self )
+        url = self.get_build_dict()[buildnumber]
+        return Build(url, buildnumber, job=self)
 
-    def __getitem__( self, buildnumber ):
+    def __getitem__(self, buildnumber):
         return self.get_build(buildnumber)
 
     def is_queued_or_running(self):
