@@ -16,10 +16,10 @@ class View(JenkinsBase):
     def __str__(self):
         return self.name
 
-    def __getitem__(self, str_job_id ):
-        assert isinstance( str_job_id, str )
-        api_url = self.python_api_url( self.get_job_url( str_job_id ) )
-        return Job( api_url, str_job_id, self.jenkins_obj )
+    def __getitem__(self, str_job_id):
+        assert isinstance(str_job_id, str)
+        api_url = self.python_api_url(self.get_job_url(str_job_id))
+        return Job(api_url, str_job_id, self.jenkins_obj)
 
     def delete(self):
         """
@@ -57,14 +57,14 @@ class View(JenkinsBase):
     def __len__(self):
         return len( self.get_job_dict().keys() )
 
-    def get_job_url( self, str_job_name ):
+    def get_job_url(self, str_job_name):
         try:
             job_dict = self.get_job_dict()
-            return job_dict[ str_job_name ]
+            return job_dict[str_job_name]
         except KeyError:
             #noinspection PyUnboundLocalVariable
-            all_views = ", ".join( job_dict.keys() )
-            raise KeyError("Job %s is not known - available: %s" % ( str_job_name, all_views ) )
+            all_views = ", ".join(job_dict.keys())
+            raise KeyError("Job %s is not known - available: %s" % (str_job_name, all_views))
 
     def get_jenkins_obj(self):
         return self.jenkins_obj
@@ -90,7 +90,6 @@ class View(JenkinsBase):
             job = self.jenkins_obj.get_job(str_job_name)
 
         jobs = self._data.setdefault('jobs', [])
-        jobs.append({'name': job.name, 'url': job.baseurl})
         data = {
             "description":"",
             "statusFilter":"",
@@ -116,7 +115,9 @@ class View(JenkinsBase):
         for job_name in self.get_job_dict().keys():
             data[job_name]='on'
         data['json'] = data.copy()
-        self.post_data('%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
+        self.jenkins_obj.requester.post_and_confirm_status(
+                '%sconfigSubmit' % self.baseurl, urllib.urlencode(data))
+        self.poll()
         log.debug('Job "%s" has been added to a view "%s"' %
                      (job.name, self.name))
         return True
