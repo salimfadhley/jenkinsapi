@@ -53,11 +53,13 @@ class Build(JenkinsBase):
         return maxRevision
 
     def _get_git_rev(self):
-        for item in self._data['actions']:
-            branch = item.get('buildsByBranchName')
-            head = branch and branch.get('origin/HEAD')
-            if head:
-                return head['revision']['SHA1']
+        # Sometimes we have None as part of actions. Filter those actions
+        # which have lastBuiltRevision in them
+        _actions = [x for x in self._data['actions'] if x \
+                        and "lastBuiltRevision" in x]
+        for item in _actions:
+            revision = item["lastBuiltRevision"]["SHA1"]
+            return revision
 
     def _get_hg_rev(self):
         return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
