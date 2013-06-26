@@ -1,5 +1,6 @@
 import os
 import time
+import requests
 import Queue
 import shutil
 import logging
@@ -68,6 +69,25 @@ class JenkinsLancher(object):
         config_dest_file = open(config_dest,'w')
         config_source = pkg_resources.resource_string('jenkinsapi_tests.systests', 'config.xml')
         config_dest_file.write(config_source.encode('UTF-8'))
+
+    def install_plugin(self, hpi_url):
+        plugin_dir = os.path.join(self.jenkins_home, 'plugins')
+        if not os.path.exists(plugin_dir):
+            os.mkdir(plugin_dir)
+        hpi_url = [hpi_url] if isinstance(hpi_url, basestring) else hpi_url
+        for i,url in enumerate(hpi_url):
+            log.info("Downloading %s", url)
+            log.info("Plugins will be installed in '%s'" % plugin_dir)
+            # FIXME: This is kinda ugly but works
+            filename = "plugin_%s.hpi" % i
+            plugin_path = os.path.join(plugin_dir, filename)
+            with open(plugin_path, 'wb') as h:
+                request = requests.get(url)
+                h.write(request.content)
+        log.info("Restarting Jenkins after installing the plugins")
+        self.jenkins_process.terminate()
+        self.jenkins_process.wait()
+        self.start()
 
     def stop(self):
         log.info("Shutting down jenkins.")
