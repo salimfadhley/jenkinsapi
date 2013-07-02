@@ -93,7 +93,9 @@ class Jenkins(JenkinsBase):
         :param jobname: name of the job, str
         :return: Job obj
         """
-        return self[jobname]
+        for info in self._data["jobs"]:
+            if info["name"] == jobname:
+                return Job(info["url"], info["name"], jenkins_obj=self)
 
     def has_job(self, jobname):
         """
