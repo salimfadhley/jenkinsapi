@@ -148,4 +148,4 @@ class View(JenkinsBase):
         return dict(self._get_nested_views())
 
     def views(self):
-        return self.jenkins_obj.views()
+        return self.get_jenkins_obj().get_jenkins_obj_from_url(self.baseurl).views()
