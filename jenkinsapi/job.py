@@ -401,6 +401,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Also refresh the ElementTree object since the config has changed
         """
         url = self.get_config_xml_url()
+        if isinstance(config, unicode):
+            config = str(config)
         response = self.jenkins.requester.post_url(url, params={}, data=config)
         self._element_tree = ET.fromstring(config)
         return response.text

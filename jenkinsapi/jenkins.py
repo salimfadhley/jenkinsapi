@@ -64,6 +64,9 @@ class Jenkins(JenkinsBase):
     def get_jenkins_obj(self):
         return self
 
+    def get_jenkins_obj_from_url(self, url):
+        return Jenkins(url, self.username, self.password, self.requester)
+
     def get_create_url(self):
         # This only ever needs to work on the base object
         return '%s/createItem' % self.baseurl
@@ -114,6 +117,8 @@ class Jenkins(JenkinsBase):
             return self[jobname]
 
         params = {'name': jobname}
+        if isinstance(config, unicode):
+            config = str(config)
         self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config, params=params)
         self.poll()
         if not self.has_job(jobname):

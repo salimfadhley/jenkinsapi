@@ -1,5 +1,18 @@
 import requests
 from jenkinsapi.exceptions import JenkinsAPIException
+# import logging
+
+# # these two lines enable debugging at httplib level (requests->urllib3->httplib)
+# # you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
+# # the only thing missing will be the response.body which is not logged.
+# import httplib
+# httplib.HTTPConnection.debuglevel = 1
+
+# logging.basicConfig() # you need to initialize logging, otherwise you will not see anything from requests
+# logging.getLogger().setLevel(logging.DEBUG)
+# requests_log = logging.getLogger("requests.packages.urllib3")
+# requests_log.setLevel(logging.DEBUG)
+# requests_log.propagate = True
 
 
 class Requester(object):
@@ -57,7 +70,8 @@ class Requester(object):
     def post_and_confirm_status(self, url, params=None, data=None, headers=None, valid=None):
         valid = valid or self.VALID_STATUS_CODES
         assert isinstance(data, (
-            str, dict)), "Unexpected data type: %s" % repr(data)
+            str, dict)), \
+            "Unexpected type of parameter 'data': %s. Expected (str, dict)" % type(data)
 
         if not headers:
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}

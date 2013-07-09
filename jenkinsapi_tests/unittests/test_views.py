@@ -25,7 +25,7 @@ class TestViews(unittest.TestCase):
                     username='foouser', password='foopassword',
                     requester=mock_requester)
 
-        new_view = J.views().create(str_view_name='NewView')
+        new_view = J.views().create('NewView')
         self.assertTrue(isinstance(new_view, View))
         self.assertEquals(new_view.baseurl,
                 'http://localhost:8080/views/NewView')
@@ -55,7 +55,7 @@ class TestViews(unittest.TestCase):
                     username='foouser',
                     password='foopassword')
 
-            new_view = J.views().create(str_view_name='NewView')
+            new_view = J.views().create('NewView')
 
             self.assertIsInstance(new_view, View)
 

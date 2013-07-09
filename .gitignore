@@ -12,3 +12,4 @@ jenkins.war
 .coverage
 nosetests.xml
 coverage*/
+.idea/

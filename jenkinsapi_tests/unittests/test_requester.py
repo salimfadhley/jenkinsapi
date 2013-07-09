@@ -105,7 +105,7 @@ class TestQueue(unittest.TestCase):
                             params={'param': 'value'},
                             data=None)
 
-        self.assertTrue(ae.exception.message=='Unexpected data type: None')
+        self.assertTrue(ae.exception.message=="Unexpected type of parameter 'data': <type 'NoneType'>. Expected (str, dict)")
 
     @mock.patch.object(requests, 'post')
     def test_post_xml_and_confirm_status_some_xml(self, _post):
@@ -129,7 +129,7 @@ class TestQueue(unittest.TestCase):
                             params={'param': 'value'},
                             data=None)
 
-        self.assertTrue(ae.exception.message=='Unexpected data type: None')
+        self.assertTrue(ae.exception.message=="Unexpected type of parameter 'data': <type 'NoneType'>. Expected (str, dict)")
 
     @mock.patch.object(requests, 'post')
     def test_post_and_confirm_status_some_data(self, _post):

@@ -118,14 +118,21 @@ class TestView(unittest.TestCase):
         v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
 
         result = v.add_job('bar')
-        self.assertFalse(result)
+        self.assertTrue(result)
 
+
+    class SelfPatchJenkins(object):
+        def has_job(self, job_name):
+            return False
+
+        def get_jenkins_obj_from_url(self, url):
+            return self
 
     # We have to re-patch JenkinsBase here because by the time
     # it get to create Job, MagicMock will already expire
-    @mock.patch.object(Jenkins, 'has_job')
-    def test_add_wrong_job(self, _has_job):
-        _has_job.return_value = False
+    @mock.patch.object(View, 'get_jenkins_obj')
+    def test_add_wrong_job(self, _get_jenkins):
+        _get_jenkins.return_value = TestView.SelfPatchJenkins()
         result = self.v.add_job('bar')
         self.assertFalse(result)
 

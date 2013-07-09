@@ -285,6 +285,58 @@ class TestJenkins(unittest.TestCase):
 
         self.assertEquals(ar.exception.message, 'Cannot create job job_new')
 
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(Jenkins, '_poll')
+    @mock.patch.object(Job, '_poll')
+    def test_get_jenkins_obj_from_url(self, _base_poll, _poll, _job_poll):
+        _job_poll.return_value = {}
+        _poll.return_value = {'jobs': [
+            {'name': 'job_one',
+             'url': 'http://localhost:8080/job_one'},
+            {'name': 'job_one',
+             'url': 'http://localhost:8080/job_one'},
+            ]}
+        _base_poll.return_value = _poll.return_value
+
+        mock_requester = Requester(username='foouser', password='foopassword')
+        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
+            return_value='')
+
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword',
+                    requester=mock_requester)
+
+        new_jenkins = J.get_jenkins_obj_from_url('http://localhost:8080/')
+        self.assertEquals(new_jenkins, J)
+
+        new_jenkins = J.get_jenkins_obj_from_url('http://localhost:8080/foo')
+        self.assertNotEquals(new_jenkins, J)
+
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(Jenkins, '_poll')
+    @mock.patch.object(Job, '_poll')
+    def test_get_jenkins_obj(self, _base_poll, _poll, _job_poll):
+        _job_poll.return_value = {}
+        _poll.return_value = {'jobs': [
+            {'name': 'job_one',
+             'url': 'http://localhost:8080/job_one'},
+            {'name': 'job_one',
+             'url': 'http://localhost:8080/job_one'},
+            ]}
+        _base_poll.return_value = _poll.return_value
+
+        mock_requester = Requester(username='foouser', password='foopassword')
+        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
+            return_value='')
+
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword',
+                    requester=mock_requester)
+
+        new_jenkins = J.get_jenkins_obj()
+        self.assertEquals(new_jenkins, J)
+
+
 class TestJenkinsURLs(unittest.TestCase):
 
     @mock.patch.object(Jenkins, '_poll')
@@ -302,6 +354,7 @@ class TestJenkinsURLs(unittest.TestCase):
                     username='foouser', password='foopassword')
         self.assertEquals(
             J.get_create_url(), 'http://localhost:8080/createItem')
+
 
 if __name__ == '__main__':
     unittest.main()

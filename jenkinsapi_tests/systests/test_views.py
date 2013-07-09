@@ -40,10 +40,7 @@ class TestViews(BaseSystemTest):
         new_view = self.jenkins.views().create(view1_name)
         self.assertIn(view1_name, self.jenkins.views())
         del self.jenkins.views()[view1_name]
-
-        with self.assertRaises(KeyError):
-            del self.jenkins.views()[view1_name]
-
+        self.assertNotIn(view1_name, self.jenkins.views())
 
 
 if __name__ == '__main__':
