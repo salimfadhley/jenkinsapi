@@ -122,7 +122,7 @@ def get_view_from_url(url):
         raise BadURL("Cannot parse URL %s" % url)
     jenkinsurl, view_name = matched.groups()
     jenkinsci = Jenkins(jenkinsurl)
-    return jenkinsci.views()[view_name]
+    return jenkinsci.views[view_name]
 
 def get_nested_view_from_url(url):
     """

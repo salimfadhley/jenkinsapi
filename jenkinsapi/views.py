@@ -32,11 +32,18 @@ class Views(object):
             self[view_name].delete()
             self.jenkins.poll()
 
-    def __setitem__(self, name, value):
-        raise NotImplementedError()
+    def __setitem__(self, view_name, job_names_list):
+        new_view = self.create(view_name)
+        if isinstance(job_names_list, str):
+            job_names_list = [job_names_list]
+        for job_name in job_names_list:
+            if not new_view.add_job(job_name):
+                # Something wrong - delete view
+                del self[new_view]
+                raise TypeError('Job %s does not exist in Jenkins')
 
     def __getitem__(self, view_name):
-        for row in self.jenkins._data['views']:
+        for row in self.jenkins._data.get('views', []):
             if row['name'] == view_name:
                 return View(
                     row['url'],
@@ -50,7 +57,7 @@ class Views(object):
         Get the names & objects for all views
         """
         self.jenkins.poll()
-        for row in self.jenkins._data['views']:
+        for row in self.jenkins._data.get('views', []):
             name = row['name']
             url = row['url']
 
@@ -66,7 +73,7 @@ class Views(object):
         """
         Get the names of all available views
         """
-        for row in self.jenkins._data['views']:
+        for row in self.jenkins._data.get('views', []):
             yield row['name']
 
     def keys(self):

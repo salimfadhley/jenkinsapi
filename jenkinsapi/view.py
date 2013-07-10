@@ -18,10 +18,16 @@ class View(JenkinsBase):
     def __str__(self):
         return self.name
 
-    def __getitem__(self, str_job_id):
-        assert isinstance(str_job_id, str)
-        api_url = self.python_api_url(self.get_job_url(str_job_id))
-        return Job(api_url, str_job_id, self.jenkins_obj)
+    def __getitem__(self, job_name):
+        assert isinstance(job_name, str)
+        api_url = self.python_api_url(self.get_job_url(job_name))
+        return Job(api_url, job_name, self.jenkins_obj)
+
+    def __contains__(self, job_name):
+        """
+        True if view_name is the name of a defined view
+        """
+        return job_name in self.keys()
 
     def delete(self):
         """
@@ -147,5 +153,6 @@ class View(JenkinsBase):
     def get_nested_view_dict(self):
         return dict(self._get_nested_views())
 
+    @property
     def views(self):
-        return self.get_jenkins_obj().get_jenkins_obj_from_url(self.baseurl).views()
+        return self.get_jenkins_obj().get_jenkins_obj_from_url(self.baseurl).views

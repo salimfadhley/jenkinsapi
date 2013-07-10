@@ -206,6 +206,7 @@ class Jenkins(JenkinsBase):
     def __str__(self):
         return "Jenkins server at %s" % self.baseurl
 
+    @property
     def views(self):
         return Views(self)
 

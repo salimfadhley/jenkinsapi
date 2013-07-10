@@ -19,9 +19,9 @@ class BaseSystemTest(unittest.TestCase):
             self.jenkins.delete_job(name)
 
     def _delete_all_views(self):
-        all_view_names = self.jenkins.views().keys()[1:]
+        all_view_names = self.jenkins.views.keys()[1:]
         for name in all_view_names:
-            del self.jenkins.views()[name]
+            del self.jenkins.views[name]
 
     def _create_job(self, name='whatever', config=EMPTY_JOB):
         job = self.jenkins.create_job(name, config)
