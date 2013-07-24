@@ -31,7 +31,7 @@ class Requester(object):
         if username:
             assert password, 'Cannot set a username without a password!'
 
-        self.base_scheme = urlparse.urlsplit(self.baseurl).scheme if baseurl else None
+        self.base_scheme = urlparse.urlsplit(baseurl).scheme if baseurl else None
         self.username = username
         self.password = password
         self.sslVerify = sslVerify
