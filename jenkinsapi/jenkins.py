@@ -7,6 +7,7 @@ from jenkinsapi.job import Job
 from jenkinsapi.node import Node
 from jenkinsapi.view import View
 from jenkinsapi.nodes import Nodes
+from jenkinsapi.plugins import Plugins
 from jenkinsapi.views import Views
 from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
@@ -14,9 +15,8 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.exceptions import UnknownJob, JenkinsAPIException
 
-
-
 log = logging.getLogger(__name__)
+
 
 class Jenkins(JenkinsBase):
     """
@@ -316,3 +316,14 @@ class Jenkins(JenkinsBase):
         self.requester.get_and_confirm_status(url)
 
         return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
+
+    def get_plugins_url(self):
+        # This only ever needs to work on the base object
+        return '%s/pluginManager/api/python?depth=1' % self.baseurl
+
+    def get_plugins(self):
+        url = self.get_plugins_url()
+        return Plugins(url, self)
+
+    def has_plugin(self, plugin_name):
+        return plugin_name in self.get_plugins()

@@ -4,6 +4,7 @@ import unittest
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.exceptions import JenkinsAPIException
 from jenkinsapi.jenkins import Jenkins, JenkinsBase, Job
+from jenkinsapi.plugins import Plugins
 
 
 class TestJenkins(unittest.TestCase):
@@ -355,6 +356,22 @@ class TestJenkinsURLs(unittest.TestCase):
         self.assertEquals(
             J.get_create_url(), 'http://localhost:8080/createItem')
 
+    @mock.patch.object(Jenkins, '_poll')
+    @mock.patch.object(Plugins, '_poll')
+    def test_has_plugin(self, _p_poll, _poll):
+        _poll.return_value = {}
+        _p_poll.return_value = {'plugins': [
+            {'deleted': False, 'hasUpdate': True, 'downgradable': False, 
+            'dependencies': [{}, {}, {}, {}], 
+            'longName': 'Jenkins Subversion Plug-in', 'active': True, 
+            'shortName': 'subversion', 'backupVersion': None, 
+            'url': 'http://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin',
+            'enabled': True, 'pinned': False, 'version': '1.45', 
+            'supportsDynamicLoad': 'MAYBE', 'bundled': True}]}
+
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword')
+        self.assertTrue(J.has_plugin('subversion'))
 
 if __name__ == '__main__':
     unittest.main()
