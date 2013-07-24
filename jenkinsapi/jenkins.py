@@ -33,7 +33,7 @@ class Jenkins(JenkinsBase):
         self.username = username
         self.password = password
         self.sslVerify = sslVerify
-        self.requester = requester or Requester(username, password, sslVerify)
+        self.requester = requester or Requester(baseurl, username, password, sslVerify)
         JenkinsBase.__init__(self, baseurl)
 
     def _clone(self):
