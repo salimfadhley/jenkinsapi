@@ -22,20 +22,23 @@ class Jenkins(JenkinsBase):
     """
     Represents a jenkins environment.
     """
-    def __init__(self, baseurl, username=None, password=None, requester=None):
+    def __init__(self, baseurl, username=None, password=None, sslVerify=True, requester=None):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
         :param password: password for jenkins auth, str
+        :param sslVerify: flag if server certificate should be verified or not
         :return: a Jenkins obj
         """
         self.username = username
         self.password = password
-        self.requester = requester or Requester(username, password)
+        self.sslVerify = sslVerify
+        self.requester = requester or Requester(username, password, baseurl, sslVerify)
         JenkinsBase.__init__(self, baseurl)
 
     def _clone(self):
-        return Jenkins(self.baseurl, username=self.username, password=self.password, requester=self.requester)
+        return Jenkins(self.baseurl, username=self.username, password=self.password, sslVerify=self.sslVerify,
+                       requester=self.requester)
 
     def base_server_url(self):
         if config.JENKINS_API in self.baseurl:
@@ -65,7 +68,7 @@ class Jenkins(JenkinsBase):
         return self
 
     def get_jenkins_obj_from_url(self, url):
-        return Jenkins(url, self.username, self.password, self.requester)
+        return Jenkins(url, self.username, self.password, self.sslVerify, self.requester)
 
     def get_create_url(self):
         # This only ever needs to work on the base object

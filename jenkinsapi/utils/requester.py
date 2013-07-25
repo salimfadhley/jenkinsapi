@@ -1,4 +1,5 @@
 import requests
+import urlparse
 from jenkinsapi.exceptions import JenkinsAPIException
 # import logging
 
@@ -26,12 +27,14 @@ class Requester(object):
 
     VALID_STATUS_CODES = [200,]
 
-    def __init__(self, username=None, password=None):
+    def __init__(self, username=None, password=None, baseurl=None, sslVerify=True):
         if username:
             assert password, 'Cannot set a username without a password!'
 
+        self.base_scheme = urlparse.urlsplit(baseurl).scheme if baseurl else None
         self.username = username
         self.password = password
+        self.sslVerify = sslVerify
 
     def get_request_dict(self, url, params, data, headers):
         requestKwargs = {}
@@ -48,19 +51,32 @@ class Requester(object):
                 headers, dict), 'headers must be a dict, got %s' % repr(headers)
             requestKwargs['headers'] = headers
 
+        requestKwargs['verify'] = self.sslVerify
+
         if not data == None:
             # It may seem odd, but some Jenkins operations require posting
             # an empty string.
             requestKwargs['data'] = data
         return requestKwargs
 
+    def _update_url_scheme(self, url):
+        """
+        Updates scheme of given url to the one used in Jenkins baseurl.
+        """
+        if self.base_scheme and not url.startswith("%s://" % self.base_scheme):
+            url_split = urlparse.urlsplit(url)
+            url = urlparse.urlunsplit([self.base_scheme, url_split.netloc, url_split.path, url_split.query,
+                                       url_split.fragment])
+        return url
+
     def get_url(self, url, params=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, None, headers)
+        url = self._update_url_scheme(url)
         return requests.get(url, **requestKwargs)
-
 
     def post_url(self, url, params=None, data=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, data, headers)
+        url = self._update_url_scheme(url)
         return requests.post(url, **requestKwargs)
 
     def post_xml_and_confirm_status(self, url, params=None, data=None, valid=None):
