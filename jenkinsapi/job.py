@@ -128,7 +128,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 data={'json': self.mk_json_from_build_parameters(
                     build_params)},  # See above - build params have to be JSON encoded & posted.
                 params=params,
-                valid=[200, 201]
+                valid=[200, 201, 302]
             )
             if invoke_pre_check_delay > 0:
                 log.info(
