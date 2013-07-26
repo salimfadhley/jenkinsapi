@@ -289,7 +289,7 @@ class Build(JenkinsBase):
         url = "%s/consoleText" % self.baseurl
         return self.job.jenkins.requester.get_url(url).content
 
-    def stop(self):
+    def stop(self, stop_delay=1):
         """
         Stops the build execution if it's running
         :return boolean True if succeded False otherwise or the build is not running
@@ -297,5 +297,9 @@ class Build(JenkinsBase):
         if self.is_running():
             url = "%s/stop" % self.baseurl
             self.job.jenkins.requester.post_and_confirm_status(url, data='', valid=[200, 302])
+            if stop_delay > 0:
+                log.info(
+                    "Waiting for %is to allow Jenkins to catch up", stop_delay)
+                sleep(stop_delay)
             return True
         return False
