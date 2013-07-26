@@ -1,6 +1,11 @@
-import time
 import datetime
 from jenkinsapi.exceptions import UnknownQueueItem, TimeOut
+from time import sleep
+
+import logging
+
+log = logging.getLogger(__name__)
+
 
 class Invocation(object):
     """
@@ -66,7 +71,7 @@ class Invocation(object):
             if fn() == expectation:
                 break
             else:
-                time.sleep(delay)
+                sleep(delay)
             if datetime.datetime.now() > endTime:
                 raise TimeOut()
 
@@ -81,11 +86,15 @@ class Invocation(object):
         if until=='completed':
             self.block_until_completed(timeout, delay)
 
-    def stop(self):
+    def stop(self, stop_post_delay=1):
         """
         Stop this item, whether it is on the queue or blocked.
         """
         self.get_build().stop()
+        if stop_post_delay > 0:
+            log.info(
+                "Waiting for %is to allow Jenkins to catch up", stop_post_delay)
+            sleep(stop_post_delay)
 
     def is_queued(self):
         """
