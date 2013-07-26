@@ -139,7 +139,8 @@ class Jenkins(JenkinsBase):
         self.requester.post_and_confirm_status(
             self.get_create_url(),
             params=params,
-            data='')
+            data='',
+            valid=[200, 302])
         self.poll()
         return self[newjobname]
 
@@ -162,7 +163,8 @@ class Jenkins(JenkinsBase):
         delete_job_url = self[jobname].get_delete_url()
         self.requester.post_and_confirm_status(
             delete_job_url,
-            data='some random bytes...'
+            data='some random bytes...',
+            valid=[200, 302]
         )
         self.poll()
         return self
@@ -177,7 +179,7 @@ class Jenkins(JenkinsBase):
         params = {'newName': newjobname}
         rename_job_url = self[jobname].get_rename_url()
         self.requester.post_and_confirm_status(
-            rename_job_url, params=params, data='')
+            rename_job_url, params=params, data='', valid=[200, 302])
         self.poll()
         return self[newjobname]
 
@@ -275,7 +277,7 @@ class Jenkins(JenkinsBase):
         assert self.has_node(nodename), "This node: %s is not registered as a slave" % nodename
         assert nodename != "master", "you cannot delete the master node"
         url = "%s/doDelete" % self.get_node_url(nodename)
-        self.requester.get_and_confirm_status(url)
+        self.requester.get_and_confirm_status(url, valid=[200, 302])
 
     def create_node(self, name, num_executors=2, node_description=None,
                     remote_fs='/var/lib/jenkins', labels=None, exclusive=False):
@@ -313,7 +315,7 @@ class Jenkins(JenkinsBase):
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urllib.urlencode(params)
-        self.requester.get_and_confirm_status(url)
+        self.requester.get_and_confirm_status(url, valid=[200, 302])
 
         return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
 
