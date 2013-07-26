@@ -34,7 +34,7 @@ class View(JenkinsBase):
         Remove this view object
         """
         url = "%s/doDelete" % self.baseurl
-        self.jenkins_obj.requester.post_and_confirm_status(url, data='')
+        self.jenkins_obj.requester.post_and_confirm_status(url, data='', valid=[200, 302])
         self.jenkins_obj.poll()
         self.deleted = True
 
@@ -137,7 +137,7 @@ class View(JenkinsBase):
         data['json'] = data.copy()
         data = urllib.urlencode(data)
         self.get_jenkins_obj().requester.post_and_confirm_status(
-            '%s/configSubmit' % self.baseurl, data=data)
+            '%s/configSubmit' % self.baseurl, data=data, valid=[200, 302])
         self.poll()
         log.debug('Job "%s" has been added to a view "%s"' %
                   (job.name, self.name))

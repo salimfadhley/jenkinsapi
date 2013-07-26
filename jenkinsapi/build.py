@@ -296,6 +296,6 @@ class Build(JenkinsBase):
         """
         if self.is_running():
             url = "%s/stop" % self.baseurl
-            self.job.jenkins.requester.post_and_confirm_status(url, data='')
+            self.job.jenkins.requester.post_and_confirm_status(url, data='', valid=[200, 302])
             return True
         return False

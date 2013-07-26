@@ -111,6 +111,6 @@ class Views(object):
             "json": json.dumps({"name": view_name, "mode": view_type})
         }
 
-        self.jenkins.requester.post_and_confirm_status(url, data=data, headers=headers)
+        self.jenkins.requester.post_and_confirm_status(url, data=data, headers=headers, valid=[200, 302])
         self.jenkins.poll()
         return self[view_name]
