@@ -55,7 +55,7 @@ class TestViews(BaseSystemTest):
         self.assertIsInstance(tv, View)
 
         # Empty sub view
-        sv1 = tv.views.create(sub1_view_name) 
+        sv1 = tv.views.create(sub1_view_name)
         self.assertIn(sub1_view_name, tv.views)
         self.assertIsInstance(sv1, View)
 
@@ -64,7 +64,6 @@ class TestViews(BaseSystemTest):
         self.assertIn(sub2_view_name, tv.views)
         sv2 = tv.views[sub2_view_name]
         self.assertIsInstance(sv2, View)
-        print 'job.name, type(job.name)=', job.name, type(job.name)
         self.assertTrue(job.name in sv2)
 
         # Can we use the API convenience methods
