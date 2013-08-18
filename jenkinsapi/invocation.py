@@ -47,9 +47,7 @@ class Invocation(object):
         """
         If this job is building or complete then provide it's build-number
         """
-        # print '\nDEBUG: job.get_last_build_or_none=', self.job.get_last_build_or_none()
-        if not self.job.is_queued_or_running():
-            self.build_number = self.job.get_last_buildnumber()
+        self.build_number = self.job.get_last_buildnumber()
         return self.build_number
 
     def get_build(self):

@@ -15,7 +15,7 @@ class TestInvocation(BaseSystemTest):
     def test_invocation_object(self):
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, LONG_RUNNING_JOB)
-        ii = job.invoke()
+        ii = job.invoke(invoke_pre_check_delay=7)
         self.assertIsInstance(ii, Invocation)
         self.assertTrue(ii.is_queued_or_running())
         self.assertEquals(ii.get_build_number(), 1)
@@ -23,7 +23,7 @@ class TestInvocation(BaseSystemTest):
     def test_get_block_until_build_running(self):
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, LONG_RUNNING_JOB)
-        ii = job.invoke()
+        ii = job.invoke(invoke_pre_check_delay=7)
         bn = ii.get_build_number()
         self.assertIsInstance(bn, int)
         ii.block(until='not_queued')
@@ -45,13 +45,13 @@ class TestInvocation(BaseSystemTest):
     def test_multiple_invocations_and_get_last_build(self):
         job_name = 'create_%s' % random_string()
 
-        job = self.jenkins.create_job(job_name, EMPTY_JOB)
+        job = self.jenkins.create_job(job_name, SHORTISH_JOB)
 
         for _ in range(3):
             ii = job.invoke()
             ii.block(until='completed')
 
-        build_number = job.get_last_buildnumber()
+        build_number = job.get_last_good_buildnumber()
         self.assertEquals(build_number, 3)
 
         build = job.get_build(build_number)
