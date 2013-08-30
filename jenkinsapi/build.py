@@ -211,6 +211,16 @@ class Build(JenkinsBase):
         except (IndexError, KeyError):
             return None
 
+    def get_matrix_runs(self):
+        """
+        For a matrix job, get the individual builds for each
+        matrix configuration
+        :return: Generator of Build
+        """
+        if "runs" in self._data:
+            for rinfo in self._data["runs"]:
+                yield Build(rinfo["url"], rinfo["number"], self.job)
+
     def is_running( self ):
         """
         Return a bool if running.

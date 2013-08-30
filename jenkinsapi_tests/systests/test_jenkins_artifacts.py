@@ -2,6 +2,7 @@
 System tests for `jenkinsapi.jenkins` module.
 '''
 import os
+import re
 import time
 import gzip
 import shutil
@@ -38,7 +39,7 @@ class TestPingerJob(BaseSystemTest):
             text_artifact.save_to_dir(tempDir)
             readBackText = open(os.path.join(
                 tempDir, text_artifact.filename), 'rb').read().strip()
-            self.assertTrue(readBackText.startswith('PING localhost'))
+            self.assertTrue(re.match(r'^PING \S+ \(127.0.0.1\)', readBackText))
             self.assertTrue(readBackText.endswith('ms'))
 
             # Verify that we can hande binary artifacts
@@ -47,7 +48,7 @@ class TestPingerJob(BaseSystemTest):
                 tempDir, 
                 binary_artifact.filename,
                 ), 'rb' ).read().strip()
-            self.assertTrue(readBackText.startswith('PING localhost'))
+            self.assertTrue(re.match(r'^PING \S+ \(127.0.0.1\)', readBackText))
             self.assertTrue(readBackText.endswith('ms'))
         finally:
             shutil.rmtree(tempDir)
