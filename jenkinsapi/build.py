@@ -63,7 +63,7 @@ class Build(JenkinsBase):
         return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
 
     def get_duration(self):
-        return self._data["duration"]
+        return datetime.timedelta(miliseconds=self._data["duration"])
 
     def get_artifacts( self ):
         for afinfo in self._data["artifacts"]:
