@@ -85,7 +85,7 @@ class Node(JenkinsBase):
         """
         initial_state = self.is_temporarily_offline()
         url = self.baseurl + "/toggleOffline?offlineMessage=" + urllib.quote(message)
-        html_result = self.jenkins.requester.get_and_confirm_status(url)
+        html_result = self.jenkins.requester.get_and_confirm_status(url, valid=[200, 302])
         self.poll()
         log.debug(html_result)
         if initial_state == self.is_temporarily_offline():

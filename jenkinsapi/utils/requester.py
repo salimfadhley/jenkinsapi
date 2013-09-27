@@ -57,6 +57,10 @@ class Requester(object):
             # It may seem odd, but some Jenkins operations require posting
             # an empty string.
             requestKwargs['data'] = data
+
+        # Don't follow redirections
+        requestKwargs['allow_redirects'] = False
+
         return requestKwargs
 
     def _update_url_scheme(self, url):
