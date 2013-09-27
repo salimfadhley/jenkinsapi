@@ -52,11 +52,13 @@ Installation
 Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or setuptools to automatically install this project.
 
 Most users can do the following:
+
 .. code-block:: bash
 	
 	pip install jenkinsapi
 
-Or..
+Or:
+
 .. code-block:: bash
 	
 	easy_install jenkinsapi
@@ -65,6 +67,8 @@ Example
 -------
 
 JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
+
+.. code-block:: pycon
 
 	Python 2.7.4 (default, Apr 19 2013, 18:28:01)
 	[GCC 4.7.3] on linux2
