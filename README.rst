@@ -66,7 +66,7 @@ Or:
 Example
 -------
 
-JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
+JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects:
 
 .. code-block:: pycon
 	
