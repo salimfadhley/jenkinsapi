@@ -2,6 +2,7 @@ import mock
 import unittest
 
 from collections import defaultdict
+from jenkinsapi import config
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.queue import Queue, QueueItem
 from jenkinsapi.jenkinsbase import JenkinsBase
@@ -23,18 +24,18 @@ class TestQueue(unittest.TestCase):
 
     URL_DATA = {}
 
-    URL_DATA['http://localhost:8080/api/python/'] = \
+    URL_DATA['http://localhost:8080/%s' % config.JENKINS_API] = \
         {'jobs':[
             {'name':'utmebvpxrw', 
               'url':'http://localhost/job/utmebvpxrw'}
               ]
         }
 
-    URL_DATA['http://localhost/job/utmebvpxrw/api/python/'] = \
+    URL_DATA['http://localhost/job/utmebvpxrw/%s' % config.JENKINS_API] = \
         {}
 
 
-    URL_DATA['http://localhost:8080/queue/api/python/'] = \
+    URL_DATA['http://localhost:8080/queue/%s' % config.JENKINS_API] = \
         {'items': [{'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
                                      'userId': None,
                                      'userName': 'anonymous'}]}],

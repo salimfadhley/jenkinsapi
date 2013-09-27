@@ -196,8 +196,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_build_dict(self):
         if not self._data.has_key("builds"):
             raise NoBuildData(repr(self))
+        builds = self._data["builds"]
+        last_build = self._data['lastBuild']
+        if builds and last_build and builds[0]['number'] != last_build['number']:
+            builds = [last_build] + builds
         return dict((build["number"], build["url"])
-                        for build in self._data["builds"])
+                        for build in builds)
 
     def get_revision_dict(self):
         """

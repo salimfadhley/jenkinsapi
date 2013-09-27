@@ -1,6 +1,7 @@
 import json
 import urllib
 import logging
+import urlparse
 
 from jenkinsapi import config
 from jenkinsapi.job import Job
@@ -240,11 +241,11 @@ class Jenkins(JenkinsBase):
 
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
-        url = "%(baseurl)s/computer/%(nodename)s" % {'baseurl': self.baseurl, 'nodename': urllib.quote(nodename)}
+        url = urlparse.urljoin(self.base_server_url(), 'computer/%s' % urllib.quote(nodename))
         return url
 
     def get_queue_url(self):
-        url = "%(baseurl)s/queue/" % {'baseurl': self.baseurl}
+        url = urlparse.urljoin(self.base_server_url(), 'queue')
         return url
 
     def get_queue(self):

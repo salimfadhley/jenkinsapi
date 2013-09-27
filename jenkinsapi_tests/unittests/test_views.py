@@ -1,5 +1,6 @@
 import mock
 import unittest
+from jenkinsapi import config
 from jenkinsapi.view import View
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.jenkinsbase import JenkinsBase
@@ -37,9 +38,9 @@ class TestViews(unittest.TestCase):
         """
         def mockGetData(JJ, url):
             DATA = {}
-            DATA['http://localhost:8080/api/python/'] = \
+            DATA['http://localhost:8080/%s' % config.JENKINS_API] = \
                 {'views':[dict(name='NewView', url='http://xxxxx/yyyy')]}
-            DATA['http://xxxxx/yyyy/api/python/'] = \
+            DATA['http://xxxxx/yyyy/%s' % config.JENKINS_API] = \
                 {}
 
             try:
