@@ -1,6 +1,14 @@
-============
 jenkinsapi
-============
+==========
+
+.. image:: https://badge.fury.io/py/jenkinsapi.png
+    :target: http://badge.fury.io/py/jenkinsapi
+
+.. image:: https://travis-ci.org/salimfadhley/jenkinsapi.png?branch=master
+        :target: https://travis-ci.org/salimfadhley/jenkinsapi
+
+.. image:: https://pypip.in/d/DTL/jenkinsapi.png
+        :target: https://crate.io/packages/jenkinsapi/
 
 About this library
 -------------------
@@ -44,12 +52,14 @@ Installation
 Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or setuptools to automatically install this project.
 
 Most users can do the following:
-::
-    pip install jenkinsapi
+.. code-block:: bash
+	
+	pip install jenkinsapi
 
 Or..
-::
-    easy_install jenkinsapi
+.. code-block:: bash
+	
+	easy_install jenkinsapi
 
 Example
 -------
@@ -80,6 +90,7 @@ Project Authors
  * Victor Garcia (bravejolie@gmail.com)
  * Bradley Harris (bradley@ninelb.com)
  * Aleksey Maksimov (ctpeko3a@gmail.com)
+ * Kyle Rockman (kyle.rockman@mac.com)
 
 License
 --------
