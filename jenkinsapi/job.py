@@ -320,6 +320,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def load_config(self):
         self._config = self.get_config()
 
+    def load_all_builds(self):
+        '''Query Jenkins to get all builds of the job.
+
+        Jenkins API loads job data lazily and may not contain all builds
+        information. Call this method to retrieve all builds data.'''
+        api_url = self.python_api_url(self.baseurl)
+        response = self.get_data(api_url, {'tree': 'allBuilds[number,url]'})
+        self._data['builds'] = response['allBuilds']
+
     def get_scm_type(self):
         element_tree = self._get_config_element_tree()
         scm_class = element_tree.find('scm').get('class')
