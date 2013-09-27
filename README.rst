@@ -7,7 +7,7 @@ jenkinsapi
 .. image:: https://travis-ci.org/salimfadhley/jenkinsapi.png?branch=master
         :target: https://travis-ci.org/salimfadhley/jenkinsapi
 
-.. image:: https://pypip.in/d/DTL/jenkinsapi.png
+.. image:: https://pypip.in/d/jenkinsapi/badge.png
         :target: https://crate.io/packages/jenkinsapi/
 
 About this library
@@ -69,10 +69,7 @@ Example
 JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
 
 .. code-block:: pycon
-
-	Python 2.7.4 (default, Apr 19 2013, 18:28:01)
-	[GCC 4.7.3] on linux2
-	Type "help", "copyright", "credits" or "license" for more information.
+	
 	>>> import jenkinsapi
 	>>> from jenkinsapi.jenkins import Jenkins
 	>>> J = Jenkins('http://localhost:8080')
@@ -82,6 +79,7 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 	<jenkinsapi.job.Job test_jenkinsapi>
 	>>> J['test_jenkinsapi'].get_last_good_build()
 	<jenkinsapi.build.Build test_jenkinsapi #77>
+	...
 
 Project Authors
 ----------------
