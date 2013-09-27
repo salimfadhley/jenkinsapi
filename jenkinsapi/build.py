@@ -65,7 +65,7 @@ class Build(JenkinsBase):
         return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
 
     def get_duration(self):
-        return self._data["duration"]
+        return datetime.timedelta(miliseconds=self._data["duration"])
 
     def get_artifacts( self ):
         for afinfo in self._data["artifacts"]:
@@ -206,7 +206,9 @@ class Build(JenkinsBase):
             fingerprints = fingerprint_data['fingerprint'][0]
             for f in fingerprints['usage']:
                 if f['name'] in downstream_jobs_names:
-                    downstream_builds.append(self.get_jenkins_obj().get_job(f['name']).get_build(f['ranges']['ranges'][0]['start']))
+                    job = self.get_jenkins_obj().get_job(f['name'])
+                    for build_id in range(f['ranges']['ranges'][0]['start'], f['ranges']['ranges'][0]['end']):
+                        downstream_builds.append(job.get_build(build_id))
             return downstream_builds
         except (IndexError, KeyError):
             return None
