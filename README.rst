@@ -1,6 +1,14 @@
-============
 jenkinsapi
-============
+==========
+
+.. image:: https://badge.fury.io/py/jenkinsapi.png
+    :target: http://badge.fury.io/py/jenkinsapi
+
+.. image:: https://travis-ci.org/salimfadhley/jenkinsapi.png?branch=master
+        :target: https://travis-ci.org/salimfadhley/jenkinsapi
+
+.. image:: https://pypip.in/d/jenkinsapi/badge.png
+        :target: https://crate.io/packages/jenkinsapi/
 
 About this library
 -------------------
@@ -21,36 +29,9 @@ This library can help you:
  * Ability to add/remove/query Jenkins slaves
  * Ability to add/remove/modify Jenkins views
 
-A word from our sponsors
-------------------------
-
-A big thanks to CloudBees, who provide this project with free continuous-integration services. Go check out
-the status of this project on one of their servers. Literally nobody knows more about Jenkins than
-CloudBees.
-
-https://jenkinsapi.ci.cloudbees.com/
-
-Getting Help
-------------
-
-If you need to ask for help or report a bug, please use the github issue tracker. Please do not email the developers directly.
-
-Supporting this project
------------------------
-
-First of all, thanks for using this project. The fact that you are checking this out is reason enough for me to continue developing it. This project is 100% free and no financial donations are requested, however there are other wasy you can support this work in progress:
-
- * Submit code and tests: This is test-driven development. The best way to help this project move along is to find a bug and pull-request a new test that shows us what's wrong. The developers of this project find it much  easier to fix against tests than bug-reports.
-
- * Submit issues & bug reports: It may be 2nd best but it's still very useful. Your bug reports help us work out what's wrong with our project and what features we need to prioritize in future releases. We take note of every issue and are truly grateful to any user who can spare the time to tell us what they think.
-
- * Submit case studies: If you like what we do, please tell us how you are using this project. We want to know what company you are working for and what kind of uses you have found for JenkinsAPI. We'd love to feature your case-study in future versions of our documentation. If you have a story to tell just raise it as an issue on Github.
-
- Thanks!
-
 Known bugs
 ----------
- [x] Currently incompatible with Jenkins > 1.518. Job deletion operations fail unless Cross-Site scripting protection is disabled.
+ [ ] Currently incompatible with Jenkins > 1.518. Job deletion operations fail unless Cross-Site scripting protection is disabled.
 
  For other issues, please refer to the support URL below.
 
@@ -71,21 +52,24 @@ Installation
 Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or setuptools to automatically install this project.
 
 Most users can do the following:
-::
-    pip install jenkinsapi
 
-Or..
-::
-    easy_install jenkinsapi
+.. code-block:: bash
+	
+	pip install jenkinsapi
+
+Or:
+
+.. code-block:: bash
+	
+	easy_install jenkinsapi
 
 Example
 -------
 
-JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects::
+JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) into easily managed Python objects:
 
-	Python 2.7.4 (default, Apr 19 2013, 18:28:01)
-	[GCC 4.7.3] on linux2
-	Type "help", "copyright", "credits" or "license" for more information.
+.. code-block:: pycon
+	
 	>>> import jenkinsapi
 	>>> from jenkinsapi.jenkins import Jenkins
 	>>> J = Jenkins('http://localhost:8080')
@@ -95,20 +79,20 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 	<jenkinsapi.job.Job test_jenkinsapi>
 	>>> J['test_jenkinsapi'].get_last_good_build()
 	<jenkinsapi.build.Build test_jenkinsapi #77>
+	...
 
 Project Authors
 ----------------
 
  * Salim Fadhley (sal@stodge.org)
- * Aleksey Maksimov (ctpeko3a@gmail.com)
  * Ramon van Alteren (ramon@vanalteren.nl)
  * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
  * Cleber J Santos (cleber@simplesconsultoria.com.br)
  * William Zhang (jollychang@douban.com)
  * Victor Garcia (bravejolie@gmail.com)
  * Bradley Harris (bradley@ninelb.com)
-
-PLEASE do not use these email addresses for support, use github's issue tracker.
+ * Aleksey Maksimov (ctpeko3a@gmail.com)
+ * Kyle Rockman (kyle.rockman@mac.com)
 
 License
 --------
