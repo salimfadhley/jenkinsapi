@@ -28,6 +28,12 @@ class Build(JenkinsBase):
         self.buildno = buildno
         self.job = job
         JenkinsBase.__init__( self, url )
+        
+    def _poll(self):
+        #For build's we need more information for downstream and upstream builds
+        #so we override the poll to get at the extra data for build objects
+        url = self.python_api_url(self.baseurl) + '?depth=2'
+        return self.get_data(url)
 
     def __str__(self):
         return self._data['fullDisplayName']
@@ -65,7 +71,7 @@ class Build(JenkinsBase):
         return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
 
     def get_duration(self):
-        return self._data["duration"]
+        return datetime.timedelta(milliseconds=self._data["duration"])
 
     def get_artifacts( self ):
         for afinfo in self._data["artifacts"]:
@@ -165,14 +171,10 @@ class Build(JenkinsBase):
         Get the downstream jobs for this build
         :return List of jobs or None
         """
-        downstream_jobs_names = self.job.get_downstream_job_names()
-        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name]]" % self.python_api_url(self.baseurl))
         downstream_jobs = []
         try:
-            fingerprints = fingerprint_data['fingerprint'][0]
-            for f in fingerprints['usage']:
-                if f['name'] in downstream_jobs_names:
-                    downstream_jobs.append(self.get_jenkins_obj().get_job(f['name']))
+            for job_name in self.get_downstream_job_names():
+                downstream_jobs.append(self.get_jenkins_obj().get_job(job_name))
             return downstream_jobs
         except (IndexError, KeyError):
             return None
@@ -182,14 +184,14 @@ class Build(JenkinsBase):
         Get the downstream job names for this build
         :return List of string or None
         """
-        downstream_jobs_names = self.job.get_downstream_job_names()
-        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name]]" % self.python_api_url(self.baseurl))
+        downstream_job_names = self.job.get_downstream_job_names()
         downstream_names = []
         try:
-            fingerprints = fingerprint_data['fingerprint'][0]
-            for f in fingerprints['usage']:
-                if f['name'] in downstream_jobs_names:
-                    downstream_names.append(f['name'])
+            fingerprints = self._data["fingerprint"]
+            for fingerprint in fingerprints :
+                for job_usage in fingerprint['usage']:
+                    if job_usage['name'] in downstream_job_names:
+                        downstream_names.append(job_usage['name'])
             return downstream_names
         except (IndexError, KeyError):
             return None
@@ -199,14 +201,18 @@ class Build(JenkinsBase):
         Get the downstream builds for this build
         :return List of Build or None
         """
-        downstream_jobs_names = self.job.get_downstream_job_names()
-        fingerprint_data = self.get_data("%s?depth=2&tree=fingerprint[usage[name,ranges[ranges[end,start]]]]" % self.python_api_url(self.baseurl))
+        downstream_job_names = self.get_downstream_job_names()
         downstream_builds = []
         try:
-            fingerprints = fingerprint_data['fingerprint'][0]
-            for f in fingerprints['usage']:
-                if f['name'] in downstream_jobs_names:
-                    downstream_builds.append(self.get_jenkins_obj().get_job(f['name']).get_build(f['ranges']['ranges'][0]['start']))
+            fingerprints = self._data["fingerprint"]
+            for fingerprint in fingerprints :
+                for job_usage in fingerprint['usage']:
+                    if job_usage['name'] in downstream_job_names:
+                        job = self.get_jenkins_obj().get_job(job_usage['name'])
+                        for job_range in job_usage['ranges']['ranges']:
+                            for build_id in range(job_range['start'],
+                                                  job_range['end']):
+                                downstream_builds.append(job.get_build(build_id))
             return downstream_builds
         except (IndexError, KeyError):
             return None

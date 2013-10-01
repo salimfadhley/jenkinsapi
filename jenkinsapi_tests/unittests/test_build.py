@@ -18,9 +18,21 @@ class test_build(unittest.TestCase):
         'changeSet': {'items': [], 'kind': None},
         'culprits': [],
         'description': None,
-        'duration': 106,
+        "duration": 5782,
         'estimatedDuration': 106,
         'executor': None,
+        "fingerprint": [{"fileName": "BuildId.json",
+                         "hash": "e3850a45ab64aa34c1aa66e30c1a8977",
+                         "original": {"name": "ArtifactGenerateJob",
+                                      "number": 469},
+                         "timestamp": 1380270162488,
+                         "usage": [{"name": "SingleJob",
+                                    "ranges": {"ranges": [{"end": 567,
+                                                           "start": 566}]}},
+                                   {"name": "MultipleJobs",
+                                    "ranges": {"ranges": [{"end": 150,
+                                                           "start": 139}]}}]
+                         }],
         'fullDisplayName': 'foo #1',
         'id': '2013-05-31_23-15-40',
         'keepLog': False,
@@ -49,3 +61,20 @@ class test_build(unittest.TestCase):
         with self.assertRaises(AttributeError):
             _ = self.b.id()
         self.assertEquals(self.b.name, 'foo #1')
+        
+    def test_duration(self):
+        expected = datetime.timedelta(milliseconds=5782)
+        self.assertEquals(self.b.get_duration(), expected)
+        self.assertEquals(self.b.get_duration().seconds, 5)
+        self.assertEquals(self.b.get_duration().microseconds, 782000)
+        self.assertEquals(str(self.b.get_duration()), '0:00:05.782000')
+        
+    def test_downstream(self):
+        expected = ['SingleJob','MultipleJobs']
+        self.assertEquals(self.b.get_downstream_job_names(), expected)
+
+def main():
+    unittest.main(verbosity=2)
+
+if __name__ == '__main__':
+    main()
