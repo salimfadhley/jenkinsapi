@@ -9,7 +9,7 @@ from jenkinsapi.invocation import Invocation
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.queue import QueueItem
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
-from jenkinsapi.exceptions import NoBuildData, NotFound, NotInQueue, WillNotBuild, UnknownQueueItem
+from jenkinsapi.exceptions import NoBuildData, NotConfiguredSCM, NotFound, NotInQueue, NotSupportSCM, WillNotBuild, UnknownQueueItem
 
 log = logging.getLogger(__name__)
 
@@ -325,10 +325,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         scm_class = element_tree.find('scm').get('class')
         scm = self._scm_map.get(scm_class)
         if not scm:
-            raise exceptions.NotSupportSCM(
+            raise NotSupportSCM(
                 "SCM class \"%s\" not supported by API, job \"%s\"" % (scm_class, self.name))
         if scm == 'NullSCM':
-            raise exceptions.NotConfiguredSCM(
+            raise NotConfiguredSCM(
                 "SCM does not configured, job \"%s\"" % self.name)
         return scm
 
