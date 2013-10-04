@@ -52,9 +52,9 @@ class JenkinsBase(object):
         url = self.python_api_url(self.baseurl)
         return self.get_data(url)
 
-    def get_data(self, url):
+    def get_data(self, url, params=None):
         requester = self.get_jenkins_obj().requester
-        response = requester.get_url(url)
+        response = requester.get_url(url, params)
         try:
             return eval(response.text)
         except Exception:

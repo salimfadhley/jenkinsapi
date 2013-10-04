@@ -37,6 +37,20 @@ class TestPlugins(unittest.TestCase):
         self.assertIsInstance(self.J.get_plugins(), Plugins)
 
     @mock.patch.object(Plugins, '_poll')
+    def test_no_plugins_str(self, _poll_plugins):
+        _poll_plugins.return_value = {}
+
+        plugins = self.J.get_plugins()
+        self.assertEquals(str(plugins), "[]")
+
+    @mock.patch.object(Plugins, '_poll')
+    def test_plugins_str(self, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+
+        plugins = self.J.get_plugins()
+        self.assertEquals(str(plugins), "['maven-plugin', 'subversion']")
+
+    @mock.patch.object(Plugins, '_poll')
     def test_plugins_len(self, _poll_plugins):
         _poll_plugins.return_value = self.DATA
 
