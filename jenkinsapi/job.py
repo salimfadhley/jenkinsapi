@@ -184,7 +184,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             "lastFailedBuild"]
         assert buildtype in KNOWNBUILDTYPES, 'Unknown build info type: %s' % buildtype
 
-        if not self._data[buildtype]:
+        if not self._data.get(buildtype):
             raise NoBuildData(buildtype)
         return self._data[buildtype]["number"]
 

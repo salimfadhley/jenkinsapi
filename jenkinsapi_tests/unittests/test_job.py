@@ -157,6 +157,14 @@ class TestJob(unittest.TestCase):
         with self.assertRaises(NoBuildData):
             j.get_revision_dict()
 
+    @mock.patch.object(Job, '_poll')
+    def test_nobuilds_get_last_build(self, _poll):
+        # Bare minimum build dict, we only testing dissapearance of 'builds'
+        _poll.return_value = {"name": "foo"}
+
+        j = Job('http://halob:8080/job/foo/', 'foo', self.J)
+        with self.assertRaises(NoBuildData):
+            j.get_last_build()
 
 if __name__ == '__main__':
     unittest.main()
