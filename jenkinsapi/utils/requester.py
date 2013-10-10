@@ -34,7 +34,7 @@ class Requester(object):
         self.password = password
         self.ssl_verify = ssl_verify
 
-    def get_request_dict(self, url, params, data, headers):
+    def get_request_dict(self, url, params=None, data=None, files=None, headers=None):
         requestKwargs = {}
         if self.username:
             requestKwargs['auth'] = (self.username, self.password)
@@ -55,31 +55,34 @@ class Requester(object):
             # It may seem odd, but some Jenkins operations require posting
             # an empty string.
             requestKwargs['data'] = data
+
+        if files:
+            requestKwargs['files'] = files
+
         return requestKwargs
 
     def get_url(self, url, params=None, headers=None):
-        requestKwargs = self.get_request_dict(url, params, None, headers)
+        requestKwargs = self.get_request_dict(url, params=params, headers=headers)
         return requests.get(url, **requestKwargs)
 
-
-    def post_url(self, url, params=None, data=None, headers=None):
-        requestKwargs = self.get_request_dict(url, params, data, headers)
+    def post_url(self, url, params=None, data=None, files=None, headers=None):
+        requestKwargs = self.get_request_dict(url, params=params, data=data, files=files, headers=headers)
         return requests.post(url, **requestKwargs)
 
     def post_xml_and_confirm_status(self, url, params=None, data=None, valid=None):
         headers = {'Content-Type': 'text/xml'}
-        return self.post_and_confirm_status(url, params, data, headers, valid)
+        return self.post_and_confirm_status(url, params=params, data=data, headers=headers, valid=valid)
 
-    def post_and_confirm_status(self, url, params=None, data=None, headers=None, valid=None):
+    def post_and_confirm_status(self, url, params=None, data=None, files=None, headers=None, valid=None):
         valid = valid or self.VALID_STATUS_CODES
         assert isinstance(data, (
             str, dict)), \
             "Unexpected type of parameter 'data': %s. Expected (str, dict)" % type(data)
 
-        if not headers:
+        if not headers and not files:
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-        response = self.post_url(url, params, data, headers)
+        response = self.post_url(url, params, data, files, headers)
         if not response.status_code in valid:
             raise JenkinsAPIException('Operation failed. url={0}, data={1}, headers={2}, status={3}, text={4}'.format(
                 response.url, data, headers, response.status_code, response.text.encode('UTF-8')))

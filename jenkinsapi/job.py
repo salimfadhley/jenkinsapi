@@ -91,7 +91,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_build_triggerurl(self):
+    def get_build_triggerurl(self, build_params=None, files=None):
+        if build_params or files:
+            return "%s/buildWithParameters" % self.baseurl
         return "%s/build" % self.baseurl
 
     @staticmethod
@@ -111,7 +113,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         to_json_structure = Job._mk_json_from_build_parameters(build_params)
         return json.dumps(to_json_structure)
 
-    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, build_params=None, cause=None):
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, build_params=None, cause=None, files=None):
         assert isinstance(invoke_pre_check_delay, (int, float))
         assert isinstance(invoke_block_delay, (int, float))
         assert isinstance(block, bool)
@@ -140,7 +142,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             log.info("Attempting to start %s on %s", self.name, repr(
                 self.get_jenkins_obj()))
 
-            url = self.get_build_triggerurl()
+            url = self.get_build_triggerurl(build_params, files)
 
             if cause:
                 build_params['cause'] = cause
@@ -148,11 +150,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if securitytoken:
                 params['token'] = securitytoken
 
+            data = build_params
+
             response = self.jenkins.requester.post_and_confirm_status(
                 url,
-                data={'json': self.mk_json_from_build_parameters(
-                    build_params)},  # See above - build params have to be JSON encoded & posted.
+                data=data,
                 params=params,
+                files=files,
                 valid=[200, 201]
             )
             if invoke_pre_check_delay > 0:
