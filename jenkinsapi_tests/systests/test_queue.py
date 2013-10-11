@@ -11,11 +11,12 @@ from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
 
 log = logging.getLogger(__name__)
 
+
 class TestQueue(BaseSystemTest):
     """
     All kinds of testing on Jenkins Queues
     """
-    #TODO: Test timeout behavior
+    # TODO: Test timeout behavior
 
     def test_get_queue(self):
         qq = self.jenkins.get_queue()
@@ -42,7 +43,6 @@ class TestQueue(BaseSystemTest):
         queue.poll()
 
         self.assertEquals(len(queue), 0)
-
 
     def test_start_and_stop_long_running_job(self):
         job_name = random_string()

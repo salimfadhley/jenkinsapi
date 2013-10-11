@@ -14,7 +14,7 @@ api = Jenkins(jenkins_url)
 logger.info('Attempting to create new view')
 new_view = api.create_view('SimpleListView')
 logger.info('new_view is %s' % new_view)
-if new_view == None: 
+if new_view is None:
     logger.error('View was not created')
 else:
     logger.info('View has been created')

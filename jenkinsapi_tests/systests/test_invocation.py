@@ -66,7 +66,7 @@ class TestInvocation(BaseSystemTest):
             ii = job.invoke()
             ii.block(until='completed')
             build_number = ii.get_build_number()
-            self.assertEquals(build_number, invocation+1)
+            self.assertEquals(build_number, invocation + 1)
 
 
 if __name__ == '__main__':

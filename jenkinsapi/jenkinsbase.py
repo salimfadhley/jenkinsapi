@@ -1,7 +1,12 @@
+"""
+Module for JenkinsBase class
+"""
+
 import logging
 from jenkinsapi import config
-from jenkinsapi.exceptions import JenkinsAPIException
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 log = logging.getLogger(__name__)
+
 
 class JenkinsBase(object):
     """
@@ -12,7 +17,7 @@ class JenkinsBase(object):
     def __repr__(self):
         return """<%s.%s %s>""" % (self.__class__.__module__,
                                    self.__class__.__name__,
-                                   str( self ))
+                                   str(self))
 
     def __str__(self):
         raise NotImplementedError
@@ -67,7 +72,7 @@ class JenkinsBase(object):
             return url
         else:
             if url.endswith(r"/"):
-                fmt="%s%s"
+                fmt = "%s%s"
             else:
                 fmt = "%s/%s"
             return fmt % (url, config.JENKINS_API)

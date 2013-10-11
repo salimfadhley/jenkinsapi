@@ -4,42 +4,47 @@ import unittest
 from jenkinsapi import config
 from jenkinsapi.job import Job
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.exceptions import NoBuildData
+from jenkinsapi.custom_exceptions import NoBuildData
 
 
 class TestJob(unittest.TestCase):
-    JOB_DATA = {"actions": [],
-            "description": "test job",
-            "displayName": "foo",
-            "displayNameOrNull": None,
-            "name": "foo",
-            "url": "http://halob:8080/job/foo/",
-            "buildable": True,
-            "builds": [{"number": 3, "url": "http://halob:8080/job/foo/3/"},
-           {"number": 2, "url": "http://halob:8080/job/foo/2/"},
-                {"number": 1, "url": "http://halob:8080/job/foo/1/"}],
-            "color": "blue",
-            "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
-            "healthReport": [{"description": "Build stability: No recent builds failed.",
-                             "iconUrl": "health-80plus.png", "score": 100}],
-            "inQueue": False,
-            "keepDependencies": False,
-            "lastBuild": {"number": 4, "url": "http://halob:8080/job/foo/4/"}, # build running
-            "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastFailedBuild": None,
-            "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastUnstableBuild": None,
-            "lastUnsuccessfulBuild": None,
-            "nextBuildNumber": 4,
-            "property": [],
-            "queueItem": None,
-            "concurrentBuild": False,
-            "downstreamProjects": [],
-            "scm": {},
-            "upstreamProjects": []}
+    JOB_DATA = {
+        "actions": [],
+        "description": "test job",
+        "displayName": "foo",
+        "displayNameOrNull": None,
+        "name": "foo",
+        "url": "http://halob:8080/job/foo/",
+        "buildable": True,
+        "builds": [
+            {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+            {"number": 2, "url": "http://halob:8080/job/foo/2/"},
+            {"number": 1, "url": "http://halob:8080/job/foo/1/"}
+        ],
+        "color": "blue",
+        "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
+        "healthReport": [
+            {"description": "Build stability: No recent builds failed.", "iconUrl": "health-80plus.png", "score": 100}
+        ],
+        "inQueue": False,
+        "keepDependencies": False,
+        "lastBuild": {"number": 4, "url": "http://halob:8080/job/foo/4/"},  # build running
+        "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastFailedBuild": None,
+        "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastUnstableBuild": None,
+        "lastUnsuccessfulBuild": None,
+        "nextBuildNumber": 4,
+        "property": [],
+        "queueItem": None,
+        "concurrentBuild": False,
+        "downstreamProjects": [],
+        "scm": {},
+        "upstreamProjects": []
+    }
 
-    URL_DATA = {'http://halob:8080/job/foo/%s' % config.JENKINS_API:JOB_DATA}
+    URL_DATA = {'http://halob:8080/job/foo/%s' % config.JENKINS_API: JOB_DATA}
 
     def fakeGetData(self, url, *args):
         try:

@@ -1,10 +1,13 @@
+"""
+Queue module for jenkinsapi
+"""
+
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.exceptions import UnknownQueueItem
+from jenkinsapi.custom_exceptions import UnknownQueueItem
 import logging
-import urlparse
-import urllib2
 
 log = logging.getLogger(__name__)
+
 
 class Queue(JenkinsBase):
     """
@@ -30,27 +33,36 @@ class Queue(JenkinsBase):
         for item in self._data['items']:
             yield item['id'], QueueItem(self.jenkins, **item)
 
+    def iterkeys(self):
+        for item in self._data['items']:
+            yield item['id']
+
+    def iterivalues(self):
+        for item in self._data['items']:
+            yield QueueItem(self.jenkins, **item)
+
     def keys(self):
-        return [i[0] for i in self.iteritems()]
+        return list(self.iterkeys())
 
     def values(self):
-        return [i[1] for i in self.iteritems()]
+        return list(self.itervalues())
 
     def __len__(self):
         return len(self._data['items'])
 
     def __getitem__(self, item_id):
-        for id, item in self.iteritems():
-            if id == item_id:
-                return item
-        raise UnknownQueueItem(item_id)
+        self_as_dict = dict(self.iteritems())
+        if item_id in self_as_dict:
+            return self_as_dict[item_id]
+        else:
+            raise UnknownQueueItem(item_id)
 
     def get_queue_items_for_job(self, job_name):
         if not job_name:
             return [QueueItem(**item) for item in self._data['items']]
         else:
             return [QueueItem(**item) for item in self._data['items']
-                   if item['task']['name'] == job_name]
+                    if item['task']['name'] == job_name]
 
     def delete_item(self, queue_item):
         self.delete_item_by_id(queue_item.id)
@@ -77,10 +89,7 @@ class QueueItem(object):
         return self.jenkins[self.task['name']]
 
     def __repr__(self):
-        return "<%s.%s %s>" % (
-                    self.__class__.__module__,
-                    self.__class__.__name__,
-                    str(self))
+        return "<%s.%s %s>" % (self.__class__.__module__, self.__class__.__name__, str(self))
 
     def __str__(self):
         return "%s #%i" % (self.task['name'], self.id)

@@ -11,7 +11,7 @@ print xml
 
 j = J.create_job(jobname=jobName, config=xml)
 
-j2= J[jobName]
+j2 = J[jobName]
 print j
 
 # Delete job

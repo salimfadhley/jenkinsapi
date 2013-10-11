@@ -1,9 +1,14 @@
+"""
+Module for jenkinsapi nodes
+"""
+
 import logging
 from jenkinsapi.node import Node
-from jenkinsapi.exceptions import UnknownNode
+from jenkinsapi.custom_exceptions import UnknownNode
 from jenkinsapi.jenkinsbase import JenkinsBase
 
 log = logging.getLogger(__name__)
+
 
 class Nodes(JenkinsBase):
     """
@@ -43,10 +48,15 @@ class Nodes(JenkinsBase):
             try:
                 yield item['displayName'], Node(nodeurl, nodename, self.jenkins)
             except Exception:
-                import ipdb; ipdb.set_trace()
+                import ipdb
+                ipdb.set_trace()
 
     def __getitem__(self, nodename):
-        for k, v in self.iteritems():
-            if k == nodename:
-                return v
-        raise UnknownNode(nodename)
+        self_as_dict = dict(self.iteritems())
+        if nodename in self_as_dict:
+            return self_as_dict[nodename]
+        else:
+            raise UnknownNode(nodename)
+
+    def __len__(self):
+        return len(self.iteritems())

@@ -27,18 +27,18 @@ class TestNodes(BaseSystemTest):
         Can we flip the online / offline state of the master node.
         """
         # Master node name should be case insensitive
-        #mn0 = self.jenkins.get_node('MaStEr')
+        # mn0 = self.jenkins.get_node('MaStEr')
         mn = self.jenkins.get_node('master')
-        #self.assertEquals(mn, mn0)
+        # self.assertEquals(mn, mn0)
 
-        mn.set_online() # It should already be online, hence no-op
+        mn.set_online()  # It should already be online, hence no-op
         self.assertTrue(mn.is_online())
 
-        mn.set_offline() # We switch that suckah off
-        mn.set_offline() # This should be a no-op
+        mn.set_offline()  # We switch that suckah off
+        mn.set_offline()  # This should be a no-op
         self.assertFalse(mn.is_online())
 
-        mn.set_online() # Switch it back on
+        mn.set_online()  # Switch it back on
         self.assertTrue(mn.is_online())
 
 

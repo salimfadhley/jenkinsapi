@@ -1,5 +1,5 @@
 # This example requires NestedViews plugin to be installed in Jenkins
-# You need to have at least one job in your Jenkins to see views 
+# You need to have at least one job in your Jenkins to see views
 import logging
 from pkg_resources import resource_string
 
@@ -22,7 +22,7 @@ j = api.create_job(jobname=jobName, config=xml)
 logger.info('Attempting to create new nested view')
 top_view = api.views.create('TopView', Views.NESTED_VIEW)
 logger.info('top_view is %s' % top_view)
-if top_view == None: 
+if top_view is None:
     logger.error('View was not created')
 else:
     logger.info('View has been created')
@@ -30,7 +30,7 @@ else:
 print 'top_view.views=', top_view.views.keys()
 logger.info('Attempting to create view inside nested view')
 sub_view = top_view.views.create('SubView')
-if sub_view == None:
+if sub_view is None:
     logger.info('View was not created')
 else:
     logger.error('View has been created')

@@ -1,3 +1,7 @@
+"""
+jenkinsapi class for invoking Jenkins
+"""
+
 import os
 import sys
 import logging
@@ -6,22 +10,28 @@ from jenkinsapi import jenkins
 
 log = logging.getLogger(__name__)
 
-class jenkins_invoke(object):
+
+class JenkinsInvoke(object):
+    """
+    JenkinsInvoke object implements class to call from command line
+    """
+
     @classmethod
     def mkparser(cls):
         parser = optparse.OptionParser()
-        DEFAULT_BASEURL=os.environ.get( "JENKINS_URL", "http://localhost/jenkins" )
-        parser.help_text = "Execute a number of jenkins jobs on the server of your choice. Optionally block until the jobs are complete."
+        DEFAULT_BASEURL = os.environ.get("JENKINS_URL", "http://localhost/jenkins")
+        parser.help_text = "Execute a number of jenkins jobs on the server of your choice." + \
+            " Optionally block until the jobs are complete."
         parser.add_option("-J", "--jenkinsbase", dest="baseurl",
                           help="Base URL for the Jenkins server, default is %s" % DEFAULT_BASEURL,
                           type="str", default=DEFAULT_BASEURL)
         parser.add_option('--username', '-u', dest='username',
-                        help="Username for jenkins authentification", type='str', default=None)
+                          help="Username for jenkins authentification", type='str', default=None)
         parser.add_option('--password', '-p', dest='password',
-                        help="password for jenkins user auth", type='str', default=None)
+                          help="password for jenkins user auth", type='str', default=None)
         parser.add_option("-b", "--block", dest="block", action="store_true", default=False,
                           help="Block until each of the jobs is complete.")
-        parser.add_option("-t", "--token", dest="token",help="Optional security token.",
+        parser.add_option("-t", "--token", dest="token", help="Optional security token.",
                           default=None)
         return parser
 
@@ -31,8 +41,8 @@ class jenkins_invoke(object):
         options, args = parser.parse_args()
         try:
             assert len(args) > 0, "Need to specify at least one job name"
-        except AssertionError, e:
-            log.critical(e[0])
+        except AssertionError as err:
+            log.critical(err[0])
             parser.print_help()
             sys.exit(1)
         invoker = cls(options, args)
@@ -58,7 +68,7 @@ class jenkins_invoke(object):
         job.invoke(securitytoken=token, block=block)
 
 
-def main(  ):
+def main():
     logging.basicConfig()
     logging.getLogger("").setLevel(logging.INFO)
-    jenkins_invoke.main()
+    JenkinsInvoke.main()

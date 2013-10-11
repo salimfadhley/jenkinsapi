@@ -8,4 +8,3 @@ jobName = 'create_fwrgmkbbzk'
 config = J[jobName].get_config()
 
 print config
-

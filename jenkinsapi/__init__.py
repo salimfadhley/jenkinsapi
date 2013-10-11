@@ -2,9 +2,13 @@
 About this library
 ==================
 
-Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi. This API makes Jenkins even easier to use by providing an easy to use conventional python interface.
+Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi.
+This API makes Jenkins even easier to use by providing an easy to use conventional python interface.
 
-Jenkins (and It's predecessor Hudson) are fantastic projects - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make most Jenkins oriented tasks simpler.
+Jenkins (and It's predecessor Hudson) are fantastic projects - but they are somewhat Java-centric.
+Thankfully the designers have provided an excellent and complete REST interface. This library
+wraps up that interface as more conventional python objects in order to make most Jenkins oriented
+tasks simpler.
 
 This library can help you:
 
@@ -20,7 +24,8 @@ This library can help you:
 Installing JenkinsAPI
 =====================
 
-Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or distribute to automatically install this project.
+Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or distribute
+to automatically install this project.
 
 Most users can do the following:
 
@@ -33,14 +38,27 @@ easy_install -m jenkinsapi
 Project Authors
 ===============
 
- * Salim Fadhley (sal@stodge.org) 
- * Ramon van Alteren (ramon@vanalteren.nl) 
- * Ruslan Lutsenko (ruslan.lutcenko@gmail.com) 
+ * Salim Fadhley (sal@stodge.org)
+ * Ramon van Alteren (ramon@vanalteren.nl)
+ * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
 
 Current code lives on github: https://github.com/salimfadhley/jenkinsapi
 
 """
-__all__= [ "command_line", "utils",
-           "api", "artifact", "build", "config", "constants", "exceptions", "fingerprint",
-           "jenkins", "jenkinsbase", "job", "node", "result_set", "result", "view"]
+
+from jenkinsapi import (
+    # Modules
+    command_line,
+    utils,
+
+    # Files
+    api, artifact, build, config, constants, custom_exceptions, fingerprint,
+    jenkins, jenkinsbase, job, node, result_set, result, view
+)
+
+__all__ = [
+    "command_line", "utils",
+    "api", "artifact", "build", "config", "constants", "custom_exceptions", "fingerprint",
+    "jenkins", "jenkinsbase", "job", "node", "result_set", "result", "view"
+]
 __docformat__ = "epytext"

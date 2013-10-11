@@ -4,48 +4,53 @@ import unittest
 from jenkinsapi import config
 from jenkinsapi.job import Job
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.exceptions import NoBuildData
 
 
 class TestJobGetAllBuilds(unittest.TestCase):
     # this job has builds
-    JOB1_DATA = {"actions": [],
-            "description": "test job",
-            "displayName": "foo",
-            "displayNameOrNull": None,
-            "name": "foo",
-            "url": "http://halob:8080/job/foo/",
-            "buildable": True,
-            # do as if build 1 & 2 are not returned by jenkins
-            "builds": [{"number": 3, "url": "http://halob:8080/job/foo/3/"}],
-            "color": "blue",
-            "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
-            "healthReport": [{"description": "Build stability: No recent builds failed.",
-                             "iconUrl": "health-80plus.png", "score": 100}],
-            "inQueue": False,
-            "keepDependencies": False,
-            "lastBuild": {"number": 4, "url": "http://halob:8080/job/foo/4/"}, # build running
-            "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastFailedBuild": None,
-            "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastUnstableBuild": None,
-            "lastUnsuccessfulBuild": None,
-            "nextBuildNumber": 4,
-            "property": [],
-            "queueItem": None,
-            "concurrentBuild": False,
-            "downstreamProjects": [],
-            "scm": {},
-            "upstreamProjects": []}
-    JOB1_ALL_BUILDS_DATA = {"allBuilds": [
-        {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-        {"number": 2, "url": "http://halob:8080/job/foo/2/"},
-        {"number": 1, "url": "http://halob:8080/job/foo/1/"}],
+    JOB1_DATA = {
+        "actions": [],
+        "description": "test job",
+        "displayName": "foo",
+        "displayNameOrNull": None,
+        "name": "foo",
+        "url": "http://halob:8080/job/foo/",
+        "buildable": True,
+        # do as if build 1 & 2 are not returned by jenkins
+        "builds": [{"number": 3, "url": "http://halob:8080/job/foo/3/"}],
+        "color": "blue",
+        "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
+        "healthReport": [
+            {"description": "Build stability: No recent builds failed.", "iconUrl": "health-80plus.png", "score": 100}
+        ],
+        "inQueue": False,
+        "keepDependencies": False,
+        "lastBuild": {"number": 4, "url": "http://halob:8080/job/foo/4/"},  # build running
+        "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastFailedBuild": None,
+        "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastUnstableBuild": None,
+        "lastUnsuccessfulBuild": None,
+        "nextBuildNumber": 4,
+        "property": [],
+        "queueItem": None,
+        "concurrentBuild": False,
+        "downstreamProjects": [],
+        "scm": {},
+        "upstreamProjects": []
+    }
+    JOB1_ALL_BUILDS_DATA = {
+        "allBuilds": [
+            {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+            {"number": 2, "url": "http://halob:8080/job/foo/2/"},
+            {"number": 1, "url": "http://halob:8080/job/foo/1/"}
+        ],
     }
     JOB1_API_URL = 'http://halob:8080/job/foo/%s' % config.JENKINS_API
 
-    JOB2_DATA = {'actions': [],
+    JOB2_DATA = {
+        'actions': [],
         'buildable': True,
         'builds': [],
         'color': 'notbuilt',
@@ -71,41 +76,47 @@ class TestJobGetAllBuilds(unittest.TestCase):
         'queueItem': None,
         'scm': {},
         'upstreamProjects': [],
-        'url': 'http://halob:8080/job/look_ma_no_builds/'}
+        'url': 'http://halob:8080/job/look_ma_no_builds/'
+    }
     JOB2_API_URL = 'http://halob:8080/job/look_ma_no_builds/%s' % config.JENKINS_API
 
     # Full list available immediatly
-    JOB3_DATA = {"actions": [],
-            "description": "test job",
-            "displayName": "fullfoo",
-            "displayNameOrNull": None,
-            "name": "fullfoo",
-            "url": "http://halob:8080/job/fullfoo/",
-            "buildable": True,
-            # all builds have been returned by Jenkins
-            "builds": [{"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
-                    {"number": 2, "url": "http://halob:8080/job/fullfoo/2/"},
-                    {"number": 1, "url": "http://halob:8080/job/fullfoo/1/"}],
-            "color": "blue",
-            "firstBuild": {"number": 1, "url": "http://halob:8080/job/fullfoo/1/"},
-            "healthReport": [{"description": "Build stability: No recent builds failed.",
-                             "iconUrl": "health-80plus.png", "score": 100}],
-            "inQueue": False,
-            "keepDependencies": False,
-            "lastBuild": {"number": 4, "url": "http://halob:8080/job/fullfoo/4/"}, # build running
-            "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
-            "lastFailedBuild": None,
-            "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
-            "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
-            "lastUnstableBuild": None,
-            "lastUnsuccessfulBuild": None,
-            "nextBuildNumber": 4,
-            "property": [],
-            "queueItem": None,
-            "concurrentBuild": False,
-            "downstreamProjects": [],
-            "scm": {},
-            "upstreamProjects": []}
+    JOB3_DATA = {
+        "actions": [],
+        "description": "test job",
+        "displayName": "fullfoo",
+        "displayNameOrNull": None,
+        "name": "fullfoo",
+        "url": "http://halob:8080/job/fullfoo/",
+        "buildable": True,
+        # all builds have been returned by Jenkins
+        "builds": [
+            {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
+            {"number": 2, "url": "http://halob:8080/job/fullfoo/2/"},
+            {"number": 1, "url": "http://halob:8080/job/fullfoo/1/"}
+        ],
+        "color": "blue",
+        "firstBuild": {"number": 1, "url": "http://halob:8080/job/fullfoo/1/"},
+        "healthReport": [
+            {"description": "Build stability: No recent builds failed.", "iconUrl": "health-80plus.png", "score": 100}
+        ],
+        "inQueue": False,
+        "keepDependencies": False,
+        "lastBuild": {"number": 4, "url": "http://halob:8080/job/fullfoo/4/"},  # build running
+        "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
+        "lastFailedBuild": None,
+        "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
+        "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
+        "lastUnstableBuild": None,
+        "lastUnsuccessfulBuild": None,
+        "nextBuildNumber": 4,
+        "property": [],
+        "queueItem": None,
+        "concurrentBuild": False,
+        "downstreamProjects": [],
+        "scm": {},
+        "upstreamProjects": []
+    }
     JOB3_ALL_BUILDS_DATA = {"allBuilds": [
         {"number": 3, "url": "http://halob:8080/job/fullfoo/3/"},
         {"number": 2, "url": "http://halob:8080/job/fullfoo/2/"},
@@ -114,14 +125,13 @@ class TestJobGetAllBuilds(unittest.TestCase):
     JOB3_API_URL = 'http://halob:8080/job/fullfoo/%s' % config.JENKINS_API
 
     URL_DATA = {
-            JOB1_API_URL: JOB1_DATA,
-            (JOB1_API_URL, str({'tree': 'allBuilds[number,url]'})): JOB1_ALL_BUILDS_DATA,
-            JOB2_API_URL: JOB2_DATA,
-            JOB3_API_URL: JOB3_DATA,
-            # this one below should never be used
-            (JOB3_API_URL, str({'tree': 'allBuilds[number,url]'})): JOB3_ALL_BUILDS_DATA,
+        JOB1_API_URL: JOB1_DATA,
+        (JOB1_API_URL, str({'tree': 'allBuilds[number,url]'})): JOB1_ALL_BUILDS_DATA,
+        JOB2_API_URL: JOB2_DATA,
+        JOB3_API_URL: JOB3_DATA,
+        # this one below should never be used
+        (JOB3_API_URL, str({'tree': 'allBuilds[number,url]'})): JOB3_ALL_BUILDS_DATA,
     }
-
 
     def fakeGetData(self, url, params=None):
         TestJobGetAllBuilds.__get_data_call_count += 1

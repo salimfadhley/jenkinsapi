@@ -1,3 +1,8 @@
+"""
+Module for jenkinsapi Jenkins object
+"""
+
+
 import json
 import urllib
 import logging
@@ -14,7 +19,7 @@ from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
-from jenkinsapi.exceptions import UnknownJob, JenkinsAPIException
+from jenkinsapi.custom_exceptions import UnknownJob, JenkinsAPIException
 
 log = logging.getLogger(__name__)
 
@@ -44,17 +49,17 @@ class Jenkins(JenkinsBase):
         else:
             return self.baseurl
 
-    def validate_fingerprint(self, id):
-        obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
+    def validate_fingerprint(self, id_):
+        obj_fingerprint = Fingerprint(self.baseurl, id_, jenkins_obj=self)
         obj_fingerprint.validate()
-        log.info("Jenkins says %s is valid" % id)
+        log.info(msg="Jenkins says %s is valid" % id_)
 
     # def reload(self):
     #     '''Try and reload the configuration from disk'''
     #     self.requester.get_url("%(baseurl)s/reload" % self.__dict__)
 
-    def get_artifact_data(self, id):
-        obj_fingerprint = Fingerprint(self.baseurl, id, jenkins_obj=self)
+    def get_artifact_data(self, id_):
+        obj_fingerprint = Fingerprint(self.baseurl, id_, jenkins_obj=self)
         obj_fingerprint.validate()
         return obj_fingerprint.get_info()
 
@@ -107,7 +112,7 @@ class Jenkins(JenkinsBase):
         """
         return jobname in self
 
-    def create_job(self, jobname, config):
+    def create_job(self, jobname, config_):
         """
         Create a job
         :param jobname: name of new job, str
@@ -118,9 +123,9 @@ class Jenkins(JenkinsBase):
             return self[jobname]
 
         params = {'name': jobname}
-        if isinstance(config, unicode):
-            config = str(config)
-        self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config, params=params)
+        if isinstance(config_, unicode):
+            config_ = str(config_)
+        self.requester.post_xml_and_confirm_status(self.get_create_url(), data=config_, params=params)
         self.poll()
         if not self.has_job(jobname):
             raise JenkinsAPIException('Cannot create job %s' % jobname)
@@ -133,9 +138,9 @@ class Jenkins(JenkinsBase):
         :param newjobname: name of new job, str
         :return: new Job obj
         """
-        params = { 'name': newjobname,
-                   'mode': 'copy',
-                   'from': jobname}
+        params = {'name': newjobname,
+                  'mode': 'copy',
+                  'from': jobname}
 
         self.requester.post_and_confirm_status(
             self.get_create_url(),
@@ -144,14 +149,14 @@ class Jenkins(JenkinsBase):
         self.poll()
         return self[newjobname]
 
-    def build_job(self, jobname, params={}):
+    def build_job(self, jobname, params=None):
         """
         Invoke a build by job name
         :param jobname: name of exist job, str
         :param params: the job params, dict
         :return: none
         """
-        self[jobname].invoke(build_params=params)
+        self[jobname].invoke(build_params=params or {})
         return
 
     def delete_job(self, jobname):
@@ -199,7 +204,7 @@ class Jenkins(JenkinsBase):
         return list(self.get_jobs())
 
     def keys(self):
-        return [ a for a in self.iterkeys() ]
+        return [a for a in self.iterkeys()]
 
     # This is a function alias we retain for historical compatibility
     get_jobs_list = keys
@@ -214,7 +219,7 @@ class Jenkins(JenkinsBase):
     def get_view_by_url(self, str_view_url):
         #for nested view
         str_view_name = str_view_url.split('/view/')[-1].replace('/', '')
-        return View(str_view_url , str_view_name, jenkins_obj=self)
+        return View(str_view_url, str_view_name, jenkins_obj=self)
 
     def __getitem__(self, jobname):
         """
@@ -226,6 +231,9 @@ class Jenkins(JenkinsBase):
             if info["name"] == jobname:
                 return Job(info["url"], info["name"], jenkins_obj=self)
         raise UnknownJob(jobname)
+
+    def __len__(self):
+        return len(self._data["jobs"])
 
     def __contains__(self, jobname):
         """
@@ -291,26 +299,26 @@ class Jenkins(JenkinsBase):
         :param exclusive: tied to specific job, boolean
         :return: node obj
         """
-        NODE_TYPE   = 'hudson.slaves.DumbSlave$DescriptorImpl'
+        NODE_TYPE = 'hudson.slaves.DumbSlave$DescriptorImpl'
         MODE = 'NORMAL'
         if self.has_node(name):
             return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
         if exclusive:
             MODE = 'EXCLUSIVE'
         params = {
-            'name' : name,
-            'type' : NODE_TYPE,
-            'json' : json.dumps ({
-                'name'            : name,
-                'nodeDescription' : node_description,
-                'numExecutors'    : num_executors,
-                'remoteFS'        : remote_fs,
-                'labelString'     : labels,
-                'mode'            : MODE,
-                'type'            : NODE_TYPE,
-                'retentionStrategy' : { 'stapler-class'  : 'hudson.slaves.RetentionStrategy$Always' },
-                'nodeProperties'    : { 'stapler-class-bag' : 'true' },
-                'launcher'          : { 'stapler-class' : 'hudson.slaves.JNLPLauncher' }
+            'name': name,
+            'type': NODE_TYPE,
+            'json': json.dumps({
+                'name': name,
+                'nodeDescription': node_description,
+                'numExecutors': num_executors,
+                'remoteFS': remote_fs,
+                'labelString': labels,
+                'mode': MODE,
+                'type': NODE_TYPE,
+                'retentionStrategy': {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
+                'nodeProperties': {'stapler-class-bag': 'true'},
+                'launcher': {'stapler-class': 'hudson.slaves.JNLPLauncher'}
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urllib.urlencode(params)

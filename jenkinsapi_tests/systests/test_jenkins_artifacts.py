@@ -44,10 +44,7 @@ class TestPingerJob(BaseSystemTest):
 
             # Verify that we can hande binary artifacts
             binary_artifact.save_to_dir(tempDir)
-            readBackText = gzip.open(os.path.join(
-                tempDir, 
-                binary_artifact.filename,
-                ), 'rb' ).read().strip()
+            readBackText = gzip.open(os.path.join(tempDir, binary_artifact.filename,), 'rb').read().strip()
             self.assertTrue(re.match(r'^PING \S+ \(127.0.0.1\)', readBackText))
             self.assertTrue(readBackText.endswith('ms'))
         finally:

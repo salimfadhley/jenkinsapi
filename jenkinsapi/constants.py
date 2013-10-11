@@ -1,3 +1,7 @@
+"""
+Constants for jenkinsapi
+"""
+
 import re
 
 STATUS_FAIL = "FAIL"
@@ -14,4 +18,4 @@ RESULTSTATUS_FAILED = "FAILED"
 RESULTSTATUS_SKIPPED = "SKIPPED"
 
 STR_RE_SPLIT_VIEW = "(.*)/view/([^/]*)/?"
-RE_SPLIT_VIEW_URL = re.compile( STR_RE_SPLIT_VIEW )
+RE_SPLIT_VIEW_URL = re.compile(STR_RE_SPLIT_VIEW)

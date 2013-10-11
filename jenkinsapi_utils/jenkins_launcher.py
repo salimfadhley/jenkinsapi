@@ -11,7 +11,7 @@ import subprocess
 import pkg_resources
 
 from jenkinsapi.jenkins import Jenkins
-from jenkinsapi.exceptions import JenkinsAPIException
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 log = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ class JenkinsLancher(object):
 
     def update_config(self):
         config_dest = os.path.join(self.jenkins_home, 'config.xml')
-        config_dest_file = open(config_dest,'w')
+        config_dest_file = open(config_dest, 'w')
         config_source = pkg_resources.resource_string('jenkinsapi_tests.systests', 'config.xml')
         config_dest_file.write(config_source.encode('UTF-8'))
 
@@ -83,7 +83,7 @@ class JenkinsLancher(object):
         plugin_dir = os.path.join(self.jenkins_home, 'plugins')
         if not os.path.exists(plugin_dir):
             os.mkdir(plugin_dir)
-        
+
         log.info("Downloading %s", hpi_url)
         log.info("Plugins will be installed in '%s'" % plugin_dir)
         # FIXME: This is kinda ugly but works
@@ -91,7 +91,7 @@ class JenkinsLancher(object):
         plugin_path = os.path.join(plugin_dir, filename)
         with open(plugin_path, 'wb') as h:
             request = requests.get(hpi_url)
-            h.write(request.content)    
+            h.write(request.content)
 
     def stop(self):
         log.info("Shutting down jenkins.")
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     jl = JenkinsLancher(
         '/home/sal/workspace/jenkinsapi/src/jenkinsapi_tests/systests/jenkins.war'
-        )
+    )
     jl.start()
     log.info("Jenkins was launched...")
 

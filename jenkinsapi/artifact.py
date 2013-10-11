@@ -12,9 +12,10 @@ import logging
 import hashlib
 
 from jenkinsapi.fingerprint import Fingerprint
-from jenkinsapi.exceptions import ArtifactBroken
+from jenkinsapi.custom_exceptions import ArtifactBroken
 
 log = logging.getLogger(__name__)
+
 
 class Artifact(object):
     """
@@ -35,14 +36,14 @@ class Artifact(object):
         :param fspath: full pathname including the filename, str
         :return: filepath
         """
-        log.info("Saving artifact @ %s to %s" % (self.url, fspath))
+        log.info(msg="Saving artifact @ %s to %s" % (self.url, fspath))
         if not fspath.endswith(self.filename):
-            log.warn("Attempt to change the filename of artifact %s on save." % self.filename)
+            log.warn(msg="Attempt to change the filename of artifact %s on save." % self.filename)
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath):
-                        log.info("Local copy of %s is already up to date." % self.filename)
+                        log.info(msg="Local copy of %s is already up to date." % self.filename)
                         return fspath
                 except ArtifactBroken:
                     log.info("Jenkins artifact could not be identified.")
@@ -83,14 +84,14 @@ class Artifact(object):
         fp = Fingerprint(self.build.job.jenkins.baseurl, local_md5, self.build.job.jenkins)
         return fp.validate_for_build(os.path.basename(fspath), self.build.job.name, self.build.buildno)
 
-    def _md5sum(self, fspath, chunksize=2**20):
+    def _md5sum(self, fspath, chunksize=2 ** 20):
         """
         A MD5 hashing function intended to produce the same results as that used by
         Jenkins.
         """
         md5 = hashlib.md5()
         try:
-            with open(fspath,'rb') as f:
+            with open(fspath, 'rb') as f:
                 for chunk in iter(lambda: f.read(chunksize), ''):
                     md5.update(chunk)
         except:
@@ -107,11 +108,8 @@ class Artifact(object):
         outputfilepath = os.path.join(dirpath, self.filename)
         return self.save(outputfilepath)
 
-
     def __repr__(self):
         """
         Produce a handy repr-string.
         """
-        return """<%s.%s %s>""" % (self.__class__.__module__,
-                                    self.__class__.__name__,
-                                    self.url)
+        return """<%s.%s %s>""" % (self.__class__.__module__, self.__class__.__name__, self.url)

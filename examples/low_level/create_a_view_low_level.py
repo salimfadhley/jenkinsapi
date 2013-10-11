@@ -8,7 +8,7 @@ import json
 url = 'http://localhost:8080/createView'
 
 str_view_name = "blahblah123"
-params = {}# {'name': str_view_name}
+params = {}  # {'name': str_view_name}
 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 data = {
     "name": str_view_name,

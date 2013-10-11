@@ -33,7 +33,7 @@ class TestPingerJob(BaseSystemTest):
             m = re.search(u'\xbb (.*) #\\d+$', r.name)
             self.assertIsNotNone(m)
             s.add(m.group(1))
-        self.assertEqual(s, {'one','two','three'})
+        self.assertEqual(s, {'one', 'two', 'three'})
 
 if __name__ == '__main__':
     unittest.main()

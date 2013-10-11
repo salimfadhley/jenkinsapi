@@ -4,7 +4,7 @@ System tests for `jenkinsapi.jenkins` module.
 import time
 import logging
 import unittest
-from jenkinsapi.exceptions import NoBuildData
+from jenkinsapi.custom_exceptions import NoBuildData
 from jenkinsapi_tests.systests.base import BaseSystemTest
 
 log = logging.getLogger(__name__)

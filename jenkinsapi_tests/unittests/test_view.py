@@ -6,6 +6,7 @@ from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.view import View
 from jenkinsapi.job import Job
 
+
 class TestView(unittest.TestCase):
 
     DATA = {'description': 'Important Shizz',
@@ -21,36 +22,42 @@ class TestView(unittest.TestCase):
             'property': [],
             'url': 'http://halob:8080/view/FodFanFo/'}
 
-    JOB_DATA = {"actions": [],
-            "description": "test job",
-            "displayName": "foo",
-            "displayNameOrNull": None,
-            "name": "foo",
-            "url": "http://halob:8080/job/foo/",
-            "buildable": True,
-            "builds": [{"number": 3, "url": "http://halob:8080/job/foo/3/"},
-           {"number": 2, "url": "http://halob:8080/job/foo/2/"},
-                {"number": 1, "url": "http://halob:8080/job/foo/1/"}],
-            "color": "blue",
-            "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
-            "healthReport": [{"description": "Build stability: No recent builds failed.",
-                             "iconUrl": "health-80plus.png", "score": 100}],
-            "inQueue": False,
-            "keepDependencies": False,
-            "lastBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastFailedBuild": None,
-            "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
-            "lastUnstableBuild": None,
-            "lastUnsuccessfulBuild": None,
-            "nextBuildNumber": 4,
-            "property": [],
-            "queueItem": None,
-            "concurrentBuild": False,
-            "downstreamProjects": [],
-            "scm": {},
-            "upstreamProjects": []}
+    JOB_DATA = {
+        "actions": [],
+        "description": "test job",
+        "displayName": "foo",
+        "displayNameOrNull": None,
+        "name": "foo",
+        "url": "http://halob:8080/job/foo/",
+        "buildable": True,
+        "builds": [
+            {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+            {"number": 2, "url": "http://halob:8080/job/foo/2/"},
+            {"number": 1, "url": "http://halob:8080/job/foo/1/"}
+        ],
+        "color": "blue",
+        "firstBuild": {"number": 1, "url": "http://halob:8080/job/foo/1/"},
+        "healthReport": [
+            {"description": "Build stability: No recent builds failed.",
+             "iconUrl": "health-80plus.png", "score": 100}
+        ],
+        "inQueue": False,
+        "keepDependencies": False,
+        "lastBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastCompletedBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastFailedBuild": None,
+        "lastStableBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastSuccessfulBuild": {"number": 3, "url": "http://halob:8080/job/foo/3/"},
+        "lastUnstableBuild": None,
+        "lastUnsuccessfulBuild": None,
+        "nextBuildNumber": 4,
+        "property": [],
+        "queueItem": None,
+        "concurrentBuild": False,
+        "downstreamProjects": [],
+        "scm": {},
+        "upstreamProjects": []
+    }
 
     @mock.patch.object(Job, '_poll')
     @mock.patch.object(View, '_poll')
@@ -99,8 +106,7 @@ class TestView(unittest.TestCase):
         self.assertTrue(self.v.deleted)
 
     def test_get_job_url(self):
-        self.assertEquals(
-                self.v.get_job_url('foo'), 'http://halob:8080/job/foo/')
+        self.assertEquals(self.v.get_job_url('foo'), 'http://halob:8080/job/foo/')
 
     def test_wrong_get_job_url(self):
         with self.assertRaises(KeyError):
@@ -119,7 +125,6 @@ class TestView(unittest.TestCase):
 
         result = v.add_job('bar')
         self.assertTrue(result)
-
 
     class SelfPatchJenkins(object):
         def has_job(self, job_name):

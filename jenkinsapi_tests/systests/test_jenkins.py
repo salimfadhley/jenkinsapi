@@ -9,7 +9,6 @@ from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
 from jenkinsapi_tests.test_utils.random_strings import random_string
 
 
-
 class JobTests(BaseSystemTest):
 
     def test_create_job(self):
@@ -23,7 +22,7 @@ class JobTests(BaseSystemTest):
         self.assertJobIsPresent(job_name)
 
         j = self.jenkins[job_name]
-        j.invoke(block=True) # run this at least once
+        j.invoke(block=True)  # run this at least once
 
         j.disable()
         self.assertEquals(j.is_enabled(), False, 'A disabled job is reporting incorrectly')

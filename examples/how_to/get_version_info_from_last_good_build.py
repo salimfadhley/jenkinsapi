@@ -3,6 +3,7 @@ Extract version information from the latest build.
 """
 from jenkinsapi.jenkins import Jenkins
 
+
 def getSCMInfroFromLatestGoodBuild(url, jobName, username=None, password=None):
     J = Jenkins(url, username, password)
     job = J[jobName]

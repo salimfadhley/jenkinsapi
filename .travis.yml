@@ -1,13 +1,16 @@
 language: python
+
 python:
-  - "2.7"
+    - "2.7"
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-    - "python setup.py develop"
-    - "easy_install mock"
-    - "easy_install nose"
-    - "easy_install coverage"
+    - python setup.py develop
+    - pip install --use-mirrors nose mock coverage pep8 pylint
+
 # command to run tests, e.g. python setup.py test
 script:
-    - "nosetests jenkinsapi_tests"
+    - pep8 --ignore=E501 jenkinsapi/*.py
+    - pylint --rcfile=pylintrc jenkinsapi/*.py
+    - nosetests jenkinsapi_tests
 #    - "nosetests jenkinsapi_tests/systests"

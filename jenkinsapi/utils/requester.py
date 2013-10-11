@@ -1,5 +1,9 @@
+"""
+Module for jenkinsapi requester (which is a wrapper around python-requests)
+"""
+
 import requests
-from jenkinsapi.exceptions import JenkinsAPIException
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 # import logging
 
 # # these two lines enable debugging at httplib level (requests->urllib3->httplib)
@@ -18,13 +22,13 @@ from jenkinsapi.exceptions import JenkinsAPIException
 class Requester(object):
 
     """
-    A class which carries out HTTP requests. You can replace this class with one of your own implementation if you require
-    some other way to access Jenkins.
+    A class which carries out HTTP requests. You can replace this class with one of your
+    own implementation if you require some other way to access Jenkins.
 
     This default class can handle simple authentication only.
     """
 
-    VALID_STATUS_CODES = [200,]
+    VALID_STATUS_CODES = [200, ]
 
     def __init__(self, username=None, password=None, ssl_verify=True):
         if username:
@@ -34,7 +38,7 @@ class Requester(object):
         self.password = password
         self.ssl_verify = ssl_verify
 
-    def get_request_dict(self, url, params, data, headers):
+    def get_request_dict(self, params, data, headers):
         requestKwargs = {}
         if self.username:
             requestKwargs['auth'] = (self.username, self.password)
@@ -51,19 +55,18 @@ class Requester(object):
 
         requestKwargs['verify'] = self.ssl_verify
 
-        if not data == None:
+        if not data is None:
             # It may seem odd, but some Jenkins operations require posting
             # an empty string.
             requestKwargs['data'] = data
         return requestKwargs
 
     def get_url(self, url, params=None, headers=None):
-        requestKwargs = self.get_request_dict(url, params, None, headers)
+        requestKwargs = self.get_request_dict(params, None, headers)
         return requests.get(url, **requestKwargs)
 
-
     def post_url(self, url, params=None, data=None, headers=None):
-        requestKwargs = self.get_request_dict(url, params, data, headers)
+        requestKwargs = self.get_request_dict(params, data, headers)
         return requests.post(url, **requestKwargs)
 
     def post_xml_and_confirm_status(self, url, params=None, data=None, valid=None):

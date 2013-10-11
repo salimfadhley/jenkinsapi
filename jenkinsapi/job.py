@@ -1,3 +1,7 @@
+"""
+Module for jenkinsapi Job
+"""
+
 import json
 import logging
 import urlparse
@@ -9,7 +13,21 @@ from jenkinsapi.invocation import Invocation
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.queue import QueueItem
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
-from jenkinsapi.exceptions import NoBuildData, NotConfiguredSCM, NotFound, NotInQueue, NotSupportSCM, WillNotBuild, UnknownQueueItem
+from jenkinsapi.custom_exceptions import (
+    NoBuildData,
+    NotConfiguredSCM,
+    NotFound,
+    NotInQueue,
+    NotSupportSCM,
+    WillNotBuild,
+    UnknownQueueItem,
+)
+
+SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
+GIT_URL = './scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url'
+HG_URL = './scm/source'
+GIT_BRANCH = './scm/branches/hudson.plugins.git.BranchSpec/name'
+HG_BRANCH = './scm/branch'
 
 log = logging.getLogger(__name__)
 
@@ -33,15 +51,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'hudson.scm.NullSCM': 'NullSCM'
         }
         self._scmurlmap = {
-            'svn': lambda element_tree: [element for element in element_tree.findall('./scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote')],
-            'git': lambda element_tree: [element for element in element_tree.findall('./scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url')],
-            'hg': lambda element_tree: [element_tree.find('./scm/source')],
+            'svn': lambda element_tree: list(element_tree.findall(SVN_URL)),
+            'git': lambda element_tree: list(element_tree.findall(GIT_URL)),
+            'hg': lambda element_tree: list(element_tree.find(HG_URL)),
             None: lambda element_tree: []
         }
         self._scmbranchmap = {
             'svn': lambda element_tree: [],
-            'git': lambda element_tree: [element for element in element_tree.findall('./scm/branches/hudson.plugins.git.BranchSpec/name')],
-            'hg': lambda element_tree: [element_tree.find('./scm/branch')],
+            'git': lambda element_tree: list(element_tree.findall(GIT_BRANCH)),
+            'hg': lambda element_tree: list(element_tree.find(HG_BRANCH)),
             None: lambda element_tree: []
         }
         JenkinsBase.__init__(self, url)
@@ -61,13 +79,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
         data = self._add_missing_builds(data)
         return data
 
+    # pylint: disable=E1123
+    # Unexpected keyword arg 'params'
     def _add_missing_builds(self, data):
         '''Query Jenkins to get all builds of the job in the data object.
 
         Jenkins API loads the first 100 builds and thus may not contain all builds
         information. This method checks if all builds are loaded in the data object
         and updates it with the missing builds if needed.'''
-        if not data.has_key("builds") or not data["builds"]:
+        if not data.get("builds"):
             return data
         # do not call _buildid_for_type here: it would poll and do an infinite loop
         oldest_loaded_build_number = data["builds"][-1]["number"]
@@ -111,7 +131,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         to_json_structure = Job._mk_json_from_build_parameters(build_params)
         return json.dumps(to_json_structure)
 
-    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3, invoke_block_delay=15, build_params=None, cause=None):
+    def invoke(self, securitytoken=None, block=False, skip_if_running=False, invoke_pre_check_delay=3,
+               invoke_block_delay=15, build_params=None, cause=None):
         assert isinstance(invoke_pre_check_delay, (int, float))
         assert isinstance(invoke_block_delay, (int, float))
         assert isinstance(block, bool)
@@ -155,6 +176,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 params=params,
                 valid=[200, 201]
             )
+            response = response
             if invoke_pre_check_delay > 0:
                 log.info(
                     "Waiting for %is to allow Jenkins to catch up", invoke_pre_check_delay)
@@ -174,8 +196,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return invocation
 
     def _buildid_for_type(self, buildtype):
-        self.poll()
         """Gets a buildid for a given type of build"""
+        self.poll()
         KNOWNBUILDTYPES = [
             "lastSuccessfulBuild",
             "lastBuild",
@@ -200,13 +222,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         return self._buildid_for_type("lastSuccessfulBuild")
 
-    def get_last_failed_buildnumber( self ):
+    def get_last_failed_buildnumber(self):
         """
         Get the numerical ID of the last good build.
         """
         return self._buildid_for_type(buildtype="lastFailedBuild")
 
-    def get_last_buildnumber( self ):
+    def get_last_buildnumber(self):
         """
         Get the numerical ID of the last build.
         """
@@ -219,14 +241,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._buildid_for_type("lastCompletedBuild")
 
     def get_build_dict(self):
-        if not self._data.has_key("builds"):
+        if "builds" not in self._data:
             raise NoBuildData(repr(self))
         builds = self._data["builds"]
         last_build = self._data['lastBuild']
         if builds and last_build and builds[0]['number'] != last_build['number']:
             builds = [last_build] + builds
-        return dict((build["number"], build["url"])
-                        for build in builds)
+        # FIXME SO how is this supposed to work if build is false-y?
+        # I don't think that builds *can* be false here, so I don't
+        # understand the test above.
+        return dict((build["number"], build["url"]) for build in builds)
 
     def get_revision_dict(self):
         """
@@ -309,6 +333,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def __getitem__(self, buildnumber):
         return self.get_build(buildnumber)
+
+    def __len__(self):
+        return len(self.get_build_dict())
 
     def is_queued_or_running(self):
         return self.is_queued() or self.is_running()

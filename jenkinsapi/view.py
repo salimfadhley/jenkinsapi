@@ -1,3 +1,6 @@
+"""
+Module for jenkinsapi views
+"""
 import urllib
 import logging
 
@@ -9,6 +12,10 @@ log = logging.getLogger(__name__)
 
 
 class View(JenkinsBase):
+    """
+    View class
+    """
+
     def __init__(self, url, name, jenkins_obj):
         self.name = name
         self.jenkins_obj = jenkins_obj
@@ -88,7 +95,7 @@ class View(JenkinsBase):
         """
         if not job:
             if str_job_name in self.get_job_dict():
-                log.warn('Job %s is already in the view %s' %
+                log.warn(msg='Job %s is already in the view %s' %
                          (str_job_name, self.name))
                 return False
             else:
@@ -99,12 +106,12 @@ class View(JenkinsBase):
                 top_jenkins = self.get_jenkins_obj().get_jenkins_obj_from_url(
                     self.baseurl.split('view/')[0])
                 if not top_jenkins.has_job(str_job_name):
-                    log.error('Job "%s" is not known to Jenkins' % str_job_name)
+                    log.error(msg='Job "%s" is not known to Jenkins' % str_job_name)
                     return False
                 else:
                     job = top_jenkins.get_job(str_job_name)
 
-        log.info('Creating job %s in view %s' % (str_job_name, self.name))
+        log.info(msg='Creating job %s in view %s' % (str_job_name, self.name))
         data = {
             "description": "",
             "statusFilter": "",
@@ -139,16 +146,13 @@ class View(JenkinsBase):
         self.get_jenkins_obj().requester.post_and_confirm_status(
             '%s/configSubmit' % self.baseurl, data=data)
         self.poll()
-        log.debug('Job "%s" has been added to a view "%s"' %
+        log.debug(msg='Job "%s" has been added to a view "%s"' %
                   (job.name, self.name))
         return True
 
     def _get_nested_views(self):
-        if not 'views' in self._data:
-            pass
-        else:
-            for viewdict in self._data["views"]:
-                yield viewdict["name"], viewdict["url"]
+        for viewdict in self._data.get("views", []):
+            yield viewdict["name"], viewdict["url"]
 
     def get_nested_view_dict(self):
         return dict(self._get_nested_views())

@@ -2,7 +2,7 @@ from jenkinsapi.view import View
 from jenkinsapi.jenkins import Jenkins
 J = Jenkins('http://localhost:8080')
 print J.items()
-j= J['foo']
+j = J['foo']
 j = J.get_job("foo")
 b = j.get_last_build()
 print b
