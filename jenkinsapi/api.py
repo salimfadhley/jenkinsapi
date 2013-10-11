@@ -15,39 +15,46 @@ from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL
 log = logging.getLogger(__name__)
 
 
-def get_latest_test_results(jenkinsurl, jobname):
+def job_by_jobname(jenkinsurl, jobname, **kwargs):
+    jenkinsci = Jenkins(jenkinsurl, **kwargs)
+    return jenkinsci[jobname]
+
+
+def job_by_jobid(jenkinsurl, jobid, **kwargs):
+    # FIXME Looks to me as if a jobid and a jobname are the same thing
+    jenkinsci = Jenkins(jenkinsurl, **kwargs)
+    return jenkinsci[jobid]
+
+
+def get_latest_test_results(jenkinsurl, jobname, **kwargs):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    latestbuild = get_latest_build(jenkinsurl, jobname)
-    res = latestbuild.get_resultset()
-    return res
+    latestbuild = get_latest_build(jenkinsurl, jobname, **kwargs)
+    return latestbuild.get_resultset()
 
 
-def get_latest_build(jenkinsurl, jobname):
+def get_latest_build(jenkinsurl, jobname, **kwargs):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    jenkinsci = Jenkins(jenkinsurl)
-    job = jenkinsci[jobname]
+    job = job_by_jobname(jenkinsurl, jobname, **kwargs)
     return job.get_last_build()
 
 
-def get_latest_complete_build(jenkinsurl, jobname):
+def get_latest_complete_build(jenkinsurl, jobname, **kwargs):
     """
     A convenience function to fetch down the very latest test results from a jenkins job.
     """
-    jenkinsci = Jenkins(jenkinsurl)
-    job = jenkinsci[jobname]
+    job = job_by_jobname(jenkinsurl, jobname, **kwargs)
     return job.get_last_completed_build()
 
 
-def get_build(jenkinsurl, jobname, build_no):
+def get_build(jenkinsurl, jobname, build_no, **kwargs):
     """
     A convenience function to fetch down the test results from a jenkins job by build number.
     """
-    jenkinsci = Jenkins(jenkinsurl)
-    job = jenkinsci[jobname]
+    job = job_by_jobname(jenkinsurl, jobname, **kwargs)
     return job.get_build(build_no)
 
 
@@ -67,7 +74,7 @@ def get_artifacts(jenkinsurl, jobid=None, build_no=None, proxyhost=None,
     return artifacts
 
 
-def search_artifacts(jenkinsurl, jobid, artifact_ids=None):
+def search_artifacts(jenkinsurl, jobid, artifact_ids=None, **kwargs):
     """
     Search the entire history of a jenkins job for a list of artifact names. If same_build
     is true then ensure that all artifacts come from the same build of the job
@@ -75,16 +82,13 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None):
     if len(artifact_ids) == 0 or artifact_ids is None:
         return []
 
-    jenkinsci = Jenkins(jenkinsurl)
-    job = jenkinsci[jobid]
-    build_ids = job.get_build_ids()
-    for build_id in build_ids:
-        build = job.get_build(build_id)
+    job = job_by_jobid(jenkinsurl, jobid, **kwargs)
+    for build in job.build_iter():
         artifacts = build.get_artifact_dict()
         if set(artifact_ids).issubset(set(artifacts.keys())):
             return dict((a, artifacts[a]) for a in artifact_ids)
         missing_artifacts = set(artifact_ids) - set(artifacts.keys())
-        log.debug(msg="Artifacts %s missing from %s #%i" % (", ".join(missing_artifacts), jobid, build_id))
+        log.debug(msg="Artifacts %s missing from %s #%i" % (", ".join(missing_artifacts), jobid, build.buildno))
     #noinspection PyUnboundLocalVariable
     raise ArtifactsMissing(missing_artifacts)
 
@@ -123,7 +127,7 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
         raise TimeOut("Waited too long for these jobs to complete: %s" % str_still_running)
 
 
-def get_view_from_url(url):
+def get_view_from_url(url, **kwargs):
     """
     Factory method
     """
@@ -131,18 +135,18 @@ def get_view_from_url(url):
     if not matched:
         raise BadURL("Cannot parse URL %s" % url)
     jenkinsurl, view_name = matched.groups()
-    jenkinsci = Jenkins(jenkinsurl)
+    jenkinsci = Jenkins(jenkinsurl, **kwargs)
     return jenkinsci.views[view_name]
 
 
-def get_nested_view_from_url(url):
+def get_nested_view_from_url(url, **kwargs):
     """
     Returns View based on provided URL. Convenient for nested views.
     """
     matched = constants.RE_SPLIT_VIEW_URL.search(url)
     if not matched:
         raise BadURL("Cannot parse URL %s" % url)
-    jenkinsci = Jenkins(matched.group(0))
+    jenkinsci = Jenkins(matched.group(0), **kwargs)
     return jenkinsci.get_view_by_url(url)
 
 
@@ -173,7 +177,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl):
     return installed
 
 
-def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp):
+def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp, **kwargs):
     '''
     Search the entire history of a hudson job for a build which has an artifact whose
     name matches a supplied regular expression. Return only that artifact.
@@ -182,14 +186,9 @@ def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp):
     @param jobid: The name of the job we are to search through
     @param artifactRegExp: A compiled regular expression object (not a re-string)
     '''
-    job = Jenkins(jenkinsurl)
-    j = job[jobid]
+    job = job_by_jobid(jenkinsurl, jobid, **kwargs)
 
-    build_ids = j.get_build_ids()
-
-    for build_id in build_ids:
-        build = j.get_build(build_id)
-
+    for build in job.build_iter():
         artifacts = build.get_artifact_dict()
 
         for name, art in artifacts.iteritems():

@@ -573,3 +573,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         for param in self.get_params():
             params.append(param['name'])
         return params
+
+    def build_iter(self):
+        for build_id in self.get_build_ids():
+            yield self.get_build(build_id)

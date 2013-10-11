@@ -29,7 +29,7 @@ class Jenkins(JenkinsBase):
     """
     Represents a jenkins environment.
     """
-    def __init__(self, baseurl, username=None, password=None, requester=None):
+    def __init__(self, baseurl, username=None, password=None, requester=None, **kwargs):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -38,7 +38,7 @@ class Jenkins(JenkinsBase):
         """
         self.username = username
         self.password = password
-        self.requester = requester or Requester(username, password, baseurl=baseurl)
+        self.requester = requester or Requester(username, password, baseurl=baseurl, **kwargs)
         JenkinsBase.__init__(self, baseurl)
 
     def _clone(self):
