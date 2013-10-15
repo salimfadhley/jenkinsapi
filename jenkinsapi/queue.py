@@ -59,9 +59,9 @@ class Queue(JenkinsBase):
 
     def get_queue_items_for_job(self, job_name):
         if not job_name:
-            return [QueueItem(**item) for item in self._data['items']]
+            return [QueueItem(self.jenkins, **item) for item in self._data['items']]
         else:
-            return [QueueItem(**item) for item in self._data['items']
+            return [QueueItem(self.jenkins, **item) for item in self._data['items']
                     if item['task']['name'] == job_name]
 
     def delete_item(self, queue_item):
@@ -87,6 +87,15 @@ class QueueItem(object):
         Return the job associated with this queue item
         """
         return self.jenkins[self.task['name']]
+
+    def get_parameters(self):
+        """returns parameters of queue item"""
+        actions = getattr(self, 'actions', [])
+        for action in actions:
+            if type(action) is dict and 'parameters' in action:
+                parameters = action['parameters']
+                return dict([(x['name'], x['value']) for x in parameters])
+        return []
 
     def __repr__(self):
         return "<%s.%s %s>" % (self.__class__.__module__, self.__class__.__name__, str(self))

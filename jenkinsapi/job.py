@@ -149,16 +149,20 @@ class Job(JenkinsBase, MutableJenkinsThing):
         params = {}  # Via Get string
 
         with invocation:
-            if self.is_queued():
-                raise WillNotBuild('%s is already queued' % repr(self))
+            if len(self.get_params_list()) == 0:
+                if self.is_queued():
+                    raise WillNotBuild('%s is already queued' % repr(self))
 
-            elif self.is_running():
-                if skip_if_running:
-                    log.warn(
-                        "Will not request new build because %s is already running", self.name)
-                else:
-                    log.warn(
-                        "Will re-schedule %s even though it is already running", self.name)
+                elif self.is_running():
+                    if skip_if_running:
+                        log.warn(
+                            "Will not request new build because %s is already running", self.name)
+                    else:
+                        log.warn(
+                            "Will re-schedule %s even though it is already running", self.name)
+            elif self.has_queued_build(build_params):
+                msg = 'A build with these parameters is already queued.'
+                raise WillNotBuild(msg)
 
             log.info("Attempting to start %s on %s", self.name, repr(
                 self.get_jenkins_obj()))
@@ -573,3 +577,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         for param in self.get_params():
             params.append(param['name'])
         return params
+
+    def has_queued_build(self, build_params):
+        """Returns True if a build with build_params is currently queued."""
+        queue = self.jenkins.get_queue()
+        queued_builds = queue.get_queue_items_for_job(self.name)
+        for build in queued_builds:
+            if build.get_parameters() == build_params:
+                return True
+        return False
