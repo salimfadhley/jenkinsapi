@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi.result_set import ResultSet
 from jenkinsapi.result import Result
@@ -66,3 +67,23 @@ class TestResultSet(unittest.TestCase):
             self.assertIsInstance(k, str)
             self.assertIsInstance(v, Result)
             self.assertIsInstance(v.identifier(), str)
+
+    @mock.patch.object(ResultSet, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        rs = ResultSet('http://', self.b, poll_cache_timeout=1)
+        for i in range(2):
+            rs.poll()
+        self.assertEquals(_poll.call_count, 1)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1)
+        rs.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.rs.poll()
+        self.assertEquals(_poll.call_count, 2)

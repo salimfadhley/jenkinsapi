@@ -33,11 +33,11 @@ class Build(JenkinsBase):
     STR_TOTALCOUNT = "totalCount"
     STR_TPL_NOTESTS_ERR = "%s has status %s, and does not have any test results"
 
-    def __init__(self, url, buildno, job):
+    def __init__(self, url, buildno, job, poll_cache_timeout=0):
         assert type(buildno) == int
         self.buildno = buildno
         self.job = job
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
 
     def _poll(self):
         #For build's we need more information for downstream and upstream builds

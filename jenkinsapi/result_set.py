@@ -10,14 +10,14 @@ class ResultSet(JenkinsBase):
     """
     Represents a result from a completed Jenkins run.
     """
-    def __init__(self, url, build):
+    def __init__(self, url, build, poll_cache_timeout=0):
         """
         Init a resultset
         :param url: url for a build, str
         :param build: build obj
         """
         self.build = build
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
 
     def get_jenkins_obj(self):
         return self.build.job.get_jenkins_obj()

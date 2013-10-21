@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi import config
 from jenkinsapi.job import Job
@@ -170,6 +171,28 @@ class TestJob(unittest.TestCase):
         j = Job('http://halob:8080/job/foo/', 'foo', self.J)
         with self.assertRaises(NoBuildData):
             j.get_last_build()
+
+    @mock.patch.object(Job, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        j = Job('http://halob:8080/job/foo/', 'foo', self.J,
+                poll_cache_timeout=1)
+        for i in range(2):
+            j.poll()
+        self.assertEquals(_poll.call_count, 1)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1)
+        j.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.j.poll()
+        self.assertEquals(_poll.call_count, 2)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -16,10 +16,10 @@ class View(JenkinsBase):
     View class
     """
 
-    def __init__(self, url, name, jenkins_obj):
+    def __init__(self, url, name, jenkins_obj, poll_cache_timeout=0):
         self.name = name
         self.jenkins_obj = jenkins_obj
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
         self.deleted = False
 
     def __str__(self):

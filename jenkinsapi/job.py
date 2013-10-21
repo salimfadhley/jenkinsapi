@@ -38,7 +38,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
     Represents a jenkins job
     A job can hold N builds which are the actual execution environments
     """
-    def __init__(self, url, name, jenkins_obj):
+    def __init__(self, url, name, jenkins_obj, poll_cache_timeout=0):
         self.name = name
         self.jenkins = jenkins_obj
         self._revmap = None
@@ -62,7 +62,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'hg': lambda element_tree: list(element_tree.find(HG_BRANCH)),
             None: lambda element_tree: []
         }
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
 
     def __str__(self):
         return self._data["name"]
