@@ -33,7 +33,7 @@ class Jobs(object):
                 delete_job_url,
                 data='some random bytes...'
             )
-            self.jenkins.poll()
+            self.jenkins.poll(True)
 
     def __setitem__(self, key, value):
         raise NotImplementedError()
@@ -96,7 +96,7 @@ class Jobs(object):
             data=config,
             params=params
         )
-        self.jenkins.poll()
+        self.jenkins.poll(True)
         if job_name not in self:
             raise JenkinsAPIException('Cannot create job %s' % job_name)
 
@@ -117,7 +117,7 @@ class Jobs(object):
             self.jenkins.get_create_url(),
             params=params,
             data='')
-        self.jenkins.poll()
+        self.jenkins.poll(True)
         return self[new_job_name]
 
     def rename(self, job_name, new_job_name):
@@ -131,7 +131,7 @@ class Jobs(object):
         rename_job_url = self[job_name].get_rename_url()
         self.jenkins.requester.post_and_confirm_status(
             rename_job_url, params=params, data='')
-        self.jenkins.poll()
+        self.jenkins.poll(True)
         return self[new_job_name]
 
     def build(self, job_name, params):

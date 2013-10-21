@@ -77,10 +77,12 @@ class test_build(unittest.TestCase):
         for i in range(2):
             b.poll()
         self.assertEquals(_poll.call_count, 1)
+        b.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
 
         # ensure it gets called again after cache timeout
         _poll.reset_mock()
-        time.sleep(1)
+        time.sleep(1.1)
         b.poll()
         self.assertTrue(_poll.called)
 
@@ -89,6 +91,7 @@ class test_build(unittest.TestCase):
         for i in range(2):
             self.b.poll()
         self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.b.poll_cache_expires)
 
     ## TEST DISABLED - DOES NOT WORK
     # def test_downstream(self):

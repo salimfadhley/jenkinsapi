@@ -312,10 +312,12 @@ class TestJenkins(unittest.TestCase):
         for i in range(2):
             J.poll()
         self.assertEquals(_poll.call_count, 1)
+        J.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
 
         # ensure it gets called again after cache timeout
         _poll.reset_mock()
-        time.sleep(1)
+        time.sleep(1.1)
         J.poll()
         self.assertTrue(_poll.called)
 
@@ -324,6 +326,7 @@ class TestJenkins(unittest.TestCase):
         for i in range(2):
             self.J.poll()
         self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.J.poll_cache_expires)
 
 
 class TestJenkinsURLs(unittest.TestCase):
@@ -363,6 +366,7 @@ class TestJenkinsURLs(unittest.TestCase):
         J = Jenkins('http://localhost:8080/',
                     username='foouser', password='foopassword')
         self.assertTrue(J.has_plugin('subversion'))
+
 
 if __name__ == '__main__':
     unittest.main()

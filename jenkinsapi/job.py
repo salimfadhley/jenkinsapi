@@ -184,7 +184,6 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 files=files,
                 valid=[200, 201]
             )
-            response = response
             if invoke_pre_check_delay > 0:
                 log.info(
                     "Waiting for %is to allow Jenkins to catch up", invoke_pre_check_delay)
@@ -345,11 +344,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def __len__(self):
         return len(self.get_build_dict())
 
-    def is_queued_or_running(self):
-        return self.is_queued() or self.is_running()
+    def is_queued_or_running(self, force=False):
+        return self.is_queued(force) or self.is_running(force)
 
-    def is_queued(self):
-        self.poll()
+    def is_queued(self, force=False):
+        self.poll(force)
         return self._data["inQueue"]
 
     def get_queue_item(self):
@@ -360,8 +359,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise UnknownQueueItem()
         return QueueItem(self.jenkins, **self._data['queueItem'])
 
-    def is_running(self):
-        self.poll()
+    def is_running(self, force=False):
+        self.poll(force)
         try:
             build = self.get_last_build_or_none()
             if build is not None:

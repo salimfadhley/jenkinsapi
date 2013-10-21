@@ -42,7 +42,7 @@ class View(JenkinsBase):
         """
         url = "%s/doDelete" % self.baseurl
         self.jenkins_obj.requester.post_and_confirm_status(url, data='')
-        self.jenkins_obj.poll()
+        self.jenkins_obj.poll(True)
         self.deleted = True
 
     def keys(self):
@@ -145,7 +145,7 @@ class View(JenkinsBase):
         data = urllib.urlencode(data)
         self.get_jenkins_obj().requester.post_and_confirm_status(
             '%s/configSubmit' % self.baseurl, data=data)
-        self.poll()
+        self.poll(True)
         log.debug(msg='Job "%s" has been added to a view "%s"' %
                   (job.name, self.name))
         return True

@@ -53,9 +53,9 @@ class JenkinsBase(object):
             url = url[:-1]
         return url
 
-    def poll(self):
+    def poll(self, force=False):
         now = datetime.datetime.now()
-        if not self.poll_cache_expires or now > self.poll_cache_expires:
+        if force or not self.poll_cache_expires or now > self.poll_cache_expires:
             self._data = self._poll()
             if self.poll_cache_timeout:
                 dt = datetime.timedelta(seconds=self.poll_cache_timeout)

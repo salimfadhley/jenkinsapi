@@ -161,10 +161,12 @@ class TestPlugins(unittest.TestCase):
         for i in range(2):
             plugins.poll()
         self.assertEquals(_poll.call_count, 1)
+        plugins.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
 
         # ensure it gets called again after cache timeout
         _poll.reset_mock()
-        time.sleep(1)
+        time.sleep(1.1)
         plugins.poll()
         self.assertTrue(_poll.called)
 
@@ -174,6 +176,8 @@ class TestPlugins(unittest.TestCase):
         for i in range(2):
             plugins.poll()
         self.assertEquals(_poll.call_count, 3)  # get plugins triggers a poll
+        self.assertIsNone(plugins.poll_cache_expires)
+
 
 if __name__ == '__main__':
     unittest.main()
