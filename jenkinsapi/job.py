@@ -184,6 +184,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 files=files,
                 valid=[200, 201]
             )
+            response = response
             if invoke_pre_check_delay > 0:
                 log.info(
                     "Waiting for %is to allow Jenkins to catch up", invoke_pre_check_delay)
@@ -191,12 +192,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if block:
                 total_wait = 0
 
-                while self.is_queued():
+                while self.is_queued(True):
                     log.info(
                         "Waited %is for %s to begin...", total_wait, self.name)
                     sleep(invoke_block_delay)
                     total_wait += invoke_block_delay
-                if self.is_running():
+                if self.is_running(True):
                     running_build = self.get_last_build()
                     running_build.block_until_complete(
                         delay=invoke_pre_check_delay)

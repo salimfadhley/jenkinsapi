@@ -58,11 +58,11 @@ class Invocation(object):
 
     def block_until_not_queued(self, timeout, delay):
         # self.__block(lambda: self.is_queued(), False, timeout, delay)
-        self.__block(self.is_queued, False, timeout, delay)
+        self.__block(lambda: self.is_queued(True), False, timeout, delay)
 
     def block_until_completed(self, timeout, delay):
         # self.__block(lambda: self.is_running(), False, timeout, delay)
-        self.__block(self.is_running, False, timeout, delay)
+        self.__block(lambda: self.is_running(True), False, timeout, delay)
 
     @staticmethod
     def __block(fn, expectation, timeout, delay=2):
@@ -92,26 +92,26 @@ class Invocation(object):
         """
         self.get_build().stop()
 
-    def is_queued(self):
+    def is_queued(self, force=False):
         """
         Returns True if this item is on the queue
         """
-        return self.job.is_queued()
+        return self.job.is_queued(force=force)
 
-    def is_running(self):
+    def is_running(self, force=False):
         """
         Returns True if this item is executing now
         Returns False if this item has completed
         or has not yet executed.
         """
         try:
-            return self.get_build().is_running()
+            return self.get_build().is_running(force=force)
         except KeyError:
             # This item has not yet executed
             return False
 
-    def is_queued_or_running(self):
-        return self.is_queued() or self.is_running()
+    def is_queued_or_running(self, force=False):
+        return self.is_queued(force=force) or self.is_running(force=force)
 
     def get_queue_item(self):
         """
