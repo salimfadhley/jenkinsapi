@@ -33,11 +33,11 @@ class Build(JenkinsBase):
     STR_TOTALCOUNT = "totalCount"
     STR_TPL_NOTESTS_ERR = "%s has status %s, and does not have any test results"
 
-    def __init__(self, url, buildno, job):
+    def __init__(self, url, buildno, job, poll_cache_timeout=0):
         assert type(buildno) == int
         self.buildno = buildno
         self.job = job
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
 
     def _poll(self):
         #For build's we need more information for downstream and upstream builds
@@ -273,15 +273,15 @@ class Build(JenkinsBase):
             for rinfo in self._data["runs"]:
                 yield Build(rinfo["url"], rinfo["number"], self.job)
 
-    def is_running(self):
+    def is_running(self, force=False):
         """
         Return a bool if running.
         """
-        self.poll()
+        self.poll(force)
         return self._data["building"]
 
     def block(self):
-        while self.is_running():
+        while self.is_running(True):
             time.sleep(1)
 
     def is_good(self):
@@ -294,7 +294,7 @@ class Build(JenkinsBase):
     def block_until_complete(self, delay=15):
         assert isinstance(delay, int)
         count = 0
-        while self.is_running():
+        while self.is_running(True):
             total_wait = delay * count
             log.info(msg="Waited %is for %s #%s to complete" % (total_wait, self.job.name, self.name))
             sleep(delay)

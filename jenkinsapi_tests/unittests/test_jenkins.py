@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.utils.requester import Requester
@@ -303,6 +304,30 @@ class TestJenkins(unittest.TestCase):
         new_jenkins = J.get_jenkins_obj()
         self.assertEquals(new_jenkins, J)
 
+    @mock.patch.object(Jenkins, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        J = Jenkins('http://localhost:8080/', username='foouser',
+                    password='foopassword', poll_cache_timeout=1)
+        for i in range(2):
+            J.poll()
+        self.assertEquals(_poll.call_count, 1)
+        J.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1.1)
+        J.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.J.poll()
+        self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.J.poll_cache_expires)
+
 
 class TestJenkinsURLs(unittest.TestCase):
 
@@ -341,6 +366,7 @@ class TestJenkinsURLs(unittest.TestCase):
         J = Jenkins('http://localhost:8080/',
                     username='foouser', password='foopassword')
         self.assertTrue(J.has_plugin('subversion'))
+
 
 if __name__ == '__main__':
     unittest.main()

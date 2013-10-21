@@ -112,7 +112,7 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30, raise_on_
     obj_jenkins = Jenkins(jenkinsurl)
     obj_jobs = [obj_jenkins[jid] for jid in jobs]
     for time_left in xrange(maxwait, 0, -interval):
-        still_running = [j for j in obj_jobs if j.is_queued_or_running()]
+        still_running = [j for j in obj_jobs if j.is_queued_or_running(True)]
         if not still_running:
             return
         str_still_running = ", ".join('"%s"' % str(a) for a in still_running)

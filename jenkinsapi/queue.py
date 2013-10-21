@@ -14,14 +14,15 @@ class Queue(JenkinsBase):
     Class that represents the Jenkins queue
     """
 
-    def __init__(self, baseurl, jenkins_obj):
+    def __init__(self, baseurl, jenkins_obj, poll_cache_timeout=0):
         """
         Init the Jenkins queue object
         :param baseurl: basic url for the queue
         :param jenkins_obj: ref to the jenkins obj
         """
         self.jenkins = jenkins_obj
-        JenkinsBase.__init__(self, baseurl)
+        JenkinsBase.__init__(self, baseurl,
+                             poll_cache_timeout=poll_cache_timeout)
 
     def __str__(self):
         return self.baseurl

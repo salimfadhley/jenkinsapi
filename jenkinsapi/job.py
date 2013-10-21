@@ -38,7 +38,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
     Represents a jenkins job
     A job can hold N builds which are the actual execution environments
     """
-    def __init__(self, url, name, jenkins_obj):
+    def __init__(self, url, name, jenkins_obj, poll_cache_timeout=0):
         self.name = name
         self.jenkins = jenkins_obj
         self._revmap = None
@@ -62,7 +62,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'hg': lambda element_tree: list(element_tree.find(HG_BRANCH)),
             None: lambda element_tree: []
         }
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
 
     def __str__(self):
         return self._data["name"]
@@ -192,12 +192,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if block:
                 total_wait = 0
 
-                while self.is_queued():
+                while self.is_queued(True):
                     log.info(
                         "Waited %is for %s to begin...", total_wait, self.name)
                     sleep(invoke_block_delay)
                     total_wait += invoke_block_delay
-                if self.is_running():
+                if self.is_running(True):
                     running_build = self.get_last_build()
                     running_build.block_until_complete(
                         delay=invoke_pre_check_delay)
@@ -345,11 +345,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def __len__(self):
         return len(self.get_build_dict())
 
-    def is_queued_or_running(self):
-        return self.is_queued() or self.is_running()
+    def is_queued_or_running(self, force=False):
+        return self.is_queued(force) or self.is_running(force)
 
-    def is_queued(self):
-        self.poll()
+    def is_queued(self, force=False):
+        self.poll(force)
         return self._data["inQueue"]
 
     def get_queue_item(self):
@@ -360,8 +360,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise UnknownQueueItem()
         return QueueItem(self.jenkins, **self._data['queueItem'])
 
-    def is_running(self):
-        self.poll()
+    def is_running(self, force=False):
+        self.poll(force)
         try:
             build = self.get_last_build_or_none()
             if build is not None:

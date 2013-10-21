@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi import config
 from jenkinsapi.jenkins import Jenkins
@@ -142,6 +143,30 @@ class TestQueue(unittest.TestCase):
         item40 = self.q[40]
         j = item40.get_job()
         self.assertIsInstance(j, Job)
+
+    @mock.patch.object(Queue, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        q = Queue('http://localhost:8080/queue', self.J, poll_cache_timeout=1)
+        for i in range(2):
+            q.poll()
+        self.assertEquals(_poll.call_count, 1)
+        q.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1.1)
+        q.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.q.poll()
+        self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.q.poll_cache_expires)
+
 
 if __name__ == '__main__':
     unittest.main()

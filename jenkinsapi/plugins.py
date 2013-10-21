@@ -15,9 +15,9 @@ class Plugins(JenkinsBase):
     """
     Plugins class for jenkinsapi
     """
-    def __init__(self, url, jenkins_obj):
+    def __init__(self, url, jenkins_obj, poll_cache_timeout=0):
         self.jenkins_obj = jenkins_obj
-        JenkinsBase.__init__(self, url)
+        JenkinsBase.__init__(self, url, poll_cache_timeout=poll_cache_timeout)
         # print 'DEBUG: Plugins._data=', self._data
 
     def get_jenkins_obj(self):

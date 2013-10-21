@@ -111,5 +111,5 @@ class Views(object):
         }
 
         self.jenkins.requester.post_and_confirm_status(url, data=data, headers=headers)
-        self.jenkins.poll()
+        self.jenkins.poll(True)
         return self[view_name]

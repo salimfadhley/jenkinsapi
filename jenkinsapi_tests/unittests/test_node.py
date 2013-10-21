@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi.node import Node
 
@@ -52,6 +53,30 @@ class TestNode(unittest.TestCase):
     def test_online(self, _poll):
         _poll.return_value = self.DATA
         return self.assertEquals(self.n.is_online(), True)
+
+    @mock.patch.object(Node, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        n = Node('http://', 'bobnit', self.J, poll_cache_timeout=1)
+        for i in range(2):
+            n.poll()
+        self.assertEquals(_poll.call_count, 1)
+        n.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1.1)
+        n.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.n.poll()
+        self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.n.poll_cache_expires)
+
 
 if __name__ == '__main__':
     unittest.main()

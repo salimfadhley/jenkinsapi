@@ -1,5 +1,6 @@
 import mock
 import unittest
+import time
 
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.nodes import Nodes
@@ -221,6 +222,30 @@ class TestNode(unittest.TestCase):
         _poll_node.return_value = self.DATA3
         mn = self.ns['halob']
         self.assertIsInstance(mn, Node)
+
+    @mock.patch.object(Nodes, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        ns = Nodes('http://', self.J, poll_cache_timeout=1)
+        for i in range(2):
+            ns.poll()
+        self.assertEquals(_poll.call_count, 1)
+        ns.poll(True)  # test force poll
+        self.assertEquals(_poll.call_count, 2)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1.1)
+        ns.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.ns.poll()
+        self.assertEquals(_poll.call_count, 2)
+        self.assertIsNone(self.ns.poll_cache_expires)
+
 
 if __name__ == '__main__':
     unittest.main()
