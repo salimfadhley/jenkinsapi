@@ -1,5 +1,6 @@
 import pytz
 import mock
+import time
 import unittest
 import datetime
 
@@ -68,6 +69,26 @@ class test_build(unittest.TestCase):
         self.assertEquals(self.b.get_duration().seconds, 5)
         self.assertEquals(self.b.get_duration().microseconds, 782000)
         self.assertEquals(str(self.b.get_duration()), '0:00:05.782000')
+
+    @mock.patch.object(Build, '_poll')
+    def test_poll_cache(self, _poll):
+        # only gets called once in interval
+        b = Build('http://', 97, self.j, poll_cache_timeout=1)
+        for i in range(2):
+            b.poll()
+        self.assertEquals(_poll.call_count, 1)
+
+        # ensure it gets called again after cache timeout
+        _poll.reset_mock()
+        time.sleep(1)
+        b.poll()
+        self.assertTrue(_poll.called)
+
+        # ensure it is disabled by default
+        _poll.reset_mock()
+        for i in range(2):
+            self.b.poll()
+        self.assertEquals(_poll.call_count, 2)
 
     ## TEST DISABLED - DOES NOT WORK
     # def test_downstream(self):

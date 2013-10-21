@@ -15,12 +15,13 @@ class Nodes(JenkinsBase):
     Class to hold information on a collection of nodes
     """
 
-    def __init__(self, baseurl, jenkins_obj):
+    def __init__(self, baseurl, jenkins_obj, poll_cache_timeout=0):
         """
         Handy access to all of the nodes on your Jenkins server
         """
         self.jenkins = jenkins_obj
-        JenkinsBase.__init__(self, baseurl)
+        JenkinsBase.__init__(self, baseurl,
+                             poll_cache_timeout=poll_cache_timeout)
 
     def get_jenkins_obj(self):
         return self.jenkins

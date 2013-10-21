@@ -3,6 +3,7 @@ Module for JenkinsBase class
 """
 
 import logging
+import datetime
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 log = logging.getLogger(__name__)
@@ -22,12 +23,14 @@ class JenkinsBase(object):
     def __str__(self):
         raise NotImplementedError
 
-    def __init__(self, baseurl, poll=True):
+    def __init__(self, baseurl, poll=True, poll_cache_timeout=0):
         """
         Initialize a jenkins connection
         """
         self._data = None
         self.baseurl = self.strip_trailing_slash(baseurl)
+        self.poll_cache_timeout = poll_cache_timeout
+        self.poll_cache_expires = None
         if poll:
             self.poll()
 
@@ -51,7 +54,12 @@ class JenkinsBase(object):
         return url
 
     def poll(self):
-        self._data = self._poll()
+        now = datetime.datetime.now()
+        if not self.poll_cache_expires or now > self.poll_cache_expires:
+            self._data = self._poll()
+            if self.poll_cache_timeout:
+                dt = datetime.timedelta(seconds=self.poll_cache_timeout)
+                self.poll_cache_expires = now + dt
 
     def _poll(self):
         url = self.python_api_url(self.baseurl)

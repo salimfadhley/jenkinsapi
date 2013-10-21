@@ -14,7 +14,7 @@ class Node(JenkinsBase):
     Class to hold information on nodes that are attached as slaves to the master jenkins instance
     """
 
-    def __init__(self, baseurl, nodename, jenkins_obj):
+    def __init__(self, baseurl, nodename, jenkins_obj, poll_cache_timeout=0):
         """
         Init a node object by providing all relevant pointers to it
         :param baseurl: basic url for querying information on a node
@@ -24,7 +24,8 @@ class Node(JenkinsBase):
         """
         self.name = nodename
         self.jenkins = jenkins_obj
-        JenkinsBase.__init__(self, baseurl)
+        JenkinsBase.__init__(self, baseurl,
+                             poll_cache_timeout=poll_cache_timeout)
 
     def get_jenkins_obj(self):
         return self.jenkins
