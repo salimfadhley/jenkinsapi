@@ -1,6 +1,4 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.node import Node
-from jenkinsapi.job import Job
 
 class Label(JenkinsBase):
     def __init__(self, name, jenkins_obj):
@@ -21,7 +19,8 @@ class Label(JenkinsBase):
     def description(self):
         return self._data['description']
 
-    def get_nodes(self):
+    @property
+    def nodes(self):
         if not self._nodes:
             self._get_nodes()
 
@@ -30,10 +29,10 @@ class Label(JenkinsBase):
     def _get_nodes(self):
         self._nodes = []
         for node in self._data['nodes']:
-            nodename = node['nodeName']
-            self._nodes.append(Node(self.jenkins.baseurl + "/computer/" + nodename, nodename, self.jenkins))
+            self._nodes.append(node['nodeName'])
 
-    def get_jobs(self):
+    @property
+    def jobs(self):
         if not self._jobs:
             self._get_jobs()
         return self._jobs
@@ -41,6 +40,4 @@ class Label(JenkinsBase):
     def _get_jobs(self):
         self._jobs = []
         for job in self._data['tiedJobs']:
-            jobname = job['name']
-            joburl = job['url']
-            self._jobs.append(Job(joburl, jobname, self.jenkins))
+            self._jobs.append(job['name'])

@@ -3,6 +3,8 @@ Module for jenkinsapi Node class
 """
 
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.label import Label
+import xml.etree.ElementTree as ET
 import logging
 import urllib
 
@@ -24,6 +26,9 @@ class Node(JenkinsBase):
         """
         self.name = nodename
         self.jenkins = jenkins_obj
+        self._config = None
+        self._element_tree = None
+        self._labels = None
         JenkinsBase.__init__(self, baseurl)
 
     def get_jenkins_obj(self):
@@ -95,3 +100,30 @@ class Node(JenkinsBase):
         state = self.is_temporarily_offline()
         if initial_state == state:
             raise AssertionError("The node state has not changed: temporarilyOffline = %s" % state)
+
+    def get_config_xml_url(self):
+        return '%s/config.xml' % self.baseurl
+
+    def get_config(self):
+        '''Returns the config.xml from the node'''
+        response = self.jenkins.requester.get_and_confirm_status(self.get_config_xml_url())
+        return response.text
+
+    def load_config(self):
+        self._config = self.get_config()
+        self._element_tree = ET.fromstring(self._config)
+
+    def _get_labels(self, add_host_label=True):
+        if self._element_tree == None:
+            self.load_config()
+        self._labels = []
+        for l in self._element_tree.find('label').text.split(' '):
+            self._labels.append(Label(l, self.jenkins))
+        if add_host_label:
+            self._labels.append(Label(self.name, self.jenkins))
+
+    @property
+    def labels(self, add_host_label=False):
+        if self._labels == None:
+            self._get_labels(add_host_label)
+        return self._labels
