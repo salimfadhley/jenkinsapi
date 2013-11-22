@@ -11,6 +11,8 @@ from time import sleep
 from jenkinsapi.build import Build
 from jenkinsapi.invocation import Invocation
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.label import Label
+from jenkinsapi.label_expression import LabelExpression
 from jenkinsapi.queue import QueueItem
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.custom_exceptions import (
@@ -586,3 +588,27 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build.get_parameters() == build_params:
                 return True
         return False
+
+    def get_label_expression(self):
+        et = self._get_config_element_tree()
+        assigned_node = et.find("assignedNode")
+        if assigned_node is not None:
+            return LabelExpression(assigned_node.text)
+        else:
+            return None
+
+    def matches_labels(self, labels):
+        """
+        Returns True if the given label or list of labels matches the jobs label expression. :param labels: can be
+        string(s) or Label(s)
+        Returns False if the given labels don't match, or if there is no label expression.
+        """
+        le = self.get_label_expression()
+        if le == None:
+            return False
+
+        if type(labels) == list:
+            for x in range(len(labels)):
+                if type(label) == Label:
+                    labels[x] = label.name
+        return le.matches(labels)
