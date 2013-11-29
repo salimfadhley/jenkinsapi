@@ -609,6 +609,6 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
         if type(labels) == list:
             for x in range(len(labels)):
-                if type(label) == Label:
+                if type(labels[x]) == Label:
                     labels[x] = label.name
         return le.matches(labels)
