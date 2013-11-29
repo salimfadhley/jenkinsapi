@@ -99,7 +99,20 @@ class test_build(unittest.TestCase):
         Can we extract git build revision data from a build object?
         """
         self.assertIsInstance(self.b.get_revision(), basestring)
-        self.assertEquals(self.b.get_revision(), '7def9ed6e92580f37d00e4980c36c4d36e68f702')
+        self.assertEquals(self.b.get_revision(),
+                          '7def9ed6e92580f37d00e4980c36c4d36e68f702')
+
+    def test_git_revision_branch(self):
+        """
+        Can we extract git build branch from a build object?
+        """
+        self.assertIsInstance(self.b.get_revision_branch(), list)
+        self.assertEquals(len(self.b.get_revision_branch()), 1)
+        self.assertIsInstance(self.b.get_revision_branch()[0], dict)
+        self.assertEquals(self.b.get_revision_branch()[0]['SHA1'],
+                          '7def9ed6e92580f37d00e4980c36c4d36e68f702')
+        self.assertEquals(self.b.get_revision_branch()[0]['name'],
+                          'origin/unstable')
 
 if __name__ == '__main__':
     unittest.main()

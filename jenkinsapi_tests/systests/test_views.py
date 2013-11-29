@@ -35,6 +35,18 @@ class TestViews(BaseSystemTest):
         del self.jenkins.views[view1_name]
         self.assertNotIn(view1_name, self.jenkins.views)
 
+    def test_create_and_delete_views_by_url(self):
+        self._create_job()
+        view1_name = random_string()
+        new_view = self.jenkins.views.create(view1_name)
+        self.assertIsInstance(new_view, View)
+        self.assertIn(view1_name, self.jenkins.views)
+        view_url = new_view.baseurl
+        view_by_url = self.jenkins.get_view_by_url(view_url)
+        self.assertIsInstance(view_by_url, View)
+        self.jenkins.delete_view_by_url(view_url)
+        self.assertNotIn(view1_name, self.jenkins.views)
+
     def test_delete_view_which_does_not_exist(self):
         self._create_job()
         view1_name = random_string()

@@ -52,13 +52,13 @@ from jenkinsapi import (
     utils,
 
     # Files
-    api, artifact, build, config, constants, custom_exceptions, fingerprint,
+    api, artifact, build, config, constants, custom_exceptions, fingerprint, executors, executor,
     jenkins, jenkinsbase, job, label, node, result_set, result, view
 )
 
 __all__ = [
     "command_line", "utils",
-    "api", "artifact", "build", "config", "constants", "custom_exceptions", "fingerprint",
-    "jenkins", "jenkinsbase", "job", "label", "node", "result_set", "result", "view"
+    "api", "artifact", "build", "config", "constants", "custom_exceptions", "executors", "executor",
+    "fingerprint", "jenkins", "jenkinsbase", "job", "label", "node", "result_set", "result", "view"
 ]
 __docformat__ = "epytext"

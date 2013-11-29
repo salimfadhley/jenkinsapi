@@ -41,7 +41,7 @@ class Views(object):
             if not new_view.add_job(job_name):
                 # Something wrong - delete view
                 del self[new_view]
-                raise TypeError('Job %s does not exist in Jenkins')
+                raise TypeError('Job %s does not exist in Jenkins' % job_name)
 
     def __getitem__(self, view_name):
         for row in self.jenkins._data.get('views', []):
@@ -77,13 +77,6 @@ class Views(object):
         Return a list of the names of all views
         """
         return list(self.iterkeys())
-
-    def delete_view_by_url(self, str_url):
-        url = "%s/doDelete" % str_url
-        response = self.requester.get_url(url, data='')
-        response = response
-        self.jenkins.poll()
-        return self
 
     def create(self, view_name, view_type=LIST_VIEW):
         """

@@ -171,5 +171,16 @@ class TestJob(unittest.TestCase):
         with self.assertRaises(NoBuildData):
             j.get_last_build()
 
+    @mock.patch.object(JenkinsBase, 'get_data')
+    def test_empty_field__add_missing_builds(self, get_data):
+        url = 'http://halob:8080/job/foo/%s' % config.JENKINS_API
+        data = TestJob.URL_DATA[url].copy()
+        data.update({'firstBuild': None})
+        get_data.return_value = data
+        j = Job('http://halob:8080/job/foo/', 'foo', self.J)
+        initial_call_count = get_data.call_count
+        j._add_missing_builds(data)
+        self.assertEquals(get_data.call_count, initial_call_count)
+
 if __name__ == '__main__':
     unittest.main()

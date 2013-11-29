@@ -102,6 +102,14 @@ class LabelExpression(object):
 
         TRUTH = (True, False)
         def reduce(tokens):
+            """
+            Evaluate tokens to a single boolean value, the result of which should indicate a positive or negative match.
+            This function starts at the left side of the list of tokens and when an ID is encountered it is replaced
+            with a True or False value indicating that ID exists in the list of labels passed to the parent matches
+            function. Where an operator is found, _skip_operation is used to perform a look-ahead and determine if any
+            operations of greater precedence needs to be done before the current operation based on the self._precedence
+            dict.
+            """
             x = 0
             while len(tokens) > 1:
                 # The lenth of tokens is a moving target, make sure we start from the beginning on each pass.

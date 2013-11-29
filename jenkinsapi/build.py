@@ -62,6 +62,10 @@ class Build(JenkinsBase):
         vcs = self._data['changeSet']['kind'] or 'git'
         return getattr(self, '_get_%s_rev' % vcs, lambda: None)()
 
+    def get_revision_branch(self):
+        vcs = self._data['changeSet']['kind'] or 'git'
+        return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
+
     def _get_svn_rev(self):
         warnings.warn("This untested function may soon be removed from Jenkinsapi.")
         maxRevision = 0
@@ -74,16 +78,26 @@ class Build(JenkinsBase):
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
                     if x and "lastBuiltRevision" in x]
-        # FIXME So this code returns the first item found in the filtered
-        # list. Why not just:
-        #     `return _actions[0]["lastBuiltRevision"]["SHA1"]`
-        for item in _actions:
-            revision = item["lastBuiltRevision"]["SHA1"]
-            return revision
+
+        return _actions[0]["lastBuiltRevision"]["SHA1"]
 
     def _get_hg_rev(self):
         warnings.warn("This untested function may soon be removed from Jenkinsapi.")
         return [x['mercurialNodeName'] for x in self._data['actions'] if 'mercurialNodeName' in x][0]
+
+    def _get_svn_rev_branch(self):
+        raise NotImplementedError('_get_svn_rev_branch is not yet implemented')
+
+    def _get_git_rev_branch(self):
+        # Sometimes we have None as part of actions. Filter those actions
+        # which have lastBuiltRevision in them
+        _actions = [x for x in self._data['actions']
+                    if x and "lastBuiltRevision" in x]
+
+        return _actions[0]["lastBuiltRevision"]["branch"]
+
+    def _get_hg_rev_branch(self):
+        raise NotImplementedError('_get_hg_rev_branch is not yet implemented')
 
     def get_duration(self):
         return datetime.timedelta(milliseconds=self._data["duration"])

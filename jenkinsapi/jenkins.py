@@ -9,6 +9,7 @@ import logging
 import urlparse
 
 from jenkinsapi import config
+from jenkinsapi.executors import Executors
 from jenkinsapi.job import Job
 from jenkinsapi.jobs import Jobs
 from jenkinsapi.node import Node
@@ -192,6 +193,12 @@ class Jenkins(JenkinsBase):
         str_view_name = str_view_url.split('/view/')[-1].replace('/', '')
         return View(str_view_url, str_view_name, jenkins_obj=self)
 
+    def delete_view_by_url(self, str_url):
+        url = "%s/doDelete" % str_url
+        self.requester.post_and_confirm_status(url, data='')
+        self.poll()
+        return self
+
     def __getitem__(self, jobname):
         """
         Get a job by name
@@ -224,7 +231,7 @@ class Jenkins(JenkinsBase):
         return url
 
     def get_queue_url(self):
-        url = urlparse.urljoin(self.base_server_url(), 'queue')
+        url = "%s/%s" % (self.base_server_url(), 'queue')
         return url
 
     def get_queue(self):
@@ -307,3 +314,7 @@ class Jenkins(JenkinsBase):
 
     def has_plugin(self, plugin_name):
         return plugin_name in self.get_plugins()
+
+    def get_executors(self, nodename):
+        url = '%s/computer/%s' % (self.baseurl, nodename)
+        return Executors(url, nodename, self)

@@ -131,6 +131,7 @@ Project Contributors
  * Aleksey Maksimov (ctpeko3a@gmail.com)
  * Kyle Rockman (kyle.rockman@mac.com)
  * Sascha Peilicke (saschpe@gmx.de)
+ * David Johansen (david@makewhat.is)
 
 Please do not contact these contributors directly for support questions! Use the GitHub tracker instead.
 

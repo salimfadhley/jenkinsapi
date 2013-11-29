@@ -2,6 +2,7 @@
 Module for JenkinsBase class
 """
 
+import ast
 import logging
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
@@ -61,7 +62,7 @@ class JenkinsBase(object):
         requester = self.get_jenkins_obj().requester
         response = requester.get_url(url, params)
         try:
-            return eval(response.text)
+            return ast.literal_eval(response.text)
         except Exception:
             log.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % response.content)

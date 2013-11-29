@@ -50,6 +50,7 @@ class Invocation(object):
         """
         If this job is building or complete then provide it's build-number
         """
+        self.job.poll()
         self.build_number = self.job.get_last_buildnumber()
         return self.build_number
 
