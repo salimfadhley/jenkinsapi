@@ -120,14 +120,14 @@ class Jenkins(JenkinsBase):
         """
         return jobname in self.jobs
 
-    def create_job(self, jobname, config_):
+    def create_job(self, jobname, config_, team=None):
         """
         Create a job
         :param jobname: name of new job, str
         :param config: configuration of new job, xml
         :return: new Job obj
         """
-        return self.jobs.create(jobname, config_)
+        return self.jobs.create(jobname, config_, team)
 
     def copy_job(self, jobname, newjobname):
         return self.jobs.copy(jobname, newjobname)
