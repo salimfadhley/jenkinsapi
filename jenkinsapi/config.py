@@ -3,6 +3,6 @@ Jenkins configuration
 """
 
 
-JENKINS_API = r"api/python"
+JENKINS_API = r"api/json"
 
 LOAD_TIMEOUT = 30

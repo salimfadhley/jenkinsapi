@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<teamManager>
+  <sysAdmin>admin</sysAdmin>
+  <team>
+    <name>one</name>
+    <description>team one</description>
+  </team>
+  <team>
+    <name>two</name>
+    <description>team two</description>
+  </team>
+  <team>
+    <name>public</name>
+  </team>
+</teamManager>

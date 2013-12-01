@@ -78,17 +78,26 @@ class Jobs(object):
         """
         return list(self.iterkeys())
 
-    def create(self, job_name, config):
+    def create(self, job_name, config, team=None):
         """
         Create a job
         :param jobname: name of new job, str
         :param config: configuration of new job, xml
+        :param team optional team for Hudson team concept
         :return: new Job obj
         """
-        if job_name in self:
-            return self[job_name]
 
+        full_job_name = job_name
         params = {'name': job_name}
+
+        # if team is provided we need to add a parameter and the jobname AFTER creation will be <team>.<jobname>
+        if team:
+            params = {'name': job_name, "team": team}
+            full_job_name = team + "." + job_name
+
+        if full_job_name in self:
+            return self[full_job_name]
+
         if isinstance(config, unicode):
             config = str(config)
         self.jenkins.requester.post_xml_and_confirm_status(
@@ -97,10 +106,10 @@ class Jobs(object):
             params=params
         )
         self.jenkins.poll()
-        if job_name not in self:
-            raise JenkinsAPIException('Cannot create job %s' % job_name)
+        if full_job_name not in self:
+            raise JenkinsAPIException('Cannot create job %s' % full_job_name)
 
-        return self[job_name]
+        return self[full_job_name]
 
     def copy(self, job_name, new_job_name):
         """
