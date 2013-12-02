@@ -23,7 +23,6 @@ class Label(JenkinsBase):
     def nodes(self):
         if not self._nodes:
             self._get_nodes()
-
         return self._nodes
 
     def _get_nodes(self):
