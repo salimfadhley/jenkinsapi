@@ -67,12 +67,6 @@ class LabelExpression(object):
             return l[0]
         return l
 
-    def _skip_operation(self, current_operation, tokens):
-        for token in tokens:
-            if type(token) == Token and self._precedence[token.typ] > self._precedence[current_operation]:
-                return True
-        return False
-
     def matches(self, labels):
         """
         Returns True or False.
@@ -101,6 +95,17 @@ class LabelExpression(object):
         tokens = [] + self.tokens
 
         TRUTH = (True, False)
+
+        def skip_operation(current_operation, tokens):
+            """
+            Look in tokens for operations of higher precedence than current_operation.
+            Returns True if current_operation should be skipped, False otherwise.
+            """
+            for token in tokens:
+                if type(token) == Token and self._precedence[token.typ] > self._precedence[current_operation]:
+                    return True
+            return False
+
         def reduce(tokens):
             """
             Evaluate tokens to a single boolean value, the result of which should indicate a positive or negative match.
@@ -157,7 +162,7 @@ class LabelExpression(object):
                                 left = tokens[:x - 1]
                                 right = tokens[x + 2:]
                                 # if the next operation is of higher precedence, do it first. (GROUP or NOT)
-                                if not self._skip_operation('AND', right):
+                                if not skip_operation('AND', right):
                                     tokens = left + [tokens[x - 1] and tokens[x + 1]] + right
 
                     elif tokens[x].typ == 'OR':
@@ -171,7 +176,7 @@ class LabelExpression(object):
                                 left = tokens[:x - 1]
                                 right = tokens[x + 2:]
                                 # if the next operation is of higher precedence, do it first. (GROUP, NOT or AND)
-                                if not self._skip_operation('OR', right):
+                                if not skip_operation('OR', right):
                                     tokens = left + [tokens[x - 1] or reduce([tokens[x + 1]] + right)]
 
                     elif tokens[x].typ == 'IMPLY':
@@ -185,7 +190,7 @@ class LabelExpression(object):
                             else:
                                 left = tokens[:x - 1]
                                 right = tokens[x + 2:]
-                                if not self._skip_operation('IMPLY', right):
+                                if not skip_operation('IMPLY', right):
                                     tokens = left + [not tokens[x - 1] or reduce([tokens[x+1]] + right)]
 
                     elif tokens[x].typ == 'ONLYIF':
@@ -199,7 +204,7 @@ class LabelExpression(object):
                             else:
                                 left = tokens[:x - 1]
                                 right = tokens[x + 1:]
-                                if not self._skip_operation('ONLYIF', right):
+                                if not skip_operation('ONLYIF', right):
                                     a = tokens[x - 1]
                                     # Since we have no higher-precedence operators to the right we can safely reduce
                                     # The right hand and use it as 'b'. The only operation left to be reduced would
