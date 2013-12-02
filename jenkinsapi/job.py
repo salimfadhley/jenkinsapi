@@ -608,6 +608,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             return False
 
         if type(labels) == list:
+            # Convert any given Label objects to strings
             for x in range(len(labels)):
                 if type(labels[x]) == Label:
                     labels[x] = label.name

@@ -110,6 +110,10 @@ class Node(JenkinsBase):
         return response.text
 
     def load_config(self):
+        '''
+        Populates the objects _element_tree attribute with a parsed element tree
+        from config.xml
+        '''
         self._config = self.get_config()
         self._element_tree = ET.fromstring(self._config)
 
@@ -117,13 +121,18 @@ class Node(JenkinsBase):
         if self._element_tree == None:
             self.load_config()
         self._labels = []
-        for l in self._element_tree.find('label').text.split(' '):
-            self._labels.append(Label(l, self.jenkins))
+        le_text = self._element_tree.find("label").text
+        if le_text:
+            for l in self._element_tree.find('label').text.split(' '):
+                self._labels.append(Label(l, self.jenkins))
         if add_host_label:
             self._labels.append(Label(self.name, self.jenkins))
 
-    @property
-    def labels(self, add_host_label=False):
+    def get_labels(self, add_host_label=True):
+        """
+        host names are sometimes treated as labels inside a jobs label expression, so we should include
+        the hostname as a label by default.
+        """
         if self._labels == None:
             self._get_labels(add_host_label)
         return self._labels
