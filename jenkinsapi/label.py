@@ -1,5 +1,6 @@
 from jenkinsapi.jenkinsbase import JenkinsBase
 
+
 class Label(JenkinsBase):
     def __init__(self, name, jenkins_obj):
         self.name = name

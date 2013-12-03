@@ -604,7 +604,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Returns False if the given labels don't match, or if there is no label expression.
         """
         le = self.get_label_expression()
-        if le == None:
+        if le is None:
             return False
 
         if type(labels) == list:
