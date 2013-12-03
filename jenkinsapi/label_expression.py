@@ -2,7 +2,7 @@ import re
 import collections
 
 Token = collections.namedtuple('Token', ['typ', 'value'])
-indent = ""
+
 
 class LabelExpression(object):
     """
@@ -11,24 +11,24 @@ class LabelExpression(object):
     """
 
     # The spec defines how to match id's and operators in the given expression
-    _spec =  [
-        ('GROUP',   r'\(.*\)'),
-        ('NOT',     r'!'),
-        ('OR',      r'\|\|'),
-        ('AND',     r'&&'),
-        ('IMPLY',   r'->'),
-        ('ONLYIF',  r'<->'),
-        ('SKIP',    r'[ \t]+'),
-        ('ID',      r'[\w-]+(?!>)')
+    _spec = [
+        ('GROUP', r'\(.*\)'),
+        ('NOT', r'!'),
+        ('OR', r'\|\|'),
+        ('AND', r'&&'),
+        ('IMPLY', r'->'),
+        ('ONLYIF', r'<->'),
+        ('SKIP', r'[ \t]+'),
+        ('ID', r'[\w-]+(?!>)')
     ]
 
     # The order operations should be performed in. Highest first.
     _precedence = {
-        'GROUP':  5,
-        'NOT':    4,
-        'AND':    3,
-        'OR':     2,
-        'IMPLY':  1,
+        'GROUP': 5,
+        'NOT': 4,
+        'AND': 3,
+        'OR': 2,
+        'IMPLY': 1,
         'ONLYIF': 0
     }
 
@@ -63,7 +63,7 @@ class LabelExpression(object):
     def _gen_tokens(self, expr, init=False):
         # Iterate over the tokens, returning a list when init is True or the number of tokens yielded is > 1
         l = [t for t in self._tokenize(expr)]
-        if len(l) == 1 and init == False:
+        if len(l) == 1 and not init:
             return l[0]
         return l
 
@@ -191,12 +191,12 @@ class LabelExpression(object):
                                 left = tokens[:x - 1]
                                 right = tokens[x + 2:]
                                 if not skip_operation('IMPLY', right):
-                                    tokens = left + [not tokens[x - 1] or reduce([tokens[x+1]] + right)]
+                                    tokens = left + [not tokens[x - 1] or reduce([tokens[x + 1]] + right)]
 
                     elif tokens[x].typ == 'ONLYIF':
                         # ONLYIF: the expression 'a<->b' translates to: "if 'a' matches, 'b' must also match, but if
                         # 'a' does not match, 'b' must also not match.", or in boolean "a && b || !a && !b".
-                        if tokens[x - 1] in TRUTH and tokens [x + 1] in TRUTH:
+                        if tokens[x - 1] in TRUTH and tokens[x + 1] in TRUTH:
                             if len(tokens) == 3:
                                 a = tokens[x - 1]
                                 b = tokens[x + 1]
@@ -219,4 +219,3 @@ class LabelExpression(object):
             return tokens[0]
 
         return reduce(tokens)
-

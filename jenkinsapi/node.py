@@ -118,7 +118,7 @@ class Node(JenkinsBase):
         self._element_tree = ET.fromstring(self._config)
 
     def _get_labels(self, add_host_label=True):
-        if self._element_tree == None:
+        if self._element_tree is None:
             self.load_config()
         self._labels = []
         le_text = self._element_tree.find("label").text
@@ -133,6 +133,6 @@ class Node(JenkinsBase):
         host names are sometimes treated as labels inside a jobs label expression, so we should include
         the hostname as a label by default.
         """
-        if self._labels == None:
+        if self._labels is None:
             self._get_labels(add_host_label)
         return self._labels
