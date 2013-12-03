@@ -1,3 +1,7 @@
+"""
+Module for jenkinsapi LabelExpression
+"""
+
 import re
 import collections
 
@@ -8,6 +12,36 @@ class LabelExpression(object):
     """
     LabelExpression takes the label expression as defined in the <assignedNode> element and parses it.
     The resulting object can be used to determine if a set of labels meet the criteria defined by the expression.
+
+    Example:
+    >>> from jenkinsapi.label_expression import LabelExpression
+    >>> le = LabelExpression('this||that')
+    >>> le.matches('this')
+    True
+    >>> le.matches('that')
+    True
+    >>> le.matches('other')
+    False
+    >>> le.matches(['this', 'other'])
+    True
+
+    Since label expressions are associated with jobs to limit where they run, a `LabelExpression` for a `Job` can be
+    retrieved by calling `Job.get_label_expression`.
+
+    >>> from jenkinsapi.jenkins import Jenkins
+    >>> J = Jenkins("http://example.com")
+    >>> job1 = J.get_job('job1')
+    >>> le = job1.get_label_expression()
+    >>> le.expr
+    'this||that'
+    >>> le.matches(['foo', 'that'])
+    True
+
+    A match can also be determined by calling `Job.matches_labels` with a list of labels.
+
+    >>> job1.matches_labels(['foo', 'that'])
+    True
+
     """
 
     # The spec defines how to match id's and operators in the given expression
@@ -62,10 +96,10 @@ class LabelExpression(object):
 
     def _gen_tokens(self, expr, init=False):
         # Iterate over the tokens, returning a list when init is True or the number of tokens yielded is > 1
-        l = [t for t in self._tokenize(expr)]
-        if len(l) == 1 and not init:
-            return l[0]
-        return l
+        tokens = [t for t in self._tokenize(expr)]
+        if len(tokens) == 1 and not init:
+            return tokens[0]
+        return tokens
 
     def matches(self, labels):
         """
@@ -106,108 +140,118 @@ class LabelExpression(object):
                     return True
             return False
 
-        def reduce(tokens):
-            x = 0
+        def reduce_tokens(tokens):
+            """
+            Evaluate tokens to a single boolean value, the result of which should indicate a positive or negative match.
+            This function starts at the left side of the list of tokens and when an ID is encountered it is replaced
+            with a True or False value indicating that ID exists in the list of labels passed to the parent matches
+            function. Where an operator is found, _skip_operation is used to perform a look-ahead and determine if any
+            operations of greater precedence needs to be done before the current operation based on the self._precedence
+            dict.
+            """
+            token_index = 0
             while len(tokens) > 1:
                 # The lenth of tokens is a moving target, make sure we start from the beginning on each pass.
-                if x >= len(tokens):
-                    x = 0
+                if token_index >= len(tokens):
+                    token_index = 0
 
                 # Skip over Tokens that have already been reduced to a boolean value.
-                if type(tokens[x]) == Token:
-                    if tokens[x].typ == 'ID':
+                if type(tokens[token_index]) == Token:
+                    if tokens[token_index].typ == 'ID':
                         # Swap an ID token with True if the label exists in labels, or False
-                        tokens[x] = tokens[x].value in labels
+                        tokens[token_index] = tokens[token_index].value in labels
 
-                    elif tokens[x].typ == 'GROUP':
+                    elif tokens[token_index].typ == 'GROUP':
                         # Evaluate the expression inside a group down to a single bool and replace the GROUP token
                         # with the result
-                        left = tokens[:x]
-                        right = tokens[x + 1:]
+                        left = tokens[:token_index]
+                        right = tokens[token_index + 1:]
                         # Make sure we don't mutate the original list inside a GROUP token by passing a copy to reduce
-                        tokens = left + [reduce([] + tokens[x].value)] + right
+                        tokens = left + [reduce_tokens([] + tokens[token_index].value)] + right
 
-                    elif tokens[x].typ == 'NOT':
+                    elif tokens[token_index].typ == 'NOT':
                         # If the next token is a bool replace tokens[x:x+2] with !tokens[x+1]. Since NOT is second
                         # only to group it is safe to assume that only a single token to the right needs to be inverted,
                         # since in a valid expression the element to the right will be an ID or a GROUP which should
                         # already be reduced.
-                        if tokens[x + 1] in TRUTH:
+                        if tokens[token_index + 1] in TRUTH:
                             if len(tokens) == 2:
-                                tokens = [not tokens[x + 1]]
+                                tokens = [not tokens[token_index + 1]]
                                 break
                             else:
-                                left = tokens[:x]
+                                left = tokens[:token_index]
                                 right = []
-                                if x + 1 < len(tokens) - 1:
-                                    right = tokens[x + 2:]
-                                tokens = tokens[:x] + [not tokens[x + 1]] + right
+                                if token_index + 1 < len(tokens) - 1:
+                                    right = tokens[token_index + 2:]
+                                tokens = tokens[:token_index] + [not tokens[token_index + 1]] + right
 
-                    elif tokens[x].typ == 'AND':
+                    elif tokens[token_index].typ == 'AND':
                         # if the previous and next elements are boolean replace tokens[x-1:x+2] with the AND of those
                         # elements
-                        if (tokens[x - 1] in TRUTH) and (tokens[x + 1] in TRUTH):
+                        if (tokens[token_index - 1] in TRUTH) and (tokens[token_index + 1] in TRUTH):
                             if len(tokens) == 3:
-                                tokens = [tokens[x - 1] and tokens[x + 1]]
+                                tokens = [tokens[token_index - 1] and tokens[token_index + 1]]
                                 break
                             else:
-                                left = tokens[:x - 1]
-                                right = tokens[x + 2:]
+                                left = tokens[:token_index - 1]
+                                right = tokens[token_index + 2:]
                                 # if the next operation is of higher precedence, do it first. (GROUP or NOT)
                                 if not skip_operation('AND', right):
-                                    tokens = left + [tokens[x - 1] and tokens[x + 1]] + right
+                                    tokens = left + [tokens[token_index - 1] and tokens[token_index + 1]] + right
 
-                    elif tokens[x].typ == 'OR':
+                    elif tokens[token_index].typ == 'OR':
                         # if the last and next elements are boolean replace tokens[x-1:x+2] with the or of those
                         # elements
-                        if tokens[x - 1] in TRUTH and tokens[x + 1] in TRUTH:
+                        if tokens[token_index - 1] in TRUTH and tokens[token_index + 1] in TRUTH:
                             if len(tokens) == 3:
-                                tokens = [tokens[x - 1] or tokens[x + 1]]
+                                tokens = [tokens[token_index - 1] or tokens[token_index + 1]]
                                 break
                             else:
-                                left = tokens[:x - 1]
-                                right = tokens[x + 2:]
+                                left = tokens[:token_index - 1]
+                                right = tokens[token_index + 2:]
                                 # if the next operation is of higher precedence, do it first. (GROUP, NOT or AND)
                                 if not skip_operation('OR', right):
-                                    tokens = left + [tokens[x - 1] or reduce([tokens[x + 1]] + right)]
+                                    tokens = left + [tokens[token_index - 1]
+                                                     or reduce_tokens([tokens[token_index + 1]] + right)]
 
-                    elif tokens[x].typ == 'IMPLY':
+                    elif tokens[token_index].typ == 'IMPLY':
                         # IMPLY: the expression 'a->b' translates to "if 'a' matches then 'b' must also match".
                         # In boolean this translates to '!a || b' so it is legal to have b with out a but not
                         # the other way around.
-                        if tokens[x - 1] in TRUTH and tokens[x + 1] in TRUTH:
+                        if tokens[token_index - 1] in TRUTH and tokens[token_index + 1] in TRUTH:
                             if len(tokens) == 3:
-                                tokens = [not tokens[x - 1] or tokens[x + 1]]
+                                tokens = [not tokens[token_index - 1] or tokens[token_index + 1]]
                                 break
                             else:
-                                left = tokens[:x - 1]
-                                right = tokens[x + 2:]
+                                left = tokens[:token_index - 1]
+                                right = tokens[token_index + 2:]
                                 if not skip_operation('IMPLY', right):
-                                    tokens = left + [not tokens[x - 1] or reduce([tokens[x + 1]] + right)]
+                                    tokens = left + [not tokens[token_index - 1]
+                                                     or reduce_tokens([tokens[token_index + 1]] + right)]
 
-                    elif tokens[x].typ == 'ONLYIF':
+                    elif tokens[token_index].typ == 'ONLYIF':
                         # ONLYIF: the expression 'a<->b' translates to: "if 'a' matches, 'b' must also match, but if
                         # 'a' does not match, 'b' must also not match.", or in boolean "a && b || !a && !b".
-                        if tokens[x - 1] in TRUTH and tokens[x + 1] in TRUTH:
+                        if tokens[token_index - 1] in TRUTH and tokens[token_index + 1] in TRUTH:
                             if len(tokens) == 3:
-                                a = tokens[x - 1]
-                                b = tokens[x + 1]
-                                tokens = [a and b or not a and not b]
+                                label1 = tokens[token_index - 1]
+                                label2 = tokens[token_index + 1]
+                                tokens = [label1 and label2 or not label1 and not label2]
                             else:
-                                left = tokens[:x - 1]
-                                right = tokens[x + 1:]
+                                left = tokens[:token_index - 1]
+                                right = tokens[token_index + 1:]
                                 if not skip_operation('ONLYIF', right):
-                                    a = tokens[x - 1]
+                                    label1 = tokens[token_index - 1]
                                     # Since we have no higher-precedence operators to the right we can safely reduce
                                     # The right hand and use it as 'b'. The only operation left to be reduced would
                                     # be another ONLYIF.
-                                    b = reduce(right)
-                                    tokens = left + [a and b or not a and not b]
+                                    label2 = reduce_tokens(right)
+                                    tokens = left + [label1 and label2 or not label1 and not label2]
                     else:
                         # Unknown condition, assume False
                         tokens = [False]
-                x += 1
+                token_index += 1
             # When we have only one element left, that is our answer.
             return tokens[0]
 
-        return reduce(tokens)
+        return reduce_tokens(tokens)

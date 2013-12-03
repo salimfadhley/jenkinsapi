@@ -590,6 +590,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return False
 
     def get_label_expression(self):
+        """
+        :return: `LabelExpression` object or None if the job has no label expression defined.
+        """
         et = self._get_config_element_tree()
         assigned_node = et.find("assignedNode")
         if assigned_node is not None:
@@ -600,8 +603,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def matches_labels(self, labels):
         """
         Returns True if the given label or list of labels matches the jobs label expression. :param labels: can be
-        string(s) or Label(s)
+        string(s) or `Label`(s)
         Returns False if the given labels don't match, or if there is no label expression.
+
+        :param labels: a singleton or list of `Label` objects or strings
+        :return: True or False
         """
         le = self.get_label_expression()
         if le is None:
@@ -609,7 +615,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
         if type(labels) == list:
             # Convert any given Label objects to strings
-            for x in range(len(labels)):
-                if type(labels[x]) == Label:
-                    labels[x] = label.name
+            for index in range(len(labels)):
+                if type(labels[index]) == Label:
+                    labels[index] = labels[index].name
         return le.matches(labels)
