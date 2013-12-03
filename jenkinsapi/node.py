@@ -123,8 +123,8 @@ class Node(JenkinsBase):
         self._labels = []
         le_text = self._element_tree.find("label").text
         if le_text:
-            for l in self._element_tree.find('label').text.split(' '):
-                self._labels.append(Label(l, self.jenkins))
+            for label_name in self._element_tree.find('label').text.split(' '):
+                self._labels.append(Label(label_name, self.jenkins))
         if add_host_label:
             self._labels.append(Label(self.name, self.jenkins))
 
