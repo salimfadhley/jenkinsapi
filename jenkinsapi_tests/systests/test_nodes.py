@@ -41,6 +41,33 @@ class TestNodes(BaseSystemTest):
         mn.set_online()  # Switch it back on
         self.assertTrue(mn.is_online())
 
+    def test_get_config_xml_url(self):
+        node_name = random_string()
+        self.jenkins.create_node(node_name)
+        expected_url = self.jenkins.baseurl + "/computer/" + node_name + "/config.xml"
+        node_config_url = self.jenkins.get_node(node_name).get_config_xml_url()
+        self.assertEqual(node_config_url, expected_url)
+
+    def test_get_config(self):
+        node_name = random_string()
+        self.jenkins.create_node(node_name)
+        config = self.jenkins.get_node(node_name).get_config()
+        self.assertFalse(config == None)
+
+    def test_load_config(self):
+        node_name = random_string()
+        self.jenkins.create_node(node_name)
+        N = self.jenkins.get_node(node_name)
+        N.load_config()
+        nn = N._element_tree.find("name")
+        self.assertTrue(nn.text, node_name)
+
+    def test_get_labels(self):
+        node_name = random_string()
+        self.jenkins.create_node(node_name)
+        N = self.jenkins.get_node(node_name)
+        self.assertTrue(node_name in [l.name for l in N.get_labels()])
+        self.assertFalse(node_name not in [l.name for l in N.get_labels(add_host_label=False)])
 
 if __name__ == '__main__':
     logging.basicConfig()
