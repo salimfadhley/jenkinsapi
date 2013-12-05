@@ -8,6 +8,9 @@ class Label(JenkinsBase):
     """
     Represents a jenkins Label.
 
+    Labels are used in jenkins to associate nodes and jobs together. The `Label  class offers a way to discover nodes
+    that share a label, and jobs that have some tie to a label.
+     
     To get the names of nodes and jobs for a label named foo you could do the following. Note that `nodes` and `jobs`
     properties return lists of strings, not their corresponding objects. This is to prevent too many queries to the
     master if an extremely generic label (for example i386) were used.

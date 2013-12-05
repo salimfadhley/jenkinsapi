@@ -11,8 +11,6 @@ from time import sleep
 from jenkinsapi.build import Build
 from jenkinsapi.invocation import Invocation
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.label import Label
-from jenkinsapi.label_expression import LabelExpression
 from jenkinsapi.queue import QueueItem
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.custom_exceptions import (
@@ -591,31 +589,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_label_expression(self):
         """
-        :return: `LabelExpression` object or None if the job has no label expression defined.
+        :return: A string representation of a label expression, or an empty string of no expression is defined for job.
         """
         et = self._get_config_element_tree()
         assigned_node = et.find("assignedNode")
-        if assigned_node is not None:
-            return LabelExpression(assigned_node.text)
-        else:
-            return None
-
-    def matches_labels(self, labels):
-        """
-        Returns True if the given label or list of labels matches the jobs label expression. :param labels: can be
-        string(s) or `Label`(s)
-        Returns False if the given labels don't match, or if there is no label expression.
-
-        :param labels: a singleton or list of `Label` objects or strings
-        :return: True or False
-        """
-        le = self.get_label_expression()
-        if le is None:
-            return False
-
-        if type(labels) == list:
-            # Convert any given Label objects to strings
-            for index in range(len(labels)):
-                if type(labels[index]) == Label:
-                    labels[index] = labels[index].name
-        return le.matches(labels)
+        try:
+            return assigned_node.text
+        except AttributeError:
+            # If the element assignedNode doesn't exist return an empty string
+            return ""

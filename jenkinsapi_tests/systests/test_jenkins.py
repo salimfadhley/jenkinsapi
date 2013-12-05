@@ -85,11 +85,10 @@ class JobTests(BaseSystemTest):
         self.assertIsInstance(j, Job)
         self.assertEquals(j.name, copied_job_name)
 
-    def test_job_labels(self):
+    def test_get_label_expression(self):
         self.jenkins.create_job('label_test_job', LABELED_JOB)
         j = self.jenkins.get_job('label_test_job')
-        self.assertTrue(j.matches_labels(['test_label1', 'test_label2']))
-        self.assertFalse(j.matches_labels(['foo', 'bar']))
+        self.assertEqual(j.get_label_expression(), 'test_label1||test_label2')
 
 if __name__ == '__main__':
     unittest.main()
