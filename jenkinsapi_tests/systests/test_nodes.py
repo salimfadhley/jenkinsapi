@@ -64,10 +64,12 @@ class TestNodes(BaseSystemTest):
 
     def test_get_labels(self):
         node_name = random_string()
-        self.jenkins.create_node(node_name)
+        self.jenkins.create_node(node_name, labels="test_label")
         N = self.jenkins.get_node(node_name)
-        self.assertTrue(node_name in [l.name for l in N.get_labels()])
-        self.assertFalse(node_name not in [l.name for l in N.get_labels(add_host_label=False)])
+        self.assertTrue(node_name in [label.name for label in N.get_labels()])
+        self.assertTrue("test_label" in [label.name for label in N.get_labels()])
+        self.assertTrue("test_label" in [label.name for label in N.get_labels(add_host_label=False)])
+        self.assertFalse(node_name not in [label.name for label in N.get_labels(add_host_label=False)])
 
 if __name__ == '__main__':
     logging.basicConfig()

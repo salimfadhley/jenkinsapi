@@ -134,6 +134,7 @@ Project Contributors
  * Kyle Rockman (kyle.rockman@mac.com)
  * Sascha Peilicke (saschpe@gmx.de)
  * David Johansen (david@makewhat.is)
+ * Adam Reid (adam@adamreid.ca)
 
 Please do not contact these contributors directly for support questions! Use the GitHub tracker instead.
 
