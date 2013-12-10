@@ -586,3 +586,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build.get_parameters() == build_params:
                 return True
         return False
+
+    def get_label_expression(self):
+        """
+        :return: A string representation of a label expression, or an empty string of no expression is defined for job.
+        """
+        et = self._get_config_element_tree()
+        assigned_node = et.find("assignedNode")
+        try:
+            return assigned_node.text
+        except AttributeError:
+            # If the element assignedNode doesn't exist return an empty string
+            return ""

@@ -5,7 +5,7 @@ import unittest
 from jenkinsapi.job import Job
 from jenkinsapi.invocation import Invocation
 from jenkinsapi_tests.systests.base import BaseSystemTest
-from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
+from jenkinsapi_tests.systests.job_configs import EMPTY_JOB, LABELED_JOB
 from jenkinsapi_tests.test_utils.random_strings import random_string
 
 
@@ -84,6 +84,11 @@ class JobTests(BaseSystemTest):
         self.assertJobIsPresent(copied_job_name)
         self.assertIsInstance(j, Job)
         self.assertEquals(j.name, copied_job_name)
+
+    def test_get_label_expression(self):
+        self.jenkins.create_job('label_test_job', LABELED_JOB)
+        j = self.jenkins.get_job('label_test_job')
+        self.assertEqual(j.get_label_expression(), 'test_label1||test_label2')
 
 if __name__ == '__main__':
     unittest.main()
