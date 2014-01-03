@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudsonSecurityManager>
+  <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+    <disableSignup>false</disableSignup>
+    <enableCaptcha>false</enableCaptcha>
+    <notifyUser>true</notifyUser>
+  </securityRealm>
+  <authorizationStrategy class="org.eclipse.hudson.security.team.TeamBasedAuthorizationStrategy"/>
+  <useSecurity>true</useSecurity>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter"/>
+</hudsonSecurityManager>
