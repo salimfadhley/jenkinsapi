@@ -41,6 +41,11 @@ class TestNodes(BaseSystemTest):
         mn.set_online()  # Switch it back on
         self.assertTrue(mn.is_online())
 
+    def test_create_node_on_host(self):
+        node_name = random_string()
+        mn = self.jenkins.create_node(node_name, host="127.0.0.1", credentials_id="1",
+                env={'key1': 1} )
+        self.assertIsNotNone(mn.is_online())
 
 if __name__ == '__main__':
     logging.basicConfig()
