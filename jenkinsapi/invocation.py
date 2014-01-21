@@ -37,8 +37,9 @@ class Invocation(object):
         """
         self.job.poll()
         newly_created_builds = set(self.job.get_build_dict().keys())
+
         if newly_created_builds:
-            self.build_number = newly_created_builds.pop()
+            self.build_number = sorted(list(newly_created_builds))[-1]
         else:
             try:
                 self.queue_item = self.job.get_queue_item()
