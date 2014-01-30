@@ -292,18 +292,17 @@ class Jenkins(JenkinsBase):
 
         if host:
             launcher = {'stapler-class': 'hudson.plugins.sshslaves.SSHLauncher',
-                    'host': host,
-                    'credentialsId': credentials_id,
-                    'port': port}
+                        'host': host,
+                        'credentialsId': credentials_id,
+                        'port': port}
         else:
             launcher = {'stapler-class': 'hudson.slaves.JNLPLauncher'}
 
         if env:
             properties = {'stapler-class-bag': 'true',
-                'hudson-slaves-EnvironmentVariablesNodeProperty': {
-                    "env": [{'key': i[0], 'value': i[1]} for i in env.items()],
-                    }
-                }
+                          'hudson-slaves-EnvironmentVariablesNodeProperty': {
+                              'env': [{'key': i[0], 'value': i[1]} for i in env.items()]}
+                          }
         else:
             properties = {'stapler-class-bag': 'true'}
 
