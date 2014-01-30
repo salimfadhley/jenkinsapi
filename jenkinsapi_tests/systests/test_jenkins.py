@@ -85,5 +85,9 @@ class JobTests(BaseSystemTest):
         self.assertIsInstance(j, Job)
         self.assertEquals(j.name, copied_job_name)
 
+    def test_get_master_data(self):
+        master_data = self.jenkins.get_master_data()
+        self.assertEquals(master_data['totalExecutors'], 2)
+
 if __name__ == '__main__':
     unittest.main()

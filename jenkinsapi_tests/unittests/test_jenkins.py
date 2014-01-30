@@ -331,6 +331,20 @@ class TestJenkins(unittest.TestCase):
                     requester=mock_requester)
         self.assertEquals('0.0', J.version)
 
+    @mock.patch.object(JenkinsBase, 'get_data')
+    def test_get_master_data(self, _base_poll):
+        base_url = 'http://localhost:808'
+        _base_poll.return_value = {
+            "busyExecutors" : 59,
+            "totalExecutors" : 75
+        }
+        j = Jenkins(base_url,
+                    username='foouser', password='foopassword')
+        data = j.get_master_data()
+        self.assertEquals(data['busyExecutors'], 59)
+        self.assertEquals(data['totalExecutors'], 75)
+
+
 class TestJenkinsURLs(unittest.TestCase):
 
     @mock.patch.object(Jenkins, '_poll')

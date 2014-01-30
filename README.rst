@@ -124,13 +124,13 @@ Project Contributors
 --------------------
 
  * Salim Fadhley (sal@stodge.org)
+ * Aleksey Maksimov (ctpeko3a@gmail.com)
  * Ramon van Alteren (ramon@vanalteren.nl)
  * Ruslan Lutsenko (ruslan.lutcenko@gmail.com)
  * Cleber J Santos (cleber@simplesconsultoria.com.br)
  * William Zhang (jollychang@douban.com)
  * Victor Garcia (bravejolie@gmail.com)
  * Bradley Harris (bradley@ninelb.com)
- * Aleksey Maksimov (ctpeko3a@gmail.com)
  * Kyle Rockman (kyle.rockman@mac.com)
  * Sascha Peilicke (saschpe@gmx.de)
  * David Johansen (david@makewhat.is)

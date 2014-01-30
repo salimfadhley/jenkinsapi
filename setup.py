@@ -2,10 +2,10 @@ from setuptools import setup
 import os
 
 PROJECT_ROOT, _ = os.path.split(__file__)
-REVISION = '0.2.16'
+REVISION = '0.2.17'
 PROJECT_NAME = 'JenkinsAPI'
-PROJECT_AUTHORS = "Salim Fadhley, Ramon van Alteren, Ruslan Lutsenko"
-PROJECT_EMAILS = 'salimfadhley@gmail.com, ramon@vanalteren.nl, ruslan.lutcenko@gmail.com'
+PROJECT_AUTHORS = "Salim Fadhley" # Please see readme.rst for a complete list of contributors
+PROJECT_EMAILS = 'salimfadhley@gmail.com'
 PROJECT_URL = "https://github.com/salimfadhley/jenkinsapi"
 SHORT_DESCRIPTION = 'A Python API for accessing resources on a Jenkins continuous-integration server.'
 

@@ -319,6 +319,10 @@ class Jenkins(JenkinsBase):
         url = '%s/computer/%s' % (self.baseurl, nodename)
         return Executors(url, nodename, self)
 
+    def get_master_data(self):
+        url = '%s/computer/api/python' % self.baseurl
+        return self.get_data(url)
+
     @property
     def version(self):
         """
