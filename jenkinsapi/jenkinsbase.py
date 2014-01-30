@@ -25,7 +25,7 @@ class JenkinsBase(object):
         
     def __hash__(self):
         #hash is used by some comparative operations
-        #as a fallback base objects should beable to create a has from their _data member
+        #jenkins objects should beable to create reliable hashes from their _data member
         def make_hash(o):
             """
             Makes a hash from a dictionary, list, tuple or set to any level, that contains
@@ -61,8 +61,7 @@ class JenkinsBase(object):
         Return true if the hash of the data they represent matches 
         """
         if isinstance(other, self.__class__):
-            if hash(self) == hash(other):
-                return True
+            return hash(self) == hash(other):
         return False
 
     @classmethod
