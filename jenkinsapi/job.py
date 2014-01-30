@@ -126,10 +126,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_build_triggerurl(self, build_params=None, files=None):
-        if build_params or files:
-            return "%s/buildWithParameters" % self.baseurl
-        return "%s/build" % self.baseurl
+    def get_build_triggerurl(self):
+        if len(self.get_params_list()) == 0:
+            return "%s/build" % self.baseurl
+        return "%s/buildWithParameters" % self.baseurl
 
     @staticmethod
     def _mk_json_from_build_parameters(build_params):
@@ -182,7 +182,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             log.info("Attempting to start %s on %s", self.name, repr(
                 self.get_jenkins_obj()))
 
-            url = self.get_build_triggerurl(build_params, files)
+            url = self.get_build_triggerurl()
 
             if cause:
                 build_params['cause'] = cause
