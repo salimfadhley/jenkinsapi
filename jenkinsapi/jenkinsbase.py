@@ -4,6 +4,7 @@ Module for JenkinsBase class
 
 import ast
 import logging
+from copy import deepcopy
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -21,6 +22,27 @@ class JenkinsBase(object):
 
     def __str__(self):
         raise NotImplementedError
+        
+    def __hash__(self):
+        #hash is used by some comparative operations
+        #as a fallback base objects should beable to create a has from their _data member
+        def make_hash(o):
+            """
+            Makes a hash from a dictionary, list, tuple or set to any level, that contains
+            only other hashable types (including any lists, tuples, sets, and
+            dictionaries).
+            """
+            if isinstance(o, (set, tuple, list)):
+                return tuple([make_hash(e) for e in o])    
+            elif not isinstance(o, dict):
+                return hash(o)
+            
+            new_o = deepcopy(o)
+            for k, v in new_o.items():
+                new_o[k] = make_hash(v)
+            
+            return hash(tuple(frozenset(sorted(new_o.items()))))
+        return make_hash(self._data)
 
     def __init__(self, baseurl, poll=True):
         """
@@ -36,13 +58,12 @@ class JenkinsBase(object):
 
     def __eq__(self, other):
         """
-        Return true if the other object represents a connection to the same server
+        Return true if the hash of the data they represent matches 
         """
-        if not isinstance(other, self.__class__):
-            return False
-        if not other.baseurl == self.baseurl:
-            return False
-        return True
+        if isinstance(other, self.__class__):
+            if hash(self) == hash(other):
+                return True
+        return False
 
     @classmethod
     def strip_trailing_slash(cls, url):
