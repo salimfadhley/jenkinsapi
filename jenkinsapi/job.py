@@ -127,7 +127,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._element_tree
 
     def get_build_triggerurl(self):
-        if not self.get_params_list():
+        if not self.has_params():
             return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
 
@@ -603,10 +603,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         Gets the list of parameter names for this job.
         """
-        params = []
-        for param in self.get_params():
-            params.append(param['name'])
-        return params
+        return [param['name'] for param in self.get_params()]
+
+    def has_params(self):
+        return len(self._data['actions']) > 0
 
     def has_queued_build(self, build_params):
         """Returns True if a build with build_params is currently queued."""
