@@ -16,6 +16,11 @@ class JobTests(BaseSystemTest):
         self.jenkins.create_job(job_name, EMPTY_JOB)
         self.assertJobIsPresent(job_name)
 
+    def test_create_job_through_jobs_dict(self):
+        job_name = 'create_%s' % random_string()
+        self.jenkins.jobs[job_name] = EMPTY_JOB
+        self.assertJobIsPresent(job_name)
+
     def test_enable_disable_job(self):
         job_name = 'create_%s' % random_string()
         self.jenkins.create_job(job_name, EMPTY_JOB)
