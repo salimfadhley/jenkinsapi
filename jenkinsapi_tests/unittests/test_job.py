@@ -9,7 +9,28 @@ from jenkinsapi.custom_exceptions import NoBuildData
 
 class TestJob(unittest.TestCase):
     JOB_DATA = {
-        "actions": [],
+        "actions": [{
+            "parameterDefinitions": [
+            {
+                "defaultParameterValue": {
+                    "name": "param1",
+                    "value": "test1"
+                },
+                "description": "",
+                "name": "param1",
+                "type": "StringParameterDefinition"
+            },
+            {
+                "defaultParameterValue": {
+                    "name": "param2",
+                    "value": ""
+                },
+                "description": "",
+                "name": "param2",
+                "type": "StringParameterDefinition"
+            }
+            ]
+        }],
         "description": "test job",
         "displayName": "foo",
         "displayNameOrNull": None,
@@ -84,7 +105,7 @@ class TestJob(unittest.TestCase):
 
     def test_get_build_triggerurl(self):
         self.assertEquals(
-            self.j.get_build_triggerurl(), 'http://halob:8080/job/foo/build')
+            self.j.get_build_triggerurl(), 'http://halob:8080/job/foo/buildWithParameters')
 
     def test_wrong__mk_json_from_build_parameters(self):
         with self.assertRaises(AssertionError) as ar:
@@ -186,6 +207,26 @@ class TestJob(unittest.TestCase):
         initial_call_count = get_data.call_count
         j._add_missing_builds(data)
         self.assertEquals(get_data.call_count, initial_call_count)
+
+    @mock.patch.object(JenkinsBase, 'get_data')
+    def test_get_params(self, get_data):
+        url = 'http://halob:8080/job/foo/%s' % config.JENKINS_API
+        get_data.return_value = TestJob.URL_DATA[url].copy()
+        j = Job('http://halob:8080/job/foo/', 'foo', self.J)
+        params = list(j.get_params())
+        self.assertEquals(len(params), 2)
+
+    @mock.patch.object(JenkinsBase, 'get_data')
+    def test_get_params_list(self, get_data):
+        url = 'http://halob:8080/job/foo/%s' % config.JENKINS_API
+        get_data.return_value = TestJob.URL_DATA[url].copy()
+        j = Job('http://halob:8080/job/foo/', 'foo', self.J)
+
+        params = j.get_params_list()
+
+        self.assertIsInstance(params, list)
+        self.assertEquals(len(params), 2)
+        self.assertEquals(params, ['param1', 'param2'])
 
 if __name__ == '__main__':
     unittest.main()
