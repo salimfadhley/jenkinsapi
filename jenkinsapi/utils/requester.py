@@ -37,7 +37,7 @@ class Requester(object):
 
     VALID_STATUS_CODES = [200, ]
 
-    def __init__(self, username=None, password=None, ssl_verify=False, baseurl=None):
+    def __init__(self, username=None, password=None, ssl_verify=True, baseurl=None):
         if username:
             assert password, 'Cannot set a username without a password!'
 
