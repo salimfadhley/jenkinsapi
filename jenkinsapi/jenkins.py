@@ -37,16 +37,20 @@ class Jenkins(JenkinsBase):
     """
     Represents a jenkins environment.
     """
-    def __init__(self, baseurl, username=None, password=None, requester=None, lazy=False):
+    def __init__(self, baseurl, username=None, password=None, requester=None,
+                 lazy=False, ssl_verify=True):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
         :param password: password for jenkins auth, str
+        :param ssl_verify: verify ssl certificate, boolean
         :return: a Jenkins obj
         """
         self.username = username
         self.password = password
-        self.requester = requester or Requester(username, password, baseurl=baseurl)
+        self.requester = requester or Requester(username, password,
+                                                baseurl=baseurl,
+                                                ssl_verify=ssl_verify)
         self.lazy = lazy
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
