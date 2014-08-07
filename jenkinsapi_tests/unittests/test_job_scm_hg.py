@@ -92,6 +92,25 @@ class TestHgJob(unittest.TestCase):
         '''
         return config_node
 
+    def configtree_with_revision(self):
+        config_node = '''
+        <project>
+        <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.50">
+        <source>http://cm5/hg/sandbox/v01.0/int</source>
+        <modules></modules>
+        <revisionType>BRANCH</revisionType>
+        <revision>testme</revision>
+        <clean>false</clean>
+        <browser class="hudson.plugins.mercurial.browser.HgWeb">
+        <url>http://cm5/hg/sandbox/v01.0/int/</url>
+        </browser>
+        </scm>
+        <disableChangeLog>false</disableChangeLog>
+        </scm>
+        </project>
+        '''
+        return config_node
+
     @mock.patch.object(Job,'get_config',configtree_with_branch)
     def test_hg_attributes(self):
         expected_url = ['http://cm5/hg/sandbox/v01.0/int']
@@ -102,6 +121,13 @@ class TestHgJob(unittest.TestCase):
     @mock.patch.object(Job,'get_config',configtree_with_default_branch)
     def test_hg_attributes_default_branch(self):
         self.assertEquals(self.j.get_scm_branch(),['default'])
+
+    @mock.patch.object(Job,'get_config',configtree_with_revision)
+    def test_hg_attributes(self):
+        expected_url = ['http://cm5/hg/sandbox/v01.0/int']
+        self.assertEquals(self.j.get_scm_type(),'hg')
+        self.assertEquals(self.j.get_scm_url(),expected_url)
+        self.assertEquals(self.j.get_scm_branch(),['testme'])
 
 if __name__ == '__main__':
     unittest.main()
