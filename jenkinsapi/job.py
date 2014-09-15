@@ -220,7 +220,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 files=files,
                 valid=[200, 201]
             )
-            response = response
+
+            queue_item_raw = self.jenkins.requester.get_and_confirm_status(
+                response.headers['location'] + '/api/json',
+                valid=[200])
+            queue_item = json.loads(queue_item_raw.text)
+            invocation.queue_item = QueueItem(self.jenkins, **queue_item)
+
             if invoke_pre_check_delay > 0:
                 log.info(
                     "Waiting for %is to allow Jenkins to catch up", invoke_pre_check_delay)
