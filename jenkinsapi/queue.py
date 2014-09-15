@@ -5,6 +5,7 @@ Queue module for jenkinsapi
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownQueueItem
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -106,3 +107,10 @@ class QueueItem(object):
 
     def __str__(self):
         return "%s #%i" % (self.task['name'], self.id)
+
+    def poll(self):
+        queue_item_raw = self.jenkins.requester.get_and_confirm_status(
+            self.jenkins.baseurl + '/' + self.url + '/api/json',
+            valid=[200])
+        queue_item = json.loads(queue_item_raw.text)
+        self.__dict__.update(**queue_item)
