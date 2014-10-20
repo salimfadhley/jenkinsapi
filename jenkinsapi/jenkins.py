@@ -293,7 +293,9 @@ class Jenkins(JenkinsBase):
             self.requester.post_and_confirm_status(url, data={})
 
     def create_node(self, name, num_executors=2, node_description=None,
-                    remote_fs='/var/lib/jenkins', labels=None, exclusive=False):
+                    remote_fs='/var/lib/jenkins', labels=None, exclusive=False,
+                    host=None, credentials_id=None, port=22,
+                    env=None):
         """
         Create a new slave node by name.
 
@@ -303,6 +305,10 @@ class Jenkins(JenkinsBase):
         :param remote_fs: jenkins path, str
         :param labels: labels to associate with slave, str
         :param exclusive: tied to specific job, boolean
+        :param host: host address
+        :param credentials_id: if a host is given this parameter is required
+        :param port: the port on the node
+        :param env: a dictionary of environment variables added to the node
         :return: node obj
         """
         NODE_TYPE = 'hudson.slaves.DumbSlave$DescriptorImpl'
@@ -311,6 +317,23 @@ class Jenkins(JenkinsBase):
             return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
         if exclusive:
             MODE = 'EXCLUSIVE'
+
+        if host:
+            launcher = {'stapler-class': 'hudson.plugins.sshslaves.SSHLauncher',
+                        'host': host,
+                        'credentialsId': credentials_id,
+                        'port': port}
+        else:
+            launcher = {'stapler-class': 'hudson.slaves.JNLPLauncher'}
+
+        if env:
+            properties = {'stapler-class-bag': 'true',
+                          'hudson-slaves-EnvironmentVariablesNodeProperty': {
+                              'env': [{'key': i[0], 'value': i[1]} for i in env.items()]}
+                          }
+        else:
+            properties = {'stapler-class-bag': 'true'}
+
         params = {
             'name': name,
             'type': NODE_TYPE,
@@ -323,8 +346,8 @@ class Jenkins(JenkinsBase):
                 'mode': MODE,
                 'type': NODE_TYPE,
                 'retentionStrategy': {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
-                'nodeProperties': {'stapler-class-bag': 'true'},
-                'launcher': {'stapler-class': 'hudson.slaves.JNLPLauncher'}
+                'nodeProperties': properties,
+                'launcher': launcher,
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urlencode(params)
