@@ -21,7 +21,7 @@ class KrbRequester(Requester):
                             from requests_kerberos package
         """
         args = {}
-        if ssl_verify:
+        if ssl_verify is not None:
             args["ssl_verify"] = ssl_verify
         if baseurl:
             args["baseurl"] = baseurl
