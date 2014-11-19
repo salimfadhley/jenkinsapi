@@ -310,6 +310,12 @@ class Build(JenkinsBase):
         url_tpl = r"%stestReport/%s"
         return url_tpl % (self._data["url"], config.JENKINS_API)
 
+    def get_build_url(self):
+        """
+        Return build url for job.
+        """
+        return self._data["url"]
+
     def get_resultset(self):
         """
         Obtain detailed results for this build.

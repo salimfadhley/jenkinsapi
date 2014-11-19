@@ -81,6 +81,10 @@ class test_build(unittest.TestCase):
                             'userId': None,
                             'userName': 'anonymous'}])
 
+    def test_get_build_url(self):
+        self.assertEquals(self.b.get_build_url(),
+                          'http://localhost:8080/job/foo/1/')
+
     @mock.patch.object(Build, 'get_data')
     def test_build_depth(self, get_data_mock):
         build = Build('http://halob:8080/job/foo/98', 98, self.j, depth=0)
@@ -94,6 +98,7 @@ class test_build(unittest.TestCase):
     # def test_downstream(self):
     #     expected = ['SingleJob','MultipleJobs']
     #     self.assertEquals(self.b.get_downstream_job_names(), expected)
+
 
 def main():
     unittest.main(verbosity=2)
