@@ -661,7 +661,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Returns job owner.
         Requires 'Job and Slave ownership plugin.
         """
-        primary_owner_id_elem = self._get_config_element_tree().find('properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
+        primary_owner_id_elem = self._get_config_element_tree().find(
+            'properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
         if None == primary_owner_id_elem:
             return None
         else:
@@ -675,13 +676,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Arguments:
             owner - jenkins user name of the job owner.
         """
-        primary_owner_id_elem = self._get_config_element_tree().find('properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
+        primary_owner_id_elem = self._get_config_element_tree().find(
+            'properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
         if primary_owner_id_elem is not None:
             if owner != primary_owner_id_elem.text:
                 primary_owner_id_elem.text = owner
             return primary_owner_id_elem.text
         else:
-            log.debug('Config of the job "{job_name}" does not have JobOwnerJobProperty section. Will be added now.'.format(job_name=self.name))
+            log.debug('Config of the job "%s" does not have JobOwnerJobProperty section. Will be added now.' %
+                      self.name)
             project_properties_elem = self._get_config_element_tree().find('properties')
 
             # create new section for Job Owner plugin info.
@@ -703,5 +706,5 @@ class Job(JenkinsBase, MutableJenkinsThing):
             ownership_elem.append(primary_owner_id_elem)
             ownership_elem.append(coowners_ids_elem)
 
-            log.debug('owner ID added. Storing changed job {job_name} to server.'.format(job_name=self.name))
+            log.debug('owner ID added. Storing changed job %s to server.' % self.name)
             self.update_config(config=ET.tostring(self._get_config_element_tree()))
