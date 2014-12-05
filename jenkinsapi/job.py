@@ -683,8 +683,6 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 primary_owner_id_elem.text = owner
             return primary_owner_id_elem.text
         else:
-            log.debug('Config of the job "%s" does not have JobOwnerJobProperty section. Will be added now.' %
-                      self.name)
             project_properties_elem = self._get_config_element_tree().find('properties')
 
             # create new section for Job Owner plugin info.
@@ -706,5 +704,4 @@ class Job(JenkinsBase, MutableJenkinsThing):
             ownership_elem.append(primary_owner_id_elem)
             ownership_elem.append(coowners_ids_elem)
 
-            log.debug('owner ID added. Storing changed job %s to server.' % self.name)
             self.update_config(config=ET.tostring(self._get_config_element_tree()))
