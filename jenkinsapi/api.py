@@ -71,7 +71,7 @@ def get_artifacts(jenkinsurl, jobid=None, build_no=None,
     """
     jenkinsci = Jenkins(jenkinsurl, username=username, password=password)
     job = jenkinsci[jobid]
-    if build_no == None:
+    if build_no is None:
         # Avoid use of get_build, which uses depth=1, which can be slow
         build_no = job.get_last_good_buildnumber()
     build = job.get_build_metadata(build_no)  # get_build_metadata is fine for artifacts, uses depth=0
