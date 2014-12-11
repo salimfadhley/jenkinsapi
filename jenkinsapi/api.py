@@ -74,7 +74,7 @@ def get_artifacts(jenkinsurl, jobid=None, build_no=None,
     if build_no == None:
         # Avoid use of get_build, which uses depth=1, which can be slow
         build_no = job.get_last_good_buildnumber()
-    build = job.get_build_metadata(build_no)  # get_build_metadata is fine for artifacts, uses default depth
+    build = job.get_build_metadata(build_no)  # get_build_metadata is fine for artifacts, uses depth=0
     artifacts = build.get_artifact_dict()
     log.info(msg="Found %i artifacts in '%s'"
              % (len(artifacts.keys()), build_no))
