@@ -34,6 +34,9 @@ GIT_URL = './scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url'
 HG_URL = './scm/source'
 GIT_BRANCH = './scm/branches/hudson.plugins.git.BranchSpec/name'
 HG_BRANCH = './scm/branch'
+# since hg plugin 1.5 revison is used to save branch in xml
+HG_REVISION_TYPE = './scm/revisionType'
+HG_REVISION = './scm/revision'
 DEFAULT_HG_BRANCH_NAME = 'default'
 
 log = logging.getLogger(__name__)
@@ -85,7 +88,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
     # default), Mercurial plugin doesn't store default branch name in config XML
     # file of the job. Create XML node corresponding to default branch
     def _get_hg_branch(self, element_tree):
-        branches = element_tree.findall(HG_BRANCH)
+        revisionType = element_tree.findall(HG_REVISION_TYPE)
+
+        if revisionType:
+            branches = element_tree.findall(HG_REVISION)
+        else:
+            branches = element_tree.findall(HG_BRANCH)
+
         if not branches:
             hg_default_branch = ET.Element('branch')
             hg_default_branch.text = DEFAULT_HG_BRANCH_NAME
