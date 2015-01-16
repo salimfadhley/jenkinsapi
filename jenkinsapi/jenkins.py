@@ -294,7 +294,8 @@ class Jenkins(JenkinsBase):
             self.requester.post_and_confirm_status(url, data={})
 
     def create_node(self, name, num_executors=2, node_description=None,
-                    remote_fs='/var/lib/jenkins', labels=None, exclusive=False):
+                    remote_fs='/var/lib/jenkins', labels=None, exclusive=False,
+                    launcher=None):
         """
         Create a new slave node by name.
 
@@ -304,6 +305,17 @@ class Jenkins(JenkinsBase):
         :param remote_fs: jenkins path, str
         :param labels: labels to associate with slave, str
         :param exclusive: tied to specific job, boolean
+        :param launcher: Slave launcher parameters, dict
+            Example SSH Launcher
+            {
+                'stapler-class': 'hudson.plugins.sshslaves.SSHLauncher',
+                'host': '',
+                'username': '',
+                'password': '',
+                'privatekey': '',
+                'port': '',
+                'jvmOptions': ''
+            }
         :return: node obj
         """
         NODE_TYPE = 'hudson.slaves.DumbSlave$DescriptorImpl'
@@ -312,6 +324,8 @@ class Jenkins(JenkinsBase):
             return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
         if exclusive:
             MODE = 'EXCLUSIVE'
+        if not launcher:
+            launcher = {'stapler-class': 'hudson.slaves.JNLPLauncher'}
         params = {
             'name': name,
             'type': NODE_TYPE,
@@ -325,7 +339,7 @@ class Jenkins(JenkinsBase):
                 'type': NODE_TYPE,
                 'retentionStrategy': {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
                 'nodeProperties': {'stapler-class-bag': 'true'},
-                'launcher': {'stapler-class': 'hudson.slaves.JNLPLauncher'}
+                'launcher': launcher
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urlencode(params)
