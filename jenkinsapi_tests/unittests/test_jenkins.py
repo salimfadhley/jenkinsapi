@@ -235,12 +235,15 @@ class TestJenkins(unittest.TestCase):
     ]
 
     # Mock function
-    def second_call_poll():
+    def second_call_poll(tree=None):
         return TestJenkins.create_job_returns.pop(0)
+
+    def job_second_call_poll(tree=None):
+        return {}
 
     # Patch Jenkins with mock function
     @mock.patch.object(Jenkins, '_poll', side_effect=second_call_poll)
-    @mock.patch.object(Job, '_poll')
+    @mock.patch.object(Job, '_poll', side_effect=job_second_call_poll)
     def test_create_new_job(self, _poll, _job_poll):
         _job_poll.return_value = {}
 

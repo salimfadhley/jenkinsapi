@@ -38,6 +38,7 @@ class TestQueue(BaseSystemTest):
             self.assertTrue(j.is_queued_or_running())
 
         queue = self.jenkins.get_queue()
+        
         reprString = repr(queue)
         self.assertIn(queue.baseurl, reprString)
 

@@ -45,11 +45,7 @@ class Nodes(JenkinsBase):
                 nodeurl = '%s/(%s)' % (self.baseurl, nodename)
             else:
                 nodeurl = '%s/%s' % (self.baseurl, nodename)
-            try:
-                yield item['displayName'], Node(nodeurl, nodename, self.jenkins)
-            except Exception:
-                import ipdb
-                ipdb.set_trace()
+            yield item['displayName'], Node(nodeurl, nodename, self.jenkins)
 
     def __getitem__(self, nodename):
         self_as_dict = dict(self.iteritems())

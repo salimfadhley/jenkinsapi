@@ -3,12 +3,14 @@ Module for JenkinsBase class
 """
 
 import ast
+import pprint
 import logging
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 
 class JenkinsBase(object):
+
     """
     This appears to be the base object that all other jenkins objects are inherited from
     """
@@ -32,7 +34,8 @@ class JenkinsBase(object):
             self.poll()
 
     def get_jenkins_obj(self):
-        raise NotImplementedError('Please implement this method on %s' % self.__class__.__name__)
+        raise NotImplementedError(
+            'Please implement this method on %s' % self.__class__.__name__)
 
     def __eq__(self, other):
         """
@@ -50,26 +53,42 @@ class JenkinsBase(object):
             url = url[:-1]
         return url
 
-    def poll(self):
-        self._data = self._poll()
-        if 'jobs' in self._data:
-            self._data['jobs'] = self.resolve_job_folders(self._data['jobs'])
+    def poll(self, tree=None):
+        data = self._poll(tree=tree)
+        if 'jobs' in data:
+            data['jobs'] = self.resolve_job_folders(data['jobs'])
+        if not tree:
+            self._data = data
+        else:
+            return data
 
-    def _poll(self):
+    def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
-        return self.get_data(url)
+        return self.get_data(url, tree=tree)
 
-    def get_data(self, url, params=None):
+    def get_data(self, url, params=None, tree=None):
         requester = self.get_jenkins_obj().requester
+        if tree:
+            if not params:
+                params = {'tree': tree}
+            else:
+                params.update({'tree': tree})
+
         response = requester.get_url(url, params)
         if response.status_code != 200:
-            logging.error('Failed request at %s with params: %s', url, params)
+            logging.error('Failed request at %s with params: %s %s',
+                          url, params, tree if tree else '')
             response.raise_for_status()
         try:
             return ast.literal_eval(response.text)
         except Exception:
             logging.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % response.content)
+
+    def pprint(self):
+        """Print out all the data in this object for debugging.
+        """
+        pprint.pprint(self._data)
 
     def resolve_job_folders(self, jobs):
         for job in list(jobs):

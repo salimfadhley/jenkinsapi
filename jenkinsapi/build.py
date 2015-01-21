@@ -49,11 +49,11 @@ class Build(JenkinsBase):
         self.depth = depth
         JenkinsBase.__init__(self, url)
 
-    def _poll(self):
+    def _poll(self, tree=None):
         # For build's we need more information for downstream and upstream builds
         # so we override the poll to get at the extra data for build objects
-        url = '%s?depth=%s' % (self.python_api_url(self.baseurl), self.depth)
-        return self.get_data(url)
+        url = self.python_api_url(self.baseurl)
+        return self.get_data(url, params={'depth': self.depth}, tree=tree)
 
     def __str__(self):
         return self._data['fullDisplayName']
@@ -116,7 +116,8 @@ class Build(JenkinsBase):
         return datetime.timedelta(milliseconds=self._data["duration"])
 
     def get_artifacts(self):
-        for afinfo in self._data["artifacts"]:
+        data = self.poll(tree='artifacts[relativePath,fileName]')
+        for afinfo in data["artifacts"]:
             url = "%s/artifact/%s" % (self.baseurl, afinfo["relativePath"])
             af = Artifact(afinfo["fileName"], url, self)
             yield af
@@ -269,16 +270,18 @@ class Build(JenkinsBase):
         matrix configuration
         :return: Generator of Build
         """
-        if "runs" in self._data:
-            for rinfo in self._data["runs"]:
-                yield Build(rinfo["url"], rinfo["number"], self.job)
+        if 'runs' in self._data:
+            for rinfo in self._data['runs']:
+                number = rinfo['number']
+                if number == self._data['number']:
+                    yield Build(rinfo['url'], number, self.job)
 
     def is_running(self):
         """
         Return a bool if running.
         """
-        self.poll()
-        return self._data["building"]
+        data = self.poll(tree='building')
+        return data.get('building', False)
 
     def block(self):
         while self.is_running():

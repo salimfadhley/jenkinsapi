@@ -19,7 +19,8 @@ class TestMatrixJob(BaseSystemTest):
     def test_invoke_matrix_job(self):
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, MATRIX_JOB)
-        job.invoke(block=True)
+        queueItem = job.invoke()
+        queueItem.block_until_complete()
 
         build = job.get_last_build()
 

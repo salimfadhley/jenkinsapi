@@ -42,10 +42,11 @@ class ResultSet(JenkinsBase):
                 yield result.identifier(), result
 
         for report_set in self._data.get("childReports", []):
-            for suite in report_set["result"]["suites"]:
-                for case in suite["cases"]:
-                    result = Result(**case)
-                    yield result.identifier(), result
+            if report_set["result"]:
+                for suite in report_set["result"]["suites"]:
+                    for case in suite["cases"]:
+                        result = Result(**case)
+                        yield result.identifier(), result
 
     def __len__(self):
         return len(self.items())

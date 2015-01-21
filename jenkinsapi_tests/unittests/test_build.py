@@ -45,7 +45,13 @@ class test_build(unittest.TestCase):
         'number': 1,
         'result': 'SUCCESS',
         'timestamp': 1370042140000,
-        'url': 'http://localhost:8080/job/foo/1/'}
+        'url': 'http://localhost:8080/job/foo/1/',
+        'runs': [{'number': 1,
+                  'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/1/'},
+                 {'number': 2,
+                  'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/2/'}]
+        }
+
 
     @mock.patch.object(Build, '_poll')
     def setUp(self, _poll):
@@ -83,17 +89,32 @@ class test_build(unittest.TestCase):
 
     @mock.patch.object(Build, 'get_data')
     def test_build_depth(self, get_data_mock):
-        build = Build('http://halob:8080/job/foo/98', 98, self.j, depth=0)
-        get_data_mock.assert_called_with('http://halob:8080/job/foo/98/api/python?depth=0')
+        Build('http://halob:8080/job/foo/98', 98, self.j, depth=0)
+        get_data_mock.assert_called_with('http://halob:8080/job/foo/98/api/'
+                                         'python',
+                                         tree=None, params={'depth': 0})
 
     def test_get_revision_no_scm(self):
         """ with no scm, get_revision should return None """
         self.assertEqual(self.b.get_revision(), None)
 
+    def test_get_revision_no_scm(self):
+        """ with no scm, get_revision should return None """
+        self.assertEqual(self.b.get_revision(), None)
+
+    @mock.patch.object(Build, '__init__')
+    def test_get_matrix_runs(self, build_init_mock):
+        build_init_mock.return_value = None
+        for build in self.b.get_matrix_runs():
+            continue
+        build_init_mock.assert_called_once_with('http//localhost:8080/job/foo/SHARD_NUM=1/1/',
+            1, self.j)
+
     ## TEST DISABLED - DOES NOT WORK
     # def test_downstream(self):
     #     expected = ['SingleJob','MultipleJobs']
     #     self.assertEquals(self.b.get_downstream_job_names(), expected)
+
 
 def main():
     unittest.main(verbosity=2)

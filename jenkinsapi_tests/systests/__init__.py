@@ -12,7 +12,8 @@ PLUGIN_DEPENDENCIES = ["http://updates.jenkins-ci.org/latest/git.hpi",
 def setUpPackage():
     systests_dir, _ = os.path.split(__file__)
     war_path = os.path.join(systests_dir, 'jenkins.war')
-    state['launcher'] = JenkinsLancher(war_path, PLUGIN_DEPENDENCIES)
+    state['launcher'] = JenkinsLancher(war_path, PLUGIN_DEPENDENCIES,
+                                       jenkins_url=os.getenv('JENKINS_URL', None))
     state['launcher'].start()
 
 

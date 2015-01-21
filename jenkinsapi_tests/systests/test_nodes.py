@@ -16,15 +16,17 @@ log = logging.getLogger(__name__)
 class TestNodes(BaseSystemTest):
 
     def test_invoke_job_parameterized(self):
-        node_name = random_string()
-        self.jenkins.create_node(node_name)
-        self.assertTrue(self.jenkins.has_node(node_name))
-
-        N = self.jenkins.get_node(node_name)
-        self.assertEquals(N.baseurl, self.jenkins.get_node_url(node_name))
-
-        self.jenkins.delete_node(node_name)
-        self.assertFalse(self.jenkins.has_node(node_name))
+        node_name = "param_" + random_string()
+        try:
+            self.jenkins.create_node(node_name)
+            self.assertTrue(self.jenkins.has_node(node_name))
+    
+            N = self.jenkins.get_node(node_name)
+            self.assertEquals(N.baseurl, self.jenkins.get_node_url(node_name))
+        
+        finally:
+            self.jenkins.delete_node(node_name)
+            self.assertFalse(self.jenkins.has_node(node_name))
 
     def test_online_offline(self):
         """

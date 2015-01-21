@@ -61,7 +61,7 @@ SHORTISH_JOB = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 10 localhost</command>
+      <command>ping -c 5 localhost</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

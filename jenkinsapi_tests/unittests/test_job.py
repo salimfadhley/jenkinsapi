@@ -1,4 +1,5 @@
 import mock
+import json
 # To run unittests on python 2.6 please use unittest2 library
 try:
     import unittest2 as unittest
@@ -90,6 +91,18 @@ class TestJob(unittest.TestCase):
         except KeyError:
             raise Exception("Missing data for %s" % url)
 
+    def fakeGetDataTree(self, url, **args):
+        try:
+            if 'builds' in args['tree']:
+                return {'builds': TestJob.URL_DATA[url]['builds']}
+            else:
+                return {'lastBuild': TestJob.URL_DATA[url]['lastBuild']}
+        except KeyError:
+            raise Exception("Missing data for %s" % url)
+
+    def fake_get_data_tree_empty(self, url, **args):
+        return {}
+
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetData)
     def setUp(self):
 
@@ -121,30 +134,12 @@ class TestJob(unittest.TestCase):
         self.assertEquals(self.j.get_description(), 'test job')
 
     def test_get_build_triggerurl(self):
-        self.assertEquals(self.j.get_build_triggerurl(),
+        self.assertEquals(self.j.get_build_triggerurl(None),
                           'http://halob:8080/job/foo/buildWithParameters')
 
     def test_wrong__mk_json_from_build_parameters(self):
         with self.assertRaises(AssertionError) as ar:
             self.j._mk_json_from_build_parameters(build_params='bad parameter')
-
-        self.assertEquals(
-            str(ar.exception), 'Build parameters must be a dict')
-
-    def test__mk_json_from_build_parameters(self):
-        params = {'param1': 'value1', 'param2': 'value2'}
-        ret = self.j.mk_json_from_build_parameters(build_params=params)
-        self.assertTrue(isinstance(ret, str))
-        try:
-            self.assertItemsEqual(ret,
-                              '{"parameter": [{"name": "param2", "value": "value2"}, {"name": "param1", "value": "value1"}]}')
-        except AttributeError:
-            self.assertCountEqual(ret,
-                              '{"parameter": [{"name": "param2", "value": "value2"}, {"name": "param1", "value": "value1"}]}')
-
-    def test_wrong_mk_json_from_build_parameters(self):
-        with self.assertRaises(AssertionError) as ar:
-            self.j.mk_json_from_build_parameters(build_params='bad parameter')
 
         self.assertEquals(
             str(ar.exception), 'Build parameters must be a dict')
@@ -179,20 +174,19 @@ class TestJob(unittest.TestCase):
         ret = self.j.get_last_completed_buildnumber()
         self.assertEquals(ret, 3)
 
+    @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_get_build_dict(self):
         ret = self.j.get_build_dict()
         self.assertTrue(isinstance(ret, dict))
         self.assertEquals(len(ret), 4)
 
-    @mock.patch.object(Job, '_poll')
-    def test_nobuilds_get_build_dict(self, _poll):
-        # Bare minimum build dict, we only testing dissapearance of 'builds'
-        _poll.return_value = {"name": "foo"}
-
+    @mock.patch.object(JenkinsBase, 'get_data', fake_get_data_tree_empty)
+    def test_nobuilds_get_build_dict(self):
         j = Job('http://halob:8080/job/foo/', 'foo', self.J)
         with self.assertRaises(NoBuildData):
             j.get_build_dict()
 
+    @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_get_build_ids(self):
         # We don't want to deal with listreverseiterator here
         # So we convert result to a list
@@ -274,12 +268,15 @@ class TestJob(unittest.TestCase):
         get_data.return_value = TestJob.URL_DATA[url].copy()
         j = Job('http://halob:8080/job/foo/', 'foo', self.J)
 
+        self.assertTrue(j.has_params())
         params = j.get_params_list()
 
         self.assertIsInstance(params, list)
         self.assertEquals(len(params), 2)
         self.assertEquals(params, ['param1', 'param2'])
 
+    @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
+    # @mock.patch.object(JenkinsBase, 'get_data', fakeGetLastBuild)
     def test_get_build(self):
         buildnumber = 1
         with mock.patch('jenkinsapi.job.Build') as build_mock:
@@ -289,6 +286,7 @@ class TestJob(unittest.TestCase):
             build_mock.assert_called_with('http://halob:8080/job/foo/1/',
                                           buildnumber, job=self.j)
 
+    @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_get_build_metadata(self):
         buildnumber = 1
         with mock.patch('jenkinsapi.job.Build') as build_mock:
@@ -297,6 +295,50 @@ class TestJob(unittest.TestCase):
             self.assertEquals(build, instance)
             build_mock.assert_called_with('http://halob:8080/job/foo/1/',
                                           buildnumber, job=self.j, depth=0)
+
+    def assertJsonEqual(self, jsonA, jsonB, msg=None):
+        A = json.loads(jsonA)
+        B = json.loads(jsonB)
+        self.assertEqual(
+            A,
+            B,
+            msg
+        )
+
+    def test_get_json_for_single_param(self):
+        params = {"B": "one two three"}
+        expected = '{"parameter": {"name": "B", "value": "one two three"}, "statusCode": "303", "redirectTo": "."}'
+        self.assertJsonEqual(
+            Job.mk_json_from_build_parameters(params),
+            expected
+        )
+
+    def test_get_json_for_many_params(self):
+        params = {"B": "Honey", "A": "Boo", "C": 2}
+        expected = '{"parameter": [{"name": "A", "value": "Boo"}, {"name": "B", "value": "Honey"}, {"name": "C", "value": "2"}], "statusCode": "303", "redirectTo": "."}'
+
+        self.assertJsonEqual(
+            Job.mk_json_from_build_parameters(params),
+            expected
+        )
+
+    def test__mk_json_from_build_parameters(self):
+        params = {'param1': 'value1', 'param2': 'value2'}
+        result = self.j._mk_json_from_build_parameters(build_params=params)
+        self.assertTrue(isinstance(result, dict))
+
+        self.assertEquals(
+            result,
+            {"parameter": [{"name": "param1", "value": "value1"}, {
+                "name": "param2", "value": "value2"}]}
+        )
+
+    def test_wrong_mk_json_from_build_parameters(self):
+        with self.assertRaises(AssertionError) as ar:
+            self.j.mk_json_from_build_parameters(build_params='bad parameter')
+
+        self.assertEquals(
+            str(ar.exception), 'Build parameters must be a dict')
 
 if __name__ == '__main__':
     unittest.main()

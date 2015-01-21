@@ -104,8 +104,8 @@ class Jenkins(JenkinsBase):
         """
         Fetch all the build-names on this Jenkins server.
         """
-        self._poll_if_needed()
-        for info in self._data["jobs"]:
+        jobs = self.poll(tree='jobs[name,url]')['jobs']
+        for info in jobs:
             yield info["name"], \
                 Job(info["url"], info["name"], jenkins_obj=self)
 
@@ -114,8 +114,8 @@ class Jenkins(JenkinsBase):
         Get the jobs information
         :return url, name
         """
-        self._poll_if_needed()
-        for info in self._data["jobs"]:
+        jobs = self.poll(tree='jobs[name,url]')['jobs']
+        for info in jobs:
             yield info["url"], info["name"]
 
     def get_job(self, jobname):
@@ -176,8 +176,8 @@ class Jenkins(JenkinsBase):
         return self.jobs.rename(jobname, newjobname)
 
     def iterkeys(self):
-        self._poll_if_needed()
-        for info in self._data["jobs"]:
+        jobs = self.poll(tree='jobs[name,color,url]')['jobs']
+        for info in jobs:
             yield info["name"]
 
     def iteritems(self):
@@ -223,16 +223,17 @@ class Jenkins(JenkinsBase):
         :param jobname: name of job, str
         :return: Job obj
         """
-        self._poll_if_needed()
-
-        for info in self._data["jobs"]:
+        # We have to ask for 'color' here because folder resolution
+        # relies on it
+        jobs = self.poll(tree='jobs[name,url,color]')['jobs']
+        for info in jobs:
             if info["name"] == jobname:
                 return Job(info["url"], info["name"], jenkins_obj=self)
         raise UnknownJob(jobname)
 
     def __len__(self):
-        self._poll_if_needed()
-        return len(self._data["jobs"])
+        jobs = self.poll(tree='jobs[name]')['jobs']
+        return len(jobs)
 
     def __contains__(self, jobname):
         """

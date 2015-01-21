@@ -33,8 +33,8 @@ class TestNodes(BaseSystemTest):
         self.jenkins.create_node(node_name)
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, LONG_RUNNING_JOB)
-        ii = job.invoke(invoke_pre_check_delay=2)
-        ii.block(until='not_queued')
+        qq = job.invoke()
+        qq.block_until_building()
 
         if job.is_running() is False:
             time.sleep(1)
@@ -44,7 +44,7 @@ class TestNodes(BaseSystemTest):
             if execs.is_idle() is False:
                 all_idle = False
                 self.assertNotEqual(execs.get_progress(), -1)
-                self.assertEqual(execs.get_current_executable(), ii.get_build_number())
+                self.assertEqual(execs.get_current_executable(), qq.get_build_number())
                 self.assertEqual(execs.likely_stuck(), False)
         self.assertEqual(all_idle, True, "Executor should have been triggered.")
 

@@ -43,7 +43,7 @@ class TestViews(unittest.TestCase):
         Assert that attempting to create a view which
         already exists simply returns the same view.
         """
-        def mockGetData(JJ, url):
+        def mockGetData(JJ, url, tree=None):
             DATA = {}
             DATA['http://localhost:8080/%s' % config.JENKINS_API] = \
                 {'views': [dict(name='NewView', url='http://xxxxx/yyyy')]}

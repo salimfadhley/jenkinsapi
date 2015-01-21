@@ -8,7 +8,7 @@ python:
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-    - pip install nose mock coverage pep8 pylint
+    - pip install nose mock coverage pep8 "pylint<1.4"
     - python setup.py develop
 
 # command to run tests, e.g. python setup.py test

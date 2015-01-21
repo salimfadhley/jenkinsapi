@@ -12,6 +12,7 @@ from jenkinsapi.view import View
 from jenkinsapi.views import Views
 from jenkinsapi.api import get_view_from_url
 from jenkinsapi_tests.systests.base import BaseSystemTest
+from jenkinsapi_tests.systests.view_configs import VIEW_WITH_FILTER_AND_REGEX
 from jenkinsapi_tests.test_utils.random_strings import random_string
 
 log = logging.getLogger(__name__)
@@ -58,6 +59,18 @@ class TestViews(BaseSystemTest):
         self.assertIn(view1_name, self.jenkins.views)
         del self.jenkins.views[view1_name]
         self.assertNotIn(view1_name, self.jenkins.views)
+
+    def test_update_view_config(self):
+        view_name = random_string()
+        new_view = self.jenkins.views.create(view_name)
+        self.assertIsInstance(new_view, View)
+        self.assertIn(view_name, self.jenkins.views)
+        config = self.jenkins.views[view_name].get_config().strip()
+        new_view_config = VIEW_WITH_FILTER_AND_REGEX % view_name
+        self.assertNotEquals(config, new_view_config)
+        self.jenkins.views[view_name].update_config(new_view_config)
+        config = self.jenkins.views[view_name].get_config().strip()
+        self.assertEquals(config, new_view_config)
 
     def test_make_nested_views(self):
         job = self._create_job()

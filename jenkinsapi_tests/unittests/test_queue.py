@@ -13,35 +13,14 @@ from jenkinsapi.job import Job
 
 
 class FourOhFourError(Exception):
+
     """
     Missing fake data
     """
 
 
 class TestQueue(unittest.TestCase):
-
-    @classmethod
-    def mockGetData(self, url):
-        try:
-            return TestQueue.URL_DATA[url]
-        except KeyError:
-            raise FourOhFourError(url)
-
-    URL_DATA = {}
-
-    URL_DATA['http://localhost:8080/%s' % config.JENKINS_API] = {
-        'jobs': [
-            {
-                'name': 'utmebvpxrw',
-                'color': 'blue',
-                'url': 'http://localhost/job/utmebvpxrw'
-            }
-        ]
-    }
-
-    URL_DATA['http://localhost/job/utmebvpxrw/%s' % config.JENKINS_API] = {}
-
-    URL_DATA['http://localhost:8080/queue/%s' % config.JENKINS_API] = {
+    QUEUE_DATA = {
         'items': [
             {
                 'actions': [
@@ -52,7 +31,10 @@ class TestQueue(unittest.TestCase):
                                 'userId': None,
                                 'userName': 'anonymous'
                             }
-                        ]
+                        ],
+                        'parameters':
+                        [{'name': 'name1', 'value': 'value1'},
+                         {'name': 'node'}]
                     }
                 ],
                 'blocked': False,
@@ -124,6 +106,36 @@ class TestQueue(unittest.TestCase):
         ]
     }
 
+    @classmethod
+    def mockGetData(self, url, tree):
+        try:
+            return TestQueue.URL_DATA[url]
+        except KeyError:
+            raise FourOhFourError(url)
+
+    URL_DATA = {}
+
+    URL_DATA['http://localhost:8080/%s' % config.JENKINS_API] = {
+        'jobs': [
+            {
+                'name': 'utmebvpxrw',
+                'color': 'blue',
+                'url': 'http://localhost/job/utmebvpxrw'
+            }
+        ]
+    }
+
+    URL_DATA['http://localhost/job/utmebvpxrw/%s' % config.JENKINS_API] = {}
+
+    URL_DATA['http://localhost:8080/queue/%s' %
+             config.JENKINS_API] = QUEUE_DATA
+
+    for item in QUEUE_DATA['items']:
+        url = 'http://localhost:8080/queue/item/%i/%s' % (
+            item['id'], config.JENKINS_API)
+        print(url)
+        URL_DATA[url] = item
+
     @mock.patch.object(JenkinsBase, 'get_data', mockGetData)
     def setUp(self):
         self.J = Jenkins('http://localhost:8080')  # Jenkins
@@ -138,6 +150,7 @@ class TestQueue(unittest.TestCase):
     def test_list_items(self):
         self.assertEquals(set(self.q.keys()), set([40, 41, 42]))
 
+    @mock.patch.object(JenkinsBase, 'get_data', mockGetData)
     def test_getitem(self):
         item40 = self.q[40]
         self.assertIsInstance(item40, QueueItem)
@@ -155,16 +168,10 @@ class TestQueue(unittest.TestCase):
         self.assertEquals(len(item40), 1)
         self.assertIsInstance(item40[0], QueueItem)
 
-        item40 = self.q.get_queue_items_for_job()
-        self.assertIsInstance(item40, list)
-        self.assertEquals(len(item40), 3)
 
+    @mock.patch.object(JenkinsBase, 'get_data', mockGetData)
     def test_qi_get_parameters(self):
-        act =  [{'parameters':
-                [{'name': 'name1', 'value': 'value1'},
-                {'name': 'node'}]}]
-        qi = QueueItem(jenkins=None, actions=act)
-
+        qi = self.q[42]
         self.assertEquals(qi.get_parameters(), {'name1': 'value1',
                                                 'node': None})
 

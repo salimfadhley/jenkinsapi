@@ -39,12 +39,10 @@ class Node(JenkinsBase):
         return self.name
 
     def is_online(self):
-        self.poll()
-        return not self._data['offline']
+        return not self.poll(tree='offline')['offline']
 
     def is_temporarily_offline(self):
-        self.poll()
-        return self._data['temporarilyOffline']
+        return self.poll(tree='temporarilyOffline')['temporarilyOffline']
 
     def is_jnlpagent(self):
         return self._data['jnlpAgent']
@@ -81,11 +79,11 @@ class Node(JenkinsBase):
         """
         if not self._data['offline']:
             self.toggle_temporarily_offline(message)
-            self.poll()
-            if not self._data['offline']:
+            data = self.poll(tree='offline,temporarilyOffline')
+            if not data['offline']:
                 raise AssertionError("The node state is still online:" +
                                      "offline = %s , temporarilyOffline = %s" %
-                                     (self._data['offline'], self._data['temporarilyOffline']))
+                                     (data['offline'], data['temporarilyOffline']))
 
     def toggle_temporarily_offline(self, message="requested from jenkinsapi"):
         """

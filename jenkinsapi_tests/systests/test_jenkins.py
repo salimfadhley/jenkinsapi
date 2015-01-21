@@ -8,7 +8,7 @@ except ImportError:
     import unittest
 from jenkinsapi.job import Job
 from jenkinsapi.plugin import Plugin
-from jenkinsapi.invocation import Invocation
+from jenkinsapi.queue import QueueItem
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
 from jenkinsapi_tests.test_utils.random_strings import random_string
@@ -56,7 +56,7 @@ class JobTests(BaseSystemTest):
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, EMPTY_JOB)
         ii = job.invoke()
-        self.assertIsInstance(ii, Invocation)
+        self.assertIsInstance(ii, QueueItem)
 
     def test_get_jobs_list(self):
         job1_name = 'first_%s' % random_string()
