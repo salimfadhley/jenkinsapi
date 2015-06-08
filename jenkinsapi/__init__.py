@@ -14,9 +14,9 @@ This library can help you:
 
  * Query the test-results of a completed build
  * Get a objects representing the latest builds of a job
- * Search for artefacts by simple criteria
+ * Search for artifacts by simple criteria
  * Block until jobs are complete
- * Install artefacts to custom-specified directory structures
+ * Install artifacts to custom-specified directory structures
  * username/password auth support for jenkins instances with auth turned on
  * Ability to search for builds by subversion revision
  * Ability to add/remove/query jenkins slaves
