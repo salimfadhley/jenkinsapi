@@ -219,10 +219,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
         redirect_url = response.headers['location']
 
         if not redirect_url.startswith("%s/queue/item" % self.jenkins.baseurl):
+            # Queue ID is currently not returned when uploading files.
+            # Guess it with next build number.
             if files:
-                raise ValueError('Builds with file parameters are not '
-                                 'supported by this jenkinsapi version. '
-                                 'Please use previous version.')
+                redirect_url = "%s/queue/item/%d/" % \
+                    (self.jenkins.baseurl, self.get_next_build_number() - 1)
             else:
                 raise ValueError("Not a Queue URL: %s" % redirect_url)
 
