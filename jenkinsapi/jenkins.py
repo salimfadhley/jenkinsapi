@@ -42,11 +42,13 @@ class Jenkins(JenkinsBase):
     def __init__(
             self, baseurl,
             username=None, password=None,
-            requester=None, lazy=False):
+            requester=None, lazy=False,
+            ssl_verify=True):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
         :param password: password for jenkins auth, str
+        :param ssl_verify: check the server certificate against the available certificate authorities (true by default)
         :return: a Jenkins obj
         """
         self.username = username
@@ -54,7 +56,8 @@ class Jenkins(JenkinsBase):
         self.requester = requester or Requester(
             username,
             password,
-            baseurl=baseurl)
+            baseurl=baseurl,
+            ssl_verify=ssl_verify)
         self.lazy = lazy
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
