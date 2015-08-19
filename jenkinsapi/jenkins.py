@@ -308,7 +308,7 @@ class Jenkins(JenkinsBase):
 
     def create_node(self, name, num_executors=2, node_description=None,
                     remote_fs='/var/lib/jenkins',
-                    labels=None, exclusive=False, 
+                    labels=None, exclusive=False,
                     launcher='hudson.slaves.JNLPLauncher'):
         """
         Create a new slave node by name.
