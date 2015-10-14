@@ -310,7 +310,8 @@ class Jenkins(JenkinsBase):
 
     def create_node(self, name, num_executors=2, node_description=None,
                     remote_fs='/var/lib/jenkins',
-                    labels=None, exclusive=False):
+                    labels=None, exclusive=False,
+                    launcher='hudson.slaves.JNLPLauncher'):
         """
         Create a new slave node by name.
 
@@ -320,6 +321,7 @@ class Jenkins(JenkinsBase):
         :param remote_fs: jenkins path, str
         :param labels: labels to associate with slave, str
         :param exclusive: tied to specific job, boolean
+        :param launcher: define the launcher, str
         :return: node obj
         """
         NODE_TYPE = 'hudson.slaves.DumbSlave$DescriptorImpl'
@@ -346,7 +348,7 @@ class Jenkins(JenkinsBase):
                     'stapler-class-bag': 'true'
                 },
                 'launcher': {
-                    'stapler-class': 'hudson.slaves.JNLPLauncher'
+                    'stapler-class': launcher
                 }
             })
         }
