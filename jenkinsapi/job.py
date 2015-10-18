@@ -678,3 +678,53 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build.get_parameters() == build_params:
                 return True
         return False
+
+    def get_owner(self):
+        """
+        Returns job owner.
+        Requires 'Job and Slave ownership plugin.
+        """
+        primary_owner_id_elem = self._get_config_element_tree().find(
+            'properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
+        if None == primary_owner_id_elem:
+            return None
+        else:
+            return primary_owner_id_elem.text
+
+    def set_owner(self, owner):
+        """
+        Sets owner of the job.
+        Requires "Job and Slave ownership" plugin.
+
+        Arguments:
+            owner - jenkins user name of the job owner.
+        """
+        primary_owner_id_elem = self._get_config_element_tree().find(
+            'properties/com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty/ownership/primaryOwnerId')
+        if primary_owner_id_elem is not None:
+            if owner != primary_owner_id_elem.text:
+                primary_owner_id_elem.text = owner
+            return primary_owner_id_elem.text
+        else:
+            project_properties_elem = self._get_config_element_tree().find('properties')
+
+            # create new section for Job Owner plugin info.
+            job_owner_root_elem = ET.Element('com.synopsys.arc.jenkins.plugins.ownership.jobs.JobOwnerJobProperty')
+            job_owner_root_elem.set('plugin', 'ownership@0.5.1')
+            project_properties_elem.append(job_owner_root_elem)
+
+            ownership_elem = ET.Element('ownership')
+            job_owner_root_elem.append(ownership_elem)
+
+            ownership_enabled_elem = ET.Element('ownershipEnabled')
+            ownership_enabled_elem.text = 'true'
+            primary_owner_id_elem = ET.Element('primaryOwnerId')
+            primary_owner_id_elem.text = owner
+            coowners_ids_elem = ET.Element('coownersIds')
+            coowners_ids_elem.set('class', 'sorted-set')
+
+            ownership_elem.append(ownership_enabled_elem)
+            ownership_elem.append(primary_owner_id_elem)
+            ownership_elem.append(coowners_ids_elem)
+
+            self.update_config(config=ET.tostring(self._get_config_element_tree()))
