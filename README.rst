@@ -7,12 +7,9 @@ jenkinsapi
 .. image:: https://travis-ci.org/salimfadhley/jenkinsapi.png?branch=master
         :target: https://travis-ci.org/salimfadhley/jenkinsapi
 
-.. image:: https://pypip.in/d/jenkinsapi/badge.png
-        :target: https://crate.io/packages/jenkinsapi/
-
 .. image:: https://landscape.io/github/salimfadhley/jenkinsapi/master/landscape.png
         :target: https://landscape.io/github/salimfadhley/jenkinsapi
-        
+
 .. image:: https://requires.io/github/salimfadhley/jenkinsapi/requirements.png?branch=master
         :target: https://requires.io/github/salimfadhley/jenkinsapi/requirements/?branch=master
         :alt: Requirements Status
@@ -26,24 +23,31 @@ Jenkins (and It's predecessor Hudson) are useful projects for automating common 
 
 This library can help you:
 
-* Query the test-results of a completed build
-* Get objects representing the latest builds of a job
-* Search for artefacts by simple criteria
-* Block until jobs are complete
-* Install artefacts to custom-specified directory structures
-* username/password auth support for jenkins instances with auth turned on
-* Ability to search for builds by subversion revision
-* Ability to add/remove/query Jenkins slaves
-* Ability to add/remove/modify Jenkins views
+* Ability to add/remove/query Jenkins jobs
+* Ability to execute jobs and:
+** Query the results of a completed build
+** Block until jobs are complete or run jobs asyncronously
+** Get objects representing the latest builds of a job
+* Work with build artefacts:
+** Search for artefacts by simple criteria
+** Install artefacts to custom-specified directory structures
+* Ability to search for builds by source code revision
+* Ability to add/remove/query:
+** Slaves (Webstart and SSH slaves)
+** Views (including nested views using NestedViews Jenkins plugin)
+** Credentials (username/password and ssh key)
+* Username/password auth support for jenkins instances with auth turned on
+* Ability to script jenkins installation including plugins
 
 Python versions
 ---------------
 
-The project have been tested and working on Python 2.6, 2.7 and 3.3
+The project have been tested and working on Python 2.7, 3.3 and 3.4.
+It was tested previously on Python 2.6, so it may work on this version too.
 
-Known bugs
-----------
-* Currently incompatible with Jenkins > 1.518. Job deletion operations fail unless Cross-Site scripting protection is disabled.
+Known issues
+------------
+* Job deletion operations fail unless Cross-Site scripting protection is disabled.
 
 For other issues, please refer to the support URL below.
 
@@ -110,6 +114,8 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 	>>> J['test_jenkinsapi'].get_last_good_build()
 	<jenkinsapi.build.Build test_jenkinsapi #77>
 	...
+
+More examples available on Github: https://github.com/salimfadhley/jenkinsapi/tree/master/examples
 
 Testing
 -------
