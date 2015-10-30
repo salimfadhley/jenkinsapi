@@ -65,7 +65,11 @@ __all__ = [
 __docformat__ = "epytext"
 # In case of jenkinsapi is not installed in 'develop' mode
 if not sys.argv[0].endswith('nosetests'):
-    __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version
+    try:
+        __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version
+    except KeyError:
+        # Working directly on repo
+        __version__ = 'dev'
 else:
     # Return bogus version
     __version__ = '99.99.99'
