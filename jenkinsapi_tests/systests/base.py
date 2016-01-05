@@ -49,9 +49,9 @@ class BaseSystemTest(unittest.TestCase):
     def assertJobIsPresent(self, name):
         self.jenkins.poll()
         self.assertTrue(name in self.jenkins,
-                        'Job %r is absent in jenkins.' % name)
+                        'Job %r is present in jenkins.' % name)
 
     def assertJobIsAbsent(self, name):
         self.jenkins.poll()
         self.assertTrue(name not in self.jenkins,
-                        'Job %r is present in jenkins.' % name)
+                        'Job %r is absent in jenkins.' % name)
