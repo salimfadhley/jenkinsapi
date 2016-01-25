@@ -25,6 +25,7 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import UnknownJob
+from jenkinsapi.promotion import PromotionBuild
 
 log = logging.getLogger(__name__)
 

@@ -8,6 +8,7 @@ not. They can also have outcomes, such as wether they passed or failed.
 Build objects can be associated with Results and Artifacts.g
 """
 
+import json
 import time
 import pytz
 import logging
@@ -18,10 +19,10 @@ from jenkinsapi import config
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.result_set import ResultSet
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.promotion import PromotionBuild
 from jenkinsapi.constants import STATUS_SUCCESS
 from jenkinsapi.custom_exceptions import NoResults
 from jenkinsapi.custom_exceptions import JenkinsAPIException
-
 
 try:
     from urllib import quote
@@ -459,3 +460,51 @@ class Build(JenkinsBase):
             self.job.jenkins.requester.post_and_confirm_status(url, data='')
             return True
         return False
+
+    def get_promotion_data(self):
+        url = "%s/promotion/" % (self.baseurl)
+        result = self.get_raw_data(url)
+        return result
+            
+    def force_promotion(self,name):
+        url = "%s/promotion/forcePromotion?name=%s" %(self.baseurl,name)
+        result = self.job.jenkins.requester.post_and_confirm_status(url, data='')
+        return result;
+
+    def promote_when_ready(self,name):
+        # Politely wait for previous promotion to complete.        
+        promotionBuildObj = self.get_latest_promotion_build(name)
+        if promotionBuildObj != None :
+            if promotionBuildObj.is_running():
+                log.info(
+                    msg="Previous promotion (%d) still running. Blocking until it's done" % promotionBuildObj.get_number())
+                promotionBuildObj.block_until_complete()
+            
+        log.info(msg="forcing promotion %s" %name)
+        
+        # Note: there is a subtle race condition here, in that two clients promoting at the same time
+        # could both return the same promotion-build instance. Without hacking the promoted builds plugin to
+        # return the location of the promotion, there's not much we can do about it.
+        
+        self.force_promotion(name)
+        promotionBuildObj = self.get_latest_promotion_build(name)
+        return promotionBuildObj
+    
+    def get_promotion_dict(self,name):
+        return json.loads(self.get_promotion_dict_text(name))
+
+    def get_promotion_dict_text(self,name):
+        url = "%s/promotion/process/%s/api/json" %(self.job.baseurl,name)
+        result = self.get_raw_data(url)
+        return result
+
+    def get_latest_promotion_build(self,name):
+        promotion_status = self.get_promotion_dict(name)
+        if promotion_status == None:
+            return None
+        promotion_build = promotion_status['lastBuild']
+        if promotion_build == None:
+            return None
+        promotion_build_url = promotion_build['url']
+        return PromotionBuild(self,promotion_build_url)
+    
