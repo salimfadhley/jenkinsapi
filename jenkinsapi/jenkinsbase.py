@@ -8,7 +8,6 @@ import logging
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
-
 class JenkinsBase(object):
 
     """
@@ -68,7 +67,7 @@ class JenkinsBase(object):
         url = self.python_api_url(self.baseurl)
         return self.get_data(url, tree=tree)
 
-    def get_data(self, url, params=None, tree=None):
+    def get_raw_data(self, url, params=None, tree= None):
         requester = self.get_jenkins_obj().requester
         if tree:
             if not params:
@@ -81,8 +80,11 @@ class JenkinsBase(object):
             logging.error('Failed request at %s with params: %s %s',
                           url, params, tree if tree else '')
             response.raise_for_status()
+        return response.text 
+
+    def get_data(self, url, params=None, tree=None):
         try:
-            return ast.literal_eval(response.text)
+            return ast.literal_eval(self.get_raw_data(url,params,tree))
         except Exception:
             logging.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % response.content)
@@ -123,3 +125,15 @@ class JenkinsBase(object):
             else:
                 fmt = "%s/%s"
             return fmt % (url, config.JENKINS_API)
+
+    @classmethod
+    def json_api_url(cls, url):
+        if url.endswith(config.JSON_API):
+            return url
+        else:
+            if url.endswith(r"/"):
+                fmt = "%s%s"
+            else:
+                fmt = "%s/%s"
+            return fmt % (url, config.JSON_API)
+        

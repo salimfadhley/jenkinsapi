@@ -79,6 +79,8 @@ class Artifact(object):
         """
         with open(fspath, "wb") as out:
             out.write(self.get_data())
+            out.flush()
+            out.close()
         return fspath
 
     def _verify_download(self, fspath, strict_validation):
