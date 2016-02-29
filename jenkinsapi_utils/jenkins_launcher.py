@@ -12,6 +12,7 @@ import tempfile
 import requests
 import threading
 import subprocess
+import wget
 from pkg_resources import resource_string
 try:
     from urlparse import urlparse
@@ -78,10 +79,7 @@ class JenkinsLancher(object):
             log.info("We already have the War file...")
         else:
             log.info("Redownloading Jenkins")
-            script_dir = os.path.join(self.war_directory,
-                                      'get-jenkins-war.sh')
-            subprocess.check_call([script_dir,
-                                   self.JENKINS_WAR_URL, self.war_directory])
+            wget.download(self.JENKINS_WAR_URL, out=self.war_directory)
 
     def update_config(self):
         config_dest = os.path.join(self.jenkins_home, 'config.xml')

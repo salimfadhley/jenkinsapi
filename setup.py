@@ -34,7 +34,7 @@ setup(
     include_package_data=False,
     install_requires=['requests>=2.3.0', 'pytz>=2014.4'],
     test_suite='nose.collector',
-    tests_require=['mock', 'nose', 'coverage', 'unittest2'],
+    tests_require=['mock', 'nose', 'coverage', 'unittest2', 'wget'],
     entry_points=GLOBAL_ENTRY_POINTS,
     url=PROJECT_URL,
     description=SHORT_DESCRIPTION,
