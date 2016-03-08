@@ -8,7 +8,7 @@ except ImportError:
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.jenkins import Jenkins, JenkinsBase, Job
-from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob, BadURL
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 
 class TestJenkins(unittest.TestCase):
@@ -128,10 +128,10 @@ class TestJenkins(unittest.TestCase):
         _poll.return_value = {
             'jobs': [
                 {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
+                 'url': 'http://localhost:8080/job/job_one',
                  'color': 'blue'},
                 {'name': 'job_two',
-                 'url': 'http://localhost:8080/job_two',
+                 'url': 'http://localhost:8080/job/job_two',
                  'color': 'blue'},
             ]
         }
@@ -141,7 +141,7 @@ class TestJenkins(unittest.TestCase):
                     username='foouser', password='foopassword')
         job = J.create_job('job_one', None)
         self.assertTrue(isinstance(job, Job))
-        self.assertTrue(job.baseurl == 'http://localhost:8080/job_one')
+        self.assertTrue(job.baseurl == 'http://localhost:8080/job/job_one')
         self.assertTrue(job.name == 'job_one')
 
     # Here we're going to test function, which is going to modify
@@ -179,32 +179,6 @@ class TestJenkins(unittest.TestCase):
         }
     ]
 
-    # Mock function
-    def second_call_poll(tree=None):
-        return TestJenkins.create_job_returns.pop(0)
-
-    def job_second_call_poll(tree=None):
-        return {}
-
-    # Patch Jenkins with mock function
-    @mock.patch.object(Jenkins, '_poll', side_effect=second_call_poll)
-    @mock.patch.object(Job, '_poll', side_effect=job_second_call_poll)
-    def test_create_new_job(self, _poll, _job_poll):
-        _job_poll.return_value = {}
-
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
-            return_value='')
-
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
-
-        job = J.create_job('job_new', None)
-        self.assertTrue(isinstance(job, Job))
-        self.assertTrue(job.baseurl == 'http://localhost:8080/job_new')
-        self.assertTrue(job.name == 'job_new')
-
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(Jenkins, '_poll')
     @mock.patch.object(Job, '_poll')
@@ -233,7 +207,7 @@ class TestJenkins(unittest.TestCase):
         with self.assertRaises(JenkinsAPIException) as ar:
             J.create_job('job_new', None)
 
-        self.assertEquals(str(ar.exception), 'Cannot create job job_new')
+        self.assertEquals(str(ar.exception), 'Job XML config cannot be empty')
 
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(Jenkins, '_poll')
@@ -371,7 +345,8 @@ class TestJenkinsURLs(unittest.TestCase):
                     'dependencies': [{}, {}, {}, {}],
                     'longName': 'Jenkins Subversion Plug-in', 'active': True,
                     'shortName': 'subversion', 'backupVersion': None,
-                    'url': 'http://wiki.jenkins-ci.org/display/JENKINS/Subversion+Plugin',
+                    'url': 'http://wiki.jenkins-ci.org/'
+                    'display/JENKINS/Subversion+Plugin',
                     'enabled': True, 'pinned': False, 'version': '1.45',
                     'supportsDynamicLoad': 'MAYBE', 'bundled': True
                 }
