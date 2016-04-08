@@ -627,7 +627,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
         url = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
-                               'cancelItem?id=%s' % queue_id)
+                               'queue/cancelItem?id=%s' % queue_id)
         self.get_jenkins_obj().requester.post_and_confirm_status(url, data='')
         return True
 
