@@ -139,11 +139,6 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._element_tree
 
     def get_build_triggerurl(self, files, build_params=None):
-        if (files and build_params) or (not self.has_params()):
-            # If job has file parameters and non-file parameters - it must be
-            # triggered using "/build", not by "/buildWithParameters"
-            # "/buildWithParameters" will ignore non-file parameters
-            return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
 
     @staticmethod
