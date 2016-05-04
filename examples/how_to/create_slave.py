@@ -1,13 +1,14 @@
 import logging
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.utils.crumb_requester import CrumbRequester
 
 log_level = getattr(logging, 'DEBUG')
 logging.basicConfig(level=log_level)
 logger = logging.getLogger()
 
 jenkins_url = "http://localhost:8080/"
-
-api = Jenkins(jenkins_url)
+crumb_requester = CrumbRequester(baseurl=jenkins_url)
+api = Jenkins(jenkins_url, requester=crumb_requester)
 
 # Create JNLP(Java Webstart) slave
 node_dict = {
@@ -27,7 +28,7 @@ node_dict = {
     'exclusive': True,
     'host': 'localhost',                         # Remote hostname
     'port': 22,                                  # Remote post, usually 22
-    'credential_descr': 'localhost cred',        # Credential to use
+    'credential_description': 'localhost cred',  # Credential to use
                                                  # (see Credentials example)
     'jvm_options': '-Xmx=2Gb',                   # JVM parameters
     'java_path': '/bin/java',                    # Path to java

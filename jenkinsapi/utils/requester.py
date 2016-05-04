@@ -125,11 +125,11 @@ class Requester(object):
 
         response = self.post_url(
             url,
-            params,
-            data,
-            files,
-            headers,
-            allow_redirects)
+            params=params,
+            data=data,
+            files=files,
+            headers=headers,
+            allow_redirects=allow_redirects)
         if response.status_code not in valid:
             raise JenkinsAPIException('Operation failed. url={0}, data={1}, headers={2}, status={3}, text={4}'.format(
                 response.url, data, headers, response.status_code, response.text.encode('UTF-8')))
