@@ -70,6 +70,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'hg': self._get_hg_branch,
             None: lambda element_tree: []
         }
+        if url is None:
+            url = jenkins_obj.baseurl + '/job/' + name
         JenkinsBase.__init__(self, url)
 
     def __str__(self):
@@ -667,9 +669,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         If job has parameters, returns True, else False
         """
-        if any("parameterDefinitions" in a for a in (self._data["actions"]) if a):
+        if any("parameterDefinitions" in a for a in (self._data["actions"])
+               if a):
             return True
-        if any("parameterDefinitions" in a for a in (self._data["property"]) if a):
+        if any("parameterDefinitions" in a for a in (self._data["property"])
+               if a):
             return True
         return False
 

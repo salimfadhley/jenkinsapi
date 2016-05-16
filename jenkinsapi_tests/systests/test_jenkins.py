@@ -58,7 +58,15 @@ class JobTests(BaseSystemTest):
     def test_invoke_job(self):
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, EMPTY_JOB)
-        job.invoke()
+        job.invoke(block=True)
+        self.assertEquals(job.get_last_buildnumber(), 1)
+
+    def test_invoke_job_through_jobs(self):
+        job_name = 'create_%s' % random_string()
+        self.jenkins.create_job(job_name, EMPTY_JOB)
+        qi = self.jenkins.jobs.build(job_name=job_name, block=True)
+        self.assertEquals(self.jenkins[job_name].get_last_buildnumber(), 1)
+        self.assertIsInstance(qi, QueueItem)
 
     def test_invocation_object(self):
         job_name = 'create_%s' % random_string()
