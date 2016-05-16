@@ -7,11 +7,13 @@ try:
 except ImportError:
     import unittest
 from jenkinsapi.job import Job
+from jenkinsapi.jobs import Jobs
 from jenkinsapi.plugin import Plugin
 from jenkinsapi.queue import QueueItem
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
 from jenkinsapi_tests.test_utils.random_strings import random_string
+from jenkinsapi.custom_exceptions import UnknownJob
 
 
 class JobTests(BaseSystemTest):
@@ -73,6 +75,41 @@ class JobTests(BaseSystemTest):
         job_list = self.jenkins.get_jobs_list()
         self.assertGreaterEqual(len(self.jenkins.jobs), 2)
         self.assertEqual([job1_name, job2_name], job_list)
+
+    def test_get_job(self):
+        job1_name = 'first_%s' % random_string()
+
+        self._create_job(job1_name)
+        job = self.jenkins[job1_name]
+        self.assertIsInstance(job, Job)
+        self.assertEqual(job.name, job1_name)
+
+    def test_get_jobs(self):
+        job1_name = 'first_%s' % random_string()
+        job2_name = 'second_%s' % random_string()
+
+        self._create_job(job1_name)
+        self._create_job(job2_name)
+        jobs = self.jenkins.jobs
+        self.assertIsInstance(jobs, Jobs)
+        self.assertGreaterEqual(len(jobs), 2)
+        for job_name, job in jobs.iteritems():
+            self.assertIsInstance(job_name, str)
+            self.assertIsInstance(job, Job)
+
+    def test_get_job_that_does_not_exist(self):
+        with self.assertRaises(UnknownJob):
+            self.jenkins['doesnot_exist']
+
+    def test_has_job(self):
+        job1_name = 'first_%s' % random_string()
+        self._create_job(job1_name)
+        self.assertTrue(self.jenkins.has_job(job1_name))
+        self.assertTrue(job1_name in self.jenkins)
+
+    def test_has_no_job(self):
+        self.assertFalse(self.jenkins.has_job('doesnt_exist'))
+        self.assertTrue('doesnt_exist' not in self.jenkins)
 
     def test_delete_job(self):
         job1_name = 'delete_me_%s' % random_string()

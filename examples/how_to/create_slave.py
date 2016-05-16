@@ -1,13 +1,18 @@
 import logging
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.utils.requester import Requester    # Addition for SSL disabling
+import requests                                     #
+requests.packages.urllib3.disable_warnings()        #
 
 log_level = getattr(logging, 'DEBUG')
 logging.basicConfig(level=log_level)
 logger = logging.getLogger()
 
 jenkins_url = "http://localhost:8080/"
+username = "default_user"                           # In case Jenkins requires authentication
+password = "default_password"                       #
 
-api = Jenkins(jenkins_url)
+api = Jenkins(jenkins_url, requester=Requester(username, password, baseurl=jenkins_url, ssl_verify=False))
 
 # Create JNLP(Java Webstart) slave
 node_dict = {
@@ -27,18 +32,18 @@ node_dict = {
     'exclusive': True,
     'host': 'localhost',                         # Remote hostname
     'port': 22,                                  # Remote post, usually 22
-    'credential_descr': 'localhost cred',        # Credential to use
+    'credential_description': 'localhost cred',  # Credential to use [Mandatory for SSH node!]
                                                  # (see Credentials example)
-    'jvm_options': '-Xmx=2Gb',                   # JVM parameters
+    'jvm_options': '-Xmx2000M',                  # JVM parameters
     'java_path': '/bin/java',                    # Path to java
     'prefix_start_slave_cmd': '',
     'suffix_start_slave_cmd': '',
     'max_num_retries': 0,
     'retry_wait_time': 0,
-    'retention': 'OnDemand',                    # Only connect when required
+    'retention': 'OnDemand',                     # Change to 'Always' for immediate slave launch
     'ondemand_delay': 1,
     'ondemand_idle_delay': 5,
-    'env': [                                    # Environment variables
+    'env': [                                     # Environment variables
         {
             'key': 'TEST',
             'value': 'VALUE'

@@ -5,6 +5,10 @@ python:
     - "3.3"
     - "3.4"
 
+env:
+    - JENKINS_VERSION=stable
+    - JENKINS_VERSION=latest
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
     - pip install nose mock coverage pep8 "astroid<1.3.0" "pylint<1.4"

@@ -4,10 +4,20 @@ from jenkinsapi_utils.jenkins_launcher import JenkinsLancher
 state = {}
 
 # Extra plugins required by the systests
-PLUGIN_DEPENDENCIES = ["http://updates.jenkins-ci.org/latest/git.hpi",
-                       "http://updates.jenkins-ci.org/latest/git-client.hpi",
-                       "https://updates.jenkins-ci.org/latest/nested-view.hpi",
-                       "https://updates.jenkins-ci.org/latest/ssh-slaves.hpi"]
+PLUGIN_DEPENDENCIES = [
+    "http://updates.jenkins-ci.org/latest/icon-shim.hpi",
+    "http://updates.jenkins-ci.org/latest/junit.hpi",
+    "http://updates.jenkins-ci.org/latest/script-security.hpi",
+    "http://updates.jenkins-ci.org/latest/matrix-project.hpi",
+    "http://updates.jenkins-ci.org/latest/credentials.hpi",
+    "http://updates.jenkins-ci.org/latest/ssh-credentials.hpi",
+    "http://updates.jenkins-ci.org/latest/scm-api.hpi",
+    "http://updates.jenkins-ci.org/latest/mailer.hpi",
+    "http://updates.jenkins-ci.org/latest/git.hpi",
+    "http://updates.jenkins-ci.org/latest/git-client.hpi",
+    "https://updates.jenkins-ci.org/latest/nested-view.hpi",
+    "https://updates.jenkins-ci.org/latest/ssh-slaves.hpi"
+]
 
 
 def setUpPackage():
