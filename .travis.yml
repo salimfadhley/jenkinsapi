@@ -18,4 +18,4 @@ install:
 script:
     - pep8 --ignore=E501 jenkinsapi/*.py
     - pylint --rcfile=pylintrc jenkinsapi/*.py --disable R0912
-    - nosetests jenkinsapi_tests
+    - nosetests -v jenkinsapi_tests
