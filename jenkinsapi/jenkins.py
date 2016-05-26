@@ -389,7 +389,11 @@ class Jenkins(JenkinsBase):
         """
         Return credentials
         """
-        url = '%s/credential-store/domain/_/' % self.baseurl
+        if int(self.version[0:1]) == 1:
+            url = '%s/credential-store/domain/_/' % self.baseurl
+        else:
+            url = '%s/credentials/store/system/domain/_/' % self.baseurl
+
         return Credentials(url, self)
 
     @property
