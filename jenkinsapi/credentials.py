@@ -91,8 +91,8 @@ class Credentials(JenkinsBase):
         if description not in self:
             params = credential.get_attributes()
             url = (
-                '%s/credential-store/domain/_/createCredentials'
-                % self.jenkins.baseurl
+                '%s/createCredentials'
+                % self.baseurl
             )
         else:
             raise JenkinsAPIException('Updating credentials is not supported '
@@ -121,8 +121,8 @@ class Credentials(JenkinsBase):
             'Submit': 'OK',
             'json': {}
         }
-        url = ('%s/credential-store/domain/_/credential/%s/doDelete'
-               % (self.jenkins.baseurl, self[description].credential_id))
+        url = ('%s/credential/%s/doDelete'
+               % (self.baseurl, self[description].credential_id))
         try:
             self.jenkins.requester.post_and_confirm_status(
                 url, params={}, data=urlencode(params)
