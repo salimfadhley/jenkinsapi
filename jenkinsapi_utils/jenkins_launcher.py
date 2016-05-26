@@ -149,7 +149,9 @@ class JenkinsLancher(object):
 
             os.chdir(self.war_directory)
 
-            jenkins_command = ['java', '-jar', self.war_filename,
+            jenkins_command = ['java',
+                               '-Djenkins.install.runSetupWizard=false',
+                               '-jar', self.war_filename,
                                '--httpPort=%d' % self.http_port]
 
             log.info("About to start Jenkins...")
