@@ -79,6 +79,24 @@ class TestQueue(BaseSystemTest):
         time.sleep(1)
         self.assertFalse(j.is_queued_or_running())
 
+    def test_queueitem_for_why_field(self):
+        # Make some jobs just in case there aren't any.
+        job_names = [random_string() for _ in range(5)]
+        jobs = []
+        for job_name in job_names:
+            j = self.jenkins.create_job(job_name, LONG_RUNNING_JOB)
+            jobs.append(j)
+            j.invoke()
+
+        queue = self.jenkins.get_queue()
+
+        # TEST!
+        self.assertIsInstance(queue[0]['why'], str)
+        self.assertIn(queue[0], 'why')
+
+        # Clean up after ourselves
+        for _, item in queue.iteritems():
+            queue.delete_item(item)
 
 if __name__ == '__main__':
     logging.basicConfig()
