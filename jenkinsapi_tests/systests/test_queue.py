@@ -90,7 +90,7 @@ class TestQueue(BaseSystemTest):
 
         queue = self.jenkins.get_queue()
         for _, item in queue.iteritems():
-            self.assertIs(type(item.why()), str)
+            assert item.why() is StringType
 
         # Clean up after ourselves
         for _, item in queue.iteritems():
