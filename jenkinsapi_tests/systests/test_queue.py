@@ -81,7 +81,7 @@ class TestQueue(BaseSystemTest):
 
     def test_queueitem_for_why_field(self):
         # Make some jobs just in case there aren't any.
-        job_names = [random_string() for _ in range(5)]
+        job_names = [random_string() for _ in range(2)]
         jobs = []
         for job_name in job_names:
             j = self.jenkins.create_job(job_name, LONG_RUNNING_JOB)
@@ -89,10 +89,8 @@ class TestQueue(BaseSystemTest):
             j.invoke()
 
         queue = self.jenkins.get_queue()
-
-        # TEST!
-        self.assertIsInstance(queue[0]['why'], str)
-        self.assertIn(queue[0], 'why')
+        for _, item in queue.iteritems():
+          self.assertIsInstance(item.why(), str)
 
         # Clean up after ourselves
         for _, item in queue.iteritems():
