@@ -16,6 +16,7 @@ from jenkinsapi.credentials import Credentials
 from jenkinsapi.executors import Executors
 from jenkinsapi.jobs import Jobs
 from jenkinsapi.view import View
+from jenkinsapi.label import Label
 from jenkinsapi.nodes import Nodes
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.views import Views
@@ -221,6 +222,10 @@ class Jenkins(JenkinsBase):
         self.requester.post_and_confirm_status(url, data='')
         self.poll()
         return self
+
+    def get_label_by_url(self, str_label_url):
+        str_label_name = str_label_url.split('/label/')[-1].replace('/', '')
+        return Label(str_label_url, str_label_name, jenkins_obj=self)
 
     def __getitem__(self, jobname):
         """
