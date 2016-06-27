@@ -61,7 +61,7 @@ class TestLabel(unittest.TestCase):
 
     @mock.patch.object(Label, '_poll')
     def test_get_tied_jobs(self, _poll):
-        _poll.return_value = self.DATA
+        _poll.return_value = self.DATA_JOBS
         return self.assertEquals(self.n.get_tied_jobs(), self.DATA_JOBS)
 
     @mock.patch.object(Label, '_poll')
