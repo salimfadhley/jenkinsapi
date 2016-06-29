@@ -35,11 +35,24 @@ class TestLabel(unittest.TestCase):
               "totalExecutors":0,
               "propertiesList":[]}
 
-    DATA_JOBS = {"tiedJobs":[
-                      {"name":"test_job1"},
-                      {"name":"test_job2"},
-                      {"name":"test_job3"},
-                      {"name":"test_job4"}]}
+    DATA_JOB_NAMES = {"tiedJobs":
+                  [{"name":"test_job1"},
+                   {"name":"test_job2"},
+                   {"name":"test_job3"},
+                   {"name":"test_job4"}]}
+
+    DATA_JOBS = [{"url":"http://jtest:8080/job/test_job1/",
+            "color":"blue",
+            "name":"test_job1"},
+           {"url":"http://jtest:8080/job/test_job2/",
+            "color":"blue",
+            "name":"test_job2"},
+           {"url":"http://jtest:8080/job/test_job3/",
+            "color":"blue",
+            "name":"test_job3"},
+           {"url":"http://jtest:8080/job/test_job4/",
+            "color":"blue",
+            "name":"test_job4"}]
 
     @mock.patch.object(Label, '_poll')
     def setUp(self, _poll):
@@ -61,8 +74,13 @@ class TestLabel(unittest.TestCase):
 
     @mock.patch.object(Label, '_poll')
     def test_get_tied_jobs(self, _poll):
-        _poll.return_value = self.DATA_JOBS
+        _poll.return_value = self.DATA
         return self.assertEquals(self.n.get_tied_jobs(), self.DATA_JOBS)
+
+    @mock.patch.object(Label, '_poll')
+    def test_get_tied_job_names(self, _poll):
+        _poll.return_value = self.DATA
+        return self.assertEquals(self.n.get_tied_job_names(), self.DATA_JOBS)
 
     @mock.patch.object(Label, '_poll')
     def test_online(self, _poll):

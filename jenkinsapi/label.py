@@ -37,6 +37,12 @@ class Label(JenkinsBase):
 
     def get_tied_jobs(self):
         """
+        Get a list of jobs.
+        """
+        return self.poll(tree='tiedJobs[name,url,color]')['tiedJobs']
+
+    def get_tied_job_names(self):
+        """
         Get a list of the name of tied jobs.
         """
-        return self.poll(tree='tiedJobs[name]')
+        return self.poll(tree='tiedJobs[name]')['tiedJobs']
