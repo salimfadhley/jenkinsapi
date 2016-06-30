@@ -39,7 +39,13 @@ class Label(JenkinsBase):
         """
         Get a list of jobs.
         """
-        return self.poll(tree='tiedJobs[name,url,color]')['tiedJobs']
+        if self.get_tied_job_names():
+            job_list = []
+            for job in self.get_tied_job_names():
+                job_list.append(self.get_jenkins_obj().get_job(job['name']))
+            return job_list
+        else:
+            return None
 
     def get_tied_job_names(self):
         """

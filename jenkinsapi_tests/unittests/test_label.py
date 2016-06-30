@@ -73,11 +73,6 @@ class TestLabel(unittest.TestCase):
         self.assertEquals(self.n.labelname, 'jenkins-slave')
 
     @mock.patch.object(Label, '_poll')
-    def test_get_tied_jobs(self, _poll):
-        _poll.return_value = self.DATA
-        return self.assertEquals(self.n.get_tied_jobs(), self.DATA_JOBS)
-
-    @mock.patch.object(Label, '_poll')
     def test_get_tied_job_names(self, _poll):
         _poll.return_value = self.DATA
         return self.assertEquals(self.n.get_tied_job_names(), self.DATA_JOBS)
