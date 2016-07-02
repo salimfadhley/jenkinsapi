@@ -13,6 +13,7 @@ import logging
 
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
+from jenkinsapi.credentials import Credentials2x
 from jenkinsapi.executors import Executors
 from jenkinsapi.jobs import Jobs
 from jenkinsapi.view import View
@@ -23,7 +24,7 @@ from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
-
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 log = logging.getLogger(__name__)
 
@@ -352,12 +353,16 @@ class Jenkins(JenkinsBase):
                                                       valid=valid)
         return resp
 
+    @property
+    def plugins(self):
+        return self.get_plugins()
+
     def get_plugins(self, depth=1):
         url = self.get_plugins_url(depth=depth)
         return Plugins(url, self)
 
     def has_plugin(self, plugin_name):
-        return plugin_name in self.get_plugins()
+        return plugin_name in self.plugins
 
     def get_executors(self, nodename):
         url = '%s/computer/%s' % (self.baseurl, nodename)
@@ -380,12 +385,16 @@ class Jenkins(JenkinsBase):
         """
         Return credentials
         """
-        if int(self.version[0:1]) == 1:
+
+        if 'credentials' not in self.plugins:
+            raise JenkinsAPIException('Credentials plugin not installed')
+
+        if int(self.plugins['credentials'].version[0:1]) == 1:
             url = '%s/credential-store/domain/_/' % self.baseurl
+            return Credentials(url, self)
         else:
             url = '%s/credentials/store/system/domain/_/' % self.baseurl
-
-        return Credentials(url, self)
+            return Credentials2x(url, self)
 
     @property
     def credentials(self):

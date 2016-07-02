@@ -149,3 +149,24 @@ class Credentials(JenkinsBase):
             cr = Credential(cred_dict)
 
         return cr
+
+
+class Credentials2x(Credentials):
+    """
+    This class provides a container-like API which gives
+    access to all global credentials on a Jenkins node.
+
+    Returns a list of Credential Objects.
+    """
+    def _poll(self, tree=None):
+        url = self.python_api_url(self.baseurl) + '?depth=2'
+        data = self.get_data(url, tree=tree)
+        credentials = data['credentials']
+        new_creds = {}
+        for cred_dict in credentials:
+            cred_dict['credential_id'] = cred_dict['id']
+            new_creds[cred_dict['id']] = self._make_credential(cred_dict)
+
+        data['credentials'] = new_creds
+
+        return data
