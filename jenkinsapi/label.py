@@ -41,7 +41,7 @@ class Label(JenkinsBase):
         """
         if self.get_tied_job_names():
             for job in self.get_tied_job_names():
-                yield(self.get_jenkins_obj().get_job(job['name']))
+                yield self.get_jenkins_obj().get_job(job['name'])
 
     def get_tied_job_names(self):
         """
