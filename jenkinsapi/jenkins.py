@@ -223,8 +223,8 @@ class Jenkins(JenkinsBase):
         self.poll()
         return self
 
-    def get_label_by_url(self, label_url):
-        label_name = label_url.split('/label/')[-1].replace('/', '')
+    def get_label(self, label_name):
+        label_url = '%s/label/%s' % (self.baseurl, label_name)
         return Label(label_url, label_name, jenkins_obj=self)
 
     def __getitem__(self, jobname):
