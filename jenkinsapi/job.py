@@ -20,6 +20,7 @@ import json
 import logging
 
 import xml.etree.ElementTree as ET
+import urllib
 
 
 try:
@@ -77,7 +78,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def _find_job_url(self, job_name):
         search_result = self.jenkins.requester.get_url(
-            self.jenkins.baseurl + '/search/suggest?query=' + job_name,
+            self.jenkins.baseurl + '/search/suggest?query=' +
+            urllib.quote(job_name),
             headers={
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
@@ -87,7 +89,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotFound('Job %s not found in Jenkins', job_name)
         full_job_name = search_result.json()['suggestions'][0]['name']
         search_result = self.jenkins.requester.get_url(
-            self.jenkins.baseurl + '/search/?q=' + full_job_name,
+            self.jenkins.baseurl + '/search/?q=' + urllib.quote(full_job_name),
             allow_redirects=False)
         if search_result.status_code != 302:
             raise NotFound('Job %s not found in Jenkins', job_name)
