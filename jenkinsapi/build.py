@@ -456,6 +456,10 @@ class Build(JenkinsBase):
         """
         if self.is_running():
             url = "%s/stop" % self.baseurl
-            self.job.jenkins.requester.post_and_confirm_status(url, data='')
+            # Starting from Jenkins 2.7 stop function sometimes breaks
+            # on redirect to job page. Call to stop works fine, and
+            # we don't need to have job page here.
+            self.job.jenkins.requester.post_and_confirm_status(
+                url, data='', valid=[302, 200, 500, ])
             return True
         return False
