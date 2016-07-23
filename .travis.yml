@@ -6,8 +6,8 @@ python:
     - "3.4"
 
 env:
-    - JENKINS_VERSION=stable
-    - JENKINS_VERSION=latest
+    - JENKINS_VERSION=1.x
+    - JENKINS_VERSION=2.x
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
