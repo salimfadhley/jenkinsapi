@@ -27,6 +27,8 @@ class JobTests(BaseSystemTest):
         job_name = 'create+%s' % random_string()
         self.jenkins.create_job(job_name, EMPTY_JOB)
         self.assertJobIsPresent(job_name)
+        job = self.jenkins[job_name]
+        self.assertTrue(job_name in job.url)
 
     def test_create_dup_job(self):
         job_name = 'create_%s' % random_string()
