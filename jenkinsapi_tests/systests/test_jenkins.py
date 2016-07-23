@@ -23,6 +23,11 @@ class JobTests(BaseSystemTest):
         self.jenkins.create_job(job_name, EMPTY_JOB)
         self.assertJobIsPresent(job_name)
 
+    def test_create_job_with_plus(self):
+        job_name = 'create+%s' % random_string()
+        self.jenkins.create_job(job_name, EMPTY_JOB)
+        self.assertJobIsPresent(job_name)
+
     def test_create_dup_job(self):
         job_name = 'create_%s' % random_string()
         old_job = self.jenkins.create_job(job_name, EMPTY_JOB)
