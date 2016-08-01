@@ -125,39 +125,14 @@ class View(JenkinsBase):
                     job = top_jenkins.get_job(str_job_name)
 
         log.info(msg='Creating job %s in view %s' % (str_job_name, self.name))
-        data = {
-            "description": "",
-            "statusFilter": "",
-            "useincluderegex": "on",
-            "includeRegex": "",
-            "columns": [{"stapler-class": "hudson.views.StatusColumn",
-                         "kind": "hudson.views.StatusColumn"},
-                        {"stapler-class": "hudson.views.WeatherColumn",
-                         "kind": "hudson.views.WeatherColumn"},
-                        {"stapler-class": "hudson.views.JobColumn",
-                         "kind": "hudson.views.JobColumn"},
-                        {"stapler-class": "hudson.views.LastSuccessColumn",
-                         "kind": "hudson.views.LastSuccessColumn"},
-                        {"stapler-class": "hudson.views.LastFailureColumn",
-                         "kind": "hudson.views.LastFailureColumn"},
-                        {"stapler-class": "hudson.views.LastDurationColumn",
-                         "kind": "hudson.views.LastDurationColumn"},
-                        {"stapler-class": "hudson.views.BuildButtonColumn",
-                         "kind": "hudson.views.BuildButtonColumn"}],
-            "Submit": "OK",
-        }
-        data["name"] = self.name
-        # Add existing jobs (if any)
-        for job_name in self.get_job_dict().keys():
-            data[job_name] = 'on'
 
-        # Add new job
-        data[job.name] = 'on'
+        url = '%s/addJobToView' % self.baseurl
+        params = {'name': str_job_name}
 
-        data['json'] = data.copy()
-        data = urlencode(data)
         self.get_jenkins_obj().requester.post_and_confirm_status(
-            '%s/configSubmit' % self.baseurl, data=data)
+            url,
+            data={},
+            params=params)
         self.poll()
         log.debug(msg='Job "%s" has been added to a view "%s"' %
                   (job.name, self.name))
