@@ -5,6 +5,7 @@ Module for jenkinsapi Views
 import logging
 import json
 from jenkinsapi.view import View
+from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +17,7 @@ class Views(object):
     """
     LIST_VIEW = 'hudson.model.ListView'
     NESTED_VIEW = 'hudson.plugins.nested_view.NestedView'
+    CATEGORIZED_VIEW = 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
     MY_VIEW = 'hudson.model.MyView'
     DASHBOARD_VIEW = 'hudson.plugins.view.dashboard.Dashboard'
     PIPELINE_VIEW = ('au.com.centrumsystems.hudson.'
@@ -87,11 +89,12 @@ class Views(object):
         """
         return list(self.iterkeys())
 
-    def create(self, view_name, view_type=LIST_VIEW):
+    def create(self, view_name, view_type=LIST_VIEW, config=None):
         """
         Create a view
         :param view_name: name of new view, str
-        :param person: Person name (to create personal view), str
+        :param view_type: type of the view, one of the constants in Views, str
+        :param config: XML configuration of the new view
         :return: new View obj or None if view was not created
         """
         log.info(msg='Creating "%s" view "%s"' % (view_type, view_name))
@@ -101,17 +104,30 @@ class Views(object):
             return self[view_name]
 
         url = '%s/createView' % self.jenkins.baseurl
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        data = {
-            "name": view_name,
-            "mode": view_type,
-            "Submit": "OK",
-            "json": json.dumps({"name": view_name, "mode": view_type})
-        }
 
-        self.jenkins.requester.post_and_confirm_status(
-            url,
-            data=data,
-            headers=headers)
+        if view_type == self.CATEGORIZED_VIEW:
+            if config is None or len(config) == 0:
+                raise JenkinsAPIException('Job XML config cannot be empty for CATEGORIZED_VIEW')
+
+            params = {'name': view_name}
+
+            self.jenkins.requester.post_xml_and_confirm_status(
+                url,
+                data=config,
+                params=params)
+        else:
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            data = {
+                "name": view_name,
+                "mode": view_type,
+                "Submit": "OK",
+                "json": json.dumps({"name": view_name, "mode": view_type})
+            }
+
+            self.jenkins.requester.post_and_confirm_status(
+                url,
+                data=data,
+                headers=headers)
+
         self.poll()
         return self[view_name]
