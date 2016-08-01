@@ -10,6 +10,7 @@ except ImportError:
 
 from jenkinsapi.view import View
 from jenkinsapi.views import Views
+from jenkinsapi.job import Job
 from jenkinsapi.api import get_view_from_url
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.systests.view_configs import VIEW_WITH_FILTER_AND_REGEX
@@ -27,10 +28,43 @@ class TestViews(BaseSystemTest):
         v = self.jenkins.views.create(view_name)
         self.assertIn(view_name, self.jenkins.views)
         self.assertIsInstance(v, View)
+        self.assertEquals(view_name, str(v))
 
         # Can we use the API convenience methods
         v2 = get_view_from_url(v.baseurl)
         self.assertEquals(v, v2)
+
+    def test_add_job_to_view(self):
+        job_name = random_string()
+        self._create_job(job_name)
+
+        view_name = random_string()
+        self.assertNotIn(view_name, self.jenkins.views)
+        v = self.jenkins.views.create(view_name)
+        self.assertIn(view_name, self.jenkins.views)
+        self.assertIsInstance(v, View)
+
+        self.assertNotIn(job_name, v)
+        self.assertTrue(v.add_job(job_name))
+        self.assertIn(job_name, v)
+        self.assertIsInstance(v[job_name], Job)
+
+        self.assertTrue(len(v) == 1)
+        for j_name, j in v.iteritems():
+            self.assertEquals(j_name, job_name)
+            self.assertIsInstance(j, Job)
+
+        for j in v.values():
+            self.assertIsInstance(j, Job)
+
+        jobs = v.items()
+        self.assertIsInstance(jobs, list)
+        self.assertIsInstance(jobs[0], tuple)
+
+        self.assertFalse(v.add_job(job_name))
+        self.assertFalse(v.add_job('unknown'))
+
+        del self.jenkins.views[view_name]
 
     def test_create_and_delete_views(self):
         self._create_job()
@@ -54,12 +88,9 @@ class TestViews(BaseSystemTest):
         self.assertNotIn(view1_name, self.jenkins.views)
 
     def test_delete_view_which_does_not_exist(self):
-        self._create_job()
         view1_name = random_string()
-        new_view = self.jenkins.views.create(view1_name)
-        self.assertIn(view1_name, self.jenkins.views)
-        del self.jenkins.views[view1_name]
         self.assertNotIn(view1_name, self.jenkins.views)
+        del self.jenkins.views[view1_name]
 
     def test_update_view_config(self):
         view_name = random_string()
