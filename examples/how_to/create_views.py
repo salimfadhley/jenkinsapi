@@ -50,3 +50,20 @@ else:
 # No error will be raised when attempting to remove non-existing view
 logger.info('Attempting to delete view that does not exist')
 del api.views[test_view_name]
+
+# Create CategorizedJobsView
+config = '''
+<org.jenkinsci.plugins.categorizedview.CategorizedJobsView>
+  <categorizationCriteria>
+    <org.jenkinsci.plugins.categorizedview.GroupingRule>
+      <groupRegex>.dev.</groupRegex>
+      <namingRule>Development</namingRule>
+    </org.jenkinsci.plugins.categorizedview.GroupingRule>
+    <org.jenkinsci.plugins.categorizedview.GroupingRule>
+      <groupRegex>.hml.</groupRegex>
+      <namingRule>Homologation</namingRule>
+    </org.jenkinsci.plugins.categorizedview.GroupingRule>
+  </categorizationCriteria>
+</org.jenkinsci.plugins.categorizedview.CategorizedJobsView>
+'''
+view = api.views.create('My categorized jobs view', api.views.CATEGORIZED_VIEW, config=config)
