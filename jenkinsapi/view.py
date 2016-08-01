@@ -1,12 +1,6 @@
 """
 Module for jenkinsapi views
 """
-try:
-    from urllib import urlencode
-except ImportError:
-    # Python3
-    from urllib.parse import urlencode
-
 import logging
 
 from jenkinsapi.jenkinsbase import JenkinsBase
