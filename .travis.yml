@@ -13,6 +13,8 @@ script:
 - pep8 --ignore=E501 jenkinsapi/*.py
 - pylint --rcfile=pylintrc jenkinsapi/*.py --disable R0912
 - nosetests -v jenkinsapi_tests
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
   user: lechat

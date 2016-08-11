@@ -8,6 +8,7 @@ import logging
 import jenkinsapi_tests.systests
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.job import Job
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ class BaseSystemTest(unittest.TestCase):
             port = jenkinsapi_tests.systests.state['launcher'].http_port
         except KeyError:
             log.warning(
-                "Jenkins was not launched from the test-framework, assuming port %i" %
+                "Jenkins was not launched from the test-framework, "
+                "assuming port %i" %
                 DEFAULT_JENKINS_PORT)
             port = DEFAULT_JENKINS_PORT
         self.jenkins = Jenkins('http://localhost:%d' % port)
@@ -50,6 +52,8 @@ class BaseSystemTest(unittest.TestCase):
         self.jenkins.poll()
         self.assertTrue(name in self.jenkins,
                         'Job %r is absent in jenkins.' % name)
+        self.assertIsInstance(self.jenkins.get_job(name), Job)
+        self.assertIsInstance(self.jenkins[name], Job)
 
     def assertJobIsAbsent(self, name):
         self.jenkins.poll()
