@@ -78,8 +78,6 @@ class JenkinsBase(object):
 
         response = requester.get_url(url, params)
         if response.status_code != 200:
-            logging.error('Failed request at %s with params: %s %s',
-                          url, params, tree if tree else '')
             response.raise_for_status()
         try:
             return ast.literal_eval(response.text)
