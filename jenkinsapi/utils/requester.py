@@ -92,11 +92,14 @@ class Requester(object):
             )
         return url
 
-    def get_url(self, url, params=None, headers=None, allow_redirects=True):
+    def get_url(self, url, params=None, headers=None, allow_redirects=True,
+                stream=False):
         requestKwargs = self.get_request_dict(
             params=params,
             headers=headers,
-            allow_redirects=allow_redirects)
+            allow_redirects=allow_redirects,
+            stream=stream
+        )
         return requests.get(self._update_url_scheme(url), **requestKwargs)
 
     def post_url(self, url, params=None, data=None, files=None,
@@ -136,9 +139,9 @@ class Requester(object):
         return response
 
     def get_and_confirm_status(
-            self, url, params=None, headers=None, valid=None):
+            self, url, params=None, headers=None, valid=None, stream=False):
         valid = valid or self.VALID_STATUS_CODES
-        response = self.get_url(url, params, headers)
+        response = self.get_url(url, params, headers, stream=stream)
         if response.status_code not in valid:
             if response.status_code == 405:         # POST required
                 raise PostRequired('POST required for url {0}'.format(url))
