@@ -70,14 +70,15 @@ class Artifact(object):
         Grab the text of the artifact
         """
         response = self.get_jenkins_obj().requester.get_and_confirm_status(
-            self.url, stream=True)
-        return response
+            self.url)
+        return response.content
 
     def _do_download(self, fspath):
         """
         Download the the artifact to a path.
         """
-        data = self.get_data()
+        data = self.get_jenkins_obj().requester.get_and_confirm_status(
+            self.url, stream=True)
         with open(fspath, "wb") as out:
             for chunk in data.iter_content(chunk_size=1024):
                 out.write(chunk)
