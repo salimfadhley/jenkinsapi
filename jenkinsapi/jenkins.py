@@ -60,7 +60,7 @@ class Jenkins(JenkinsBase):
 
     def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
-        return self.get_data(url, tree='jobs[name,color]'
+        return self.get_data(url, tree='jobs[name,color,url]'
                              if not tree else tree)
 
     def _poll_if_needed(self):

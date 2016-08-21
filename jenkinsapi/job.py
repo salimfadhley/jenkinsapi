@@ -24,11 +24,9 @@ import xml.etree.ElementTree as ET
 
 try:
     import urlparse
-    from urllib import quote_plus as q_plus
 except ImportError:
     # Python3
     import urllib.parse as urlparse
-    from urllib.parse import quote_plus as q_plus
 
 
 SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
@@ -73,41 +71,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             None: lambda element_tree: []
         }
         self.url = url
-        if self.url is None:
-            self.url = self._find_job_url(name)
         JenkinsBase.__init__(self, self.url)
-
-    def _find_job_url(self, job_name):
-        # First we ask search box for suggestions of the job name
-        search_url = '{base}/search/suggest?query={job_name}'.format(
-            base=self.jenkins.baseurl,
-            job_name=q_plus(job_name)
-        )
-        search_result = self.jenkins.requester.get_url(
-            search_url,
-            headers={
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            allow_redirects=False)
-        if search_result.status_code != 200:
-            raise NotFound('Job %s not found in Jenkins', job_name)
-        # Job will be first in the list
-        full_job_name = search_result.json()['suggestions'][0]['name']
-
-        # Second, we ask search to give us suggested job
-        search_url = '{base}/search/?q={job_name}'.format(
-            base=self.jenkins.baseurl,
-            job_name=q_plus(full_job_name)
-        )
-        search_result = self.jenkins.requester.get_url(
-            search_url,
-            allow_redirects=False)
-        if search_result.status_code != 302:
-            raise NotFound('Job %s not found in Jenkins', job_name)
-
-        # Job location will be in search result's headers
-        return search_result.headers['Location']
 
     def __str__(self):
         return self.name
