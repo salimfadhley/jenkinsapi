@@ -131,6 +131,30 @@ class TestViews(BaseSystemTest):
         v = get_view_from_url(sv2.baseurl)
         self.assertEquals(v, sv2)
 
+    def test_add_to_view_after_copy(self):
+        # This test is for issue #291
+        job = self._create_job()
+        new_job_name = random_string()
+        view_name = random_string()
+        new_view = self.jenkins.views.create(view_name)
+        new_view = self.jenkins.views[view_name]
+        new_job = self.jenkins.copy_job(job.name, new_job_name)
+        self.assertTrue(new_view.add_job(new_job.name))
+        self.assertIn(new_job.name, new_view)
+
+    def test_get_job_config(self):
+        # This test is for issue #301
+        job = self._create_job()
+        view_name = random_string()
+        new_view = self.jenkins.views.create(view_name)
+
+        self.assertTrue(new_view.add_job(job.name))
+
+        self.assertIn('<?xml', self.jenkins.get_job(job.name).get_config())
+        for job_name, job in self.jenkins.views[view_name].items():
+            self.assertIn('<?xml', job.get_config())
+
+
 if __name__ == '__main__':
     logging.basicConfig()
     unittest.main()

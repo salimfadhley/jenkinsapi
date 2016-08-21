@@ -57,8 +57,7 @@ class View(JenkinsBase):
             it = self.get_job_dict().items()
 
         for name, url in it:
-            api_url = self.python_api_url(url)
-            yield name, Job(api_url, name, self.jenkins_obj)
+            yield name, Job(url, name, self.jenkins_obj)
 
     def values(self):
         return [a[1] for a in self.iteritems()]
