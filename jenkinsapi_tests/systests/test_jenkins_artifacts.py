@@ -40,7 +40,7 @@ class TestPingerJob(BaseSystemTest):
 
         try:
             # Verify that we can handle text artifacts
-            text_artifact.save_to_dir(tempDir)
+            text_artifact.save_to_dir(tempDir, strict_validation=True)
             readBackText = open(os.path.join(tempDir,
                                              text_artifact.filename),
                                 'rb').read().strip()
@@ -49,7 +49,7 @@ class TestPingerJob(BaseSystemTest):
             self.assertTrue(readBackText.endswith('ms'))
 
             # Verify that we can hande binary artifacts
-            binary_artifact.save_to_dir(tempDir)
+            binary_artifact.save_to_dir(tempDir, strict_validation=True)
             readBackText = gzip.open(os.path.join(tempDir,
                                                   binary_artifact.filename,),
                                      'rb').read().strip()

@@ -149,7 +149,7 @@ gzip &lt; out.txt &gt; out.gz</command>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Fingerprinter>
-      <targets></targets>
+      <targets>*.*</targets>
       <recordBuildArtifacts>true</recordBuildArtifacts>
     </hudson.tasks.Fingerprinter>
   </publishers>
