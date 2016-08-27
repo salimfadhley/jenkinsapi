@@ -116,7 +116,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # do not call _buildid_for_type here: it would poll and do an infinite
         # loop
         oldest_loaded_build_number = data["builds"][-1]["number"]
-        if not self._data['firstBuild']:
+        if 'firstBuild' not in self._data or not self._data['firstBuild']:
             first_build_number = oldest_loaded_build_number
         else:
             first_build_number = self._data["firstBuild"]["number"]
