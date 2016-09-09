@@ -298,7 +298,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         last_build_number = self.get_last_buildnumber()
         assert order == 1 or order == -1, 'Direction should be ascending or descending (1/-1)'
 
-        for number in range(first_build_number, last_build_number+1)[::order]:
+        for number in range(first_build_number, last_build_number + 1)[::order]:
             build = self.get_build(number)
             if build.get_params() == build_params:
                 return build
