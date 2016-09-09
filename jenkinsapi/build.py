@@ -93,11 +93,13 @@ class Build(JenkinsBase):
 
     def get_params(self):
         """
-        Return a dictionary of params names and their values
+        Return a dictionary of params names and their values or None
+        if no parameters present
         """
-        parameters = self._data.get('actions', {})[0].get('parameters', )
-        result = {pair['name']: pair['value'] for pair in parameters}
-        return result
+        actions = self._data.get('actions')
+        if actions:
+            parameters = actions[0].get('parameters', {})
+            return {pair['name']: pair['value'] for pair in parameters}
 
     def get_changeset_items(self):
         """
