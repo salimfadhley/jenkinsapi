@@ -92,12 +92,11 @@ class Build(JenkinsBase):
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
     def get_params(self):
-        result = {}
-        parameters = self._data.get('actions', {})[0].get('parameters', {})
-        for pair in parameters:
-            key = pair['name']
-            value = pair['value']
-            result[key] = value
+        """
+        Return a dictionary of params names and their values
+        """
+        parameters = self._data.get('actions', {})[0].get('parameters', )
+        result = {pair['name']: pair['value'] for pair in parameters}
         return result
 
     def get_changeset_items(self):

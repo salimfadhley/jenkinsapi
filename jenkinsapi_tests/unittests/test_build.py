@@ -105,10 +105,6 @@ class test_build(unittest.TestCase):
         """ with no scm, get_revision should return None """
         self.assertEqual(self.b.get_revision(), None)
 
-    def test_get_revision_no_scm(self):
-        """ with no scm, get_revision should return None """
-        self.assertEqual(self.b.get_revision(), None)
-
     @mock.patch.object(Build, '__init__')
     def test_get_matrix_runs(self, build_init_mock):
         build_init_mock.return_value = None
@@ -116,6 +112,23 @@ class test_build(unittest.TestCase):
             continue
         build_init_mock.assert_called_once_with('http//localhost:8080/job/foo/SHARD_NUM=1/1/',
                                                 1, self.j)
+
+    def test_get_params(self):
+        expected = {
+            'first_param': 'first_value',
+            'second_param': 'second_value',
+        }
+        self.b._data = {
+            'actions': [{
+                'parameters': [
+                    {'name': 'first_param', 'value': 'first_value'},
+                    {'name': 'second_param', 'value': 'second_value'},
+                ]
+            }]
+        }
+        params = self.b.get_params()
+
+        self.assertDictEqual(params, expected)
 
     # TEST DISABLED - DOES NOT WORK
     # def test_downstream(self):

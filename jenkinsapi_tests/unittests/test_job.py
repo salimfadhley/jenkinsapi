@@ -340,5 +340,20 @@ class TestJob(unittest.TestCase):
         self.assertEquals(
             str(ar.exception), 'Build parameters must be a dict')
 
+    def test_get_build_by_params(self):
+        build_params = {
+            'param1': 'value1'
+        }
+        get_params_mock = mock.Mock(side_effect=({}, {}, build_params))
+        build_mock = mock.Mock(get_params=get_params_mock)
+        with mock.patch.object(self.j, 'get_first_buildnumber', return_value=1), \
+                mock.patch.object(self.j, 'get_last_buildnumber', return_value=3), \
+                mock.patch.object(self.j, 'get_build', return_value=build_mock) as get_build_mock:
+            result = self.j.get_build_by_params(build_params)
+            assert get_build_mock.call_count == 3
+            assert get_params_mock.call_count == 3
+            assert result == build_mock
+
+
 if __name__ == '__main__':
     unittest.main()
