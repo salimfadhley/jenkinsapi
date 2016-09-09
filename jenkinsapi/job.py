@@ -293,6 +293,18 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # understand the test above.
         return dict((build["number"], build["url"]) for build in builds)
 
+    def get_build_by_params(self, build_params, order=1):
+        first_build_number = self.get_first_buildnumber()
+        last_build_number = self.get_last_buildnumber()
+        assert order == 1 or order == -1, 'Direction should be ascending or descending (1/-1)'
+
+        for number in range(first_build_number, last_build_number+1)[::order]:
+            build = self.get_build(number)
+            if build.get_params() == build_params:
+                return build
+
+        raise NoBuildData('No build with such params {params}'.format(params=build_params))
+
     def get_revision_dict(self):
         """
         Get dictionary of all revisions with a list of buildnumbers (int)

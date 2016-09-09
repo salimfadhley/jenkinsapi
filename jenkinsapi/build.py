@@ -91,6 +91,15 @@ class Build(JenkinsBase):
         vcs = self._data['changeSet']['kind'] or 'git'
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
+    def get_params(self):
+        result = {}
+        parameters = self._data.get('actions', {})[0].get('parameters', {})
+        for pair in parameters:
+            key = pair['name']
+            value = pair['value']
+            result[key] = value
+        return result
+
     def get_changeset_items(self):
         """
         Returns a list of changeSet items.
