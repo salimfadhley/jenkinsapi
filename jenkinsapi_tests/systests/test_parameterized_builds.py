@@ -27,9 +27,10 @@ class TestParameterizedBuilds(BaseSystemTest):
         job_name = 'create1_%s' % random_string()
         job = self.jenkins.create_job(job_name, JOB_WITH_FILE)
 
-        job.invoke(block=True, files={'file.txt': param_file})
+        self.assertTrue(job.has_params())
+        self.assertTrue(len(job.get_params_list()) != 0)
 
-        # Following test is enabled because standalone file parameters work
+        job.invoke(block=True, files={'file.txt': param_file})
 
         build = job.get_last_build()
         while build.is_running():
@@ -105,6 +106,10 @@ class TestParameterizedBuilds(BaseSystemTest):
 
         job_name = 'create_%s' % random_string()
         job = self.jenkins.create_job(job_name, JOB_WITH_FILE_AND_PARAMS)
+
+        self.assertTrue(job.has_params())
+        self.assertTrue(len(job.get_params_list()) != 0)
+
         qi = job.invoke(
             block=True,
             files={'file.txt': param_file},
