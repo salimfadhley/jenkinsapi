@@ -29,6 +29,7 @@ class BaseSystemTest(unittest.TestCase):
         self.jenkins = Jenkins('http://localhost:%d' % port)
         self._delete_all_jobs()
         self._delete_all_views()
+        self._delete_all_credentials()
 
     def tearDown(self):
         pass
@@ -42,6 +43,11 @@ class BaseSystemTest(unittest.TestCase):
         all_view_names = self.jenkins.views.keys()[1:]
         for name in all_view_names:
             del self.jenkins.views[name]
+
+    def _delete_all_credentials(self):
+        all_cred_names = self.jenkins.credentials.keys()
+        for name in all_cred_names:
+            del self.jenkins.credentials[name]
 
     def _create_job(self, name='whatever', config=EMPTY_JOB):
         job = self.jenkins.create_job(name, config)

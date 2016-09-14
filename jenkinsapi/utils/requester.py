@@ -12,13 +12,17 @@ except ImportError:
 from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired
 # import logging
 
-# # these two lines enable debugging at httplib level (requests->urllib3->httplib)
-# # you will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
-# # the only thing missing will be the response.body which is not logged.
+# these two lines enable debugging at httplib level
+# (requests->urllib3->httplib)
+# you will see the REQUEST, including HEADERS and DATA, and RESPONSE
+# with HEADERS but without DATA.
+# the only thing missing will be the response.body which is not logged.
 # import httplib
 # httplib.HTTPConnection.debuglevel = 1
 
-# logging.basicConfig() # you need to initialize logging, otherwise you will not see anything from requests
+# you need to initialize logging, otherwise you will not see anything
+# from requests
+# logging.basicConfig()
 # logging.getLogger().setLevel(logging.DEBUG)
 # requests_log = logging.getLogger("requests.packages.urllib3")
 # requests_log.setLevel(logging.DEBUG)
@@ -28,8 +32,9 @@ from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired
 class Requester(object):
 
     """
-    A class which carries out HTTP requests. You can replace this class with one of your
-    own implementation if you require some other way to access Jenkins.
+    A class which carries out HTTP requests. You can replace this
+    class with one of your own implementation if you require some other
+    way to access Jenkins.
 
     This default class can handle simple authentication only.
     """
@@ -60,7 +65,8 @@ class Requester(object):
 
         if headers:
             assert isinstance(
-                headers, dict), 'headers must be a dict, got %s' % repr(headers)
+                headers, dict), \
+                'headers must be a dict, got %s' % repr(headers)
             requestKwargs['headers'] = headers
 
         requestKwargs['verify'] = self.ssl_verify
@@ -119,7 +125,8 @@ class Requester(object):
             url, params=params, data=data, headers=headers, valid=valid)
 
     def post_and_confirm_status(
-            self, url, params=None, data=None, files=None, headers=None, valid=None, allow_redirects=True):
+            self, url, params=None, data=None, files=None, headers=None,
+            valid=None, allow_redirects=True):
         valid = valid or self.VALID_STATUS_CODES
         if not headers and not files:
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -134,8 +141,13 @@ class Requester(object):
             headers,
             allow_redirects)
         if response.status_code not in valid:
-            raise JenkinsAPIException('Operation failed. url={0}, data={1}, headers={2}, status={3}, text={4}'.format(
-                response.url, data, headers, response.status_code, response.text.encode('UTF-8')))
+            raise JenkinsAPIException(
+                'Operation failed. url={0}, data={1}, headers={2}, '
+                'status={3}, text={4}'.format(
+                    response.url, data, headers, response.status_code,
+                    response.text.encode('UTF-8')
+                )
+            )
         return response
 
     def get_and_confirm_status(
@@ -146,6 +158,11 @@ class Requester(object):
             if response.status_code == 405:         # POST required
                 raise PostRequired('POST required for url {0}'.format(url))
             else:
-                raise JenkinsAPIException('Operation failed. url={0}, headers={1}, status={2}, text={3}'.format(
-                    response.url, headers, response.status_code, response.text.encode('UTF-8')))
+                raise JenkinsAPIException(
+                    'Operation failed. url={0}, headers={1}, status={2}, '
+                    'text={3}'.format(
+                        response.url, headers, response.status_code,
+                        response.text.encode('UTF-8')
+                    )
+                )
         return response
