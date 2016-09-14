@@ -102,10 +102,13 @@ class TestInvocation(BaseSystemTest):
             job.get_build(1)
 
         # Delete build using Job as dictionary of builds
-        _ = job[2]
+        job[2]
         del job[2]
         with self.assertRaises(NotFound):
             job.get_build(2)
+
+        with self.assertRaises(NotFound):
+            job.delete_build(99)
 
     def test_give_params_on_non_parameterized_job(self):
         job_name = 'Ecreate_%s' % random_string()
