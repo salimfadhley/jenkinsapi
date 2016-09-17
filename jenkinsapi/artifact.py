@@ -25,10 +25,11 @@ class Artifact(object):
     generated as a by-product of executing a Jenkins build.
     """
 
-    def __init__(self, filename, url, build):
+    def __init__(self, filename, url, build, relative_path=None):
         self.filename = filename
         self.url = url
         self.build = build
+        self.relative_path = relative_path
 
     def save(self, fspath, strict_validation=False):
         """

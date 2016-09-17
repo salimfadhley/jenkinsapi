@@ -180,7 +180,8 @@ class Build(JenkinsBase):
         for afinfo in data["artifacts"]:
             url = "%s/artifact/%s" % (self.baseurl,
                                       quote(afinfo["relativePath"]))
-            af = Artifact(afinfo["fileName"], url, self)
+            af = Artifact(afinfo["fileName"], url, self,
+                          relative_path=afinfo["relativePath"])
             yield af
 
     def get_artifact_dict(self):
