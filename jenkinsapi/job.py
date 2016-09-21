@@ -154,7 +154,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         assert isinstance(
             build_params, dict), 'Build parameters must be a dict'
 
-        build_p = [{'name': k, 'value': str(v)}
+        build_p = [{'name': k, 'value': str(v.encode('utf-8'))}
                    for k, v in sorted(build_params.items())]
         out = {'parameter': build_p}
         if file_params:
