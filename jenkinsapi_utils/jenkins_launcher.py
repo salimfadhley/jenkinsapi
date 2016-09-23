@@ -73,6 +73,8 @@ class JenkinsLancher(object):
         if 'JENKINS_HOME' not in os.environ:
             self.jenkins_home = tempfile.mkdtemp(prefix='jenkins-home-')
             os.environ['JENKINS_HOME'] = self.jenkins_home
+        else:
+            self.jenkins_home = os.environ['JENKINS_HOME']
 
         self.jenkins_process = None
         self.q = Queue.Queue()
@@ -99,10 +101,10 @@ class JenkinsLancher(object):
         tarball.extractall(path=self.jenkins_home)
 
     def install_plugins(self):
-        for i, url in enumerate(self.plugin_urls):
-            self.install_plugin(url, i)
+        for url in self.plugin_urls:
+            self.install_plugin(url)
 
-    def install_plugin(self, hpi_url, i):
+    def install_plugin(self, hpi_url):
         plugin_dir = os.path.join(self.jenkins_home, 'plugins')
         if not os.path.exists(plugin_dir):
             os.mkdir(plugin_dir)
@@ -115,6 +117,10 @@ class JenkinsLancher(object):
         with open(plugin_path, 'wb') as h:
             request = requests.get(hpi_url)
             h.write(request.content)
+        # Create an empty .pinned file, so that the downloaded plugin
+        # will be used, instead of the version bundled in jenkins.war
+        # See https://wiki.jenkins-ci.org/display/JENKINS/Pinned+Plugins
+        open(plugin_path + ".pinned", 'a').close()
 
     def stop(self):
         if not self.jenkins_url:

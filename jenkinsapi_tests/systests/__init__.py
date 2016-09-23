@@ -17,7 +17,8 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins-ci.org/latest/git-client.hpi",
     "https://updates.jenkins-ci.org/latest/nested-view.hpi",
     "https://updates.jenkins-ci.org/latest/ssh-slaves.hpi",
-    "https://updates.jenkins-ci.org/latest/structs.hpi"
+    "https://updates.jenkins-ci.org/latest/structs.hpi",
+    "http://updates.jenkins-ci.org/latest/plain-credentials.hpi"
 ]
 
 

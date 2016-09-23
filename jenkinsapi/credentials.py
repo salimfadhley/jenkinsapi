@@ -11,6 +11,7 @@ except ImportError:
     from urllib.parse import urlencode
 from jenkinsapi.credential import Credential
 from jenkinsapi.credential import UsernamePasswordCredential
+from jenkinsapi.credential import SecretTextCredential
 from jenkinsapi.credential import SSHKeyCredential
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
@@ -145,6 +146,8 @@ class Credentials(JenkinsBase):
             cr = UsernamePasswordCredential(cred_dict)
         elif cred_dict['typeName'] == 'SSH Username with private key':
             cr = SSHKeyCredential(cred_dict)
+        elif cred_dict['typeName'] == 'Secret text':
+            cr = SecretTextCredential(cred_dict)
         else:
             cr = Credential(cred_dict)
 

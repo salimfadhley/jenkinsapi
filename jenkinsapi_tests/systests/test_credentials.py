@@ -10,7 +10,8 @@ except ImportError:
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi.credentials import Credentials
-from jenkinsapi.credential import UsernamePasswordCredential
+from jenkinsapi.credentials import UsernamePasswordCredential
+from jenkinsapi.credentials import SecretTextCredential
 from jenkinsapi.credential import SSHKeyCredential
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -122,6 +123,27 @@ class TestCredentials(BaseSystemTest):
         }
         with self.assertRaises(ValueError):
             creds[cred_descr] = SSHKeyCredential(cred_dict)
+
+    def test_create_secret_text_credential(self):
+        """
+        Tests the creation of a secret text.
+        """
+        creds = self.jenkins.credentials
+
+        cred_descr = random_string()
+        cred_dict = {
+            'description': cred_descr,
+            'secret': 'newsecret'
+        }
+        creds[cred_descr] = SecretTextCredential(cred_dict)
+
+        self.assertTrue(cred_descr in creds)
+        cred = creds[cred_descr]
+        self.assertIsInstance(cred, SecretTextCredential)
+        self.assertEquals(cred.secret, None)
+        self.assertEquals(cred.description, cred_descr)
+
+        del creds[cred_descr]
 
     def test_delete_credential(self):
         creds = self.jenkins.credentials

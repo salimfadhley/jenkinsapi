@@ -95,6 +95,53 @@ class UsernamePasswordCredential(Credential):
         }
 
 
+class SecretTextCredential(Credential):
+    """
+    Secret text credential
+
+    Constructor expects following dict:
+        {
+            'credential_id': str,   Automatically set by jenkinsapi
+            'displayName': str,     Automatically set by Jenkins
+            'fullName': str,        Automatically set by Jenkins
+            'typeName': str,        Automatically set by Jenkins
+            'description': str,
+            'secret': str,
+        }
+
+    When creating credential via jenkinsapi automatic fields not need to be in
+    dict
+    """
+
+    def __init__(self, cred_dict):
+        super(SecretTextCredential, self).__init__(cred_dict)
+        self.secret = cred_dict.get('secret', None)
+
+    def get_attributes(self):
+        """
+        Used by Credentials object to create credential in Jenkins
+        """
+        c_class = (
+            'org.jenkinsci.plugins.plaincredentials.impl.'
+            'StringCredentialsImpl'
+        )
+        c_id = '' if self.credential_id is None else self.credential_id
+        return {
+            'stapler-class': c_class,
+            'Submit': 'OK',
+            'json': {
+                '': '1',
+                'credentials': {
+                    'stapler-class': c_class,
+                    '$class': c_class,
+                    'id': c_id,
+                    'secret': self.secret,
+                    'description': self.description
+                }
+            }
+        }
+
+
 class SSHKeyCredential(Credential):
     """
     SSH key credential
