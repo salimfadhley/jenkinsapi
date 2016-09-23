@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import mock
 import json
 # To run unittests on python 2.6 please use unittest2 library
@@ -143,6 +145,13 @@ class TestJob(unittest.TestCase):
 
         self.assertEquals(
             str(ar.exception), 'Build parameters must be a dict')
+
+    def test_unicode_mk_json_from_build_parameters(self):
+        json = self.j._mk_json_from_build_parameters({'age': 20,
+                                                      'name': u'品品',
+                                                      'country': 'USA',
+                                                      'height': 1.88})
+        self.assertTrue(isinstance(json, dict))
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetData)
     def test_wrong_field__build_id_for_type(self):
