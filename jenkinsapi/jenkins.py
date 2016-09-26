@@ -335,7 +335,8 @@ class Jenkins(JenkinsBase):
 
     def _get_update_center_dict(self):
         update_center = 'https://updates.jenkins-ci.org/update-center.json'
-        return json.loads(jsonp_to_json(requests.get(update_center).content))
+        jsonp = requests.get(update_center).content.decode('utf-8')
+        return json.loads(jsonp_to_json(jsonp))
 
     def install_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
         """
