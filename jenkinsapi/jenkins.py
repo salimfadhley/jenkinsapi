@@ -1,6 +1,10 @@
 """
 Module for jenkinsapi Jenkins object
 """
+
+import json
+import logging
+import time
 try:
     import urlparse
     from urllib import quote as urlquote
@@ -8,8 +12,7 @@ except ImportError:
     # Python3
     import urllib.parse as urlparse
     from urllib.parse import quote as urlquote
-
-import logging
+import requests
 
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
@@ -20,10 +23,12 @@ from jenkinsapi.view import View
 from jenkinsapi.label import Label
 from jenkinsapi.nodes import Nodes
 from jenkinsapi.plugins import Plugins
+from jenkinsapi.plugin import Plugin
 from jenkinsapi.views import Views
 from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.utils.jsonp_to_json import jsonp_to_json
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -56,6 +61,7 @@ class Jenkins(JenkinsBase):
             ssl_verify=ssl_verify)
         self.lazy = lazy
         self.jobs_container = None
+        self.update_center_dict = self._get_update_center_dict()
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
     def _poll(self, tree=None):
@@ -330,25 +336,27 @@ class Jenkins(JenkinsBase):
         return '%s/pluginManager/api/python?depth=%i' % (self.baseurl, depth)
 
     def install_plugin(self, plugin):
-        plugin = str(plugin)
-        if '@' not in plugin or len(plugin.split('@')) != 2:
-            usage_err = ('argument must be a string like '
-                         '"plugin-name@version", not "{0}"')
-            usage_err = usage_err.format(plugin)
-            raise ValueError(usage_err)
-        payload = '<jenkins> <install plugin="{0}" /> </jenkins>'
-        payload = payload.format(plugin)
-        url = '%s/pluginManager/installNecessaryPlugins' % (self.baseurl,)
-        return self.requester.post_xml_and_confirm_status(
-            url, data=payload)
+        if not isinstance(plugin, Plugin):
+            plugin = Plugin(plugin)
+        self.plugins[plugin.shortName] = plugin
 
-    def install_plugins(self, plugin_list, restart=False):
-        for plugin in plugin_list:
+    def _get_update_center_dict(self):
+        update_center = 'https://updates.jenkins-ci.org/update-center.json'
+        return json.loads(jsonp_to_json(requests.get(update_center).content))
+
+    def install_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
+        """
+        Install a list of plugins.
+        @param plugin_list: a list of plugins to be installed
+        @param restart:
+        """
+        plugins = [p if isinstance(p, Plugin) else Plugin(p) for p in plugin_list]
+        for plugin in plugins:
             self.install_plugin(plugin)
         if restart:
-            self.safe_restart()
+            self.safe_restart(wait_for_reboot=wait_for_reboot)
 
-    def safe_restart(self):
+    def safe_restart(self, wait_for_reboot=False):
         """ restarts jenkins when no jobs are running """
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
@@ -356,7 +364,32 @@ class Jenkins(JenkinsBase):
         valid = self.requester.VALID_STATUS_CODES + [503]
         resp = self.requester.post_and_confirm_status(url, data='',
                                                       valid=valid)
+        if wait_for_reboot:
+            self._wait_for_reboot()
         return resp
+
+    def _wait_for_reboot(self):
+        wait = 5
+        count = 0
+        max_count = 30
+        success = False
+        while count < max_count:
+            time.sleep(wait)
+            try:
+                self.poll()
+                success = True
+            except (requests.HTTPError, requests.ConnectionError):
+                msg = ("Jenkins has not restarted yet!  (This is"
+                       " try {0} of {1}, waited {2} seconds so far)"
+                       "  Sleeping and trying again..")
+                msg = msg.format(count, max_count, count * wait)
+                log.debug(msg)
+            count += 1
+        if not success:
+            msg = ("Jenkins did not come back from safe restart! "
+                   "Waited {0} seconds altogether.  This "
+                   "failure may cause other failures.")
+            log.critical(msg.format(count * wait))
 
     @property
     def plugins(self):

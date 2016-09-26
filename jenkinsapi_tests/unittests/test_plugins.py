@@ -177,27 +177,36 @@ class TestPlugins(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.J.install_plugin('test')
 
+    @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
-    def test_install_plugin_good_input(self, _post):
-        self.J.install_plugin('test@1.0')
-        expected_data = '<jenkins> <install plugin="test@1.0" /> </jenkins>'
+    def test_install_plugin_good_input(self,_post, _wait, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+        self.J.install_plugin('test@latest')
+        expected_data = '<jenkins> <install plugin="test@latest" /> </jenkins>'
         _post.assert_called_with(
             '/'.join([self.J.baseurl,
                       'pluginManager',
                       'installNecessaryPlugins']),
             data=expected_data)
 
+    @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
     @mock.patch.object(Jenkins, 'safe_restart')
-    def test_install_plugins_good_input_no_restart(self, _restart, _post):
-        self.J.install_plugins(['test@1.0', 'test@1.0'])
+    def test_install_plugins_good_input_no_restart(self, _restart, _post, _wait, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+        self.J.install_plugins(['test@latest', 'test@latest'])
         self.assertEqual(_post.call_count, 2)
         self.assertEqual(_restart.call_count, 0)
 
+    @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
     @mock.patch.object(Jenkins, 'safe_restart')
-    def test_install_plugins_good_input_with_restart(self, _restart, _post):
-        self.J.install_plugins(['test@1.0', 'test@1.0'], restart=True)
+    def test_install_plugins_good_input_with_restart(self, _restart, _post, _wait, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+        self.J.install_plugins(['test@latest', 'test@latest'], restart=True)
         self.assertEqual(_post.call_count, 2)
         self.assertEqual(_restart.call_count, 1)
 

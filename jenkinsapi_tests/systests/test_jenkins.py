@@ -8,7 +8,6 @@ except ImportError:
     import unittest
 from jenkinsapi.job import Job
 from jenkinsapi.jobs import Jobs
-from jenkinsapi.plugin import Plugin
 from jenkinsapi.queue import QueueItem
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
@@ -167,20 +166,6 @@ class JobTests(BaseSystemTest):
         master_data = self.jenkins.get_master_data()
         self.assertEquals(master_data['totalExecutors'], 2)
 
-    def test_get_missing_plugin(self):
-        plugins = self.jenkins.get_plugins()
-        with self.assertRaises(KeyError):
-            plugins["lsdajdaslkjdlkasj"]  # this plugin surely does not exist!
-
-    def test_get_single_plugin(self):
-        plugins = self.jenkins.get_plugins()
-        plugin_name, plugin = next(plugins.iteritems())
-        self.assertIsInstance(plugin_name, str)
-        self.assertIsInstance(plugin, Plugin)
-
-    def test_get_single_plugin_depth_2(self):
-        plugins = self.jenkins.get_plugins(depth=2)
-        _, plugin = next(plugins.iteritems())
 
 if __name__ == '__main__':
     unittest.main()
