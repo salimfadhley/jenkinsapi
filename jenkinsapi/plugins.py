@@ -11,7 +11,7 @@ try:
     from urllib import urlencode
 except ImportError:
     # Python3
-    from io import StringIO
+    from io import BytesIO as StringIO
     from urllib.parse import urlencode
 import requests
 from jenkinsapi.plugin import Plugin
@@ -117,6 +117,7 @@ class Plugins(JenkinsBase):
     def _install_plugin_dependencies(self, downloaded_plugin):
         with zipfile.ZipFile(downloaded_plugin) as archive:
             for line in archive.open('META-INF/MANIFEST.MF'):
+                line = line.decode('utf-8')
                 if line.startswith('Plugin-Dependencies: '):
                     dependencies = line.strip().split('Plugin-Dependencies: ')[1].split(',')
                     for dep in dependencies:
@@ -142,14 +143,12 @@ class Plugins(JenkinsBase):
         )
 
         self.poll()
-        self.plugins = self._data['plugins']
         if not self[shortName].deleted:
             raise JenkinsAPIException('Problem uninstalling plugin.')
 
     def _wait_until_plugin_installed(self, shortName, maxwait=60, interval=1):
-        for time_left in range(maxwait, 0, -interval):
+        for _ in range(maxwait, 0, -interval):
             self.poll()
-            self.plugins = self._data['plugins']
             if shortName in self:
                 return
             time.sleep(interval)
