@@ -101,7 +101,7 @@ class Build(JenkinsBase):
             parameters = {}
             for elem in actions:
                 if 'parameters' in elem:
-                    parameters = elem.get('parameters')
+                    parameters = elem['parameters']
                     break
             return {pair['name']: pair['value'] for pair in parameters}
 
