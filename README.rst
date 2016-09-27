@@ -130,16 +130,35 @@ the testsuite with the following command:
 
 .. code-block:: bash
 
-        python setup.py test
+    python setup.py test
 
 Otherwise using a virtualenv is recommended. Setuptools will automatically fetch
 missing test dependencies:
 
 .. code-block:: bash
 
-        virtualenv
-        source .venv/bin/active
-        (venv) python setup.py test
+    virtualenv
+    source .venv/bin/active
+    (venv) python setup.py test
+
+Development
+-----------
+
+* Make sure that you have Java_ installed.
+* Create virtual environment for development
+* Install package in development mode
+
+.. code-block:: bash
+
+    (venv) pip install -e .
+    (venv) pip install -r requirements/dev-requirements.txt
+
+* Make your changes, write tests and check your code
+
+.. code-block:: bash
+
+    (venv) nosetests -v jenkinsapi_tests
+
 
 Project Contributors
 --------------------
@@ -155,6 +174,7 @@ Project Contributors
 * Kyle Rockman (kyle.rockman@mac.com)
 * Sascha Peilicke (saschpe@gmx.de)
 * David Johansen (david@makewhat.is)
+* Misha Behersky (bmwant@gmail.com)
 
 Please do not contact these contributors directly for support questions! Use the GitHub tracker instead.
 
@@ -166,3 +186,5 @@ The MIT License (MIT): Permission is hereby granted, free of charge, to any pers
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+.. _Java: http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
