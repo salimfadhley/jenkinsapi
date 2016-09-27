@@ -19,7 +19,6 @@ from jenkinsapi.views import Views
 from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.utils.jsonp_to_json import jsonp_to_json
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -55,7 +54,6 @@ class Jenkins(JenkinsBase):
         self.requester.timeout = timeout
         self.lazy = lazy
         self.jobs_container = None
-        self.update_center_dict = self._get_update_center_dict()
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
     def _poll(self, tree=None):
@@ -332,11 +330,6 @@ class Jenkins(JenkinsBase):
         if not isinstance(plugin, Plugin):
             plugin = Plugin(plugin)
         self.plugins[plugin.shortName] = plugin
-
-    def _get_update_center_dict(self):
-        update_center = 'https://updates.jenkins-ci.org/update-center.json'
-        jsonp = requests.get(update_center).content.decode('utf-8')
-        return json.loads(jsonp_to_json(jsonp))
 
     def install_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
         """
