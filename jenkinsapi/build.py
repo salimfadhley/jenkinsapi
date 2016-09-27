@@ -98,7 +98,11 @@ class Build(JenkinsBase):
         """
         actions = self._data.get('actions')
         if actions:
-            parameters = actions[0].get('parameters', {})
+            parameters = {}
+            for elem in actions:
+                if 'parameters' in elem:
+                    parameters = elem.get('parameters')
+                    break
             return {pair['name']: pair['value'] for pair in parameters}
 
     def get_changeset_items(self):
