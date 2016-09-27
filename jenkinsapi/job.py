@@ -306,28 +306,18 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_build_by_params(self, build_params, order=1):
         first_build_number = self.get_first_buildnumber()
         last_build_number = self.get_last_buildnumber()
-<<<<<<< HEAD
-        assert order == 1 or order == -1, (
-            'Direction should be ascending or descending (1/-1)'
-        )
+        if order != 1 or order != -1:
+            raise ValueError(
+                'Direction should be ascending or descending (1/-1)')
 
         for number in range(first_build_number,
                             last_build_number + 1)[::order]:
-=======
-        assert order == 1 or order == -1, 'Direction should be ascending or descending (1/-1)'
-
-        for number in range(first_build_number, last_build_number + 1)[::order]:
->>>>>>> 79734ecd6d8bedcf59e6185b94b737601af927df
             build = self.get_build(number)
             if build.get_params() == build_params:
                 return build
 
-<<<<<<< HEAD
         raise NoBuildData(
             'No build with such params {params}'.format(params=build_params))
-=======
-        raise NoBuildData('No build with such params {params}'.format(params=build_params))
->>>>>>> 79734ecd6d8bedcf59e6185b94b737601af927df
 
     def get_revision_dict(self):
         """
