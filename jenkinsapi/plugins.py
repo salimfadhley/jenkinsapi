@@ -13,11 +13,13 @@ except ImportError:
     # Python3
     from io import BytesIO as StringIO
     from urllib.parse import urlencode
+import json
 import requests
 from jenkinsapi.plugin import Plugin
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownPlugin
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+from jenkinsapi.utils.jsonp_to_json import jsonp_to_json
 
 
 log = logging.getLogger(__name__)
@@ -43,6 +45,12 @@ class Plugins(JenkinsBase):
             % self.jenkins_obj.baseurl
         )
         self.jenkins_obj.requester.post_and_confirm_status(url, params={}, data={})
+
+    @property
+    def update_center_dict(self):
+        update_center = 'https://updates.jenkins-ci.org/update-center.json'
+        jsonp = requests.get(update_center).content.decode('utf-8')
+        return json.loads(jsonp_to_json(jsonp))
 
     def _poll(self, tree=None):
         return self.get_data(self.baseurl, tree=tree)
@@ -85,7 +93,7 @@ class Plugins(JenkinsBase):
         :param shortName: Plugin ID
         :param plugin a Plugin object to be installed.
         """
-        if plugin.is_latest(self.jenkins_obj.update_center_dict):
+        if plugin.is_latest(self.update_center_dict):
             self._install_plugin_from_updatecenter(plugin)
         else:
             self._install_specific_version(plugin)
@@ -105,7 +113,7 @@ class Plugins(JenkinsBase):
         """
         Plugins that are not the latest version have to be uploaded.
         """
-        download_link = plugin.get_download_link(update_center_dict=self.jenkins_obj.update_center_dict)
+        download_link = plugin.get_download_link(update_center_dict=self.update_center_dict)
         downloaded_plugin = StringIO()
         downloaded_plugin.write(requests.get(download_link).content)
         self._install_plugin_dependencies(downloaded_plugin)
@@ -146,7 +154,7 @@ class Plugins(JenkinsBase):
         if not self[shortName].deleted:
             raise JenkinsAPIException("Problem uninstalling plugin '%s'." % shortName)
 
-    def _wait_until_plugin_installed(self, shortName, maxwait=60, interval=1):
+    def _wait_until_plugin_installed(self, shortName, maxwait=120, interval=1):
         for _ in range(maxwait, 0, -interval):
             self.poll()
             if shortName in self:

@@ -70,14 +70,14 @@ class TestPlugins(BaseSystemTest):
 
     def test_downgrade_plugin(self):
         plugin_name = 'amazon-ecs'
-        plugin_version = '1.5'
+        plugin_version = '1.5'  # This is explicitly not the latest version
         plugin = Plugin({'shortName': plugin_name, 'version': plugin_version})
         self.assertIsInstance(plugin, Plugin)
-        self.jenkins.plugins[plugin_name] = plugin
+        # Need to restart when not installing the latest version
+        self.jenkins.install_plugins([plugin], restart=True, wait_for_reboot=True)
         installed_plugin = self.jenkins.plugins[plugin_name]
         self.assertEquals(installed_plugin.version, '1.5')
         older_plugin = Plugin({'shortName': plugin_name, 'version': '1.4'})
-        # Need to restart when changing version
         self.jenkins.install_plugins([older_plugin], restart=True, wait_for_reboot=True)
         installed_older_plugin = self.jenkins.plugins[plugin_name]
         self.assertEquals(installed_older_plugin.version, '1.4')
