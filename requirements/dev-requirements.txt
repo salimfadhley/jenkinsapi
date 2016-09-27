@@ -1,0 +1,7 @@
+nose
+mock
+coverage
+pep8
+unittest2
+astroid<1.3.0
+pylint<1.4

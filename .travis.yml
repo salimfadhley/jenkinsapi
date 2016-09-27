@@ -7,7 +7,7 @@ env:
 - JENKINS_VERSION=1.x
 - JENKINS_VERSION=2.x
 install:
-- pip install nose mock coverage pep8 "astroid<1.3.0" "pylint<1.4"
+- pip install -r requirements/dev-requirements.txt
 - python setup.py develop
 script:
 - pep8 --ignore=E501 jenkinsapi/*.py

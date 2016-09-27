@@ -306,7 +306,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_build_by_params(self, build_params, order=1):
         first_build_number = self.get_first_buildnumber()
         last_build_number = self.get_last_buildnumber()
-        if order != 1 or order != -1:
+        if order != 1 and order != -1:
             raise ValueError(
                 'Direction should be ascending or descending (1/-1)')
 

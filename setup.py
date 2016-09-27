@@ -25,6 +25,10 @@ GLOBAL_ENTRY_POINTS = {
     ]
 }
 
+tests_require = [line.strip()
+                 for line in open('requirements/dev-requirements.txt')
+                 if line.strip()]
+
 setup(
     name=PROJECT_NAME.lower(),
     version=REVISION,
@@ -39,7 +43,7 @@ setup(
     include_package_data=False,
     install_requires=['requests>=2.3.0', 'pytz>=2014.4'],
     test_suite='nose.collector',
-    tests_require=['mock', 'nose', 'coverage', 'unittest2'],
+    tests_require=tests_require,
     entry_points=GLOBAL_ENTRY_POINTS,
     url=PROJECT_URL,
     description=SHORT_DESCRIPTION,
