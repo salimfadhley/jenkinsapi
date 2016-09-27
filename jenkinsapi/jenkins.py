@@ -348,7 +348,7 @@ class Jenkins(JenkinsBase):
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
         url = '%s/safeRestart' % (self.baseurl,)
-        valid = self.requester.VALID_STATUS_CODES + [503]
+        valid = self.requester.VALID_STATUS_CODES + [503, 500]
         resp = self.requester.post_and_confirm_status(url, data='',
                                                       valid=valid)
         if wait_for_reboot:
@@ -383,7 +383,7 @@ class Jenkins(JenkinsBase):
     def __jenkins_is_unavailable(self):
         while True:
             try:
-                self.requester.get_and_confirm_status(self.baseurl, valid=[503])
+                self.requester.get_and_confirm_status(self.baseurl, valid=[503, 500])
                 return True
             except requests.ConnectionError:
                 # This is also a possibility while Jenkins is restarting
