@@ -363,15 +363,18 @@ class Jenkins(JenkinsBase):
         return resp
 
     def _wait_for_reboot(self):
+        # We need to make sure all jobs have finished, and that jenkins is actually restarting.
+        # One way to be sure is to make sure jenkins is really down.
         wait = 5
         count = 0
         max_count = 30
-        success = False
+        self.__jenkins_is_unavailable()  # Blocks until jenkins is really restarting
         while count < max_count:
             time.sleep(wait)
             try:
                 self.poll()
-                success = True
+                len(self.plugins)  # Make sure jenkins is fully started
+                return  # By this time jenkins is back online
             except (requests.HTTPError, requests.ConnectionError):
                 msg = ("Jenkins has not restarted yet!  (This is"
                        " try {0} of {1}, waited {2} seconds so far)"
@@ -379,11 +382,22 @@ class Jenkins(JenkinsBase):
                 msg = msg.format(count, max_count, count * wait)
                 log.debug(msg)
             count += 1
-        if not success:
-            msg = ("Jenkins did not come back from safe restart! "
-                   "Waited {0} seconds altogether.  This "
-                   "failure may cause other failures.")
-            log.critical(msg.format(count * wait))
+        msg = ("Jenkins did not come back from safe restart! "
+               "Waited {0} seconds altogether.  This "
+               "failure may cause other failures.")
+        log.critical(msg.format(count * wait))
+
+    def __jenkins_is_unavailable(self):
+        while True:
+            try:
+                self.requester.get_and_confirm_status(self.baseurl, valid=[503])
+                return True
+            except requests.ConnectionError:
+                # This is also a possibility while Jenkins is restarting
+                return True
+            except requests.HTTPError:
+                # This is a return code that is not 503, so Jenkins is likely available
+                time.sleep(1)
 
     @property
     def plugins(self):
