@@ -144,7 +144,7 @@ class Plugins(JenkinsBase):
 
         self.poll()
         if not self[shortName].deleted:
-            raise JenkinsAPIException('Problem uninstalling plugin.')
+            raise JenkinsAPIException("Problem uninstalling plugin '%s'." % shortName)
 
     def _wait_until_plugin_installed(self, shortName, maxwait=60, interval=1):
         for _ in range(maxwait, 0, -interval):
