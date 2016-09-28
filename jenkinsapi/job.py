@@ -4,6 +4,7 @@ Module for jenkinsapi Job
 import json
 import logging
 import xml.etree.ElementTree as ET
+import six.moves.urllib.parse as urlparse
 
 from collections import defaultdict
 from jenkinsapi.build import Build
@@ -20,7 +21,6 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
 from jenkinsapi_utils.compat import to_string
-from six.moves.urllib.parse import urlparse
 
 
 SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'

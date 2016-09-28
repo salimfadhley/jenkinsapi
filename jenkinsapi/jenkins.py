@@ -2,10 +2,9 @@
 Module for jenkinsapi Jenkins object
 """
 import logging
+import six.moves.urllib.parse as urlparse
 
-from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote as urlquote
-
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import Credentials2x

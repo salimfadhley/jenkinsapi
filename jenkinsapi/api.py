@@ -9,7 +9,7 @@ import time
 import logging
 import six
 
-from six.moves.urllib.parse import urlparse
+import six.moves.urllib.parse as urlparse
 
 from jenkinsapi import constants
 from jenkinsapi.jenkins import Jenkins
