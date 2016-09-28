@@ -4,11 +4,6 @@ from mock import (
     patch,
     call
 )
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
 from requests.exceptions import HTTPError
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.jenkinsbase import JenkinsBase
