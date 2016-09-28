@@ -144,8 +144,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Key-Value pairs would be far too simple, no no!
         Watch and read on and behold!
         """
-        assert isinstance(
-            build_params, dict), 'Build parameters must be a dict'
+        if not isinstance(build_params, dict):
+            raise ValueError('Build parameters must be a dict')
 
         try:
             build_p = [{'name': k,
