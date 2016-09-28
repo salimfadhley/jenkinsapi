@@ -1,3 +1,4 @@
+import six
 import pytest
 from . import configs
 from jenkinsapi.build import Build
@@ -34,6 +35,7 @@ def test_git_scm(build):
     """
     Can we extract git build revision data from a build object?
     """
+    self.assertIsInstance(self.b.get_revision(), six.string_types)
     try:
         assert isinstance(build.get_revision(), basestring)
     except NameError:

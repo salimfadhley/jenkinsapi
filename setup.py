@@ -25,6 +25,12 @@ GLOBAL_ENTRY_POINTS = {
     ]
 }
 
+install_requires = [
+    'requests>=2.3.0',
+    'pytz>=2014.4',
+    'six>=1.10.0',
+]
+
 tests_require = [line.strip()
                  for line in open('requirements/dev-requirements.txt')
                  if line.strip()]
@@ -41,7 +47,7 @@ setup(
         'jenkinsapi_tests'],
     zip_safe=True,
     include_package_data=False,
-    install_requires=['requests>=2.3.0', 'pytz>=2014.4'],
+    install_requires=install_requires,
     test_suite='nose.collector',
     tests_require=tests_require,
     entry_points=GLOBAL_ENTRY_POINTS,
