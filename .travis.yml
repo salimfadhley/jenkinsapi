@@ -10,8 +10,7 @@ install:
 - pip install -r requirements/dev-requirements.txt
 - python setup.py develop
 script:
-- pep8 --ignore=E501 jenkinsapi/*.py
-- pylint --rcfile=pylintrc jenkinsapi/*.py
-- py.test -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
+- make lint
+- make coverage
 after_success:
    - codecov
