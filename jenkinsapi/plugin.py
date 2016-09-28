@@ -46,6 +46,11 @@ class Plugin(object):
         return "<jenkins> <install plugin=\"%s@%s\" /> </jenkins>" % (self.shortName, self.version)
 
     def is_latest(self, update_center_dict):
+        """
+        Used by Plugins object to determine if plugin can be
+        installed through the update center (when plugin version is latest version),
+        or must be installed by uploading the plugin hpi file.
+        """
         if self.version == 'latest':
             return True
         center_plugin = update_center_dict['plugins'][self.shortName]

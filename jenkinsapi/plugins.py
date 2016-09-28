@@ -88,16 +88,18 @@ class Plugins(JenkinsBase):
         Installs plugin in Jenkins.
 
         If plugin already exists - this method is going to uninstall the existing
-        plugin and install the specified version.
+        plugin and install the specified version if it is not already installed.
 
         :param shortName: Plugin ID
         :param plugin a Plugin object to be installed.
         """
+        if self.plugin_version_alread_installed(plugin):
+            return
         if plugin.is_latest(self.update_center_dict):
             self._install_plugin_from_updatecenter(plugin)
         else:
             self._install_specific_version(plugin)
-        self._wait_until_plugin_installed(shortName)
+        self._wait_until_plugin_installed(plugin)
 
     def _install_plugin_from_updatecenter(self, plugin):
         """
@@ -108,6 +110,15 @@ class Plugins(JenkinsBase):
             '%s/pluginManager/installNecessaryPlugins' % self.jenkins_obj.baseurl
         )
         self.jenkins_obj.requester.post_xml_and_confirm_status(url, data=xml_str)
+
+    @property
+    def update_center_install_status(self):
+        """
+        Jenkins 2.x specific
+        """
+        url = "%s/updateCenter/installStatus" % self.jenkins_obj.baseurl
+        status = self.jenkins_obj.requester.get_url(url)
+        return status.json()
 
     def _install_specific_version(self, plugin):
         """
@@ -123,15 +134,57 @@ class Plugins(JenkinsBase):
         requester.post_and_confirm_status(url, files={'file': ('plugin.hpi', downloaded_plugin)}, data={}, params={})
 
     def _install_plugin_dependencies(self, downloaded_plugin):
+        for line in self.__get_manifest(downloaded_plugin):
+            line = line.decode('UTF-8')
+            if line.startswith('Plugin-Dependencies: '):
+                dependencies = line.strip().split('Plugin-Dependencies: ')[1].split(',')
+                for dep in dependencies:
+                    components = dep.split(';')  # split plugin:version;resolution:optional entries
+                    dep_plugin = components[0]
+                    name = dep_plugin.split(':')[0]
+                    # install latest dependency, avoids multiple versions of the same dep
+                    self.jenkins_obj.plugins[name] = Plugin({'shortName': name, 'version': 'latest'})
+
+    def __get_manifest(self, downloaded_plugin):
         with zipfile.ZipFile(downloaded_plugin) as archive:
-            for line in archive.open('META-INF/MANIFEST.MF'):
-                line = line.decode('utf-8')
-                if line.startswith('Plugin-Dependencies: '):
-                    dependencies = line.strip().split('Plugin-Dependencies: ')[1].split(',')
-                    for dep in dependencies:
-                        name, _ = dep.split(':')
-                        # install latest dependency, avoids multiple versions of the same dep
-                        self.jenkins_obj.plugins[name] = Plugin({'shortName': name, 'version': 'latest'})
+            return archive.open('META-INF/MANIFEST.MF')
+
+    def _plugin_has_finished_installation(self, plugin):
+        """
+        Return True if installation is marked as 'Succes' or 'SuccessButRequiresRestart'
+        in Jenkins' update_center.
+        """
+        if self.jenkins_obj.version.startswith('1'):
+            # We have no good way of knowing if a plugin has finished installing.
+            # Most plugins install rapidly, so we return False and the calling method
+            # checks if the plugin has been loaded or the maximum timespan has passed.
+            return False
+        else:
+            jobs = self.update_center_install_status['data']['jobs']
+            for job in jobs:
+                if job['name'] == plugin.shortName and job['installStatus'] in ['Success', 'SuccessButRequiresRestart']:
+                    return True
+            return False
+
+    def plugin_version_alread_installed(self, plugin):
+        """
+        Check if plugin version is already installed
+        """
+        if plugin.shortName not in self:
+            return False  # plugin not installed
+        installed_plugin = self[plugin.shortName]
+        if plugin.version == installed_plugin.version:
+            return True
+        elif plugin.version == "latest":
+            # we don't have an exact version, we first check if Jenkins knows about an update
+            if hasattr(installed_plugin, 'hasUpdates') and installed_plugin.hasUpdates:
+                return False
+            else:
+                # Jenkins may not have an up-to-date catalogue, so check update-center directly
+                latest_version = self.update_center_dict['plugins'][plugin.shortName]['version']
+                return installed_plugin.version == latest_version
+        else:
+            return False
 
     def __delitem__(self, shortName):
         if shortName not in self:
@@ -154,13 +207,19 @@ class Plugins(JenkinsBase):
         if not self[shortName].deleted:
             raise JenkinsAPIException("Problem uninstalling plugin '%s'." % shortName)
 
-    def _wait_until_plugin_installed(self, shortName, maxwait=120, interval=1):
+    def _wait_until_plugin_installed(self, plugin, maxwait=120, interval=1):
         for _ in range(maxwait, 0, -interval):
             self.poll()
-            if shortName in self:
+            if self._plugin_has_finished_installation(plugin):
                 return
+            if plugin.shortName in self:
+                return True  # for Jenkins 1.X
             time.sleep(interval)
-        raise JenkinsAPIException('Problem installing plugin.')
+        if self.jenkins_obj.version.startswith('2'):
+            raise JenkinsAPIException("Problem installing plugin '%s'." % plugin.shortName)
+        else:
+            log.warning("Plugin '%s' not found in loaded plugins."
+                        "You may need to restart Jenkins.", plugin.shortName)
 
     def __contains__(self, plugin_name):
         """
