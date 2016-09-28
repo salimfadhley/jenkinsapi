@@ -1,9 +1,6 @@
 import os
 import time
-try:
-    import Queue
-except ImportError:
-    import queue as Queue
+import random
 import shutil
 import logging
 import datetime
@@ -14,10 +11,8 @@ import threading
 import subprocess
 from pkg_resources import resource_stream
 from tarfile import TarFile
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from six.moves import queue
+from six.moves.urllib.parse import urlparse
 
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.custom_exceptions import JenkinsAPIException
@@ -99,7 +94,7 @@ class JenkinsLancher(object):
             self.jenkins_home = os.environ['JENKINS_HOME']
 
         self.jenkins_process = None
-        self.queue = Queue.Queue()
+        self.queue = queue.Queue()
         self.plugin_urls = plugin_urls or []
         if os.environ.get('JENKINS_VERSION', '1.x') == '1.x':
             self.JENKINS_WAR_URL = (
@@ -214,7 +209,7 @@ class JenkinsLancher(object):
                     # Python 3.x
                     if isinstance(line, bytes):
                         line = line.decode('UTF-8')
-                except Queue.Empty:
+                except queue.Empty:
                     log.warn("Input ended unexpectedly")
                     break
                 else:

@@ -19,6 +19,7 @@ from jenkinsapi.custom_exceptions import (
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
+from jenkinsapi_utils.compat import to_string
 from six.moves.urllib.parse import urlparse
 
 
@@ -147,18 +148,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         if not isinstance(build_params, dict):
             raise ValueError('Build parameters must be a dict')
 
-        try:
-            build_p = [{'name': k,
-                        'value': str(
-                            v.encode('utf-8')
-                            if isinstance(v, unicode)  # pylint: disable=undefined-variable
-                            else v)}
-                       for k, v in sorted(build_params.items())]
-
-        except NameError:
-            # Python 3 already a str
-            build_p = [{'name': k, 'value': str(v)}
-                       for k, v in sorted(build_params.items())]
+        build_p = [{'name': k, 'value': to_string(v)}
+                   for k, v in sorted(build_params.items())]
 
         out = {'parameter': build_p}
         if file_params:

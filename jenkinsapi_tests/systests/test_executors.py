@@ -1,6 +1,9 @@
-'''
+"""
 System tests for `jenkinsapi.jenkins` module.
-'''
+"""
+from jenkinsapi_tests.systests.base import BaseSystemTest
+from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
+from jenkinsapi_tests.test_utils.random_strings import random_string
 import logging
 import time
 from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB

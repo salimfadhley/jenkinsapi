@@ -1,11 +1,11 @@
 import time
 import json
 import logging
+import jenkinsapi_tests.systests
+
+from six import StringIO
 import pytest
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+
 try:
     from urlparse import urljoin
 except ImportError:

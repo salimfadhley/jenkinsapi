@@ -1,6 +1,6 @@
-'''
+"""
 System tests for `jenkinsapi.jenkins` module.
-'''
+"""
 import time
 import logging
 import pytest

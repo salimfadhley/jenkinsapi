@@ -67,7 +67,5 @@ __version__ = '99.99.99'
 try:
     import pkg_resources
     __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version
-except ImportError:
-    pass
-except KeyError:
+except (ImportError, KeyError):
     pass

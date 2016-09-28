@@ -1,11 +1,9 @@
-'''
+"""
 System tests for `jenkinsapi.jenkins` module.
-'''
+"""
 import time
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+
+from six import StringIO
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE_AND_PARAMS
@@ -50,8 +48,9 @@ def test_invoke_job_parameterized(jenkins):
 
 
 def test_parameterized_job_build_queuing(jenkins):
-    """Accept multiple builds of parameterized jobs with unique
-        parameters."""
+    """
+    Accept multiple builds of parameterized jobs with unique parameters.
+    """
     job_name = 'create_%s' % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_PARAMETERS)
 
@@ -79,8 +78,10 @@ def test_parameterized_job_build_queuing(jenkins):
 
 
 def test_parameterized_multiple_builds_get_the_same_queue_item(jenkins):
-    """Multiple attempts to run the same parameterized
-    build will get the same queue item."""
+    """
+    Multiple attempts to run the same parameterized
+    build will get the same queue item.
+    """
     job_name = 'create_%s' % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_PARAMETERS)
 
