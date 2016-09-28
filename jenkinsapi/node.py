@@ -1,20 +1,15 @@
 """
 Module for jenkinsapi Node class
 """
-
-from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.custom_exceptions import PostRequired
-from jenkinsapi.custom_exceptions import JenkinsAPIException
 import json
 import logging
 
 import xml.etree.ElementTree as ET
 
-try:
-    from urllib import quote as urlquote
-except ImportError:
-    # Python3
-    from urllib.parse import quote as urlquote
+from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.custom_exceptions import PostRequired
+from jenkinsapi.custom_exceptions import JenkinsAPIException
+from six.moves.urllib.parse import quote as urlquote
 
 log = logging.getLogger(__name__)
 

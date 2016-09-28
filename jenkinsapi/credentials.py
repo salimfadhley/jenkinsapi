@@ -4,11 +4,8 @@ container-like interface for all of the Global credentials defined on a single
 Jenkins node.
 """
 import logging
-try:
-    from urllib import urlencode
-except ImportError:
-    # Python3
-    from urllib.parse import urlencode
+
+from six.moves.urllib.parse import urlencode
 from jenkinsapi.credential import Credential
 from jenkinsapi.credential import UsernamePasswordCredential
 from jenkinsapi.credential import SecretTextCredential

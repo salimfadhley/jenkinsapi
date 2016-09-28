@@ -136,13 +136,7 @@ class Jobs(object):
             raise JenkinsAPIException('Job XML config cannot be empty')
 
         params = {'name': job_name}
-        try:
-            if isinstance(
-                    config, unicode):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python2 already a str
-            pass
+        config = str(config)  # cast unicode in case of Python 2
 
         self.jenkins.requester.post_xml_and_confirm_status(
             self.jenkins.get_create_url(),

@@ -1,15 +1,10 @@
 """
 Module for jenkinsapi Jenkins object
 """
-try:
-    import urlparse
-    from urllib import quote as urlquote
-except ImportError:
-    # Python3
-    import urllib.parse as urlparse
-    from urllib.parse import quote as urlquote
-
 import logging
+
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import quote as urlquote
 
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials

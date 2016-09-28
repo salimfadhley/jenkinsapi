@@ -1,6 +1,9 @@
 """
 Module for jenkinsapi Job
 """
+import json
+import logging
+import xml.etree.ElementTree as ET
 
 from collections import defaultdict
 from jenkinsapi.build import Build
@@ -16,17 +19,7 @@ from jenkinsapi.custom_exceptions import (
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
-import json
-import logging
-
-import xml.etree.ElementTree as ET
-
-
-try:
-    import urlparse
-except ImportError:
-    # Python3
-    import urllib.parse as urlparse
+from six.moves.urllib.parse import urlparse
 
 
 SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
@@ -236,7 +229,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return qi
 
     def _buildid_for_type(self, buildtype):
-        """Gets a buildid for a given type of build"""
+        """
+        Gets a buildid for a given type of build
+        """
         KNOWNBUILDTYPES = [
             "lastStableBuild",
             "lastSuccessfulBuild",
@@ -479,7 +474,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return False
 
     def get_config(self):
-        '''Returns the config.xml from the job'''
+        """
+        Returns the config.xml from the job
+        """
         response = self.jenkins.requester.get_and_confirm_status(
             "%(baseurl)s/config.xml" % self.__dict__)
         return response.text
@@ -581,14 +578,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             Useful for debugging and validation workflows.
         """
         url = self.get_config_xml_url()
-        try:
-            if isinstance(
-                    config, unicode):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python3 already a str
-            pass
-
+        config = str(config)  # cast unicode in case of Python 2
         response = self.jenkins.requester.post_url(url, params={}, data=config)
         self._element_tree = ET.fromstring(config)
 
@@ -655,12 +645,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return data.get('color', None) != 'disabled'
 
     def disable(self):
-        '''Disable job'''
+        """
+        Disable job
+        """
         url = "%s/disable" % self.baseurl
         return self.get_jenkins_obj().requester.post_url(url, data='')
 
     def enable(self):
-        '''Enable job'''
+        """
+        Enable job
+        """
         url = "%s/enable" % self.baseurl
         return self.get_jenkins_obj().requester.post_url(url, data='')
 
@@ -722,7 +716,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return False
 
     def has_queued_build(self, build_params):
-        """Returns True if a build with build_params is currently queued."""
+        """
+        Returns True if a build with build_params is currently queued.
+        """
         queue = self.jenkins.get_queue()
         queued_builds = queue.get_queue_items_for_job(self.name)
         for build in queued_builds:

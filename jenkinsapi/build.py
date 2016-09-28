@@ -12,6 +12,7 @@ import time
 import logging
 import warnings
 import datetime
+
 from time import sleep
 import pytz
 from jenkinsapi import config
@@ -22,12 +23,8 @@ from jenkinsapi.constants import STATUS_SUCCESS
 from jenkinsapi.custom_exceptions import NoResults
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
+from six.moves.urllib.parse import quote
 
-try:
-    from urllib import quote
-except ImportError:
-    # Python3
-    from urllib.parse import quote
 
 log = logging.getLogger(__name__)
 

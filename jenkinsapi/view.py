@@ -1,6 +1,7 @@
 """
 Module for jenkinsapi views
 """
+import six
 import logging
 
 from jenkinsapi.jenkinsbase import JenkinsBase
@@ -50,11 +51,7 @@ class View(JenkinsBase):
         return self.get_job_dict().keys()
 
     def iteritems(self):
-        try:
-            it = self.get_job_dict().iteritems()
-        except AttributeError:
-            # Python3
-            it = self.get_job_dict().items()
+        it = six.iteritems(self.get_job_dict())
 
         for name, url in it:
             yield name, Job(url, name, self.jenkins_obj)
@@ -155,13 +152,7 @@ class View(JenkinsBase):
         Update the config.xml to the view
         """
         url = self.get_config_xml_url()
-        try:
-            if isinstance(
-                    config, unicode):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python3 already a str
-            pass
+        config = str(config)  # cast unicode in case of Python 2
 
         response = self.get_jenkins_obj().requester.post_url(
             url, params={}, data=config)
