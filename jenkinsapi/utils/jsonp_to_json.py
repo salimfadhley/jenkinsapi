@@ -3,8 +3,7 @@ def jsonp_to_json(jsonp):
         l_index = jsonp.index('(') + 1
         r_index = jsonp.rindex(')')
     except ValueError:
-        print("Input is not in a jsonp format.")
+        print("Input is not in jsonp format.")
         return
-
     res = jsonp[l_index:r_index]
     return res
