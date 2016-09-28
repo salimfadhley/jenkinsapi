@@ -78,5 +78,6 @@ class TestResultSet(unittest.TestCase):
             self.assertIsInstance(v, Result)
             self.assertIsInstance(v.identifier(), str)
 
+
 if __name__ == '__main__':
     unittest.main()

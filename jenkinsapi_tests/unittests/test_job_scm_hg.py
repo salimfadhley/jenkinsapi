@@ -106,5 +106,6 @@ class TestHgJob(unittest.TestCase):
     def test_hg_attributes_default_branch(self):
         self.assertEquals(self.j.get_scm_branch(), ['default'])
 
+
 if __name__ == '__main__':
     unittest.main()
