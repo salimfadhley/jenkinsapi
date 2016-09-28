@@ -93,7 +93,7 @@ class Plugins(JenkinsBase):
         :param shortName: Plugin ID
         :param plugin a Plugin object to be installed.
         """
-        if self.plugin_version_alread_installed(plugin):
+        if self.plugin_version_already_installed(plugin):
             return
         if plugin.is_latest(self.update_center_dict):
             self._install_plugin_from_updatecenter(plugin)
@@ -125,15 +125,19 @@ class Plugins(JenkinsBase):
         Plugins that are not the latest version have to be uploaded.
         """
         download_link = plugin.get_download_link(update_center_dict=self.update_center_dict)
-        downloaded_plugin = StringIO()
-        downloaded_plugin.write(requests.get(download_link).content)
-        self._install_plugin_dependencies(downloaded_plugin)
+        downloaded_plugin = self._download_plugin(download_link)
+        plugin_dependencies = self._get_plugin_dependencies(downloaded_plugin)
+        self.jenkins_obj.install_plugins(plugin_dependencies)
         url = ('%s/pluginManager/uploadPlugin' % self.jenkins_obj.baseurl)
         requester = self.jenkins_obj.requester
         downloaded_plugin.seek(0)
         requester.post_and_confirm_status(url, files={'file': ('plugin.hpi', downloaded_plugin)}, data={}, params={})
 
-    def _install_plugin_dependencies(self, downloaded_plugin):
+    def _get_plugin_dependencies(self, downloaded_plugin):
+        """
+        Returns a list of all dependencies for a downloaded plugin
+        """
+        plugin_dependencies = []
         for line in self.__get_manifest(downloaded_plugin):
             line = line.decode('UTF-8')
             if line.startswith('Plugin-Dependencies: '):
@@ -143,7 +147,13 @@ class Plugins(JenkinsBase):
                     dep_plugin = components[0]
                     name = dep_plugin.split(':')[0]
                     # install latest dependency, avoids multiple versions of the same dep
-                    self.jenkins_obj.plugins[name] = Plugin({'shortName': name, 'version': 'latest'})
+                    plugin_dependencies.append(Plugin({'shortName': name, 'version': 'latest'}))
+        return plugin_dependencies
+
+    def _download_plugin(self, download_link):
+        downloaded_plugin = StringIO()
+        downloaded_plugin.write(requests.get(download_link).content)
+        return downloaded_plugin
 
     def __get_manifest(self, downloaded_plugin):
         with zipfile.ZipFile(downloaded_plugin) as archive:
@@ -151,8 +161,8 @@ class Plugins(JenkinsBase):
 
     def _plugin_has_finished_installation(self, plugin):
         """
-        Return True if installation is marked as 'Succes' or 'SuccessButRequiresRestart'
-        in Jenkins' update_center.
+        Return True if installation is marked as 'Success' or 'SuccessButRequiresRestart'
+        in Jenkins' update_center, else return False.
         """
         if self.jenkins_obj.version.startswith('1'):
             # We have no good way of knowing if a plugin has finished installing.
@@ -166,7 +176,7 @@ class Plugins(JenkinsBase):
                     return True
             return False
 
-    def plugin_version_alread_installed(self, plugin):
+    def plugin_version_already_installed(self, plugin):
         """
         Check if plugin version is already installed
         """
