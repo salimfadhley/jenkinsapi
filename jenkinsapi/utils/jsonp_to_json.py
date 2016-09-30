@@ -1,3 +1,8 @@
+"""
+Module for converting jsonp to json.
+"""
+
+
 def jsonp_to_json(jsonp):
     try:
         l_index = jsonp.index('(') + 1

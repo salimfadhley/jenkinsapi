@@ -140,7 +140,7 @@ class Plugins(JenkinsBase):
         download_link = plugin.get_download_link(update_center_dict=self.update_center_dict)
         downloaded_plugin = self._download_plugin(download_link)
         plugin_dependencies = self._get_plugin_dependencies(downloaded_plugin)
-        log.debug("Installing dependencies for plugin '%s'" % plugin.shortName)
+        log.debug("Installing dependencies for plugin '%s'", plugin.shortName)
         self.jenkins_obj.install_plugins(plugin_dependencies)
         url = ('%s/pluginManager/uploadPlugin' % self.jenkins_obj.baseurl)
         requester = self.jenkins_obj.requester
