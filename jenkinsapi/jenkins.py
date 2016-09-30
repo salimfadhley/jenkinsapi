@@ -333,14 +333,14 @@ class Jenkins(JenkinsBase):
 
     def install_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
         """
-        Install a list of plugins.
-        @param plugin_list: a list of plugins to be installed
-        @param restart:
+        Install a list of plugins and optionally restart jenkins.
+        @param plugin_list: list of plugins to be installed
+        @param restart: Boolean, restart jenkins after plugin installation
         """
         plugins = [p if isinstance(p, Plugin) else Plugin(p) for p in plugin_list]
         for plugin in plugins:
             self.install_plugin(plugin)
-        if restart:
+        if restart and self.plugins.restart_required:
             self.safe_restart(wait_for_reboot=wait_for_reboot)
 
     def safe_restart(self, wait_for_reboot=False):

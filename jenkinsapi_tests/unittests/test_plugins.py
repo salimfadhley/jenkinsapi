@@ -184,10 +184,12 @@ class TestPlugins(unittest.TestCase):
             self.J.install_plugin('test')
 
     @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, 'plugin_version_already_installed')
     @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
-    def test_install_plugin_good_input(self,_post, _wait, _poll_plugins):
+    def test_install_plugin_good_input(self,_post, _wait, already_installed, _poll_plugins):
         _poll_plugins.return_value = self.DATA
+        already_installed.return_value = False
         self.J.install_plugin('test@latest')
         expected_data = '<jenkins> <install plugin="test@latest" /> </jenkins>'
         _post.assert_called_with(
@@ -197,21 +199,33 @@ class TestPlugins(unittest.TestCase):
             data=expected_data)
 
     @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, 'plugin_version_already_installed')
     @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
     @mock.patch.object(Jenkins, 'safe_restart')
-    def test_install_plugins_good_input_no_restart(self, _restart, _post, _wait, _poll_plugins):
+    def test_install_plugins_good_input_no_restart(self, _restart, _post, _wait, already_installed, _poll_plugins):
         _poll_plugins.return_value = self.DATA
+        already_installed.return_value = False
         self.J.install_plugins(['test@latest', 'test@latest'])
         self.assertEqual(_post.call_count, 2)
         self.assertEqual(_restart.call_count, 0)
 
     @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, 'plugin_version_already_installed')
+    @mock.patch.object(Plugins, 'restart_required', new_callable=mock.mock.PropertyMock)
     @mock.patch.object(Plugins, '_wait_until_plugin_installed')
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
     @mock.patch.object(Jenkins, 'safe_restart')
-    def test_install_plugins_good_input_with_restart(self, _restart, _post, _wait, _poll_plugins):
+    def test_install_plugins_good_input_with_restart(self,
+                                                     _restart,
+                                                     _post,
+                                                     _wait,
+                                                     restart_required,
+                                                     already_installed,
+                                                     _poll_plugins):
         _poll_plugins.return_value = self.DATA
+        restart_required.return_value = True,
+        already_installed.return_value = False
         self.J.install_plugins(['test@latest', 'test@latest'], restart=True)
         self.assertEqual(_post.call_count, 2)
         self.assertEqual(_restart.call_count, 1)
@@ -238,6 +252,28 @@ class TestPlugins(unittest.TestCase):
         self.assertFalse(self.J.plugins.plugin_version_already_installed(not_installed))
         latest = Plugin({'shortName': 'subversion', 'version': 'latest'})
         self.assertFalse(self.J.plugins.plugin_version_already_installed(latest))
+
+    @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, 'update_center_install_status', new_callable=mock.mock.PropertyMock)
+    def test_restart_required_after_plugin_installation(self, status, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+        status.return_value = {'data': {'jobs': [{'installStatus': 'SuccessButRequiresRestart',
+                                                  'name': 'credentials',
+                                                  'requiresRestart': 'true',
+                                                  'title': None,
+                                                  'version': '0'}],
+                                        'state': 'RUNNING'},
+                               'status': 'ok'}
+        self.assertTrue(self.J.plugins.restart_required)
+
+    @mock.patch.object(Plugins, '_poll')
+    @mock.patch.object(Plugins, 'update_center_install_status', new_callable=mock.mock.PropertyMock)
+    def test_restart_not_required_after_plugin_installation(self, status, _poll_plugins):
+        _poll_plugins.return_value = self.DATA
+        status.return_value = {'data': {'jobs': [],
+                                        'state': 'RUNNING'},
+                               'status': 'ok'}
+        self.assertFalse(self.J.plugins.restart_required)
 
     def test_plugin_repr(self):
         p = Plugin(
