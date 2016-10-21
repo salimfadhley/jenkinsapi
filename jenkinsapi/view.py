@@ -99,8 +99,9 @@ class View(JenkinsBase):
         """
         if not job:
             if str_job_name in self.get_job_dict():
-                log.warn(msg='Job %s is already in the view %s' %
-                         (str_job_name, self.name))
+                log.warning(
+                    'Job %s is already in the view %s',
+                    str_job_name, self.name)
                 return False
             else:
                 # Since this call can be made from nested view,

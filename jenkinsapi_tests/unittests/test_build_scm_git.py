@@ -1,133 +1,54 @@
-import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import pytest
+from . import configs
 from jenkinsapi.build import Build
+from jenkinsapi.job import Job
 
 
-class test_build(unittest.TestCase):
+@pytest.fixture(scope='function')
+def jenkins(mocker):
+    return mocker.MagicMock()
 
-    DATA = {
-        'actions': [
-            {
-                'causes': [{'shortDescription': 'Started by an SCM change'}]
-            },
-            {},
-            {
-                'buildsByBranchName': {
-                    'origin/HEAD': {
-                        'buildNumber': 2,
-                        'buildResult': None,
-                        'revision': {
-                            'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                            'branch': [
-                                {'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                                 'name': 'origin/HEAD'},
-                                {'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                                 'name': 'origin/master'}
-                            ]
-                        }
-                    },
-                    'origin/master': {
-                        'buildNumber': 2,
-                        'buildResult': None,
-                        'revision': {
-                            'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                            'branch': [
-                                {'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                                 'name': 'origin/HEAD'},
-                                {'SHA1': 'd2a5d435fa2df3bff572bd06e43c86544749c5d2',
-                                 'name': 'origin/master'}
-                            ]
-                        }
-                    },
-                    'origin/python_3_compatibility': {
-                        'buildNumber': 1,
-                        'buildResult': None,
-                        'revision': {
-                            'SHA1': 'c9d1c96bc926ff63a5209c51b3ed537e62ea50e6',
-                            'branch': [
-                                {'SHA1': 'c9d1c96bc926ff63a5209c51b3ed537e62ea50e6',
-                                 'name': 'origin/python_3_compatibility'}
-                            ]
-                        }
-                    },
-                    'origin/unstable': {
-                        'buildNumber': 3,
-                        'buildResult': None,
-                        'revision': {
-                            'SHA1': '7def9ed6e92580f37d00e4980c36c4d36e68f702',
-                            'branch': [
-                                {'SHA1': '7def9ed6e92580f37d00e4980c36c4d36e68f702',
-                                 'name': 'origin/unstable'}
-                            ]
-                        }
-                    }
-                },
-                'lastBuiltRevision': {
-                    'SHA1': '7def9ed6e92580f37d00e4980c36c4d36e68f702',
-                    'branch': [
-                        {'SHA1': '7def9ed6e92580f37d00e4980c36c4d36e68f702',
-                         'name': 'origin/unstable'}
-                    ]
-                },
-                'remoteUrls': ['https://github.com/salimfadhley/jenkinsapi.git'],
-                'scmName': ''
-            },
-            {},
-            {}
-        ],
-        'artifacts': [],
-        'building': False,
-        'builtOn': '',
-        'changeSet': {'items': [], 'kind': 'git'},
-        'culprits': [],
-        'description': None,
-        'duration': 1051,
-        'estimatedDuration': 2260,
-        'executor': None,
-        'fullDisplayName': 'git_yssrtigfds #3',
-        'id': '2013-06-30_01-54-35',
-        'keepLog': False,
-        'number': 3,
-        'result': 'SUCCESS',
-        'timestamp': 1372553675652,
-        'url': 'http://localhost:8080/job/git_yssrtigfds/3/'
-    }
 
-    @mock.patch.object(Build, '_poll')
-    def setUp(self, _poll):
-        _poll.return_value = self.DATA
-        self.j = mock.MagicMock()  # Job
-        self.j.name = 'FooJob'
+@pytest.fixture(scope='function')
+def job(monkeypatch, jenkins):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.JOB_DATA
 
-        self.b = Build('http://', 97, self.j)
+    monkeypatch.setattr(Job, '_poll', fake_poll)
 
-    def test_git_scm(self):
-        """
-        Can we extract git build revision data from a build object?
-        """
-        try:
-            self.assertIsInstance(self.b.get_revision(), basestring)
-        except NameError:
-            # Python3
-            self.assertIsInstance(self.b.get_revision(), str)
-        self.assertEquals(self.b.get_revision(),
-                          '7def9ed6e92580f37d00e4980c36c4d36e68f702')
+    fake_job = Job('http://', 'Fake_Job', jenkins)
+    return fake_job
 
-    def test_git_revision_branch(self):
-        """
-        Can we extract git build branch from a build object?
-        """
-        self.assertIsInstance(self.b.get_revision_branch(), list)
-        self.assertEquals(len(self.b.get_revision_branch()), 1)
-        self.assertIsInstance(self.b.get_revision_branch()[0], dict)
-        self.assertEquals(self.b.get_revision_branch()[0]['SHA1'],
-                          '7def9ed6e92580f37d00e4980c36c4d36e68f702')
-        self.assertEquals(self.b.get_revision_branch()[0]['name'],
-                          'origin/unstable')
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.fixture(scope='function')
+def build(job, monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.BUILD_SCM_DATA
+
+    monkeypatch.setattr(Build, '_poll', fake_poll)
+
+    return Build('http://', 97, job)
+
+
+def test_git_scm(build):
+    """
+    Can we extract git build revision data from a build object?
+    """
+    try:
+        assert isinstance(build.get_revision(), basestring)
+    except NameError:
+        # Python3
+        assert isinstance(build.get_revision(), str)
+    assert build.get_revision() == '7def9ed6e92580f37d00e4980c36c4d36e68f702'
+
+
+def test_git_revision_branch(build):
+    """
+    Can we extract git build branch from a build object?
+    """
+    assert isinstance(build.get_revision_branch(), list)
+    assert len(build.get_revision_branch()) == 1
+    assert isinstance(build.get_revision_branch()[0], dict)
+    assert build.get_revision_branch()[0]['SHA1'] == \
+        '7def9ed6e92580f37d00e4980c36c4d36e68f702'
+    assert build.get_revision_branch()[0]['name'] == 'origin/unstable'

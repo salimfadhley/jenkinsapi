@@ -41,15 +41,15 @@ class Artifact(object):
         """
         log.info(msg="Saving artifact @ %s to %s" % (self.url, fspath))
         if not fspath.endswith(self.filename):
-            log.warn(
-                msg="Attempt to change the filename of artifact %s on save." %
+            log.warning(
+                "Attempt to change the filename of artifact %s on save.",
                 self.filename)
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath, strict_validation):
                         log.info(
-                            msg="Local copy of %s is already up to date." %
+                            "Local copy of %s is already up to date.",
                             self.filename)
                         return fspath
                 except ArtifactBroken:

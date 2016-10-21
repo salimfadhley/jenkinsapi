@@ -404,3 +404,7 @@ class Jenkins(JenkinsBase):
     @property
     def credentials(self):
         return self.get_credentials()
+
+    def shutdown(self):
+        url = "%s/exit" % self.baseurl
+        self.requester.post_and_confirm_status(url, data='')

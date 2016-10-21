@@ -9,11 +9,11 @@ Build objects can be associated with Results and Artifacts.g
 """
 
 import time
-import pytz
 import logging
 import warnings
 import datetime
 from time import sleep
+import pytz
 from jenkinsapi import config
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.result_set import ResultSet
@@ -179,12 +179,31 @@ class Build(JenkinsBase):
     def get_duration(self):
         return datetime.timedelta(milliseconds=self._data["duration"])
 
+    def _get_build(self, job_name, buildno, cache):
+        key = (job_name, buildno)
+        if key not in cache:
+            cache[key] = self.get_jenkins_obj()[job_name].get_build(buildno)
+        return cache[key]
+
+    def _get_artifact_builds(self):
+        data = self.poll(tree='fingerprint[fileName,original[name,number]]')
+        build_cache = {(self.job.name, self.buildno): self}
+        builds = {}
+        for fpinfo in data["fingerprint"]:
+            buildno = fpinfo["original"]["number"]
+            job_name = fpinfo["original"]["name"]
+            build = self._get_build(job_name, buildno, build_cache)
+            builds[fpinfo["fileName"]] = build
+        return builds
+
     def get_artifacts(self):
         data = self.poll(tree='artifacts[relativePath,fileName]')
+        builds = self._get_artifact_builds()
         for afinfo in data["artifacts"]:
             url = "%s/artifact/%s" % (self.baseurl,
                                       quote(afinfo["relativePath"]))
-            af = Artifact(afinfo["fileName"], url, self,
+            fn = afinfo["fileName"]
+            af = Artifact(fn, url, builds.get(fn, self),
                           relative_path=afinfo["relativePath"])
             yield af
 

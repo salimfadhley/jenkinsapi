@@ -1,3 +1,6 @@
+"""
+This example shows how to create credentials
+"""
 import logging
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.credential import UsernamePasswordCredential, SSHKeyCredential
@@ -8,11 +11,11 @@ logger = logging.getLogger()
 
 jenkins_url = "http://localhost:8080/"
 
-api = Jenkins(jenkins_url)
+jenkins = Jenkins(jenkins_url)
 
 # Get a list of all global credentials
-creds = api.credentials
-logging.info(api.credentials.keys())
+creds = jenkins.credentials
+logging.info(jenkins.credentials.keys())
 
 # Create username and password credential
 creds_description1 = 'My_username_credential'

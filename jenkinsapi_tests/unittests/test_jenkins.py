@@ -1,9 +1,4 @@
-import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import pytest
 
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.utils.requester import Requester
@@ -12,255 +7,246 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.job import Job
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
-
-class TestJenkins(unittest.TestCase):
-
-    DATA = {}
-
-    @mock.patch.object(Jenkins, '_poll')
-    def setUp(self, _poll):
-        _poll.return_value = self.DATA
-        self.J = Jenkins('http://localhost:8080',
-                         username='foouser', password='foopassword')
-
-    @mock.patch.object(Jenkins, '_poll')
-    def test_clone(self, _poll):
-        _poll.return_value = self.DATA
-        JJ = self.J._clone()
-        self.assertNotEquals(id(JJ), id(self.J))
-        self.assertEquals(JJ, self.J)
-
-    def test_stored_passwords(self):
-        self.assertEquals(self.J.requester.password, 'foopassword')
-        self.assertEquals(self.J.requester.username, 'foouser')
-
-    @mock.patch.object(Jenkins, '_poll')
-    def test_reload(self, _poll):
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.get_url = mock.MagicMock(return_value='')
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
-        J.poll()
-
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(Job, '_poll')
-    def test_get_jobs_list(self, _base_poll, _poll, _job_poll):
-        _poll.return_value = {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-                {'name': 'job_two',
-                 'url': 'http://localhost:8080/job_two',
-                 'color': 'blue'},
-            ]
-        }
-        _base_poll.return_value = _poll.return_value
-        _job_poll.return_value = {}
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword')
-        for idx, job_name in enumerate(J.get_jobs_list()):
-            self.assertEquals(
-                job_name,
-                _poll.return_value['jobs'][idx]['name'])
-
-    # Here we're going to test function, which is going to modify
-    # Jenkins internal data. It calls for data once to check
-    # if job already there, then calls again to see if job hs been created.
-    # So we need to create mock function, which
-    # will return different value per each call
-
-    # Define what we will return
-    create_job_returns = [
-        # This will be returned when job is not yet created
-        {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8081/job_one',
-                 'color': 'blue'},
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-            ]
-        },
-        # This to simulate that the job has been created
-        {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-                {'name': 'job_two',
-                 'url': 'http://localhost:8080/job_two',
-                 'color': 'blue'},
-                {'name': 'job_new',
-                 'url': 'http://localhost:8080/job_new',
-                 'color': 'blue'},
-            ]
-        }
+DATA = {}
+TWO_JOBS_DATA = {
+    'jobs': [
+        {'name': 'job_one',
+         'url': 'http://localhost:8080/job_one',
+         'color': 'blue'},
+        {'name': 'job_two',
+         'url': 'http://localhost:8080/job_two',
+         'color': 'blue'},
     ]
+}
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(Job, '_poll')
-    def test_create_new_job_fail(self, _base_poll, _poll, _job_poll):
-        _job_poll.return_value = {}
-        _poll.return_value = {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-            ]
-        }
-        _base_poll.return_value = _poll.return_value
 
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
-            return_value='')
+@pytest.fixture(scope='function')
+def jenkins(monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
 
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
 
-        with self.assertRaises(JenkinsAPIException) as ar:
-            J.create_job('job_new', None)
+    return Jenkins('http://localhost:8080',
+                   username='foouser', password='foopassword')
 
-        self.assertEquals(str(ar.exception), 'Job XML config cannot be empty')
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(Job, '_poll')
-    def test_get_jenkins_obj_from_url(self, _base_poll, _poll, _job_poll):
-        _job_poll.return_value = {}
-        _poll.return_value = {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-            ]
-        }
-        _base_poll.return_value = _poll.return_value
+def test__clone(jenkins):
+    cloned = jenkins._clone()
+    assert id(cloned) != id(jenkins)
+    assert cloned == jenkins
 
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
-            return_value='')
 
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
+def test_stored_passwords(jenkins):
+    assert jenkins.requester.password == 'foopassword'
+    assert jenkins.requester.username == 'foouser'
 
-        new_jenkins = J.get_jenkins_obj_from_url('http://localhost:8080/')
-        self.assertEquals(new_jenkins, J)
 
-        new_jenkins = J.get_jenkins_obj_from_url('http://localhost:8080/foo')
-        self.assertNotEquals(new_jenkins, J)
+def test_reload(monkeypatch):
+    class FakeResponse(object):
+        status_code = 200
+        text = '{}'
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(Job, '_poll')
-    def test_get_jenkins_obj(self, _base_poll, _poll, _job_poll):
-        _job_poll.return_value = {}
-        _poll.return_value = {
-            'jobs': [
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-                {'name': 'job_one',
-                 'url': 'http://localhost:8080/job_one',
-                 'color': 'blue'},
-            ]
-        }
-        _base_poll.return_value = _poll.return_value
+    def fake_get_url(
+            url,  # pylint: disable=unused-argument
+            params=None,  # pylint: disable=unused-argument
+            headers=None,  # pylint: disable=unused-argument
+            allow_redirects=True,  # pylint: disable=unused-argument
+            stream=False):  # pylint: disable=unused-argument
 
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.post_xml_and_confirm_status = mock.MagicMock(
-            return_value='')
+        return FakeResponse()
 
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
+    monkeypatch.setattr(Requester, 'get_url', fake_get_url)
+    mock_requester = Requester(username='foouser', password='foopassword')
+    jenkins = Jenkins(
+        'http://localhost:8080/',
+        username='foouser', password='foopassword',
+        requester=mock_requester)
+    jenkins.poll()
 
-        new_jenkins = J.get_jenkins_obj()
-        self.assertEquals(new_jenkins, J)
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    def test_get_version(self, _base_poll, _poll):
-        class MockResponse(object):
+def test_get_jobs_list(monkeypatch):
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return TWO_JOBS_DATA
 
-            def __init__(self):
-                self.headers = {}
-                self.headers['X-Jenkins'] = '1.542'
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.get_and_confirm_status = mock.MagicMock(
-            return_value=MockResponse())
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
-        self.assertEquals('1.542', J.version)
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(Jenkins, '_poll')
-    def test_get_version_nonexistent(self, _base_poll, _poll):
-        class MockResponse(object):
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Job, '_poll', fake_job_poll)
 
-            def __init__(self):
-                self.headers = {}
-        base_url = 'http://localhost:8080'
-        mock_requester = Requester(username='foouser', password='foopassword')
-        mock_requester.get_and_confirm_status = mock.MagicMock(
-            return_value=MockResponse())
-        J = Jenkins(base_url,
-                    username='foouser', password='foopassword',
-                    requester=mock_requester)
-        self.assertEquals('0.0', J.version)
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword')
+    for idx, job_name in enumerate(jenkins.get_jobs_list()):
+        assert job_name == TWO_JOBS_DATA['jobs'][idx]['name']
 
-    @mock.patch.object(JenkinsBase, 'get_data')
-    def test_get_master_data(self, _base_poll):
-        base_url = 'http://localhost:808'
-        _base_poll.return_value = {
+    for idx, job_name in enumerate(jenkins.jobs.keys()):
+        assert job_name == TWO_JOBS_DATA['jobs'][idx]['name']
+
+
+def test_create_new_job_fail(mocker, monkeypatch):
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return TWO_JOBS_DATA
+
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Job, '_poll', fake_job_poll)
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.post_xml_and_confirm_status = mocker.MagicMock(
+        return_value=''
+    )
+
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+
+    with pytest.raises(JenkinsAPIException) as ar:
+        jenkins.create_job('job_new', None)
+
+    assert 'Job XML config cannot be empty' in str(ar.value)
+
+
+def test_get_jenkins_obj_from_url(mocker, monkeypatch):
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return TWO_JOBS_DATA
+
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Job, '_poll', fake_job_poll)
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.post_xml_and_confirm_status = mocker.MagicMock(
+        return_value=''
+    )
+
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+
+    new_jenkins = jenkins.get_jenkins_obj_from_url('http://localhost:8080/')
+    assert new_jenkins == jenkins
+
+    new_jenkins = jenkins.get_jenkins_obj_from_url('http://localhost:8080/foo')
+    assert new_jenkins != jenkins
+
+
+def test_get_jenkins_obj(mocker, monkeypatch):
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return TWO_JOBS_DATA
+
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Job, '_poll', fake_job_poll)
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.post_xml_and_confirm_status = mocker.MagicMock(
+        return_value=''
+    )
+
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+
+    new_jenkins = jenkins.get_jenkins_obj()
+    assert new_jenkins == jenkins
+
+
+def test_get_version(monkeypatch):
+    class MockResponse(object):
+        def __init__(self):
+            self.headers = {}
+            self.headers['X-Jenkins'] = '1.542'
+
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+
+    def fake_get(cls, *arga, **kwargs):  # pylint: disable=unused-argument
+        return MockResponse()
+
+    monkeypatch.setattr(Requester, 'get_and_confirm_status', fake_get)
+
+    jenkins = Jenkins('http://foobar:8080/',
+                      username='foouser', password='foopassword')
+    assert jenkins.version == '1.542'
+
+
+def test_get_version_nonexistent(mocker):
+    class MockResponse(object):
+        status_code = 200
+        headers = {}
+        text = '{}'
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.get_url = mocker.MagicMock(
+        return_value=MockResponse()
+    )
+    jenkins = Jenkins('http://localhost:8080',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+    assert jenkins.version == '0.0'
+
+
+def test_get_master_data(mocker):
+    class MockResponse(object):
+        status_code = 200
+        headers = {}
+        text = '{}'
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.get_url = mocker.MagicMock(
+        return_value=MockResponse()
+    )
+    jenkins = Jenkins('http://localhost:808',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+    jenkins.get_data = mocker.MagicMock(
+        return_value={
             "busyExecutors": 59,
             "totalExecutors": 75
         }
-        j = Jenkins(base_url,
-                    username='foouser', password='foopassword')
-        data = j.get_master_data()
-        self.assertEquals(data['busyExecutors'], 59)
-        self.assertEquals(data['totalExecutors'], 75)
+    )
+
+    data = jenkins.get_master_data()
+    assert data['busyExecutors'] == 59
+    assert data['totalExecutors'] == 75
 
 
-class TestJenkinsURLs(unittest.TestCase):
+def test_get_create_url(monkeypatch):
+    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
 
-    @mock.patch.object(Jenkins, '_poll')
-    def testNoSlash(self, _poll):
-        _poll.return_value = {}
-        J = Jenkins('http://localhost:8080',
-                    username='foouser', password='foopassword')
-        self.assertEquals(
-            J.get_create_url(),
-            'http://localhost:8080/createItem')
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    # Jenkins URL w/o slash
+    jenkins = Jenkins('http://localhost:8080',
+                      username='foouser', password='foopassword')
+    assert jenkins.get_create_url() == 'http://localhost:8080/createItem'
+    # Jenkins URL w/ slash
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword')
+    assert jenkins.get_create_url() == 'http://localhost:8080/createItem'
 
-    @mock.patch.object(Jenkins, '_poll')
-    def testWithSlash(self, _poll):
-        _poll.return_value = {}
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword')
-        self.assertEquals(
-            J.get_create_url(),
-            'http://localhost:8080/createItem')
 
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(Plugins, '_poll')
-    def test_has_plugin(self, _p_poll, _poll):
-        _poll.return_value = {}
-        _p_poll.return_value = {
+def test_has_plugin(monkeypatch):
+    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+
+    def fake_plugin_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {
             'plugins': [
                 {
                     'deleted': False, 'hasUpdate': True, 'downgradable': False,
@@ -268,16 +254,15 @@ class TestJenkinsURLs(unittest.TestCase):
                     'longName': 'Jenkins Subversion Plug-in', 'active': True,
                     'shortName': 'subversion', 'backupVersion': None,
                     'url': 'http://wiki.jenkins-ci.org/'
-                    'display/JENKINS/Subversion+Plugin',
+                           'display/JENKINS/Subversion+Plugin',
                     'enabled': True, 'pinned': False, 'version': '1.45',
                     'supportsDynamicLoad': 'MAYBE', 'bundled': True
                 }
             ]
         }
 
-        J = Jenkins('http://localhost:8080/',
-                    username='foouser', password='foopassword')
-        self.assertTrue(J.has_plugin('subversion'))
+    monkeypatch.setattr(Plugins, '_poll', fake_plugin_poll)
 
-if __name__ == '__main__':
-    unittest.main()
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword')
+    assert jenkins.has_plugin('subversion') is True

@@ -149,8 +149,9 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30,
         if not still_running:
             return
         str_still_running = ", ".join('"%s"' % str(a) for a in still_running)
-        log.warn(msg="Waiting for jobs %s to complete. Will wait another %is"
-                 % (str_still_running, time_left))
+        log.warning(
+            "Waiting for jobs %s to complete. Will wait another %is",
+            str_still_running, time_left)
         time.sleep(interval)
     if raise_on_timeout:
         # noinspection PyUnboundLocalVariable
@@ -194,7 +195,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl,
     for reldir, artifactnames in dirstruct.items():
         destdir = os.path.join(installdir, reldir)
         if not os.path.exists(destdir):
-            log.warn(msg="Making install directory %s" % destdir)
+            log.warning("Making install directory %s", destdir)
             os.makedirs(destdir)
         else:
             assert os.path.isdir(destdir)

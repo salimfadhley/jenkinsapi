@@ -17,7 +17,8 @@ class Views(object):
     """
     LIST_VIEW = 'hudson.model.ListView'
     NESTED_VIEW = 'hudson.plugins.nested_view.NestedView'
-    CATEGORIZED_VIEW = 'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
+    CATEGORIZED_VIEW = \
+        'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
     MY_VIEW = 'hudson.model.MyView'
     DASHBOARD_VIEW = 'hudson.plugins.view.dashboard.Dashboard'
     PIPELINE_VIEW = ('au.com.centrumsystems.hudson.'
@@ -97,17 +98,18 @@ class Views(object):
         :param config: XML configuration of the new view
         :return: new View obj or None if view was not created
         """
-        log.info(msg='Creating "%s" view "%s"' % (view_type, view_name))
+        log.info('Creating "%s" view "%s"', view_type, view_name)
 
         if view_name in self:
-            log.warn(msg='View "%s" already exists' % view_name)
+            log.warning('View "%s" already exists', view_name)
             return self[view_name]
 
         url = '%s/createView' % self.jenkins.baseurl
 
         if view_type == self.CATEGORIZED_VIEW:
             if config is None or len(config) == 0:
-                raise JenkinsAPIException('Job XML config cannot be empty for CATEGORIZED_VIEW')
+                raise JenkinsAPIException(
+                    'Job XML config cannot be empty for CATEGORIZED_VIEW')
 
             params = {'name': view_name}
 

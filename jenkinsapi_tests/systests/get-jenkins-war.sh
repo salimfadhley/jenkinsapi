@@ -9,10 +9,9 @@ fi
 readonly JENKINS_WAR_URL=$1
 readonly JENKINS_PATH=$2
 
-hash wget 2>/dev/null
-if [ $? -ne 0 ]; then
-    echo "You should install wget to launch tests"
+if   [[ $(type -t wget) ]]; then wget -O ${JENKINS_PATH}/jenkins.war $JENKINS_WAR_URL
+elif [[ $(type -t curl) ]]; then curl -sSL -o ${JENKINS_PATH}/jenkins.war $JENKINS_WAR_URL
+else
+    echo "Could not find wget or curl"
     exit 1
 fi
-
-wget -O ${JENKINS_PATH}/jenkins.war $JENKINS_WAR_URL

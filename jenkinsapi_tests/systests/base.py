@@ -1,9 +1,3 @@
-# For tests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 import logging
 import jenkinsapi_tests.systests
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB
@@ -14,8 +8,6 @@ log = logging.getLogger(__name__)
 
 DEFAULT_JENKINS_PORT = 8080
 
-
-class BaseSystemTest(unittest.TestCase):
 
     def setUp(self):
         try:
@@ -53,15 +45,3 @@ class BaseSystemTest(unittest.TestCase):
         job = self.jenkins.create_job(name, config)
         self.jenkins.poll()
         return job
-
-    def assertJobIsPresent(self, name):
-        self.jenkins.poll()
-        self.assertTrue(name in self.jenkins,
-                        'Job %r is absent in jenkins.' % name)
-        self.assertIsInstance(self.jenkins.get_job(name), Job)
-        self.assertIsInstance(self.jenkins[name], Job)
-
-    def assertJobIsAbsent(self, name):
-        self.jenkins.poll()
-        self.assertTrue(name not in self.jenkins,
-                        'Job %r is present in jenkins.' % name)

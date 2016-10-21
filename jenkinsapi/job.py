@@ -156,9 +156,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
         try:
             build_p = [{'name': k,
-                        'value': str(v.encode('utf-8')
-                                     if isinstance(v, unicode)  # pylint: disable=undefined-variable
-                                     else v)}
+                        'value': str(
+                            v.encode('utf-8')
+                            if isinstance(v, unicode)  # pylint: disable=undefined-variable
+                            else v)}
                        for k, v in sorted(build_params.items())]
 
         except NameError:
@@ -431,7 +432,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         tons of tests, this method is faster than get_build by returning less
         data.
         """
-        assert isinstance(buildnumber, int)
+        if not isinstance(buildnumber, int):
+            raise ValueError('Parameter "buildNumber" must be int')
+
         try:
             url = self.get_build_dict()[buildnumber]
             return Build(url, buildnumber, job=self, depth=0)
