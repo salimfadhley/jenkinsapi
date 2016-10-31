@@ -1,19 +1,15 @@
 import time
 import json
 import logging
-import jenkinsapi_tests.systests
-
-from six import StringIO
 import pytest
 
-try:
-    from urlparse import urljoin
-except ImportError:
-    from urllib.parse import urljoin
+from six import StringIO
+from six.moves.urllib.parse import urljoin
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.utils.crumb_requester import CrumbRequester
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE
+
 
 log = logging.getLogger(__name__)
 
@@ -39,6 +35,7 @@ ENABLE_CRUMBS_CONFIG = {
     },
     'core:apply': '',
 }
+
 DISABLE_CRUMBS_CONFIG = {
     '': '0',
     'markupFormatter': {

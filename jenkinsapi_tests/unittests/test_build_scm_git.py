@@ -35,12 +35,7 @@ def test_git_scm(build):
     """
     Can we extract git build revision data from a build object?
     """
-    self.assertIsInstance(self.b.get_revision(), six.string_types)
-    try:
-        assert isinstance(build.get_revision(), basestring)
-    except NameError:
-        # Python3
-        assert isinstance(build.get_revision(), str)
+    assert isinstance(build.get_revision(), six.string_types)
     assert build.get_revision() == '7def9ed6e92580f37d00e4980c36c4d36e68f702'
 
 
