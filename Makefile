@@ -1,7 +1,7 @@
 .PHONY: test lint tox coverage
 
 test:
-	nosetests -sv jenkinsapi_tests
+	py.test -sv jenkinsapi_tests
 
 lint:
 	pep8 --ignore=E501 jenkinsapi/*.py
@@ -11,4 +11,4 @@ tox:
 	tox
 
 coverage:
-	nosetests -v --with-coverage --cover-xml jenkinsapi_tests
+	py.test -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests

@@ -121,7 +121,7 @@ def test_verify_download_invalid(artifact, monkeypatch):
            in str(ab.value)
 
 
-class ArtifactTest(unittest.TestCase):
+class ArtifactTest(object):
 
     def setUp(self):
         self._build = build = Mock()

@@ -99,7 +99,7 @@ def test_get_build_triggerurl(job):
 
 
 def test_wrong__mk_json_from_build_parameters(job):
-    with pytest.raises(AssertionError) as ar:
+    with pytest.raises(ValueError) as ar:
         job._mk_json_from_build_parameters(build_params='bad parameter')
 
     assert str(ar.value) == 'Build parameters must be a dict'
@@ -293,7 +293,7 @@ def test__mk_json_from_build_parameters(job):
 
 
 def test_wrong_mk_json_from_build_parameters(job):
-    with pytest.raises(AssertionError) as ar:
+    with pytest.raises(ValueError) as ar:
         job.mk_json_from_build_parameters(build_params='bad parameter')
 
     assert 'Build parameters must be a dict' in str(ar.value)

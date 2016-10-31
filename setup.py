@@ -1,5 +1,5 @@
-from setuptools import setup
 import os
+from setuptools import setup
 
 PROJECT_ROOT, _ = os.path.split(__file__)
 REVISION = '0.3.2'
