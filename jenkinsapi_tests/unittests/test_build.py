@@ -1,12 +1,6 @@
 import pytest
 import pytz
-import mock
 from . import configs
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
 import datetime
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
@@ -134,15 +128,3 @@ def test_get_params_different_order(build):
     params = build.get_params()
 
     assert params == expected
-
-
-@pytest.mark.skip(reason='@lechat: Not sure what this tests')
-class OldTest(unittest.TestCase):
-
-    @mock.patch.object(Build, '__init__')
-    def test_get_matrix_runs(self, build_init_mock):
-        build_init_mock.return_value = None
-        for _ in self.b.get_matrix_runs():
-            continue
-        build_init_mock.assert_called_once_with(
-            'http//localhost:8080/job/foo/SHARD_NUM=1/1/', 1, self.j)

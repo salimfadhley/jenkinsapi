@@ -1,277 +1,273 @@
+import pytest
 import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 from jenkinsapi.jenkins import JenkinsBase
 
 
-class TestJobFolders(unittest.TestCase):
+@pytest.fixture(scope='function')
+def jenkinsbase():
+    return JenkinsBase('http://localhost:8080/', poll=False)
 
-    def setUp(self):
-        self.jb = JenkinsBase('http://localhost:8080/', poll=False)
 
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase.resolve_job_folders')
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase._poll')
-    def test_called_in__poll(self, _poll_mock, resolve_job_folders_mock):
-        _poll_mock.return_value = {
+def test_called_in__poll(jenkinsbase, monkeypatch, mocker):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {
             'description': "My jobs",
-            'jobs': [
-                {
-                    'name': "Foo",
-                    'url': "http://localhost:8080/job/Foo",
-                    'color': "blue",
-                },
-            ],
+            'jobs': [{
+                'name': "Foo",
+                'url': "http://localhost:8080/job/Foo",
+                'color': "blue",
+            }],
             'name': "All",
             'property': [],
             'url': "http://localhost:8080/view/All/",
         }
 
-        self.jb.poll()
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_poll)
+    stub = mocker.stub()
+    monkeypatch.setattr(JenkinsBase, 'resolve_job_folders', stub)
 
-        resolve_job_folders_mock.assert_called_once_with(
-            [
-                {
-                    'name': "Foo",
-                    'url': "http://localhost:8080/job/Foo",
-                    'color': "blue",
-                },
-            ],
-        )
+    jenkinsbase.poll()
 
-    def test_no_folders(self):
-        jobs = [
+    stub.assert_called_once_with(
+        [
             {
                 'name': "Foo",
                 'url': "http://localhost:8080/job/Foo",
                 'color': "blue",
             },
-            {
-                'name': "Bar",
-                'url': "http://localhost:8080/job/Bar",
-                'color': "disabled",
-            },
-        ]
+        ],
+    )
 
-        self.assertEquals(
-            self.jb.resolve_job_folders(jobs),
-            [
-                {
-                    'name': "Foo",
-                    'url': "http://localhost:8080/job/Foo",
-                    'color': "blue",
-                },
-                {
-                    'name': "Bar",
-                    'url': "http://localhost:8080/job/Bar",
-                    'color': "disabled",
-                },
-            ]
-        )
 
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase.get_data')
-    def test_empty_folder(self, get_data_mock):
-        get_data_mock.return_value = {'jobs': []}
-        jobs = [
-            {
-                'name': "Folder1",
-                'url': "http://localhost:8080/job/Folder1",
-            },
-        ]
+def test_no_folders(jenkinsbase):
+    jobs = [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Bar",
+            'url': "http://localhost:8080/job/Bar",
+            'color': "disabled",
+        },
+    ]
 
-        self.assertEquals(self.jb.resolve_job_folders(jobs), [])
-        get_data_mock.assert_called_once_with(
-            'http://localhost:8080/job/Folder1/api/python',
-            tree='jobs[name,color]'
-        )
+    assert jenkinsbase.resolve_job_folders(jobs) == [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Bar",
+            'url': "http://localhost:8080/job/Bar",
+            'color': "disabled",
+        },
+    ]
 
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase.get_data')
-    def test_folder_job_mix(self, get_data_mock):
-        get_data_mock.return_value = {'jobs': [
-            {
-                'name': "Bar",
-                'url': "http://localhost:8080/job/Folder1/job/Bar",
-                'color': "disabled",
-            },
-        ]
-        }
-        jobs = [
-            {
-                'name': "Foo",
-                'url': "http://localhost:8080/job/Foo",
-                'color': "blue",
-            },
-            {
-                'name': "Folder1",
-                'url': "http://localhost:8080/job/Folder1",
-            },
-        ]
 
-        self.assertEquals(
-            self.jb.resolve_job_folders(jobs),
-            [
-                {
-                    'name': "Foo",
-                    'url': "http://localhost:8080/job/Foo",
-                    'color': "blue",
-                },
+def test_empty_folder(jenkinsbase, monkeypatch, mocker):
+    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument
+        return {'jobs': []}
+
+    monkeypatch.setattr(JenkinsBase, 'get_data', fake_get_data)
+    spy = mocker.spy(jenkinsbase, 'get_data')
+
+    jobs = [
+        {
+            'name': "Folder1",
+            'url': "http://localhost:8080/job/Folder1",
+        },
+    ]
+
+    assert jenkinsbase.resolve_job_folders(jobs) == []
+    spy.assert_called_once_with(
+        'http://localhost:8080/job/Folder1/api/python',
+        tree='jobs[name,color]'
+    )
+
+
+def test_folder_job_mix(jenkinsbase, monkeypatch, mocker):
+    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument
+        return {
+            'jobs': [
                 {
                     'name': "Bar",
                     'url': "http://localhost:8080/job/Folder1/job/Bar",
                     'color': "disabled",
-                },
+                }
             ]
-        )
-        get_data_mock.assert_called_once_with(
-            'http://localhost:8080/job/Folder1/api/python',
-            tree='jobs[name,color]'
-        )
+        }
 
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase.get_data')
-    def test_multiple_folders(self, get_data_mock):
-        get_data_mock.side_effect = [
-            # first call
-            {
-                'jobs': [
-                    {
-                        'name': "Foo",
-                        'url': "http://localhost:8080/job/Folder1/job/Foo",
-                        'color': "disabled",
-                    },
-                ]
-            },
+    monkeypatch.setattr(JenkinsBase, 'get_data', fake_get_data)
+    spy = mocker.spy(jenkinsbase, 'get_data')
 
-            # second call
-            {
-                'jobs': [
-                    {
-                        'name': "Bar",
-                        'url': "http://localhost:8080/job/Folder2/job/Bar",
-                        'color': "blue",
-                    },
-                ]
-            },
-        ]
+    jobs = [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Folder1",
+            'url': "http://localhost:8080/job/Folder1",
+        },
+    ]
 
-        jobs = [
-            {
-                'name': "Folder1",
-                'url': "http://localhost:8080/job/Folder1",
-            },
-            {
-                'name': "Folder2",
-                'url': "http://localhost:8080/job/Folder2",
-            },
-        ]
+    assert jenkinsbase.resolve_job_folders(jobs) == [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Bar",
+            'url': "http://localhost:8080/job/Folder1/job/Bar",
+            'color': "disabled",
+        }
+    ]
 
-        self.assertEquals(
-            self.jb.resolve_job_folders(jobs),
-            [
+    spy.assert_called_once_with(
+        'http://localhost:8080/job/Folder1/api/python',
+        tree='jobs[name,color]'
+    )
+
+
+def test_multiple_folders(jenkinsbase, monkeypatch, mocker):
+    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument
+        # first call
+        if 'Folder1' in url:
+            return {'jobs': [
                 {
                     'name': "Foo",
                     'url': "http://localhost:8080/job/Folder1/job/Foo",
                     'color': "disabled",
                 },
+            ]}
+
+        if 'Folder2' in url:
+            # second call
+            return {'jobs': [
                 {
                     'name': "Bar",
                     'url': "http://localhost:8080/job/Folder2/job/Bar",
                     'color': "blue",
                 },
-            ]
-        )
+            ]}
 
-        self.assertEquals(
-            get_data_mock.call_args_list,
-            [
-                mock.call(
-                    'http://localhost:8080/job/Folder1/api/python',
-                    tree='jobs[name,color]'
-                ),
-                mock.call(
-                    'http://localhost:8080/job/Folder2/api/python',
-                    tree='jobs[name,color]'
-                ),
-            ]
-        )
+    monkeypatch.setattr(JenkinsBase, 'get_data', fake_get_data)
+    spy = mocker.spy(jenkinsbase, 'get_data')
 
-    @mock.patch('jenkinsapi.jenkins.JenkinsBase.get_data')
-    def test_multiple_folder_levels(self, get_data_mock):
-        get_data_mock.side_effect = [
+    jobs = [
+        {
+            'name': "Folder1",
+            'url': "http://localhost:8080/job/Folder1",
+        },
+        {
+            'name': "Folder2",
+            'url': "http://localhost:8080/job/Folder2",
+        },
+    ]
+
+    assert jenkinsbase.resolve_job_folders(jobs) == [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Folder1/job/Foo",
+            'color': "disabled",
+        },
+        {
+            'name': "Bar",
+            'url': "http://localhost:8080/job/Folder2/job/Bar",
+            'color': "blue",
+        },
+    ]
+
+    assert spy.call_args_list == [
+        mock.call(
+            'http://localhost:8080/job/Folder1/api/python',
+            tree='jobs[name,color]'
+        ),
+        mock.call(
+            'http://localhost:8080/job/Folder2/api/python',
+            tree='jobs[name,color]'
+        ),
+    ]
+
+
+def test_multiple_folder_levels(jenkinsbase, monkeypatch, mocker):
+    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument
+        if 'Folder1' in url and 'Folder2' not in url:
             # first call
-            {
-                'jobs': [
-                    {
-                        'name': "Bar",
-                        'url': "http://localhost:8080/job/Folder1/job/Bar",
-                        'color': "disabled",
-                    },
-                    {
-                        'name': "Folder2",
-                        'url': "http://localhost:8080/job/Folder1/job/Folder2",
-                    },
-                ]
-            },
-
-            # second call
-            {
-                'jobs': [
-                    {
-                        'name': "Baz",
-                        'url': "http://localhost:8080/job/Folder1/job/Folder2/job/Baz",
-                        'color': "disabled",
-                    },
-                ]
-            },
-        ]
-
-        jobs = [
-            {
-                'name': "Foo",
-                'url': "http://localhost:8080/job/Foo",
-                'color': "blue",
-            },
-            {
-                'name': "Folder1",
-                'url': "http://localhost:8080/job/Folder1",
-            },
-        ]
-
-        self.assertEquals(
-            self.jb.resolve_job_folders(jobs),
-            [
-                {
-                    'name': "Foo",
-                    'url': "http://localhost:8080/job/Foo",
-                    'color': "blue",
-                },
+            return {'jobs': [
                 {
                     'name': "Bar",
                     'url': "http://localhost:8080/job/Folder1/job/Bar",
                     'color': "disabled",
                 },
                 {
-                    'name': "Baz",
-                    'url': ("http://localhost:8080/job/Folder1"
-                            "/job/Folder2/job/Baz"),
-                    'color': "disabled",
-                },
-            ]
-        )
+                    'name': "Folder2",
+                    'url': "http://localhost:8080/job/Folder1/job/Folder2",
+                }
+            ]}
 
-        self.assertEquals(
-            get_data_mock.call_args_list,
-            [
-                mock.call(
-                    'http://localhost:8080/job/Folder1/api/python',
-                    tree='jobs[name,color]'
-                ),
-                mock.call(
-                    'http://localhost:8080/job/Folder1'
-                    '/job/Folder2/api/python',
-                    tree='jobs[name,color]'
-                ),
-            ]
-        )
+        if 'Folder2' in url:
+            # second call
+            return {
+                'jobs': [
+                    {
+                        'name': "Baz",
+                        'url': (
+                            "http://localhost:8080/job/Folder1/"
+                            "job/Folder2/job/Baz"
+                        ),
+                        'color': "disabled",
+                    },
+                ]
+            }
+
+    monkeypatch.setattr(JenkinsBase, 'get_data', fake_get_data)
+    spy = mocker.spy(jenkinsbase, 'get_data')
+
+    jobs = [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Folder1",
+            'url': "http://localhost:8080/job/Folder1",
+        },
+    ]
+
+    assert jenkinsbase.resolve_job_folders(jobs) == [
+        {
+            'name': "Foo",
+            'url': "http://localhost:8080/job/Foo",
+            'color': "blue",
+        },
+        {
+            'name': "Bar",
+            'url': "http://localhost:8080/job/Folder1/job/Bar",
+            'color': "disabled",
+        },
+        {
+            'name': "Baz",
+            'url': ("http://localhost:8080/job/Folder1"
+                    "/job/Folder2/job/Baz"),
+            'color': "disabled",
+        },
+    ]
+
+    assert spy.call_args_list == [
+        mock.call(
+            'http://localhost:8080/job/Folder1/api/python',
+            tree='jobs[name,color]'
+        ),
+        mock.call(
+            'http://localhost:8080/job/Folder1'
+            '/job/Folder2/api/python',
+            tree='jobs[name,color]'
+        ),
+    ]

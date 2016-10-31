@@ -3,6 +3,6 @@ pytest-mock
 pytest-cov
 pep8
 unittest2
-astroid==1.4.0
-pylint==1.5
+astroid
+pylint==1.6.4
 codecov
