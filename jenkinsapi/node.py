@@ -285,6 +285,14 @@ class Node(JenkinsBase):
         """
         self._config = self.get_config()
 
+    def upload_config(self, config_xml):
+        """
+        Uploads config_xml to the config.xml for the node.
+        """
+        self.jenkins.requester.post_and_confirm_status(
+            "%(baseurl)s/config.xml" % self.__dict__,
+            data=config_xml.encode('utf-8'))
+
     def get_labels(self):
         """
         Returns the labels for a slave as a string with each label
