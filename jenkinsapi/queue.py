@@ -166,3 +166,10 @@ class QueueItem(JenkinsBase):
             return self._data['task']['name']
         except KeyError:
             raise NotBuiltYet()
+
+    def get_queue_item_url_suffix(self):
+        try:
+            return self._data['queueItem']['url']
+        except KeyError:
+            raise NotBuiltYet()
+

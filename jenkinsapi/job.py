@@ -134,7 +134,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._element_tree
 
     def get_build_triggerurl(self):
-        if not self.has_params():
+        '''
+        default use build
+        '''
+        if self.has_params():
             return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
 
@@ -210,6 +213,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         )
 
         redirect_url = response.headers['location']
+
+        #change redirect_url
+        redirect = QueueItem(redirect_url, self.Jenkins)
+        redirect_url = "{0}/{1}".format(self.jenkins.baseurl, redirect.get_queue_item_url_suffix())
 
         if not redirect_url.startswith("%s/queue/item" % self.jenkins.baseurl):
             raise ValueError("Not a Queue URL: %s" % redirect_url)
