@@ -44,6 +44,27 @@ def test_verify_download_valid_positive(artifact, monkeypatch):
                                      strict_validation=False)
 
 
+def test_verify_download_valid_positive_with_rename(artifact, monkeypatch):
+    def fake_md5(cls, fspath):   # pylint: disable=unused-argument
+        return '097c42989a9e5d9dcced7b35ec4b0486'
+
+    monkeypatch.setattr(Artifact, '_md5sum', fake_md5)
+
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_poll)
+
+    def fake_validate(cls, filename,   # pylint: disable=unused-argument
+                      job, build):   # pylint: disable=unused-argument
+        return filename == 'artifact.zip'
+
+    monkeypatch.setattr(Fingerprint, 'validate_for_build', fake_validate)
+
+    assert artifact._verify_download('/tmp/temporary_filename',
+                                     strict_validation=False)
+
+
 def test_verify_download_valid_negative(artifact, monkeypatch):
     def fake_md5(cls, fspath):   # pylint: disable=unused-argument
         return '097c42989a9e5d9dcced7b35ec4b0486'
