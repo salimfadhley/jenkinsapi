@@ -7,7 +7,7 @@ PROJECT_NAME = 'JenkinsAPI'
 PROJECT_AUTHORS = 'Salim Fadhley, Aleksey Maksimov'
 # Please see readme.rst for a complete list of contributors
 PROJECT_EMAILS = 'salimfadhley@gmail.com, ctpeko3a@gmail.com'
-PROJECT_URL = 'https://github.com/salimfadhley/jenkinsapi'
+PROJECT_URL = 'https://github.com/pycontribs/jenkinsapi'
 SHORT_DESCRIPTION = (
     'A Python API for accessing resources on a Jenkins '
     'continuous-integration server.'
