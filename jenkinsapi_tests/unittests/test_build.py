@@ -88,6 +88,7 @@ def test_get_params(build):
     }
     build._data = {
         'actions': [{
+            '_class': 'hudson.model.ParametersAction',
             'parameters': [
                 {'name': 'first_param', 'value': 'first_value'},
                 {'name': 'second_param', 'value': 'second_value'},
@@ -95,7 +96,6 @@ def test_get_params(build):
         }]
     }
     params = build.get_params()
-
     assert params == expected
 
 
@@ -118,6 +118,7 @@ def test_get_params_different_order(build):
                 'another_action': 'some_value',
             },
             {
+                '_class': 'hudson.model.ParametersAction',
                 'parameters': [
                     {'name': 'first_param', 'value': 'first_value'},
                     {'name': 'second_param', 'value': 'second_value'},
@@ -126,5 +127,30 @@ def test_get_params_different_order(build):
         ]
     }
     params = build.get_params()
-
     assert params == expected
+
+
+def test_only_ParametersAction_parameters_considered(build):
+    """Actions other than ParametersAction can have dicts called parameters."""
+    expected = {
+        'param': 'value',
+    }
+    build._data = {
+        'actions': [
+            {
+                '_class': 'hudson.model.SomeOtherAction',
+                'parameters': [
+                    {'name': 'Not', 'value': 'OurValue'},
+                ]
+            },
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'param', 'value': 'value'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
+

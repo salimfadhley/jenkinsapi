@@ -93,12 +93,17 @@ class Build(JenkinsBase):
         Return a dictionary of params names and their values or None
         if no parameters present
         """
+        # This is what a parameter action looks like:
+        # {'_class': 'hudson.model.ParametersAction', 'parameters': [
+        #     {'_class': 'hudson.model.StringParameterValue',
+        #      'value': '12',
+        #      'name': 'FOO_BAR_BAZ'}]}
         actions = self._data.get('actions')
         if actions:
             parameters = {}
             for elem in actions:
-                if 'parameters' in elem:
-                    parameters = elem['parameters']
+                if elem.get('_class') == 'hudson.model.ParametersAction':
+                    parameters = elem.get('parameters', {})
                     break
             return {pair['name']: pair['value'] for pair in parameters}
 

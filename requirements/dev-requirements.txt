@@ -5,3 +5,4 @@ pep8
 astroid==1.4.8
 pylint==1.6.4
 tox==2.3.1
+mock
