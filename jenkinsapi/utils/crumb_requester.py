@@ -16,6 +16,26 @@ class CrumbRequester(Requester):
         self._baseurl = kwargs['baseurl']
         self._last_crumb_data = None
 
+    def get_url(self, url, params=None, headers=None, allow_redirects=True,
+                stream=False):
+        if self._last_crumb_data:
+            # first try request with previous crumb if available
+            response = self._get_url_with_crumb(
+                self._last_crumb_data, url, params,
+                headers, allow_redirects, stream
+            )
+            # code 403 might indicate that the crumb is not valid anymore
+            if response.status_code != 403:
+                return response
+
+        # fetch new crumb (if server has crumbs enabled)
+        if self._last_crumb_data is not False:
+            self._last_crumb_data = self._get_crumb_data()
+
+        return self._get_url_with_crumb(
+            self._last_crumb_data, url, params,
+            headers, allow_redirects, stream)
+
     def post_url(self, url, params=None, data=None, files=None,
                  headers=None, allow_redirects=True, **kwargs):
         if self._last_crumb_data:
@@ -37,7 +57,7 @@ class CrumbRequester(Requester):
             files, headers, allow_redirects, **kwargs)
 
     def _get_crumb_data(self):
-        response = self.get_url(self._baseurl + '/crumbIssuer/api/python')
+        response = super(CrumbRequester, self).get_url(self._baseurl + '/crumbIssuer/api/python')
         if response.status_code in [404]:
             logger.warning('The Jenkins master does not require a crumb')
             return False
@@ -48,6 +68,17 @@ class CrumbRequester(Requester):
         crumb = crumb_issuer_response['crumb']
         logger.debug('Fetched crumb: %s', crumb)
         return {crumb_request_field: crumb}
+
+    def _get_url_with_crumb(self, crumb_data, url, params,
+                            headers, allow_redirects, stream):
+        if crumb_data:
+            if headers is None:
+                headers = crumb_data
+            else:
+                headers.update(crumb_data)
+
+        return super(CrumbRequester, self).get_url(
+            url, params, headers, allow_redirects, stream)
 
     def _post_url_with_crumb(self, crumb_data, url, params, data,
                              files, headers, allow_redirects, **kwargs):
