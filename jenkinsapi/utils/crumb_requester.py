@@ -37,12 +37,12 @@ class CrumbRequester(Requester):
             headers, allow_redirects, stream)
 
     def post_url(self, url, params=None, data=None, files=None,
-                 headers=None, allow_redirects=True, **kwargs):
+                 headers=None, allow_redirects=True):
         if self._last_crumb_data:
             # first try request with previous crumb if available
             response = self._post_url_with_crumb(
                 self._last_crumb_data, url, params, data,
-                files, headers, allow_redirects, **kwargs
+                files, headers, allow_redirects
             )
             # code 403 might indicate that the crumb is not valid anymore
             if response.status_code != 403:
@@ -54,7 +54,7 @@ class CrumbRequester(Requester):
 
         return self._post_url_with_crumb(
             self._last_crumb_data, url, params, data,
-            files, headers, allow_redirects, **kwargs)
+            files, headers, allow_redirects)
 
     def _get_crumb_data(self):
         response = super(CrumbRequester, self).get_url(self._baseurl + '/crumbIssuer/api/python')
@@ -81,7 +81,7 @@ class CrumbRequester(Requester):
             url, params, headers, allow_redirects, stream)
 
     def _post_url_with_crumb(self, crumb_data, url, params, data,
-                             files, headers, allow_redirects, **kwargs):
+                             files, headers, allow_redirects):
         if crumb_data:
             if headers is None:
                 headers = crumb_data
@@ -89,4 +89,4 @@ class CrumbRequester(Requester):
                 headers.update(crumb_data)
 
         return super(CrumbRequester, self).post_url(
-            url, params, data, files, headers, allow_redirects, **kwargs)
+            url, params, data, files, headers, allow_redirects)
