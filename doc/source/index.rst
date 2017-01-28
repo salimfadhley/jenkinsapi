@@ -25,6 +25,7 @@ Sections
    artifact
    build
    using_jenkinsapi
+   csrf_protection
    rules_for_contributors
 
 Important Links
@@ -59,8 +60,9 @@ Or..
 
     easy_install jenkinsapi
 
- * In Jenkins > 1.518 you will need to disable "Prevent Cross Site Request Forgery exploits".
- * Remember to set the Jenkins Location in general settings - Jenkins' REST web-interface will not work if this is set incorrectly.
+
+* If using Jenkins > 1.518 please see :doc:`csrf_protection` if you leave the "Prevent Cross Site Request Forgery exploits" option enabled.
+* Remember to set the Jenkins Location in general settings - Jenkins' REST web-interface will not work if this is set incorrectly.
 
 Examples
 --------
