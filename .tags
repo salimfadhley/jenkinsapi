@@ -1,0 +1,1680 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AlreadyExists	jenkinsapi/custom_exceptions.py	/^class AlreadyExists(JenkinsAPIException):$/;"	kind:class	line:156
+Artifact	jenkinsapi/api.py	/^from jenkinsapi.artifact import Artifact$/;"	kind:namespace	line:16
+Artifact	jenkinsapi/artifact.py	/^class Artifact(object):$/;"	kind:class	line:21
+Artifact	jenkinsapi/build.py	/^from jenkinsapi.artifact import Artifact$/;"	kind:namespace	line:19
+Artifact	jenkinsapi_tests/unittests/test_artifact.py	/^from jenkinsapi.artifact import Artifact$/;"	kind:namespace	line:8
+ArtifactBroken	jenkinsapi/artifact.py	/^from jenkinsapi.custom_exceptions import ArtifactBroken$/;"	kind:namespace	line:16
+ArtifactBroken	jenkinsapi/custom_exceptions.py	/^class ArtifactBroken(JenkinsAPIException):$/;"	kind:class	line:78
+ArtifactBroken	jenkinsapi/fingerprint.py	/^from jenkinsapi.custom_exceptions import ArtifactBroken$/;"	kind:namespace	line:6
+ArtifactBroken	jenkinsapi_tests/unittests/test_artifact.py	/^from jenkinsapi.custom_exceptions import ArtifactBroken$/;"	kind:namespace	line:11
+ArtifactTest	jenkinsapi_tests/unittests/test_artifact.py	/^class ArtifactTest(unittest.TestCase):$/;"	kind:class	line:149
+ArtifactsMissing	jenkinsapi/api.py	/^from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL$/;"	kind:namespace	line:17
+ArtifactsMissing	jenkinsapi/custom_exceptions.py	/^class ArtifactsMissing(NotFound):$/;"	kind:class	line:22
+BUILD_DATA	jenkinsapi_tests/unittests/configs.py	/^BUILD_DATA = {$/;"	kind:variable	line:72
+BUILD_SCM_DATA	jenkinsapi_tests/unittests/configs.py	/^BUILD_SCM_DATA = {$/;"	kind:variable	line:122
+BadParams	jenkinsapi/custom_exceptions.py	/^class BadParams(JenkinsAPIException):$/;"	kind:class	line:149
+BadParams	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi.custom_exceptions import BadParams, NotFound$/;"	kind:namespace	line:12
+BadURL	jenkinsapi/api.py	/^from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL$/;"	kind:namespace	line:17
+BadURL	jenkinsapi/custom_exceptions.py	/^class BadURL(ValueError, JenkinsAPIException):$/;"	kind:class	line:106
+Build	jenkinsapi/build.py	/^class Build(JenkinsBase):$/;"	kind:class	line:32
+Build	jenkinsapi/job.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:10
+Build	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:7
+Build	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:8
+Build	jenkinsapi_tests/unittests/test_build.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:5
+Build	jenkinsapi_tests/unittests/test_build_scm_git.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:4
+Build	jenkinsapi_tests/unittests/test_job.py	/^from jenkinsapi.build import Build$/;"	kind:namespace	line:7
+CATEGORIZED_VIEW	jenkinsapi/views.py	/^        'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'$/;"	kind:variable	line:21
+ConnectionError	jenkinsapi_tests/systests/test_restart.py	/^from requests import HTTPError, ConnectionError$/;"	kind:namespace	line:10
+Credential	jenkinsapi/credential.py	/^class Credential(object):$/;"	kind:class	line:9
+Credential	jenkinsapi/credentials.py	/^from jenkinsapi.credential import Credential$/;"	kind:namespace	line:9
+Credentials	jenkinsapi/credentials.py	/^class Credentials(JenkinsBase):$/;"	kind:class	line:19
+Credentials	jenkinsapi/jenkins.py	/^from jenkinsapi.credentials import Credentials$/;"	kind:namespace	line:9
+Credentials	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi.credentials import Credentials$/;"	kind:namespace	line:7
+Credentials2x	jenkinsapi/credentials.py	/^class Credentials2x(Credentials):$/;"	kind:class	line:154
+Credentials2x	jenkinsapi/jenkins.py	/^from jenkinsapi.credentials import Credentials2x$/;"	kind:namespace	line:10
+CrumbRequester	jenkinsapi/utils/crumb_requester.py	/^class CrumbRequester(Requester):$/;"	kind:class	line:10
+CrumbRequester	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from jenkinsapi.utils.crumb_requester import CrumbRequester$/;"	kind:namespace	line:9
+DASHBOARD_VIEW	jenkinsapi/views.py	/^    DASHBOARD_VIEW = 'hudson.plugins.view.dashboard.Dashboard'$/;"	kind:variable	line:23
+DATA	jenkinsapi_tests/unittests/test_jenkins.py	/^DATA = {}$/;"	kind:variable	line:10
+DATA	jenkinsapi_tests/unittests/test_label.py	/^DATA = {$/;"	kind:variable	line:5
+DATA	jenkinsapi_tests/unittests/test_node.py	/^DATA = {$/;"	kind:variable	line:5
+DATA	jenkinsapi_tests/unittests/test_plugins.py	/^    DATA = {$/;"	kind:variable	line:19
+DATA	jenkinsapi_tests/unittests/test_result_set.py	/^    DATA = {'duration': 0.0,$/;"	kind:variable	line:14
+DATA	jenkinsapi_tests/unittests/test_view.py	/^    DATA = {'description': 'Important Shizz',$/;"	kind:variable	line:14
+DATA0	jenkinsapi_tests/unittests/test_executors.py	/^DATA0 = {$/;"	kind:variable	line:29
+DATA0	jenkinsapi_tests/unittests/test_nodes.py	/^DATA0 = {$/;"	kind:variable	line:7
+DATA1	jenkinsapi_tests/unittests/test_executors.py	/^DATA1 = {$/;"	kind:variable	line:85
+DATA1	jenkinsapi_tests/unittests/test_nodes.py	/^DATA1 = {$/;"	kind:variable	line:28
+DATA2	jenkinsapi_tests/unittests/test_executors.py	/^DATA2 = {$/;"	kind:variable	line:134
+DATA2	jenkinsapi_tests/unittests/test_nodes.py	/^DATA2 = {$/;"	kind:variable	line:130
+DATA3	jenkinsapi_tests/unittests/test_executors.py	/^DATA3 = {$/;"	kind:variable	line:185
+DATA3	jenkinsapi_tests/unittests/test_nodes.py	/^DATA3 = {$/;"	kind:variable	line:166
+DATAM	jenkinsapi_tests/unittests/test_executors.py	/^DATAM = {$/;"	kind:variable	line:8
+DATA_JOBS	jenkinsapi_tests/unittests/test_label.py	/^DATA_JOBS = [$/;"	kind:variable	line:47
+DATA_JOB_NAMES	jenkinsapi_tests/unittests/test_label.py	/^DATA_JOB_NAMES = {$/;"	kind:variable	line:38
+DEFAULT_HG_BRANCH_NAME	jenkinsapi/job.py	/^DEFAULT_HG_BRANCH_NAME = 'default'$/;"	kind:variable	line:31
+DEFAULT_JENKINS_PORT	jenkinsapi_tests/systests/test_crumbs_requester.py	/^DEFAULT_JENKINS_PORT = 8080$/;"	kind:variable	line:16
+DELAY	jenkinsapi_tests/systests/test_downstream_upstream.py	/^DELAY = 10$/;"	kind:variable	line:86
+DESCRIPTION	setup.py	/^    DESCRIPTION = SHORT_DESCRIPTION$/;"	kind:variable	line:19
+DESCRIPTION	setup.py	/^    DESCRIPTION = open(os.path.join(PROJECT_ROOT, 'README.rst')).read()$/;"	kind:variable	line:17
+DISABLE_CRUMBS_CONFIG	jenkinsapi_tests/systests/test_crumbs_requester.py	/^DISABLE_CRUMBS_CONFIG = {$/;"	kind:variable	line:39
+EMPTY_JOB	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi_tests.systests.job_configs import SHORTISH_JOB, EMPTY_JOB$/;"	kind:namespace	line:11
+EMPTY_JOB	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi_tests.systests.job_configs import EMPTY_JOB$/;"	kind:namespace	line:10
+EMPTY_JOB	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi_tests.systests.job_configs import EMPTY_JOB$/;"	kind:namespace	line:9
+ENABLE_CRUMBS_CONFIG	jenkinsapi_tests/systests/test_crumbs_requester.py	/^ENABLE_CRUMBS_CONFIG = {$/;"	kind:variable	line:17
+ET	jenkinsapi/job.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:6
+ET	jenkinsapi/node.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:7
+EXEC0	jenkinsapi_tests/unittests/test_executors.py	/^EXEC0 = {$/;"	kind:variable	line:232
+EXEC1	jenkinsapi_tests/unittests/test_executors.py	/^EXEC1 = {$/;"	kind:variable	line:244
+Executor	jenkinsapi/executor.py	/^class Executor(JenkinsBase):$/;"	kind:class	line:11
+Executor	jenkinsapi/executors.py	/^from jenkinsapi.executor import Executor$/;"	kind:namespace	line:7
+Executor	jenkinsapi_tests/unittests/test_executors.py	/^from jenkinsapi.executor import Executor$/;"	kind:namespace	line:5
+Executors	jenkinsapi/executors.py	/^class Executors(JenkinsBase):$/;"	kind:class	line:13
+Executors	jenkinsapi/jenkins.py	/^from jenkinsapi.executors import Executors$/;"	kind:namespace	line:11
+Executors	jenkinsapi_tests/unittests/test_executors.py	/^from jenkinsapi.executors import Executors$/;"	kind:namespace	line:4
+FailedNoResults	jenkinsapi/custom_exceptions.py	/^class FailedNoResults(NoResults):$/;"	kind:class	line:99
+FailedToStart	jenkinsapi_utils/jenkins_launcher.py	/^class FailedToStart(Exception):$/;"	kind:class	line:23
+FakeHTTPError	jenkinsapi_tests/unittests/test_artifact.py	/^    class FakeHTTPError(HTTPError):$/;"	kind:class	line:107
+FakeHTTPError	jenkinsapi_tests/unittests/test_artifact.py	/^    class FakeHTTPError(HTTPError):$/;"	kind:class	line:78
+FakeHTTPError	jenkinsapi_tests/unittests/test_fingerprint.py	/^    class FakeHTTPError(HTTPError):$/;"	kind:class	line:45
+FakeHTTPError	jenkinsapi_tests/unittests/test_fingerprint.py	/^    class FakeHTTPError(HTTPError):$/;"	kind:class	line:74
+FakeResponse	jenkinsapi_tests/unittests/test_artifact.py	/^    class FakeResponse(object):$/;"	kind:class	line:103
+FakeResponse	jenkinsapi_tests/unittests/test_artifact.py	/^    class FakeResponse(object):$/;"	kind:class	line:74
+FakeResponse	jenkinsapi_tests/unittests/test_fingerprint.py	/^    class FakeResponse(object):$/;"	kind:class	line:41
+FakeResponse	jenkinsapi_tests/unittests/test_fingerprint.py	/^    class FakeResponse(object):$/;"	kind:class	line:70
+FakeResponse	jenkinsapi_tests/unittests/test_jenkins.py	/^    class FakeResponse(object):$/;"	kind:class	line:46
+FakeResponse	jenkinsapi_tests/unittests/test_requester.py	/^    class FakeResponse(object):$/;"	kind:class	line:199
+FakeResponse	jenkinsapi_tests/unittests/test_requester.py	/^    class FakeResponse(object):$/;"	kind:class	line:238
+FakeResponse	jenkinsapi_tests/unittests/test_requester.py	/^    class FakeResponse(requests.Response):$/;"	kind:class	line:146
+FakeResponse	jenkinsapi_tests/unittests/test_requester.py	/^    class FakeResponse(requests.Response):$/;"	kind:class	line:180
+FakeResponse	jenkinsapi_tests/unittests/test_requester.py	/^    class FakeResponse(requests.Response):$/;"	kind:class	line:220
+Fingerprint	jenkinsapi/artifact.py	/^from jenkinsapi.fingerprint import Fingerprint$/;"	kind:namespace	line:15
+Fingerprint	jenkinsapi/fingerprint.py	/^class Fingerprint(JenkinsBase):$/;"	kind:class	line:16
+Fingerprint	jenkinsapi/jenkins.py	/^from jenkinsapi.fingerprint import Fingerprint$/;"	kind:namespace	line:19
+Fingerprint	jenkinsapi_tests/unittests/test_artifact.py	/^from jenkinsapi.fingerprint import Fingerprint$/;"	kind:namespace	line:10
+Fingerprint	jenkinsapi_tests/unittests/test_fingerprint.py	/^from jenkinsapi.fingerprint import Fingerprint$/;"	kind:namespace	line:5
+GIT_BRANCH	jenkinsapi/job.py	/^GIT_BRANCH = '.\/scm\/branches\/hudson.plugins.git.BranchSpec\/name'$/;"	kind:variable	line:29
+GIT_URL	jenkinsapi/job.py	/^GIT_URL = '.\/scm\/userRemoteConfigs\/hudson.plugins.git.UserRemoteConfig\/url'$/;"	kind:variable	line:27
+GLOBAL_ENTRY_POINTS	setup.py	/^GLOBAL_ENTRY_POINTS = {$/;"	kind:variable	line:21
+HG_BRANCH	jenkinsapi/job.py	/^HG_BRANCH = '.\/scm\/branch'$/;"	kind:variable	line:30
+HG_URL	jenkinsapi/job.py	/^HG_URL = '.\/scm\/source'$/;"	kind:variable	line:28
+HTTPError	jenkinsapi/queue.py	/^from requests import HTTPError$/;"	kind:namespace	line:4
+HTTPError	jenkinsapi_tests/systests/test_restart.py	/^from requests import HTTPError, ConnectionError$/;"	kind:namespace	line:10
+HTTPError	jenkinsapi_tests/unittests/test_artifact.py	/^from requests.exceptions import HTTPError$/;"	kind:namespace	line:7
+HTTPError	jenkinsapi_tests/unittests/test_fingerprint.py	/^from requests.exceptions import HTTPError$/;"	kind:namespace	line:7
+HTTPKerberosAuth	jenkinsapi/utils/krb_requester.py	/^from requests_kerberos import HTTPKerberosAuth, OPTIONAL$/;"	kind:namespace	line:5
+Handler	examples/low_level/post_watcher.py	/^Handler = ServerHandler$/;"	kind:variable	line:51
+Handler	jenkinsapi_utils/simple_post_logger.py	/^Handler = ServerHandler$/;"	kind:variable	line:29
+I	examples/low_level/post_watcher.py	/^I = "localhost"$/;"	kind:variable	line:25
+J	examples/how_to/add_command.py	/^J = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:8
+J	examples/low_level/copy_a_job.py	/^J = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:11
+J	examples/low_level/login_with_auth.py	/^J = jenkins.Jenkins("http:\/\/localhost:8080", username="sal", password="foobar")$/;"	kind:variable	line:9
+JENKINS_API	jenkinsapi/config.py	/^JENKINS_API = r"api\/python"$/;"	kind:variable	line:6
+JENKINS_WAR_URL	jenkinsapi_utils/jenkins_launcher.py	/^    JENKINS_WAR_URL = "http:\/\/mirrors.jenkins-ci.org\/war\/latest\/jenkins.war"$/;"	kind:variable	line:68
+JOB1_ALL_BUILDS_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB1_ALL_BUILDS_DATA = {$/;"	kind:variable	line:50
+JOB1_API_URL	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB1_API_URL = 'http:\/\/halob:8080\/job\/foo\/%s' % config.JENKINS_API$/;"	kind:variable	line:57
+JOB1_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB1_DATA = {$/;"	kind:variable	line:15
+JOB2_API_URL	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB2_API_URL = 'http:\/\/halob:8080\/job\/look_ma_no_builds\/%s' % config.JENKINS_API$/;"	kind:variable	line:88
+JOB2_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB2_DATA = {$/;"	kind:variable	line:59
+JOB3_ALL_BUILDS_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB3_ALL_BUILDS_DATA = {"allBuilds": [$/;"	kind:variable	line:130
+JOB3_API_URL	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB3_API_URL = 'http:\/\/halob:8080\/job\/fullfoo\/%s' % config.JENKINS_API$/;"	kind:variable	line:135
+JOB3_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    JOB3_DATA = {$/;"	kind:variable	line:91
+JOB_CONFIGS	jenkinsapi_tests/systests/test_downstream_upstream.py	/^JOB_CONFIGS = {$/;"	kind:variable	line:11
+JOB_DATA	jenkinsapi_tests/unittests/configs.py	/^JOB_DATA = {$/;"	kind:variable	line:3
+JOB_DATA	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    JOB_DATA = {$/;"	kind:variable	line:15
+JOB_DATA	jenkinsapi_tests/unittests/test_view.py	/^    JOB_DATA = {$/;"	kind:variable	line:27
+JOB_WITH_ARTIFACTS	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^from jenkinsapi_tests.systests.job_configs import JOB_WITH_ARTIFACTS$/;"	kind:namespace	line:10
+JOB_WITH_FILE	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE$/;"	kind:namespace	line:11
+JOB_WITH_FILE	jenkinsapi_tests/systests/test_parameterized_builds.py	/^from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE$/;"	kind:namespace	line:8
+JOB_WITH_FILE_AND_PARAMS	jenkinsapi_tests/systests/test_parameterized_builds.py	/^from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE_AND_PARAMS$/;"	kind:namespace	line:9
+JOB_WITH_PARAMETERS	jenkinsapi_tests/systests/test_parameterized_builds.py	/^from jenkinsapi_tests.systests.job_configs import JOB_WITH_PARAMETERS$/;"	kind:namespace	line:10
+Jenkins	examples/how_to/add_command.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/how_to/create_a_job.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/how_to/create_credentials.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	examples/how_to/create_nested_views.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:11
+Jenkins	examples/how_to/create_slave.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/how_to/create_views.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/how_to/delete_all_the_nodes_except_master.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/how_to/get_config.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	examples/how_to/get_plugin_information.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	examples/how_to/get_version_info_from_last_good_build.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	examples/how_to/query_a_build.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	examples/how_to/start_parameterized_build.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:6
+Jenkins	examples/low_level/copy_a_job.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:8
+Jenkins	jenkinsapi/api.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:15
+Jenkins	jenkinsapi/jenkins.py	/^class Jenkins(JenkinsBase):$/;"	kind:class	line:27
+Jenkins	jenkinsapi_tests/systests/conftest.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:4
+Jenkins	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:8
+Jenkins	jenkinsapi_tests/unittests/test_executors.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:3
+Jenkins	jenkinsapi_tests/unittests/test_fingerprint.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:3
+Jenkins	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:5
+Jenkins	jenkinsapi_tests/unittests/test_job.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:8
+Jenkins	jenkinsapi_tests/unittests/test_nodes.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:2
+Jenkins	jenkinsapi_tests/unittests/test_plugins.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:13
+Jenkins	jenkinsapi_utils/jenkins_launcher.py	/^from jenkinsapi.jenkins import Jenkins$/;"	kind:namespace	line:17
+JenkinsAPIException	jenkinsapi/build.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:24
+JenkinsAPIException	jenkinsapi/credentials.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:14
+JenkinsAPIException	jenkinsapi/custom_exceptions.py	/^class JenkinsAPIException(Exception):$/;"	kind:class	line:8
+JenkinsAPIException	jenkinsapi/jenkins.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:22
+JenkinsAPIException	jenkinsapi/jenkinsbase.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:9
+JenkinsAPIException	jenkinsapi/jobs.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob$/;"	kind:namespace	line:7
+JenkinsAPIException	jenkinsapi/node.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:11
+JenkinsAPIException	jenkinsapi/nodes.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:9
+JenkinsAPIException	jenkinsapi/utils/requester.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired$/;"	kind:namespace	line:7
+JenkinsAPIException	jenkinsapi/views.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:8
+JenkinsAPIException	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:11
+JenkinsAPIException	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:8
+JenkinsAPIException	jenkinsapi_tests/unittests/test_requester.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:5
+JenkinsAPIException	jenkinsapi_utils/jenkins_launcher.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException$/;"	kind:namespace	line:18
+JenkinsBase	jenkinsapi/build.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:21
+JenkinsBase	jenkinsapi/credentials.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:13
+JenkinsBase	jenkinsapi/executor.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:5
+JenkinsBase	jenkinsapi/executors.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:8
+JenkinsBase	jenkinsapi/fingerprint.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:5
+JenkinsBase	jenkinsapi/jenkins.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:20
+JenkinsBase	jenkinsapi/jenkinsbase.py	/^class JenkinsBase(object):$/;"	kind:class	line:12
+JenkinsBase	jenkinsapi/job.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:20
+JenkinsBase	jenkinsapi/label.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:4
+JenkinsBase	jenkinsapi/node.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:9
+JenkinsBase	jenkinsapi/nodes.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:8
+JenkinsBase	jenkinsapi/plugins.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:8
+JenkinsBase	jenkinsapi/queue.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:5
+JenkinsBase	jenkinsapi/result_set.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:5
+JenkinsBase	jenkinsapi/view.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:7
+JenkinsBase	jenkinsapi_tests/unittests/test_artifact.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:9
+JenkinsBase	jenkinsapi_tests/unittests/test_fingerprint.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:4
+JenkinsBase	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:6
+JenkinsBase	jenkinsapi_tests/unittests/test_job.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:9
+JenkinsBase	jenkinsapi_tests/unittests/test_job_folders.py	/^from jenkinsapi.jenkins import JenkinsBase$/;"	kind:namespace	line:3
+JenkinsBase	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:10
+JenkinsBase	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:10
+JenkinsBase	jenkinsapi_tests/unittests/test_view.py	/^from jenkinsapi.jenkinsbase import JenkinsBase$/;"	kind:namespace	line:6
+JenkinsInvoke	jenkinsapi/command_line/jenkins_invoke.py	/^class JenkinsInvoke(object):$/;"	kind:class	line:14
+JenkinsLancher	jenkinsapi_tests/systests/conftest.py	/^from jenkinsapi_utils.jenkins_launcher import JenkinsLancher$/;"	kind:namespace	line:5
+JenkinsLancher	jenkinsapi_utils/jenkins_launcher.py	/^class JenkinsLancher(object):$/;"	kind:class	line:63
+Job	jenkinsapi/job.py	/^class Job(JenkinsBase, MutableJenkinsThing):$/;"	kind:class	line:36
+Job	jenkinsapi/jobs.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:6
+Job	jenkinsapi/view.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:8
+Job	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:5
+Job	jenkinsapi_tests/systests/test_queue.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:8
+Job	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:7
+Job	jenkinsapi_tests/unittests/test_build.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:6
+Job	jenkinsapi_tests/unittests/test_build_scm_git.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:5
+Job	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:7
+Job	jenkinsapi_tests/unittests/test_job.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:6
+Job	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:9
+Job	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:9
+Job	jenkinsapi_tests/unittests/test_view.py	/^from jenkinsapi.job import Job$/;"	kind:namespace	line:8
+Jobs	jenkinsapi/jenkins.py	/^from jenkinsapi.jobs import Jobs$/;"	kind:namespace	line:12
+Jobs	jenkinsapi/jobs.py	/^class Jobs(object):$/;"	kind:class	line:12
+Jobs	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.jobs import Jobs$/;"	kind:namespace	line:6
+KrbRequester	jenkinsapi/utils/krb_requester.py	/^class KrbRequester(Requester):$/;"	kind:class	line:9
+LIST_VIEW	jenkinsapi/views.py	/^    LIST_VIEW = 'hudson.model.ListView'$/;"	kind:variable	line:18
+LOAD_TIMEOUT	jenkinsapi/config.py	/^LOAD_TIMEOUT = 30$/;"	kind:variable	line:8
+LONG_RUNNING_JOB	jenkinsapi_tests/systests/test_executors.py	/^from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB$/;"	kind:namespace	line:6
+LONG_RUNNING_JOB	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB$/;"	kind:namespace	line:10
+LONG_RUNNING_JOB	jenkinsapi_tests/systests/test_queue.py	/^from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB$/;"	kind:namespace	line:10
+Label	jenkinsapi/jenkins.py	/^from jenkinsapi.label import Label$/;"	kind:namespace	line:14
+Label	jenkinsapi/label.py	/^class Label(JenkinsBase):$/;"	kind:class	line:10
+Label	jenkinsapi_tests/unittests/test_label.py	/^from jenkinsapi.label import Label$/;"	kind:namespace	line:2
+MATRIX_JOB	jenkinsapi_tests/systests/test_jenkins_matrix.py	/^from jenkinsapi_tests.systests.job_configs import MATRIX_JOB$/;"	kind:namespace	line:6
+MY_VIEW	jenkinsapi/views.py	/^    MY_VIEW = 'hudson.model.MyView'$/;"	kind:variable	line:22
+MockResponse	jenkinsapi_tests/unittests/test_jenkins.py	/^    class MockResponse(object):$/;"	kind:class	line:166
+MockResponse	jenkinsapi_tests/unittests/test_jenkins.py	/^    class MockResponse(object):$/;"	kind:class	line:187
+MockResponse	jenkinsapi_tests/unittests/test_jenkins.py	/^    class MockResponse(object):$/;"	kind:class	line:203
+MutableJenkinsThing	jenkinsapi/job.py	/^from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing$/;"	kind:namespace	line:21
+MutableJenkinsThing	jenkinsapi/mutable_jenkins_thing.py	/^class MutableJenkinsThing(object):$/;"	kind:class	line:6
+NESTED_VIEW	jenkinsapi/views.py	/^    NESTED_VIEW = 'hudson.plugins.nested_view.NestedView'$/;"	kind:variable	line:19
+NoBuildData	jenkinsapi/custom_exceptions.py	/^class NoBuildData(NotFound):$/;"	kind:class	line:64
+NoBuildData	jenkinsapi_tests/systests/test_downstream_upstream.py	/^from jenkinsapi.custom_exceptions import NoBuildData$/;"	kind:namespace	line:7
+NoBuildData	jenkinsapi_tests/unittests/test_job.py	/^from jenkinsapi.custom_exceptions import NoBuildData$/;"	kind:namespace	line:10
+NoResults	jenkinsapi/build.py	/^from jenkinsapi.custom_exceptions import NoResults$/;"	kind:namespace	line:23
+NoResults	jenkinsapi/custom_exceptions.py	/^class NoResults(JenkinsAPIException):$/;"	kind:class	line:92
+Node	jenkinsapi/node.py	/^class Node(JenkinsBase):$/;"	kind:class	line:17
+Node	jenkinsapi/nodes.py	/^from jenkinsapi.node import Node$/;"	kind:namespace	line:7
+Node	jenkinsapi_tests/systests/test_nodes.py	/^from jenkinsapi.node import Node$/;"	kind:namespace	line:6
+Node	jenkinsapi_tests/unittests/test_node.py	/^from jenkinsapi.node import Node$/;"	kind:namespace	line:2
+Node	jenkinsapi_tests/unittests/test_nodes.py	/^from jenkinsapi.node import Node$/;"	kind:namespace	line:4
+Nodes	jenkinsapi/jenkins.py	/^from jenkinsapi.nodes import Nodes$/;"	kind:namespace	line:15
+Nodes	jenkinsapi/nodes.py	/^class Nodes(JenkinsBase):$/;"	kind:class	line:16
+Nodes	jenkinsapi_tests/unittests/test_nodes.py	/^from jenkinsapi.nodes import Nodes$/;"	kind:namespace	line:3
+NotAuthorized	jenkinsapi/custom_exceptions.py	/^class NotAuthorized(JenkinsAPIException):$/;"	kind:class	line:113
+NotBuiltYet	jenkinsapi/custom_exceptions.py	/^class NotBuiltYet(NotFound):$/;"	kind:class	line:71
+NotBuiltYet	jenkinsapi/queue.py	/^from jenkinsapi.custom_exceptions import UnknownQueueItem, NotBuiltYet$/;"	kind:namespace	line:6
+NotConfiguredSCM	jenkinsapi/custom_exceptions.py	/^class NotConfiguredSCM(JenkinsAPIException):$/;"	kind:class	line:128
+NotFound	jenkinsapi/custom_exceptions.py	/^class NotFound(JenkinsAPIException):$/;"	kind:class	line:15
+NotFound	jenkinsapi/view.py	/^from jenkinsapi.custom_exceptions import NotFound$/;"	kind:namespace	line:9
+NotFound	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi.custom_exceptions import BadParams, NotFound$/;"	kind:namespace	line:12
+NotFound	jenkinsapi_tests/unittests/test_view.py	/^from jenkinsapi.custom_exceptions import NotFound$/;"	kind:namespace	line:9
+NotInQueue	jenkinsapi/custom_exceptions.py	/^class NotInQueue(JenkinsAPIException):$/;"	kind:class	line:135
+NotSupportSCM	jenkinsapi/custom_exceptions.py	/^class NotSupportSCM(JenkinsAPIException):$/;"	kind:class	line:120
+OPTIONAL	jenkinsapi/utils/krb_requester.py	/^from requests_kerberos import HTTPKerberosAuth, OPTIONAL$/;"	kind:namespace	line:5
+PIPELINE_VIEW	jenkinsapi/views.py	/^    PIPELINE_VIEW = ('au.com.centrumsystems.hudson.'$/;"	kind:variable	line:24
+PLUGIN_DEPENDENCIES	jenkinsapi_tests/systests/conftest.py	/^PLUGIN_DEPENDENCIES = [$/;"	kind:variable	line:11
+PORT	examples/low_level/post_watcher.py	/^PORT = 8081  # <-- change this to be the actual port you want to run on$/;"	kind:variable	line:24
+PORT	jenkinsapi_utils/simple_post_logger.py	/^PORT = 8080$/;"	kind:variable	line:8
+PROJECT_AUTHORS	setup.py	/^PROJECT_AUTHORS = 'Salim Fadhley, Aleksey Maksimov'$/;"	kind:variable	line:7
+PROJECT_EMAILS	setup.py	/^PROJECT_EMAILS = 'salimfadhley@gmail.com, ctpeko3a@gmail.com'$/;"	kind:variable	line:9
+PROJECT_NAME	setup.py	/^PROJECT_NAME = 'JenkinsAPI'$/;"	kind:variable	line:6
+PROJECT_URL	setup.py	/^PROJECT_URL = 'https:\/\/github.com\/pycontribs\/jenkinsapi'$/;"	kind:variable	line:10
+Plugin	jenkinsapi/plugin.py	/^class Plugin(object):$/;"	kind:class	line:6
+Plugin	jenkinsapi/plugins.py	/^from jenkinsapi.plugin import Plugin$/;"	kind:namespace	line:7
+Plugin	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.plugin import Plugin$/;"	kind:namespace	line:7
+Plugin	jenkinsapi_tests/unittests/test_plugins.py	/^from jenkinsapi.plugin import Plugin$/;"	kind:namespace	line:15
+Plugins	jenkinsapi/jenkins.py	/^from jenkinsapi.plugins import Plugins$/;"	kind:namespace	line:16
+Plugins	jenkinsapi/plugins.py	/^class Plugins(JenkinsBase):$/;"	kind:class	line:15
+Plugins	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.plugins import Plugins$/;"	kind:namespace	line:3
+Plugins	jenkinsapi_tests/unittests/test_plugins.py	/^from jenkinsapi.plugins import Plugins$/;"	kind:namespace	line:14
+PostRequired	jenkinsapi/custom_exceptions.py	/^class PostRequired(JenkinsAPIException):$/;"	kind:class	line:142
+PostRequired	jenkinsapi/node.py	/^from jenkinsapi.custom_exceptions import PostRequired$/;"	kind:namespace	line:10
+PostRequired	jenkinsapi/nodes.py	/^from jenkinsapi.custom_exceptions import PostRequired$/;"	kind:namespace	line:11
+PostRequired	jenkinsapi/utils/requester.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired$/;"	kind:namespace	line:7
+Queue	jenkinsapi/jenkins.py	/^from jenkinsapi.queue import Queue$/;"	kind:namespace	line:18
+Queue	jenkinsapi/queue.py	/^class Queue(JenkinsBase):$/;"	kind:class	line:13
+Queue	jenkinsapi_tests/systests/test_queue.py	/^from jenkinsapi.queue import Queue$/;"	kind:namespace	line:6
+QueueItem	jenkinsapi/job.py	/^from jenkinsapi.queue import QueueItem$/;"	kind:namespace	line:22
+QueueItem	jenkinsapi/queue.py	/^class QueueItem(JenkinsBase):$/;"	kind:class	line:85
+QueueItem	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi.queue import QueueItem$/;"	kind:namespace	line:8
+QueueItem	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.queue import QueueItem$/;"	kind:namespace	line:9
+QueueItem	jenkinsapi_tests/systests/test_queue.py	/^from jenkinsapi.queue import QueueItem$/;"	kind:namespace	line:7
+RESULTSTATUS_FAILED	jenkinsapi/constants.py	/^RESULTSTATUS_FAILED = "FAILED"$/;"	kind:variable	line:17
+RESULTSTATUS_FAILURE	jenkinsapi/constants.py	/^RESULTSTATUS_FAILURE = "FAILURE"$/;"	kind:variable	line:16
+RESULTSTATUS_SKIPPED	jenkinsapi/constants.py	/^RESULTSTATUS_SKIPPED = "SKIPPED"$/;"	kind:variable	line:18
+RETRY_ATTEMPTS	jenkinsapi/jenkinsbase.py	/^    RETRY_ATTEMPTS = 1$/;"	kind:variable	line:18
+REVISION	setup.py	/^REVISION = '0.3.4'$/;"	kind:variable	line:5
+RE_MD5	jenkinsapi/fingerprint.py	/^    RE_MD5 = re.compile("^([0-9a-z]{32})$")$/;"	kind:variable	line:21
+RE_SPLIT_VIEW_URL	jenkinsapi/constants.py	/^RE_SPLIT_VIEW_URL = re.compile(STR_RE_SPLIT_VIEW)$/;"	kind:variable	line:21
+Requester	examples/how_to/create_slave.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:7
+Requester	jenkinsapi/jenkins.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:21
+Requester	jenkinsapi/utils/crumb_requester.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:5
+Requester	jenkinsapi/utils/krb_requester.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:4
+Requester	jenkinsapi/utils/requester.py	/^class Requester(object):$/;"	kind:class	line:27
+Requester	jenkinsapi_tests/unittests/test_fingerprint.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:6
+Requester	jenkinsapi_tests/unittests/test_jenkins.py	/^from jenkinsapi.utils.requester import Requester$/;"	kind:namespace	line:4
+Requester	jenkinsapi_tests/unittests/test_plugins.py	/^from jenkinsapi.jenkins import Requester$/;"	kind:namespace	line:12
+Requester	jenkinsapi_tests/unittests/test_requester.py	/^from jenkinsapi.jenkins import Requester$/;"	kind:namespace	line:4
+Result	jenkinsapi/result.py	/^class Result(object):$/;"	kind:class	line:6
+Result	jenkinsapi/result_set.py	/^from jenkinsapi.result import Result$/;"	kind:namespace	line:6
+Result	jenkinsapi_tests/unittests/test_result_set.py	/^from jenkinsapi.result import Result$/;"	kind:namespace	line:9
+ResultSet	jenkinsapi/build.py	/^from jenkinsapi.result_set import ResultSet$/;"	kind:namespace	line:20
+ResultSet	jenkinsapi/result_set.py	/^class ResultSet(JenkinsBase):$/;"	kind:class	line:9
+ResultSet	jenkinsapi_tests/unittests/test_result_set.py	/^from jenkinsapi.result_set import ResultSet$/;"	kind:namespace	line:8
+SHORTISH_JOB	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi_tests.systests.job_configs import SHORTISH_JOB, EMPTY_JOB$/;"	kind:namespace	line:11
+SHORT_DESCRIPTION	setup.py	/^SHORT_DESCRIPTION = ($/;"	kind:variable	line:11
+SSHKeyCredential	examples/how_to/create_credentials.py	/^from jenkinsapi.credential import UsernamePasswordCredential, SSHKeyCredential$/;"	kind:namespace	line:6
+SSHKeyCredential	jenkinsapi/credential.py	/^class SSHKeyCredential(Credential):$/;"	kind:class	line:145
+SSHKeyCredential	jenkinsapi/credentials.py	/^from jenkinsapi.credential import SSHKeyCredential$/;"	kind:namespace	line:12
+SSHKeyCredential	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi.credential import SSHKeyCredential$/;"	kind:namespace	line:10
+SSHKeyCredential	jenkinsapi_tests/systests/test_nodes.py	/^from jenkinsapi.credential import SSHKeyCredential$/;"	kind:namespace	line:7
+STATUS_ABORTED	jenkinsapi/constants.py	/^STATUS_ABORTED = "ABORTED"$/;"	kind:variable	line:9
+STATUS_ERROR	jenkinsapi/constants.py	/^STATUS_ERROR = "ERROR"$/;"	kind:variable	line:8
+STATUS_FAIL	jenkinsapi/constants.py	/^STATUS_FAIL = "FAIL"$/;"	kind:variable	line:7
+STATUS_FIXED	jenkinsapi/constants.py	/^STATUS_FIXED = "FIXED"$/;"	kind:variable	line:13
+STATUS_PASSED	jenkinsapi/constants.py	/^STATUS_PASSED = "PASSED"$/;"	kind:variable	line:14
+STATUS_REGRESSION	jenkinsapi/constants.py	/^STATUS_REGRESSION = "REGRESSION"$/;"	kind:variable	line:10
+STATUS_SUCCESS	jenkinsapi/build.py	/^from jenkinsapi.constants import STATUS_SUCCESS$/;"	kind:namespace	line:22
+STATUS_SUCCESS	jenkinsapi/constants.py	/^STATUS_SUCCESS = "SUCCESS"$/;"	kind:variable	line:11
+STR_RE_SPLIT_VIEW	jenkinsapi/constants.py	/^STR_RE_SPLIT_VIEW = "(.*)\/view\/([^\/]*)\/?"$/;"	kind:variable	line:20
+STR_TOTALCOUNT	jenkinsapi/build.py	/^    STR_TOTALCOUNT = "totalCount"$/;"	kind:variable	line:38
+STR_TPL_NOTESTS_ERR	jenkinsapi/build.py	/^    STR_TPL_NOTESTS_ERR = ("%s has status %s, and does not have "$/;"	kind:variable	line:39
+SVN_URL	jenkinsapi/job.py	/^SVN_URL = '.\/scm\/locations\/hudson.scm.SubversionSCM_-ModuleLocation\/remote'$/;"	kind:variable	line:26
+SecretTextCredential	jenkinsapi/credential.py	/^class SecretTextCredential(Credential):$/;"	kind:class	line:98
+SecretTextCredential	jenkinsapi/credentials.py	/^from jenkinsapi.credential import SecretTextCredential$/;"	kind:namespace	line:11
+SecretTextCredential	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi.credentials import SecretTextCredential$/;"	kind:namespace	line:9
+SelfPatchJenkins	jenkinsapi_tests/unittests/test_view.py	/^    class SelfPatchJenkins(object):$/;"	kind:class	line:133
+ServerHandler	examples/low_level/post_watcher.py	/^class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):$/;"	kind:class	line:28
+ServerHandler	jenkinsapi_utils/simple_post_logger.py	/^class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):$/;"	kind:class	line:11
+SimpleHTTPServer	examples/low_level/post_watcher.py	/^from six.moves import SimpleHTTPServer, socketserver$/;"	kind:namespace	line:20
+SimpleHTTPServer	jenkinsapi_utils/simple_post_logger.py	/^import SimpleHTTPServer$/;"	kind:namespace	line:3
+SocketServer	jenkinsapi_utils/simple_post_logger.py	/^import SocketServer$/;"	kind:namespace	line:4
+StreamThread	jenkinsapi_utils/jenkins_launcher.py	/^class StreamThread(threading.Thread):$/;"	kind:class	line:31
+StringIO	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from six import StringIO$/;"	kind:namespace	line:6
+StringIO	jenkinsapi_tests/systests/test_parameterized_builds.py	/^from six import StringIO$/;"	kind:namespace	line:6
+TWO_JOBS_DATA	jenkinsapi_tests/unittests/test_jenkins.py	/^TWO_JOBS_DATA = {$/;"	kind:variable	line:11
+TarFile	jenkinsapi_utils/jenkins_launcher.py	/^from tarfile import TarFile$/;"	kind:namespace	line:13
+TestHgJob	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^class TestHgJob(unittest.TestCase):$/;"	kind:class	line:14
+TestJobGetAllBuilds	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^class TestJobGetAllBuilds(unittest.TestCase):$/;"	kind:class	line:13
+TestPlugins	jenkinsapi_tests/unittests/test_plugins.py	/^class TestPlugins(unittest.TestCase):$/;"	kind:class	line:18
+TestResultSet	jenkinsapi_tests/unittests/test_result_set.py	/^class TestResultSet(unittest.TestCase):$/;"	kind:class	line:12
+TestView	jenkinsapi_tests/unittests/test_view.py	/^class TestView(unittest.TestCase):$/;"	kind:class	line:12
+TimeOut	jenkinsapi/api.py	/^from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL$/;"	kind:namespace	line:17
+TimeOut	jenkinsapi/custom_exceptions.py	/^class TimeOut(JenkinsAPIException):$/;"	kind:class	line:85
+TimeOut	jenkinsapi_utils/jenkins_launcher.py	/^class TimeOut(Exception):$/;"	kind:class	line:27
+URL_DATA	jenkinsapi_tests/unittests/configs.py	/^URL_DATA = {'http:\/\/halob:8080\/job\/foo\/%s' % config.JENKINS_API: JOB_DATA}$/;"	kind:variable	line:70
+URL_DATA	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    URL_DATA = {$/;"	kind:variable	line:137
+URL_DATA	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    URL_DATA = {'http:\/\/halob:8080\/job\/foo\/%s' % config.JENKINS_API: JOB_DATA}$/;"	kind:variable	line:54
+UnknownJob	jenkinsapi/custom_exceptions.py	/^class UnknownJob(KeyError, NotFound):$/;"	kind:class	line:29
+UnknownJob	jenkinsapi/jobs.py	/^from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob$/;"	kind:namespace	line:7
+UnknownJob	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi.custom_exceptions import UnknownJob$/;"	kind:namespace	line:12
+UnknownNode	jenkinsapi/custom_exceptions.py	/^class UnknownNode(KeyError, NotFound):$/;"	kind:class	line:43
+UnknownNode	jenkinsapi/nodes.py	/^from jenkinsapi.custom_exceptions import UnknownNode$/;"	kind:namespace	line:10
+UnknownPlugin	jenkinsapi/custom_exceptions.py	/^class UnknownPlugin(KeyError, NotFound):$/;"	kind:class	line:57
+UnknownPlugin	jenkinsapi/plugins.py	/^from jenkinsapi.custom_exceptions import UnknownPlugin$/;"	kind:namespace	line:9
+UnknownQueueItem	jenkinsapi/custom_exceptions.py	/^class UnknownQueueItem(KeyError, NotFound):$/;"	kind:class	line:50
+UnknownQueueItem	jenkinsapi/queue.py	/^from jenkinsapi.custom_exceptions import UnknownQueueItem, NotBuiltYet$/;"	kind:namespace	line:6
+UnknownView	jenkinsapi/custom_exceptions.py	/^class UnknownView(KeyError, NotFound):$/;"	kind:class	line:36
+UsernamePasswordCredential	examples/how_to/create_credentials.py	/^from jenkinsapi.credential import UsernamePasswordCredential, SSHKeyCredential$/;"	kind:namespace	line:6
+UsernamePasswordCredential	jenkinsapi/credential.py	/^class UsernamePasswordCredential(Credential):$/;"	kind:class	line:45
+UsernamePasswordCredential	jenkinsapi/credentials.py	/^from jenkinsapi.credential import UsernamePasswordCredential$/;"	kind:namespace	line:10
+UsernamePasswordCredential	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi.credentials import UsernamePasswordCredential$/;"	kind:namespace	line:8
+VALID_STATUS_CODES	jenkinsapi/utils/requester.py	/^    VALID_STATUS_CODES = [200, ]$/;"	kind:variable	line:37
+VIEW_WITH_FILTER_AND_REGEX	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi_tests.systests.view_configs import VIEW_WITH_FILTER_AND_REGEX$/;"	kind:namespace	line:10
+View	jenkinsapi/jenkins.py	/^from jenkinsapi.view import View$/;"	kind:namespace	line:13
+View	jenkinsapi/view.py	/^class View(JenkinsBase):$/;"	kind:class	line:15
+View	jenkinsapi/views.py	/^from jenkinsapi.view import View$/;"	kind:namespace	line:7
+View	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi.view import View$/;"	kind:namespace	line:5
+View	jenkinsapi_tests/unittests/test_view.py	/^from jenkinsapi.view import View$/;"	kind:namespace	line:7
+Views	examples/how_to/create_nested_views.py	/^from jenkinsapi.views import Views$/;"	kind:namespace	line:10
+Views	jenkinsapi/jenkins.py	/^from jenkinsapi.views import Views$/;"	kind:namespace	line:17
+Views	jenkinsapi/views.py	/^class Views(object):$/;"	kind:class	line:13
+Views	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi.views import Views$/;"	kind:namespace	line:6
+__all__	jenkinsapi/__init__.py	/^__all__ = [$/;"	kind:variable	line:59
+__call__	jenkinsapi/command_line/jenkins_invoke.py	/^    def __call__(self):$/;"	kind:member	line:62
+__contains__	jenkinsapi/credentials.py	/^    def __contains__(self, description):$/;"	kind:member	line:53
+__contains__	jenkinsapi/jenkins.py	/^    def __contains__(self, jobname):$/;"	kind:member	line:236
+__contains__	jenkinsapi/jobs.py	/^    def __contains__(self, job_name):$/;"	kind:member	line:94
+__contains__	jenkinsapi/nodes.py	/^    def __contains__(self, node_name):$/;"	kind:member	line:35
+__contains__	jenkinsapi/plugins.py	/^    def __contains__(self, plugin_name):$/;"	kind:member	line:60
+__contains__	jenkinsapi/view.py	/^    def __contains__(self, job_name):$/;"	kind:member	line:35
+__contains__	jenkinsapi/views.py	/^    def __contains__(self, view_name):$/;"	kind:member	line:73
+__delitem__	jenkinsapi/credentials.py	/^    def __delitem__(self, description):$/;"	kind:member	line:117
+__delitem__	jenkinsapi/jenkins.py	/^    def __delitem__(self, job_name):$/;"	kind:member	line:244
+__delitem__	jenkinsapi/job.py	/^    def __delitem__(self, build_number):$/;"	kind:member	line:430
+__delitem__	jenkinsapi/jobs.py	/^    def __delitem__(self, job_name):$/;"	kind:member	line:39
+__delitem__	jenkinsapi/nodes.py	/^    def __delitem__(self, item):$/;"	kind:member	line:68
+__delitem__	jenkinsapi/views.py	/^    def __delitem__(self, view_name):$/;"	kind:member	line:38
+__docformat__	jenkinsapi/__init__.py	/^__docformat__ = "epytext"$/;"	kind:variable	line:64
+__eq__	jenkinsapi/jenkinsbase.py	/^    def __eq__(self, other):$/;"	kind:member	line:41
+__eq__	jenkinsapi/plugin.py	/^    def __eq__(self, other):$/;"	kind:member	line:16
+__getitem__	jenkinsapi/credentials.py	/^    def __getitem__(self, description):$/;"	kind:member	line:66
+__getitem__	jenkinsapi/jenkins.py	/^    def __getitem__(self, jobname):$/;"	kind:member	line:225
+__getitem__	jenkinsapi/job.py	/^    def __getitem__(self, buildnumber):$/;"	kind:member	line:433
+__getitem__	jenkinsapi/jobs.py	/^    def __getitem__(self, job_name):$/;"	kind:member	line:79
+__getitem__	jenkinsapi/nodes.py	/^    def __getitem__(self, nodename):$/;"	kind:member	line:58
+__getitem__	jenkinsapi/plugins.py	/^    def __getitem__(self, plugin_name):$/;"	kind:member	line:54
+__getitem__	jenkinsapi/queue.py	/^    def __getitem__(self, item_id):$/;"	kind:member	line:58
+__getitem__	jenkinsapi/result_set.py	/^    def __getitem__(self, key):$/;"	kind:member	line:56
+__getitem__	jenkinsapi/view.py	/^    def __getitem__(self, job_name):$/;"	kind:member	line:30
+__getitem__	jenkinsapi/views.py	/^    def __getitem__(self, view_name):$/;"	kind:member	line:56
+__init__	jenkinsapi/artifact.py	/^    def __init__(self, filename, url, build, relative_path=None):$/;"	kind:member	line:28
+__init__	jenkinsapi/build.py	/^    def __init__(self, url, buildno, job, depth=1):$/;"	kind:member	line:42
+__init__	jenkinsapi/command_line/jenkins_invoke.py	/^    def __init__(self, options, jobs):$/;"	kind:member	line:53
+__init__	jenkinsapi/credential.py	/^    def __init__(self, cred_dict):$/;"	kind:member	line:116
+__init__	jenkinsapi/credential.py	/^    def __init__(self, cred_dict):$/;"	kind:member	line:170
+__init__	jenkinsapi/credential.py	/^    def __init__(self, cred_dict):$/;"	kind:member	line:23
+__init__	jenkinsapi/credential.py	/^    def __init__(self, cred_dict):$/;"	kind:member	line:63
+__init__	jenkinsapi/credentials.py	/^    def __init__(self, baseurl, jenkins_obj):$/;"	kind:member	line:26
+__init__	jenkinsapi/executor.py	/^    def __init__(self, baseurl, nodename, jenkins_obj, number):$/;"	kind:member	line:18
+__init__	jenkinsapi/executors.py	/^    def __init__(self, baseurl, nodename, jenkins):$/;"	kind:member	line:22
+__init__	jenkinsapi/fingerprint.py	/^    def __init__(self, baseurl, id_, jenkins_obj):$/;"	kind:member	line:23
+__init__	jenkinsapi/jenkins.py	/^    def __init__($/;"	kind:member	line:33
+__init__	jenkinsapi/jenkinsbase.py	/^    def __init__(self, baseurl, poll=True):$/;"	kind:member	line:28
+__init__	jenkinsapi/job.py	/^    def __init__(self, url, name, jenkins_obj):$/;"	kind:member	line:43
+__init__	jenkinsapi/jobs.py	/^    def __init__(self, jenkins):$/;"	kind:member	line:21
+__init__	jenkinsapi/label.py	/^    def __init__(self, baseurl, labelname, jenkins_obj):$/;"	kind:member	line:16
+__init__	jenkinsapi/node.py	/^    def __init__(self, jenkins_obj, baseurl, nodename, node_dict, poll=True):$/;"	kind:member	line:24
+__init__	jenkinsapi/nodes.py	/^    def __init__(self, baseurl, jenkins_obj):$/;"	kind:member	line:22
+__init__	jenkinsapi/plugin.py	/^    def __init__(self, plugin_dict):$/;"	kind:member	line:12
+__init__	jenkinsapi/plugins.py	/^    def __init__(self, url, jenkins_obj):$/;"	kind:member	line:21
+__init__	jenkinsapi/queue.py	/^    def __init__(self, baseurl, jenkins_obj):$/;"	kind:member	line:19
+__init__	jenkinsapi/queue.py	/^    def __init__(self, baseurl, jenkins_obj):$/;"	kind:member	line:90
+__init__	jenkinsapi/result.py	/^    def __init__(self, **kwargs):$/;"	kind:member	line:12
+__init__	jenkinsapi/result_set.py	/^    def __init__(self, url, build):$/;"	kind:member	line:15
+__init__	jenkinsapi/utils/crumb_requester.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:14
+__init__	jenkinsapi/utils/krb_requester.py	/^    def __init__(self, ssl_verify=None, baseurl=None, mutual_auth=OPTIONAL):$/;"	kind:member	line:15
+__init__	jenkinsapi/utils/requester.py	/^    def __init__($/;"	kind:member	line:39
+__init__	jenkinsapi/view.py	/^    def __init__(self, url, name, jenkins_obj):$/;"	kind:member	line:21
+__init__	jenkinsapi/views.py	/^    def __init__(self, jenkins):$/;"	kind:member	line:27
+__init__	jenkinsapi_tests/unittests/test_artifact.py	/^        def __init__(self):$/;"	kind:member	line:108
+__init__	jenkinsapi_tests/unittests/test_artifact.py	/^        def __init__(self):$/;"	kind:member	line:79
+__init__	jenkinsapi_tests/unittests/test_fingerprint.py	/^        def __init__(self):$/;"	kind:member	line:46
+__init__	jenkinsapi_tests/unittests/test_fingerprint.py	/^        def __init__(self):$/;"	kind:member	line:75
+__init__	jenkinsapi_tests/unittests/test_jenkins.py	/^        def __init__(self):$/;"	kind:member	line:167
+__init__	jenkinsapi_tests/unittests/test_requester.py	/^        def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:member	line:147
+__init__	jenkinsapi_tests/unittests/test_requester.py	/^        def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:member	line:181
+__init__	jenkinsapi_tests/unittests/test_requester.py	/^        def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:member	line:200
+__init__	jenkinsapi_tests/unittests/test_requester.py	/^        def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:member	line:221
+__init__	jenkinsapi_tests/unittests/test_requester.py	/^        def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:member	line:239
+__init__	jenkinsapi_utils/jenkins_launcher.py	/^    def __init__(self, name, q, stream, fn_log):$/;"	kind:member	line:33
+__init__	jenkinsapi_utils/jenkins_launcher.py	/^    def __init__(self, war_path, plugin_urls=None, jenkins_url=None):$/;"	kind:member	line:70
+__init__.py	examples/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi/command_line/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi/utils/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi_tests/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi_tests/systests/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi_tests/test_utils/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi_tests/unittests/__init__.py	1;"	kind:file	line:1
+__init__.py	jenkinsapi_utils/__init__.py	1;"	kind:file	line:1
+__iter__	jenkinsapi/credentials.py	/^    def __iter__(self):$/;"	kind:member	line:49
+__iter__	jenkinsapi/executors.py	/^    def __iter__(self):$/;"	kind:member	line:34
+__iter__	jenkinsapi/plugins.py	/^    __iter__ = keys$/;"	kind:variable	line:35
+__len__	jenkinsapi/credentials.py	/^    def __len__(self):$/;"	kind:member	line:74
+__len__	jenkinsapi/jenkins.py	/^    def __len__(self):$/;"	kind:member	line:233
+__len__	jenkinsapi/job.py	/^    def __len__(self):$/;"	kind:member	line:436
+__len__	jenkinsapi/jobs.py	/^    def __len__(self):$/;"	kind:member	line:33
+__len__	jenkinsapi/nodes.py	/^    def __len__(self):$/;"	kind:member	line:65
+__len__	jenkinsapi/plugins.py	/^    def __len__(self):$/;"	kind:member	line:51
+__len__	jenkinsapi/queue.py	/^    def __len__(self):$/;"	kind:member	line:55
+__len__	jenkinsapi/result_set.py	/^    def __len__(self):$/;"	kind:member	line:53
+__len__	jenkinsapi/view.py	/^    def __len__(self):$/;"	kind:member	line:73
+__len__	jenkinsapi/views.py	/^    def __len__(self):$/;"	kind:member	line:35
+__repr__	jenkinsapi/artifact.py	/^    def __repr__(self):$/;"	kind:member	line:135
+__repr__	jenkinsapi/jenkinsbase.py	/^    def __repr__(self):$/;"	kind:member	line:20
+__repr__	jenkinsapi/plugin.py	/^    def __repr__(self):$/;"	kind:member	line:22
+__repr__	jenkinsapi/queue.py	/^    def __repr__(self):$/;"	kind:member	line:125
+__repr__	jenkinsapi/result.py	/^    def __repr__(self):$/;"	kind:member	line:18
+__setitem__	jenkinsapi/credentials.py	/^    def __setitem__(self, description, credential):$/;"	kind:member	line:77
+__setitem__	jenkinsapi/jobs.py	/^    def __setitem__(self, key, value):$/;"	kind:member	line:66
+__setitem__	jenkinsapi/nodes.py	/^    def __setitem__(self, name, node_dict):$/;"	kind:member	line:81
+__setitem__	jenkinsapi/views.py	/^    def __setitem__(self, view_name, job_names_list):$/;"	kind:member	line:46
+__str__	jenkinsapi/build.py	/^    def __str__(self):$/;"	kind:member	line:64
+__str__	jenkinsapi/credential.py	/^    def __str__(self):$/;"	kind:member	line:38
+__str__	jenkinsapi/credentials.py	/^    def __str__(self):$/;"	kind:member	line:43
+__str__	jenkinsapi/executor.py	/^    def __str__(self):$/;"	kind:member	line:32
+__str__	jenkinsapi/executors.py	/^    def __str__(self):$/;"	kind:member	line:28
+__str__	jenkinsapi/fingerprint.py	/^    def __str__(self):$/;"	kind:member	line:36
+__str__	jenkinsapi/jenkins.py	/^    def __str__(self):$/;"	kind:member	line:203
+__str__	jenkinsapi/jenkinsbase.py	/^    def __str__(self):$/;"	kind:member	line:25
+__str__	jenkinsapi/job.py	/^    def __str__(self):$/;"	kind:member	line:70
+__str__	jenkinsapi/label.py	/^    def __str__(self):$/;"	kind:member	line:29
+__str__	jenkinsapi/node.py	/^    def __str__(self):$/;"	kind:member	line:177
+__str__	jenkinsapi/nodes.py	/^    def __str__(self):$/;"	kind:member	line:32
+__str__	jenkinsapi/plugin.py	/^    def __str__(self):$/;"	kind:member	line:19
+__str__	jenkinsapi/plugins.py	/^    def __str__(self):$/;"	kind:member	line:66
+__str__	jenkinsapi/queue.py	/^    def __str__(self):$/;"	kind:member	line:129
+__str__	jenkinsapi/queue.py	/^    def __str__(self):$/;"	kind:member	line:28
+__str__	jenkinsapi/result.py	/^    def __str__(self):$/;"	kind:member	line:15
+__str__	jenkinsapi/result_set.py	/^    def __str__(self):$/;"	kind:member	line:27
+__str__	jenkinsapi/view.py	/^    def __str__(self):$/;"	kind:member	line:27
+__version__	jenkinsapi/__init__.py	/^    __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version$/;"	kind:variable	line:69
+__version__	jenkinsapi/__init__.py	/^__version__ = '99.99.99'$/;"	kind:variable	line:66
+_add_missing_builds	jenkinsapi/job.py	/^    def _add_missing_builds(self, data):$/;"	kind:member	line:100
+_buildid_for_type	jenkinsapi/job.py	/^    def _buildid_for_type(self, buildtype):$/;"	kind:member	line:222
+_clone	jenkinsapi/jenkins.py	/^    def _clone(self):$/;"	kind:member	line:64
+_del_data	jenkinsapi/jobs.py	/^    def _del_data(self, job_name):$/;"	kind:member	line:25
+_delete_all_credentials	jenkinsapi_tests/systests/conftest.py	/^def _delete_all_credentials(jenkins):$/;"	kind:function	line:44
+_delete_all_jobs	jenkinsapi_tests/systests/conftest.py	/^def _delete_all_jobs(jenkins):$/;"	kind:function	line:32
+_delete_all_views	jenkinsapi_tests/systests/conftest.py	/^def _delete_all_views(jenkins):$/;"	kind:function	line:38
+_do_download	jenkinsapi/artifact.py	/^    def _do_download(self, fspath):$/;"	kind:member	line:77
+_get_api	jenkinsapi/command_line/jenkins_invoke.py	/^    def _get_api(self, baseurl, username, password):$/;"	kind:member	line:59
+_get_config_element_tree	jenkinsapi/job.py	/^    def _get_config_element_tree(self):$/;"	kind:member	line:124
+_get_config_element_tree	jenkinsapi/node.py	/^    def _get_config_element_tree(self):$/;"	kind:member	line:261
+_get_crumb_data	jenkinsapi/utils/crumb_requester.py	/^    def _get_crumb_data(self):$/;"	kind:member	line:39
+_get_git_rev	jenkinsapi/build.py	/^    def _get_git_rev(self):$/;"	kind:member	line:149
+_get_git_rev_branch	jenkinsapi/build.py	/^    def _get_git_rev_branch(self):$/;"	kind:member	line:170
+_get_hg_branch	jenkinsapi/job.py	/^    def _get_hg_branch(self, element_tree):$/;"	kind:member	line:83
+_get_hg_rev	jenkinsapi/build.py	/^    def _get_hg_rev(self):$/;"	kind:member	line:160
+_get_hg_rev_branch	jenkinsapi/build.py	/^    def _get_hg_rev_branch(self):$/;"	kind:member	line:178
+_get_jobs	jenkinsapi/view.py	/^    def _get_jobs(self):$/;"	kind:member	line:65
+_get_nested_views	jenkinsapi/view.py	/^    def _get_nested_views(self):$/;"	kind:member	line:132
+_get_plugins	jenkinsapi/plugins.py	/^    def _get_plugins(self):$/;"	kind:member	line:43
+_get_queue_items_for_job	jenkinsapi/queue.py	/^    def _get_queue_items_for_job(self, job_name):$/;"	kind:member	line:65
+_get_svn_rev	jenkinsapi/build.py	/^    def _get_svn_rev(self):$/;"	kind:member	line:140
+_get_svn_rev_branch	jenkinsapi/build.py	/^    def _get_svn_rev_branch(self):$/;"	kind:member	line:167
+_make_credential	jenkinsapi/credentials.py	/^    def _make_credential(self, cred_dict):$/;"	kind:member	line:141
+_md5sum	jenkinsapi/artifact.py	/^    def _md5sum(self, fspath, chunksize=2 ** 20):$/;"	kind:member	line:108
+_mk_json_from_build_parameters	jenkinsapi/job.py	/^    def _mk_json_from_build_parameters(build_params, file_params=None):$/;"	kind:member	line:142
+_poll	jenkinsapi/build.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:57
+_poll	jenkinsapi/credentials.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:161
+_poll	jenkinsapi/credentials.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:33
+_poll	jenkinsapi/jenkins.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:55
+_poll	jenkinsapi/jenkinsbase.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:65
+_poll	jenkinsapi/plugins.py	/^    def _poll(self, tree=None):$/;"	kind:member	line:29
+_poll_if_needed	jenkinsapi/jenkins.py	/^    def _poll_if_needed(self):$/;"	kind:member	line:60
+_post_url_with_crumb	jenkinsapi/utils/crumb_requester.py	/^    def _post_url_with_crumb(self, crumb_data, url, params, data,$/;"	kind:member	line:52
+_update_url_scheme	jenkinsapi/utils/requester.py	/^    def _update_url_scheme(self, url):$/;"	kind:member	line:79
+_verify_download	jenkinsapi/artifact.py	/^    def _verify_download(self, fspath, strict_validation):$/;"	kind:member	line:88
+add_command.py	examples/how_to/add_command.py	1;"	kind:file	line:1
+add_job	jenkinsapi/view.py	/^    def add_job(self, str_job_name, job=None):$/;"	kind:member	line:88
+api.py	jenkinsapi/api.py	1;"	kind:file	line:1
+artifact	jenkinsapi_tests/unittests/test_artifact.py	/^def artifact(mocker):$/;"	kind:function	line:19
+artifact.py	jenkinsapi/artifact.py	1;"	kind:file	line:1
+artifact_ids	examples/how_to/search_artifacts.py	/^artifact_ids = ["test1.txt", "test2.txt"]$/;"	kind:variable	line:10
+artifact_regexp	examples/how_to/search_artifact_by_regexp.py	/^artifact_regexp = re.compile(r"test1\\.txt")  # A file name I want.$/;"	kind:variable	line:10
+ast	jenkinsapi/jenkinsbase.py	/^import ast$/;"	kind:namespace	line:5
+ast	jenkinsapi/utils/crumb_requester.py	/^import ast$/;"	kind:namespace	line:3
+author	setup.py	/^    author=PROJECT_AUTHORS,$/;"	kind:variable	line:41
+author_email	setup.py	/^    author_email=PROJECT_EMAILS,$/;"	kind:variable	line:42
+base_server_url	jenkinsapi/jenkins.py	/^    def base_server_url(self):$/;"	kind:member	line:68
+block	jenkinsapi/build.py	/^    def block(self):$/;"	kind:member	line:364
+block_until_building	jenkinsapi/queue.py	/^    def block_until_building(self, delay=5):$/;"	kind:member	line:141
+block_until_complete	jenkinsapi/api.py	/^def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30,$/;"	kind:function	line:131
+block_until_complete	jenkinsapi/build.py	/^    def block_until_complete(self, delay=15):$/;"	kind:member	line:376
+block_until_complete	jenkinsapi/queue.py	/^    def block_until_complete(self, delay=5):$/;"	kind:member	line:137
+block_until_jenkins_ready	jenkinsapi_utils/jenkins_launcher.py	/^    def block_until_jenkins_ready(self, timeout):$/;"	kind:member	line:158
+build	examples/how_to/query_a_build.py	/^build = job.get_last_build()$/;"	kind:variable	line:13
+build	examples/how_to/start_parameterized_build.py	/^build = qi.get_build()$/;"	kind:variable	line:25
+build	jenkinsapi/jobs.py	/^    def build(self, job_name, params=None, **kwargs):$/;"	kind:member	line:188
+build	jenkinsapi_tests/unittests/test_build.py	/^def build(job, monkeypatch):$/;"	kind:function	line:26
+build	jenkinsapi_tests/unittests/test_build_scm_git.py	/^def build(job, monkeypatch):$/;"	kind:function	line:25
+build.py	jenkinsapi/build.py	1;"	kind:file	line:1
+build_job	jenkinsapi/jenkins.py	/^    def build_job(self, jobname, params=None):$/;"	kind:member	line:158
+builders	examples/how_to/add_command.py	/^builders = root.find('builders')$/;"	kind:variable	line:35
+cgi	examples/low_level/post_watcher.py	/^import cgi$/;"	kind:namespace	line:22
+cgi	jenkinsapi_utils/simple_post_logger.py	/^import cgi$/;"	kind:namespace	line:6
+classifiers	setup.py	/^    classifiers=[$/;"	kind:variable	line:60
+command	examples/how_to/add_command.py	/^command = et.SubElement(shell, 'command')$/;"	kind:variable	line:37
+compat.py	jenkinsapi_utils/compat.py	1;"	kind:file	line:1
+config	examples/how_to/get_config.py	/^config = jenkins[jobName].get_config()$/;"	kind:variable	line:10
+config	jenkinsapi/build.py	/^from jenkinsapi import config$/;"	kind:namespace	line:18
+config	jenkinsapi/jenkins.py	/^from jenkinsapi import config$/;"	kind:namespace	line:8
+config	jenkinsapi/jenkinsbase.py	/^from jenkinsapi import config$/;"	kind:namespace	line:8
+config	jenkinsapi_tests/unittests/configs.py	/^from jenkinsapi import config$/;"	kind:namespace	line:1
+config	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^from jenkinsapi import config$/;"	kind:namespace	line:8
+config	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^from jenkinsapi import config$/;"	kind:namespace	line:8
+config.py	jenkinsapi/config.py	1;"	kind:file	line:1
+configs	jenkinsapi_tests/unittests/test_build.py	/^from . import configs$/;"	kind:namespace	line:3
+configs	jenkinsapi_tests/unittests/test_build_scm_git.py	/^from . import configs$/;"	kind:namespace	line:3
+configs	jenkinsapi_tests/unittests/test_job.py	/^from . import configs$/;"	kind:namespace	line:5
+configs.py	jenkinsapi_tests/unittests/configs.py	1;"	kind:file	line:1
+configtree_with_branch	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def configtree_with_branch(self):$/;"	kind:member	line:67
+configtree_with_default_branch	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def configtree_with_default_branch(self):$/;"	kind:member	line:83
+conftest.py	jenkinsapi_tests/conftest.py	1;"	kind:file	line:1
+conftest.py	jenkinsapi_tests/systests/conftest.py	1;"	kind:file	line:1
+constants	jenkinsapi/api.py	/^from jenkinsapi import constants$/;"	kind:namespace	line:14
+constants.py	jenkinsapi/constants.py	1;"	kind:file	line:1
+copy	jenkinsapi/jobs.py	/^    def copy(self, job_name, new_job_name):$/;"	kind:member	line:151
+copy_a_job.py	examples/low_level/copy_a_job.py	1;"	kind:file	line:1
+copy_job	jenkinsapi/jenkins.py	/^    def copy_job(self, jobname, newjobname):$/;"	kind:member	line:155
+create	jenkinsapi/jobs.py	/^    def create(self, job_name, config):$/;"	kind:member	line:124
+create	jenkinsapi/views.py	/^    def create(self, view_name, view_type=LIST_VIEW, config=None):$/;"	kind:member	line:93
+create_a_job.py	examples/how_to/create_a_job.py	1;"	kind:file	line:1
+create_a_view_low_level.py	examples/low_level/create_a_view_low_level.py	1;"	kind:file	line:1
+create_credentials.py	examples/how_to/create_credentials.py	1;"	kind:file	line:1
+create_job	jenkinsapi/jenkins.py	/^    def create_job(self, jobname, xml):$/;"	kind:member	line:143
+create_job	jenkinsapi_tests/systests/test_views.py	/^def create_job(jenkins, job_name='whatever'):$/;"	kind:function	line:16
+create_nested_views.py	examples/how_to/create_nested_views.py	1;"	kind:file	line:1
+create_node	jenkinsapi/jenkins.py	/^    def create_node(self, name, num_executors=2, node_description=None,$/;"	kind:member	line:297
+create_node	jenkinsapi/nodes.py	/^    def create_node(self, name, node_dict):$/;"	kind:member	line:88
+create_slave.py	examples/how_to/create_slave.py	1;"	kind:file	line:1
+create_views.py	examples/how_to/create_views.py	1;"	kind:file	line:1
+cred_dict	examples/how_to/create_credentials.py	/^cred_dict = {$/;"	kind:variable	line:22
+cred_dict	examples/how_to/create_credentials.py	/^cred_dict = {$/;"	kind:variable	line:40
+cred_dict	examples/how_to/create_credentials.py	/^cred_dict = {$/;"	kind:variable	line:52
+credential.py	jenkinsapi/credential.py	1;"	kind:file	line:1
+credentials	jenkinsapi/jenkins.py	/^    def credentials(self):$/;"	kind:member	line:399
+credentials.py	jenkinsapi/credentials.py	1;"	kind:file	line:1
+creds	examples/how_to/create_credentials.py	/^creds = jenkins.credentials$/;"	kind:variable	line:17
+creds_description1	examples/how_to/create_credentials.py	/^creds_description1 = 'My_username_credential'$/;"	kind:variable	line:21
+creds_description2	examples/how_to/create_credentials.py	/^creds_description2 = 'My_ssh_cred1'$/;"	kind:variable	line:39
+creds_description3	examples/how_to/create_credentials.py	/^creds_description3 = 'My_ssh_cred2'$/;"	kind:variable	line:51
+crumb_requester.py	jenkinsapi/utils/crumb_requester.py	1;"	kind:file	line:1
+crumbed_jenkins	jenkinsapi_tests/systests/test_crumbs_requester.py	/^def crumbed_jenkins(jenkins):$/;"	kind:function	line:54
+custom_exceptions.py	jenkinsapi/custom_exceptions.py	1;"	kind:file	line:1
+data	examples/low_level/create_a_view_low_level.py	/^data = {$/;"	kind:variable	line:14
+datetime	jenkinsapi/build.py	/^import datetime$/;"	kind:namespace	line:14
+datetime	jenkinsapi_tests/unittests/test_build.py	/^import datetime$/;"	kind:namespace	line:4
+datetime	jenkinsapi_utils/jenkins_launcher.py	/^import datetime$/;"	kind:namespace	line:6
+defaultdict	jenkinsapi/job.py	/^from collections import defaultdict$/;"	kind:namespace	line:9
+delete	jenkinsapi/view.py	/^    def delete(self):$/;"	kind:member	line:41
+delete_all_the_nodes_except_master.py	examples/how_to/delete_all_the_nodes_except_master.py	1;"	kind:file	line:1
+delete_build	jenkinsapi/job.py	/^    def delete_build(self, build_number):$/;"	kind:member	line:400
+delete_from_queue	jenkinsapi/job.py	/^    def delete_from_queue(self):$/;"	kind:member	line:652
+delete_item	jenkinsapi/queue.py	/^    def delete_item(self, queue_item):$/;"	kind:member	line:77
+delete_item_by_id	jenkinsapi/queue.py	/^    def delete_item_by_id(self, item_id):$/;"	kind:member	line:80
+delete_job	jenkinsapi/jenkins.py	/^    def delete_job(self, jobname):$/;"	kind:member	line:167
+delete_node	jenkinsapi/jenkins.py	/^    def delete_node(self, nodename):$/;"	kind:member	line:284
+delete_view_by_url	jenkinsapi/jenkins.py	/^    def delete_view_by_url(self, str_url):$/;"	kind:member	line:215
+description	setup.py	/^    description=SHORT_DESCRIPTION,$/;"	kind:variable	line:57
+disable	jenkinsapi/job.py	/^    def disable(self):$/;"	kind:member	line:638
+do_GET	examples/low_level/post_watcher.py	/^    def do_GET(self):$/;"	kind:member	line:30
+do_GET	jenkinsapi_utils/simple_post_logger.py	/^    def do_GET(self):$/;"	kind:member	line:13
+do_POST	examples/low_level/post_watcher.py	/^    def do_POST(self):$/;"	kind:member	line:35
+do_POST	jenkinsapi_utils/simple_post_logger.py	/^    def do_POST(self):$/;"	kind:member	line:17
+dummy_md5	jenkinsapi_tests/unittests/test_fingerprint.py	/^def dummy_md5():$/;"	kind:function	line:22
+enable	jenkinsapi/job.py	/^    def enable(self):$/;"	kind:member	line:645
+entry_points	setup.py	/^    entry_points=GLOBAL_ENTRY_POINTS,$/;"	kind:variable	line:55
+et	examples/how_to/add_command.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:5
+etree	examples/how_to/add_command.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:5
+etree	jenkinsapi/job.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:6
+etree	jenkinsapi/node.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:7
+example_param_build.py	examples/low_level/example_param_build.py	1;"	kind:file	line:1
+executor.py	jenkinsapi/executor.py	1;"	kind:file	line:1
+executors.py	jenkinsapi/executors.py	1;"	kind:file	line:1
+fakeGetData	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def fakeGetData(self, url, params=None, tree=None):$/;"	kind:member	line:146
+fakeGetData	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def fakeGetData(self, url, *args, **kwargs):$/;"	kind:member	line:56
+fakeGetDataTree	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def fakeGetDataTree(self, url, **args):$/;"	kind:member	line:161
+fake_get	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_get(cls, *arga, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:176
+fake_get	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_get(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:101
+fake_get	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_get(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:224
+fake_get	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_get(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:244
+fake_get_build	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_build(cls, number):  # pylint: disable=unused-argument$/;"	kind:function	line:314
+fake_get_build	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_build(cls, number):  # pylint: disable=unused-argument$/;"	kind:function	line:345
+fake_get_data	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_data(cls, url, tree):  # pylint: disable=unused-argument$/;"	kind:function	line:196
+fake_get_data	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:26
+fake_get_data	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:38
+fake_get_data	jenkinsapi_tests/unittests/test_job.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:53
+fake_get_data	jenkinsapi_tests/unittests/test_job_folders.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:138
+fake_get_data	jenkinsapi_tests/unittests/test_job_folders.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:199
+fake_get_data	jenkinsapi_tests/unittests/test_job_folders.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:71
+fake_get_data	jenkinsapi_tests/unittests/test_job_folders.py	/^    def fake_get_data(cls, url, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:92
+fake_get_url	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_get_url($/;"	kind:function	line:54
+fake_get_url	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_get_url($/;"	kind:function	line:83
+fake_get_url	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_get_url($/;"	kind:function	line:50
+fake_jenkins_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:115
+fake_jenkins_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:142
+fake_jenkins_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:69
+fake_jenkins_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:89
+fake_jenkins_poll	jenkinsapi_tests/unittests/test_nodes.py	/^    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:193
+fake_job_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:118
+fake_job_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:145
+fake_job_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:72
+fake_job_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:92
+fake_md5	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_md5(cls, fspath):   # pylint: disable=unused-argument$/;"	kind:function	line:125
+fake_md5	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_md5(cls, fspath):   # pylint: disable=unused-argument$/;"	kind:function	line:27
+fake_md5	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_md5(cls, fspath):   # pylint: disable=unused-argument$/;"	kind:function	line:48
+fake_md5	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_md5(cls, fspath):   # pylint: disable=unused-argument$/;"	kind:function	line:69
+fake_md5	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_md5(cls, fspath):   # pylint: disable=unused-argument$/;"	kind:function	line:98
+fake_nodes_poll	jenkinsapi_tests/unittests/test_nodes.py	/^    def fake_nodes_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:198
+fake_plugin_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_plugin_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:248
+fake_poll	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:111
+fake_poll	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:130
+fake_poll	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:32
+fake_poll	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:53
+fake_poll	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:82
+fake_poll	jenkinsapi_tests/unittests/test_build.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:16
+fake_poll	jenkinsapi_tests/unittests/test_build.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:27
+fake_poll	jenkinsapi_tests/unittests/test_build_scm_git.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:15
+fake_poll	jenkinsapi_tests/unittests/test_build_scm_git.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:26
+fake_poll	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll(cls, tree=None):      # pylint: disable=unused-argument$/;"	kind:function	line:256
+fake_poll	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:12
+fake_poll	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:29
+fake_poll	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:49
+fake_poll	jenkinsapi_tests/unittests/test_fingerprint.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:78
+fake_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:171
+fake_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:25
+fake_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:228
+fake_poll	jenkinsapi_tests/unittests/test_jenkins.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:243
+fake_poll	jenkinsapi_tests/unittests/test_job.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:15
+fake_poll	jenkinsapi_tests/unittests/test_job.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:175
+fake_poll	jenkinsapi_tests/unittests/test_job.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:185
+fake_poll	jenkinsapi_tests/unittests/test_job_folders.py	/^    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument$/;"	kind:function	line:12
+fake_poll	jenkinsapi_tests/unittests/test_label.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:70
+fake_poll	jenkinsapi_tests/unittests/test_node.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:43
+fake_poll	jenkinsapi_tests/unittests/test_nodes.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:216
+fake_poll	jenkinsapi_tests/unittests/test_nodes.py	/^    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:226
+fake_poll_extr	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extr(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:273
+fake_poll_extr	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extr(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:292
+fake_poll_extr	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extr(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:312
+fake_poll_extr	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extr(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:324
+fake_poll_extrs	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extrs(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:276
+fake_poll_extrs	jenkinsapi_tests/unittests/test_executors.py	/^    def fake_poll_extrs(cls, tree=None):  # pylint: disable=unused-argument$/;"	kind:function	line:295
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:116
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:131
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:150
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:165
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:184
+fake_post	jenkinsapi_tests/unittests/test_requester.py	/^    def fake_post(*args, **kwargs):  # pylint: disable=unused-argument$/;"	kind:function	line:205
+fake_validate	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_validate(cls, filename,   # pylint: disable=unused-argument$/;"	kind:function	line:135
+fake_validate	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_validate(cls, filename,   # pylint: disable=unused-argument$/;"	kind:function	line:37
+fake_validate	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_validate(cls, filename,   # pylint: disable=unused-argument$/;"	kind:function	line:58
+fake_validate	jenkinsapi_tests/unittests/test_artifact.py	/^    def fake_validate(cls, filename,   # pylint: disable=unused-argument$/;"	kind:function	line:87
+fingerprint.py	jenkinsapi/fingerprint.py	1;"	kind:file	line:1
+foo	examples/low_level/example_param_build.py	/^def foo():$/;"	kind:function	line:7
+format	jenkinsapi_tests/conftest.py	/^    format='%(module)s.%(funcName)s %(levelname)s: %(message)s',$/;"	kind:variable	line:6
+get	jenkinsapi/credentials.py	/^    def get(self, item, default):$/;"	kind:member	line:114
+get_actions	jenkinsapi/build.py	/^    def get_actions(self):$/;"	kind:member	line:420
+get_and_confirm_status	jenkinsapi/utils/requester.py	/^    def get_and_confirm_status($/;"	kind:member	line:148
+get_artifact_data	jenkinsapi/jenkins.py	/^    def get_artifact_data(self, id_):$/;"	kind:member	line:83
+get_artifact_dict	jenkinsapi/build.py	/^    def get_artifact_dict(self):$/;"	kind:member	line:193
+get_artifacts	jenkinsapi/api.py	/^def get_artifacts(jenkinsurl, jobid=None, build_no=None,$/;"	kind:function	line:70
+get_artifacts	jenkinsapi/build.py	/^    def get_artifacts(self):$/;"	kind:member	line:184
+get_attributes	jenkinsapi/credential.py	/^    def get_attributes(self):$/;"	kind:member	line:120
+get_attributes	jenkinsapi/credential.py	/^    def get_attributes(self):$/;"	kind:member	line:195
+get_attributes	jenkinsapi/credential.py	/^    def get_attributes(self):$/;"	kind:member	line:41
+get_attributes	jenkinsapi/credential.py	/^    def get_attributes(self):$/;"	kind:member	line:73
+get_build	jenkinsapi/api.py	/^def get_build(jenkinsurl, jobname, build_no, username=None, password=None,$/;"	kind:function	line:58
+get_build	jenkinsapi/job.py	/^    def get_build(self, buildnumber):$/;"	kind:member	line:392
+get_build	jenkinsapi/queue.py	/^    def get_build(self):$/;"	kind:member	line:132
+get_build_by_params	jenkinsapi/job.py	/^    def get_build_by_params(self, build_params, order=1):$/;"	kind:member	line:293
+get_build_dict	jenkinsapi/job.py	/^    def get_build_dict(self):$/;"	kind:member	line:278
+get_build_ids	jenkinsapi/job.py	/^    def get_build_ids(self):$/;"	kind:member	line:322
+get_build_metadata	jenkinsapi/job.py	/^    def get_build_metadata(self, buildnumber):$/;"	kind:member	line:415
+get_build_number	jenkinsapi/queue.py	/^    def get_build_number(self):$/;"	kind:member	line:158
+get_build_triggerurl	jenkinsapi/job.py	/^    def get_build_triggerurl(self):$/;"	kind:member	line:136
+get_buildnumber_for_revision	jenkinsapi/job.py	/^    def get_buildnumber_for_revision(self, revision, refresh=False):$/;"	kind:member	line:375
+get_causes	jenkinsapi/build.py	/^    def get_causes(self):$/;"	kind:member	line:428
+get_changeset_items	jenkinsapi/build.py	/^    def get_changeset_items(self):$/;"	kind:member	line:110
+get_config	jenkinsapi/job.py	/^    def get_config(self):$/;"	kind:member	line:467
+get_config	jenkinsapi/node.py	/^    def get_config(self):$/;"	kind:member	line:273
+get_config	jenkinsapi/view.py	/^    def get_config(self):$/;"	kind:member	line:142
+get_config.py	examples/how_to/get_config.py	1;"	kind:file	line:1
+get_config_xml_url	jenkinsapi/job.py	/^    def get_config_xml_url(self):$/;"	kind:member	line:560
+get_config_xml_url	jenkinsapi/view.py	/^    def get_config_xml_url(self):$/;"	kind:member	line:139
+get_console	jenkinsapi/build.py	/^    def get_console(self):$/;"	kind:member	line:452
+get_create_url	jenkinsapi/jenkins.py	/^    def get_create_url(self):$/;"	kind:member	line:98
+get_credentials	jenkinsapi/jenkins.py	/^    def get_credentials(self):$/;"	kind:member	line:383
+get_current_executable	jenkinsapi/executor.py	/^    def get_current_executable(self):$/;"	kind:member	line:60
+get_data	jenkinsapi/artifact.py	/^    def get_data(self):$/;"	kind:member	line:69
+get_data	jenkinsapi/jenkinsbase.py	/^    def get_data(self, url, params=None, tree=None):$/;"	kind:member	line:69
+get_delete_url	jenkinsapi/mutable_jenkins_thing.py	/^    def get_delete_url(self):$/;"	kind:member	line:12
+get_description	jenkinsapi/build.py	/^    def get_description(self):$/;"	kind:member	line:71
+get_description	jenkinsapi/job.py	/^    def get_description(self):$/;"	kind:member	line:73
+get_downstream_builds	jenkinsapi/build.py	/^    def get_downstream_builds(self):$/;"	kind:member	line:323
+get_downstream_job_names	jenkinsapi/build.py	/^    def get_downstream_job_names(self):$/;"	kind:member	line:306
+get_downstream_job_names	jenkinsapi/job.py	/^    def get_downstream_job_names(self):$/;"	kind:member	line:595
+get_downstream_jobs	jenkinsapi/build.py	/^    def get_downstream_jobs(self):$/;"	kind:member	line:289
+get_downstream_jobs	jenkinsapi/job.py	/^    def get_downstream_jobs(self):$/;"	kind:member	line:581
+get_duration	jenkinsapi/build.py	/^    def get_duration(self):$/;"	kind:member	line:181
+get_executors	jenkinsapi/jenkins.py	/^    def get_executors(self, nodename):$/;"	kind:member	line:366
+get_first_build	jenkinsapi/job.py	/^    def get_first_build(self):$/;"	kind:member	line:355
+get_first_buildnumber	jenkinsapi/job.py	/^    def get_first_buildnumber(self):$/;"	kind:member	line:242
+get_info	jenkinsapi/fingerprint.py	/^    def get_info(self):$/;"	kind:member	line:109
+get_jenkins_obj	jenkinsapi/artifact.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:66
+get_jenkins_obj	jenkinsapi/build.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:387
+get_jenkins_obj	jenkinsapi/credentials.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:46
+get_jenkins_obj	jenkinsapi/executor.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:35
+get_jenkins_obj	jenkinsapi/executors.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:31
+get_jenkins_obj	jenkinsapi/fingerprint.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:33
+get_jenkins_obj	jenkinsapi/jenkins.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:92
+get_jenkins_obj	jenkinsapi/jenkinsbase.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:37
+get_jenkins_obj	jenkinsapi/job.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:76
+get_jenkins_obj	jenkinsapi/label.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:32
+get_jenkins_obj	jenkinsapi/node.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:174
+get_jenkins_obj	jenkinsapi/nodes.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:29
+get_jenkins_obj	jenkinsapi/plugins.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:26
+get_jenkins_obj	jenkinsapi/queue.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:106
+get_jenkins_obj	jenkinsapi/queue.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:31
+get_jenkins_obj	jenkinsapi/result_set.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:24
+get_jenkins_obj	jenkinsapi/view.py	/^    def get_jenkins_obj(self):$/;"	kind:member	line:85
+get_jenkins_obj_from_url	jenkinsapi/jenkins.py	/^    def get_jenkins_obj_from_url(self, url):$/;"	kind:member	line:95
+get_jenkins_obj_from_url	jenkinsapi_tests/unittests/test_view.py	/^        def get_jenkins_obj_from_url(self, url):$/;"	kind:member	line:138
+get_job	jenkinsapi/jenkins.py	/^    def get_job(self, jobname):$/;"	kind:member	line:127
+get_job	jenkinsapi/queue.py	/^    def get_job(self):$/;"	kind:member	line:109
+get_job_dict	jenkinsapi/view.py	/^    def get_job_dict(self):$/;"	kind:member	line:70
+get_job_name	jenkinsapi/queue.py	/^    def get_job_name(self):$/;"	kind:member	line:164
+get_job_url	jenkinsapi/view.py	/^    def get_job_url(self, str_job_name):$/;"	kind:member	line:76
+get_jobs	jenkinsapi/jenkins.py	/^    def get_jobs(self):$/;"	kind:member	line:113
+get_jobs_info	jenkinsapi/jenkins.py	/^    def get_jobs_info(self):$/;"	kind:member	line:119
+get_jobs_list	jenkinsapi/jenkins.py	/^    def get_jobs_list(self):$/;"	kind:member	line:191
+get_label	jenkinsapi/jenkins.py	/^    def get_label(self, label_name):$/;"	kind:member	line:221
+get_labels	jenkinsapi/node.py	/^    def get_labels(self):$/;"	kind:member	line:296
+get_last_build	jenkinsapi/job.py	/^    def get_last_build(self):$/;"	kind:member	line:348
+get_last_build_or_none	jenkinsapi/job.py	/^    def get_last_build_or_none(self):$/;"	kind:member	line:359
+get_last_buildnumber	jenkinsapi/job.py	/^    def get_last_buildnumber(self):$/;"	kind:member	line:266
+get_last_completed_build	jenkinsapi/job.py	/^    def get_last_completed_build(self):$/;"	kind:member	line:368
+get_last_completed_buildnumber	jenkinsapi/job.py	/^    def get_last_completed_buildnumber(self):$/;"	kind:member	line:272
+get_last_failed_buildnumber	jenkinsapi/job.py	/^    def get_last_failed_buildnumber(self):$/;"	kind:member	line:260
+get_last_good_build	jenkinsapi/job.py	/^    def get_last_good_build(self):$/;"	kind:member	line:341
+get_last_good_buildnumber	jenkinsapi/job.py	/^    def get_last_good_buildnumber(self):$/;"	kind:member	line:254
+get_last_stable_build	jenkinsapi/job.py	/^    def get_last_stable_build(self):$/;"	kind:member	line:334
+get_last_stable_buildnumber	jenkinsapi/job.py	/^    def get_last_stable_buildnumber(self):$/;"	kind:member	line:248
+get_latest_build	jenkinsapi/api.py	/^def get_latest_build(jenkinsurl, jobname, username=None, password=None,$/;"	kind:function	line:34
+get_latest_complete_build	jenkinsapi/api.py	/^def get_latest_complete_build(jenkinsurl, jobname,$/;"	kind:function	line:46
+get_latest_test_results	jenkinsapi/api.py	/^def get_latest_test_results(jenkinsurl, jobname, username=None, password=None,$/;"	kind:function	line:22
+get_master_build	jenkinsapi/build.py	/^    def get_master_build(self):$/;"	kind:member	line:275
+get_master_build_number	jenkinsapi/build.py	/^    def get_master_build_number(self):$/;"	kind:member	line:262
+get_master_data	jenkinsapi/jenkins.py	/^    def get_master_data(self):$/;"	kind:member	line:370
+get_master_job	jenkinsapi/build.py	/^    def get_master_job(self):$/;"	kind:member	line:249
+get_master_job_name	jenkinsapi/build.py	/^    def get_master_job_name(self):$/;"	kind:member	line:239
+get_matrix_runs	jenkinsapi/build.py	/^    def get_matrix_runs(self):$/;"	kind:member	line:345
+get_nested_view_dict	jenkinsapi/view.py	/^    def get_nested_view_dict(self):$/;"	kind:member	line:136
+get_nested_view_from_url	jenkinsapi/api.py	/^def get_nested_view_from_url(url, username=None, password=None,$/;"	kind:function	line:172
+get_next_build_number	jenkinsapi/job.py	/^    def get_next_build_number(self):$/;"	kind:member	line:328
+get_node	jenkinsapi/jenkins.py	/^    def get_node(self, nodename):$/;"	kind:member	line:247
+get_node_attributes	jenkinsapi/node.py	/^    def get_node_attributes(self):$/;"	kind:member	line:91
+get_node_url	jenkinsapi/jenkins.py	/^    def get_node_url(self, nodename=""):$/;"	kind:member	line:251
+get_nodes	jenkinsapi/jenkins.py	/^    def get_nodes(self):$/;"	kind:member	line:267
+get_nodes_url	jenkinsapi/jenkins.py	/^    def get_nodes_url(self):$/;"	kind:member	line:102
+get_number	jenkinsapi/build.py	/^    def get_number(self):$/;"	kind:member	line:74
+get_number	jenkinsapi/executor.py	/^    def get_number(self):$/;"	kind:member	line:42
+get_parameters	jenkinsapi/queue.py	/^    def get_parameters(self):$/;"	kind:member	line:115
+get_params	jenkinsapi/build.py	/^    def get_params(self):$/;"	kind:member	line:91
+get_params	jenkinsapi/job.py	/^    def get_params(self):$/;"	kind:member	line:665
+get_params_list	jenkinsapi/job.py	/^    def get_params_list(self):$/;"	kind:member	line:691
+get_plugin_information.py	examples/how_to/get_plugin_information.py	1;"	kind:file	line:1
+get_plugins	jenkinsapi/jenkins.py	/^    def get_plugins(self, depth=1):$/;"	kind:member	line:359
+get_plugins_dict	jenkinsapi/plugins.py	/^    def get_plugins_dict(self):$/;"	kind:member	line:48
+get_plugins_url	jenkinsapi/jenkins.py	/^    def get_plugins_url(self, depth):$/;"	kind:member	line:322
+get_private_key_from_file	examples/how_to/create_credentials.py	/^def get_private_key_from_file():$/;"	kind:function	line:34
+get_progress	jenkinsapi/executor.py	/^    def get_progress(self):$/;"	kind:member	line:38
+get_queue	jenkinsapi/jenkins.py	/^    def get_queue(self):$/;"	kind:member	line:263
+get_queue_item	jenkinsapi/job.py	/^    def get_queue_item(self):$/;"	kind:member	line:446
+get_queue_item_url	jenkinsapi/queue.py	/^    def get_queue_item_url(self, item):$/;"	kind:member	line:74
+get_queue_items_for_job	jenkinsapi/queue.py	/^    def get_queue_items_for_job(self, job_name):$/;"	kind:member	line:71
+get_queue_url	jenkinsapi/jenkins.py	/^    def get_queue_url(self):$/;"	kind:member	line:259
+get_rename_url	jenkinsapi/mutable_jenkins_thing.py	/^    def get_rename_url(self):$/;"	kind:member	line:15
+get_request_dict	jenkinsapi/utils/krb_requester.py	/^    def get_request_dict($/;"	kind:member	line:31
+get_request_dict	jenkinsapi/utils/requester.py	/^    def get_request_dict($/;"	kind:member	line:50
+get_result_url	jenkinsapi/build.py	/^    def get_result_url(self):$/;"	kind:member	line:390
+get_resultset	jenkinsapi/build.py	/^    def get_resultset(self):$/;"	kind:member	line:397
+get_revision	jenkinsapi/build.py	/^    def get_revision(self):$/;"	kind:member	line:83
+get_revision_branch	jenkinsapi/build.py	/^    def get_revision_branch(self):$/;"	kind:member	line:87
+get_revision_dict	jenkinsapi/job.py	/^    def get_revision_dict(self):$/;"	kind:member	line:309
+get_scm_branch	jenkinsapi/job.py	/^    def get_scm_branch(self):$/;"	kind:member	line:503
+get_scm_type	jenkinsapi/job.py	/^    def get_scm_type(self):$/;"	kind:member	line:478
+get_scm_url	jenkinsapi/job.py	/^    def get_scm_url(self):$/;"	kind:member	line:491
+get_slave	jenkinsapi/build.py	/^    def get_slave(self):$/;"	kind:member	line:80
+get_status	jenkinsapi/build.py	/^    def get_status(self):$/;"	kind:member	line:77
+get_tied_job_names	jenkinsapi/label.py	/^    def get_tied_job_names(self):$/;"	kind:member	line:46
+get_tied_jobs	jenkinsapi/label.py	/^    def get_tied_jobs(self):$/;"	kind:member	line:38
+get_timestamp	jenkinsapi/build.py	/^    def get_timestamp(self):$/;"	kind:member	line:443
+get_upstream_build	jenkinsapi/build.py	/^    def get_upstream_build(self):$/;"	kind:member	line:228
+get_upstream_build_number	jenkinsapi/build.py	/^    def get_upstream_build_number(self):$/;"	kind:member	line:218
+get_upstream_job	jenkinsapi/build.py	/^    def get_upstream_job(self):$/;"	kind:member	line:208
+get_upstream_job_name	jenkinsapi/build.py	/^    def get_upstream_job_name(self):$/;"	kind:member	line:198
+get_upstream_job_names	jenkinsapi/job.py	/^    def get_upstream_job_names(self):$/;"	kind:member	line:608
+get_upstream_jobs	jenkinsapi/job.py	/^    def get_upstream_jobs(self):$/;"	kind:member	line:621
+get_url	jenkinsapi/utils/requester.py	/^    def get_url(self, url, params=None, headers=None, allow_redirects=True,$/;"	kind:member	line:96
+get_version_info_from_last_good_build.py	examples/how_to/get_version_info_from_last_good_build.py	1;"	kind:file	line:1
+get_view_by_url	jenkinsapi/jenkins.py	/^    def get_view_by_url(self, str_view_url):$/;"	kind:member	line:210
+get_view_from_url	jenkinsapi/api.py	/^def get_view_from_url(url, username=None, password=None, ssl_verify=True):$/;"	kind:function	line:159
+get_view_from_url	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi.api import get_view_from_url$/;"	kind:namespace	line:8
+grab_artifact	jenkinsapi/api.py	/^def grab_artifact(jenkinsurl, jobid, artifactid, targetdir,$/;"	kind:function	line:114
+gzip	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import gzip$/;"	kind:namespace	line:7
+h	examples/low_level/copy_a_job.py	/^h = {'Content-Type': 'application\/x-www-form-urlencoded'}$/;"	kind:variable	line:22
+has_job	jenkinsapi/jenkins.py	/^    def has_job(self, jobname):$/;"	kind:member	line:135
+has_job	jenkinsapi_tests/unittests/test_view.py	/^        def has_job(self, job_name):$/;"	kind:member	line:135
+has_node	jenkinsapi/jenkins.py	/^    def has_node(self, nodename):$/;"	kind:member	line:275
+has_params	jenkinsapi/job.py	/^    def has_params(self):$/;"	kind:member	line:697
+has_plugin	jenkinsapi/jenkins.py	/^    def has_plugin(self, plugin_name):$/;"	kind:member	line:363
+has_queued_build	jenkinsapi/job.py	/^    def has_queued_build(self, build_params):$/;"	kind:member	line:709
+has_resultset	jenkinsapi/build.py	/^    def has_resultset(self):$/;"	kind:member	line:414
+hashlib	jenkinsapi/artifact.py	/^import hashlib$/;"	kind:namespace	line:13
+hashlib	jenkinsapi_tests/unittests/test_fingerprint.py	/^import hashlib$/;"	kind:namespace	line:2
+headers	examples/low_level/create_a_view_low_level.py	/^headers = {'Content-Type': 'application\/x-www-form-urlencoded'}$/;"	kind:variable	line:13
+headers	jenkinsapi_tests/unittests/test_jenkins.py	/^        headers = {}$/;"	kind:variable	line:189
+headers	jenkinsapi_tests/unittests/test_jenkins.py	/^        headers = {}$/;"	kind:variable	line:205
+httpd	examples/low_level/post_watcher.py	/^httpd = socketserver.TCPServer(("", PORT), Handler)$/;"	kind:variable	line:53
+httpd	jenkinsapi_utils/simple_post_logger.py	/^httpd = SocketServer.TCPServer(("", PORT), Handler)$/;"	kind:variable	line:31
+identifier	jenkinsapi/result.py	/^    def identifier(self):$/;"	kind:member	line:24
+include_package_data	setup.py	/^    include_package_data=False,$/;"	kind:variable	line:51
+install_artifacts	jenkinsapi/api.py	/^def install_artifacts(artifacts, dirstruct, installdir, basestaticurl,$/;"	kind:function	line:185
+install_plugin	jenkinsapi/jenkins.py	/^    def install_plugin(self, plugin):$/;"	kind:member	line:326
+install_plugin	jenkinsapi_utils/jenkins_launcher.py	/^    def install_plugin(self, hpi_url, plugin_dir):$/;"	kind:member	line:130
+install_plugins	jenkinsapi/jenkins.py	/^    def install_plugins(self, plugin_list, restart=False):$/;"	kind:member	line:339
+install_plugins	jenkinsapi_utils/jenkins_launcher.py	/^    def install_plugins(self):$/;"	kind:member	line:120
+install_requires	setup.py	/^    install_requires=install_requires,$/;"	kind:variable	line:52
+install_requires	setup.py	/^install_requires = [$/;"	kind:variable	line:28
+invoke	jenkinsapi/job.py	/^    def invoke(self, securitytoken=None, block=False,$/;"	kind:member	line:175
+invokejob	jenkinsapi/command_line/jenkins_invoke.py	/^    def invokejob(self, jobname, block, token):$/;"	kind:member	line:67
+is_enabled	jenkinsapi/job.py	/^    def is_enabled(self):$/;"	kind:member	line:634
+is_good	jenkinsapi/build.py	/^    def is_good(self):$/;"	kind:member	line:368
+is_idle	jenkinsapi/executor.py	/^    def is_idle(self):$/;"	kind:member	line:48
+is_idle	jenkinsapi/node.py	/^    def is_idle(self):$/;"	kind:member	line:189
+is_jnlpagent	jenkinsapi/node.py	/^    def is_jnlpagent(self):$/;"	kind:member	line:186
+is_online	jenkinsapi/label.py	/^    def is_online(self):$/;"	kind:member	line:35
+is_online	jenkinsapi/node.py	/^    def is_online(self):$/;"	kind:member	line:180
+is_queued	jenkinsapi/job.py	/^    def is_queued(self):$/;"	kind:member	line:442
+is_queued_or_running	jenkinsapi/job.py	/^    def is_queued_or_running(self):$/;"	kind:member	line:439
+is_running	jenkinsapi/build.py	/^    def is_running(self):$/;"	kind:member	line:357
+is_running	jenkinsapi/job.py	/^    def is_running(self):$/;"	kind:member	line:455
+is_running	jenkinsapi/queue.py	/^    def is_running(self):$/;"	kind:member	line:150
+is_temporarily_offline	jenkinsapi/node.py	/^    def is_temporarily_offline(self):$/;"	kind:member	line:183
+items	jenkinsapi/jenkins.py	/^    def items(self):$/;"	kind:member	line:184
+items	jenkinsapi/result_set.py	/^    def items(self):$/;"	kind:member	line:37
+items	jenkinsapi/view.py	/^    def items(self):$/;"	kind:member	line:62
+iteritems	jenkinsapi/credentials.py	/^    def iteritems(self):$/;"	kind:member	line:62
+iteritems	jenkinsapi/jenkins.py	/^    def iteritems(self):$/;"	kind:member	line:197
+iteritems	jenkinsapi/jobs.py	/^    def iteritems(self):$/;"	kind:member	line:87
+iteritems	jenkinsapi/nodes.py	/^    def iteritems(self):$/;"	kind:member	line:45
+iteritems	jenkinsapi/plugins.py	/^    def iteritems(self):$/;"	kind:member	line:37
+iteritems	jenkinsapi/queue.py	/^    def iteritems(self):$/;"	kind:member	line:34
+iteritems	jenkinsapi/result_set.py	/^    def iteritems(self):$/;"	kind:member	line:40
+iteritems	jenkinsapi/view.py	/^    def iteritems(self):$/;"	kind:member	line:53
+iteritems	jenkinsapi/views.py	/^    def iteritems(self):$/;"	kind:member	line:62
+iterkeys	jenkinsapi/credentials.py	/^    def iterkeys(self):$/;"	kind:member	line:56
+iterkeys	jenkinsapi/jenkins.py	/^    def iterkeys(self):$/;"	kind:member	line:194
+iterkeys	jenkinsapi/jobs.py	/^    def iterkeys(self):$/;"	kind:member	line:100
+iterkeys	jenkinsapi/nodes.py	/^    def iterkeys(self):$/;"	kind:member	line:38
+iterkeys	jenkinsapi/queue.py	/^    def iterkeys(self):$/;"	kind:member	line:41
+iterkeys	jenkinsapi/views.py	/^    def iterkeys(self):$/;"	kind:member	line:79
+itervalues	jenkinsapi/jobs.py	/^    def itervalues(self):$/;"	kind:member	line:109
+itervalues	jenkinsapi/queue.py	/^    def itervalues(self):$/;"	kind:member	line:45
+j	examples/how_to/create_nested_views.py	/^j = jenkins.create_job(jobname=job_name, xml=xml)$/;"	kind:variable	line:22
+j	examples/how_to/delete_all_the_nodes_except_master.py	/^j = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:10
+j	examples/low_level/copy_a_job.py	/^j = J.create_job(jobname=jobName, xml=xml)$/;"	kind:variable	line:19
+jenkins	examples/how_to/create_a_job.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:8
+jenkins	examples/how_to/create_credentials.py	/^jenkins = Jenkins(jenkins_url)$/;"	kind:variable	line:14
+jenkins	examples/how_to/create_nested_views.py	/^jenkins = Jenkins(jenkins_url)$/;"	kind:variable	line:18
+jenkins	examples/how_to/create_slave.py	/^jenkins = Jenkins(jenkins_url,$/;"	kind:variable	line:18
+jenkins	examples/how_to/create_views.py	/^jenkins = Jenkins(jenkins_url, lazy=True)$/;"	kind:variable	line:13
+jenkins	examples/how_to/get_config.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:7
+jenkins	examples/how_to/get_plugin_information.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:9
+jenkins	examples/how_to/get_version_info_from_last_good_build.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:9
+jenkins	examples/how_to/query_a_build.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:8
+jenkins	examples/how_to/start_parameterized_build.py	/^jenkins = Jenkins('http:\/\/localhost:8080')$/;"	kind:variable	line:8
+jenkins	examples/low_level/login_with_auth.py	/^from jenkinsapi import jenkins$/;"	kind:namespace	line:6
+jenkins	jenkinsapi/command_line/jenkins_invoke.py	/^from jenkinsapi import jenkins$/;"	kind:namespace	line:9
+jenkins	jenkinsapi_tests/systests/conftest.py	/^def jenkins(launched_jenkins):$/;"	kind:function	line:67
+jenkins	jenkinsapi_tests/unittests/test_build.py	/^def jenkins(mocker):$/;"	kind:function	line:10
+jenkins	jenkinsapi_tests/unittests/test_build_scm_git.py	/^def jenkins(mocker):$/;"	kind:function	line:9
+jenkins	jenkinsapi_tests/unittests/test_executors.py	/^def jenkins(monkeypatch):$/;"	kind:function	line:255
+jenkins	jenkinsapi_tests/unittests/test_fingerprint.py	/^def jenkins(monkeypatch):$/;"	kind:function	line:11
+jenkins	jenkinsapi_tests/unittests/test_jenkins.py	/^def jenkins(monkeypatch):$/;"	kind:function	line:24
+jenkins	jenkinsapi_tests/unittests/test_job.py	/^def jenkins(monkeypatch):$/;"	kind:function	line:14
+jenkins.py	jenkinsapi/jenkins.py	1;"	kind:file	line:1
+jenkins_invoke.py	jenkinsapi/command_line/jenkins_invoke.py	1;"	kind:file	line:1
+jenkins_launcher.py	jenkinsapi_utils/jenkins_launcher.py	1;"	kind:file	line:1
+jenkins_url	examples/how_to/create_credentials.py	/^jenkins_url = "http:\/\/localhost:8080\/"$/;"	kind:variable	line:12
+jenkins_url	examples/how_to/create_nested_views.py	/^jenkins_url = "http:\/\/127.0.0.1:8080\/"$/;"	kind:variable	line:17
+jenkins_url	examples/how_to/create_slave.py	/^jenkins_url = "http:\/\/localhost:8080\/"$/;"	kind:variable	line:14
+jenkins_url	examples/how_to/create_views.py	/^jenkins_url = "http:\/\/localhost:8080\/"$/;"	kind:variable	line:11
+jenkinsapi	jenkinsapi_tests/unittests/test_misc.py	/^import jenkinsapi$/;"	kind:namespace	line:1
+jenkinsapi_version.py	jenkinsapi/command_line/jenkinsapi_version.py	1;"	kind:file	line:1
+jenkinsbase	jenkinsapi_tests/unittests/test_job_folders.py	/^def jenkinsbase():$/;"	kind:function	line:7
+jenkinsbase.py	jenkinsapi/jenkinsbase.py	1;"	kind:file	line:1
+jenkinsurl	examples/how_to/search_artifact_by_regexp.py	/^jenkinsurl = "http:\/\/localhost:8080"$/;"	kind:variable	line:8
+jenkinsurl	examples/how_to/search_artifacts.py	/^jenkinsurl = "http:\/\/localhost:8080"$/;"	kind:variable	line:7
+jl	jenkinsapi_utils/jenkins_launcher.py	/^    jl = JenkinsLancher($/;"	kind:variable	line:238
+job	examples/how_to/create_a_job.py	/^job = jenkins.create_job(jobname=job_name, xml=xml)$/;"	kind:variable	line:14
+job	examples/how_to/get_version_info_from_last_good_build.py	/^job = jenkins[job_name]$/;"	kind:variable	line:10
+job	examples/how_to/query_a_build.py	/^job = jenkins.get_job("foo")$/;"	kind:variable	line:12
+job	examples/how_to/start_parameterized_build.py	/^job = jenkins['foo']$/;"	kind:variable	line:18
+job	jenkinsapi_tests/unittests/test_build.py	/^def job(monkeypatch, jenkins):$/;"	kind:function	line:15
+job	jenkinsapi_tests/unittests/test_build_scm_git.py	/^def job(monkeypatch, jenkins):$/;"	kind:function	line:14
+job	jenkinsapi_tests/unittests/test_job.py	/^def job(jenkins, monkeypatch):$/;"	kind:function	line:25
+job.py	jenkinsapi/job.py	1;"	kind:file	line:1
+jobName	examples/how_to/get_config.py	/^jobName = jenkins.keys()[0]  # get the first job$/;"	kind:variable	line:8
+jobName	examples/low_level/copy_a_job.py	/^jobName = random_string()$/;"	kind:variable	line:12
+jobName2	examples/low_level/copy_a_job.py	/^jobName2 = '%s_2' % jobName$/;"	kind:variable	line:13
+job_absent	jenkinsapi_tests/systests/test_jenkins.py	/^def job_absent(jenkins, name):$/;"	kind:function	line:22
+job_configs.py	jenkinsapi_tests/systests/job_configs.py	1;"	kind:file	line:1
+job_name	examples/how_to/create_a_job.py	/^job_name = 'foo_job2'$/;"	kind:variable	line:9
+job_name	examples/how_to/create_nested_views.py	/^job_name = 'foo_job2'$/;"	kind:variable	line:20
+job_name	examples/how_to/create_views.py	/^job_name = 'foo_job2'$/;"	kind:variable	line:35
+job_name	examples/how_to/get_version_info_from_last_good_build.py	/^job_name = 'foo'$/;"	kind:variable	line:8
+job_present	jenkinsapi_tests/systests/test_jenkins.py	/^def job_present(jenkins, name):$/;"	kind:function	line:15
+job_tree	jenkinsapi_tests/unittests/test_job.py	/^def job_tree(jenkins, monkeypatch):$/;"	kind:function	line:37
+job_tree_empty	jenkinsapi_tests/unittests/test_job.py	/^def job_tree_empty(jenkins, monkeypatch):$/;"	kind:function	line:52
+jobid	examples/how_to/search_artifact_by_regexp.py	/^jobid = "foo"$/;"	kind:variable	line:9
+jobid	examples/how_to/search_artifacts.py	/^jobid = "foo"$/;"	kind:variable	line:8
+jobname	examples/how_to/add_command.py	/^jobname = 'foo_job'$/;"	kind:variable	line:29
+jobs	jenkinsapi/jenkins.py	/^    def jobs(self):$/;"	kind:member	line:107
+jobs.py	jenkinsapi/jobs.py	1;"	kind:file	line:1
+json	examples/low_level/create_a_view_low_level.py	/^import json$/;"	kind:namespace	line:6
+json	examples/low_level/example_param_build.py	/^import json$/;"	kind:namespace	line:3
+json	jenkinsapi/job.py	/^import json$/;"	kind:namespace	line:4
+json	jenkinsapi/node.py	/^import json$/;"	kind:namespace	line:4
+json	jenkinsapi/views.py	/^import json$/;"	kind:namespace	line:6
+json	jenkinsapi_tests/systests/test_crumbs_requester.py	/^import json$/;"	kind:namespace	line:2
+json	jenkinsapi_tests/unittests/test_job.py	/^import json$/;"	kind:namespace	line:4
+json_equal	jenkinsapi_tests/unittests/test_job.py	/^def json_equal(json_a, json_b):$/;"	kind:function	line:258
+keys	jenkinsapi/credentials.py	/^    def keys(self):$/;"	kind:member	line:59
+keys	jenkinsapi/jenkins.py	/^    def keys(self):$/;"	kind:member	line:200
+keys	jenkinsapi/jobs.py	/^    def keys(self):$/;"	kind:member	line:118
+keys	jenkinsapi/nodes.py	/^    def keys(self):$/;"	kind:member	line:42
+keys	jenkinsapi/plugins.py	/^    def keys(self):$/;"	kind:member	line:32
+keys	jenkinsapi/queue.py	/^    def keys(self):$/;"	kind:member	line:49
+keys	jenkinsapi/result_set.py	/^    def keys(self):$/;"	kind:member	line:34
+keys	jenkinsapi/view.py	/^    def keys(self):$/;"	kind:member	line:50
+keys	jenkinsapi/views.py	/^    def keys(self):$/;"	kind:member	line:87
+krb_requester.py	jenkinsapi/utils/krb_requester.py	1;"	kind:file	line:1
+label	jenkinsapi_tests/unittests/test_label.py	/^def label(monkeypatch, mocker):$/;"	kind:function	line:69
+label.py	jenkinsapi/label.py	1;"	kind:file	line:1
+launched_jenkins	jenkinsapi_tests/systests/conftest.py	/^def launched_jenkins():$/;"	kind:function	line:51
+level	jenkinsapi_tests/conftest.py	/^        else os.environ['LOG_LEVEL'].upper().strip()$/;"	kind:variable	line:14
+level	jenkinsapi_tests/conftest.py	/^    level=logging.INFO$/;"	kind:variable	line:7
+lgb	examples/how_to/get_version_info_from_last_good_build.py	/^lgb = job.get_last_good_build()$/;"	kind:variable	line:11
+license	setup.py	/^    license='MIT',$/;"	kind:variable	line:59
+likely_stuck	jenkinsapi/executor.py	/^    def likely_stuck(self):$/;"	kind:member	line:54
+load_config	jenkinsapi/job.py	/^    def load_config(self):$/;"	kind:member	line:475
+load_config	jenkinsapi/node.py	/^    def load_config(self):$/;"	kind:member	line:281
+log	jenkinsapi/api.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:19
+log	jenkinsapi/artifact.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:18
+log	jenkinsapi/build.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:29
+log	jenkinsapi/command_line/jenkins_invoke.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:11
+log	jenkinsapi/credential.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:6
+log	jenkinsapi/credentials.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:16
+log	jenkinsapi/executor.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:8
+log	jenkinsapi/executors.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:10
+log	jenkinsapi/fingerprint.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:13
+log	jenkinsapi/jenkins.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:24
+log	jenkinsapi/job.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:33
+log	jenkinsapi/jobs.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:9
+log	jenkinsapi/label.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:7
+log	jenkinsapi/node.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:14
+log	jenkinsapi/nodes.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:13
+log	jenkinsapi/plugins.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:12
+log	jenkinsapi/queue.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:10
+log	jenkinsapi/view.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:12
+log	jenkinsapi/views.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:10
+log	jenkinsapi_tests/systests/conftest.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:7
+log	jenkinsapi_tests/systests/test_credentials.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:13
+log	jenkinsapi_tests/systests/test_crumbs_requester.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:14
+log	jenkinsapi_tests/systests/test_downstream_upstream.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:9
+log	jenkinsapi_tests/systests/test_executors.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:9
+log	jenkinsapi_tests/systests/test_invocation.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:15
+log	jenkinsapi_tests/systests/test_nodes.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:10
+log	jenkinsapi_tests/systests/test_queue.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:12
+log	jenkinsapi_tests/systests/test_restart.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:12
+log	jenkinsapi_tests/systests/test_views.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:13
+log	jenkinsapi_utils/jenkins_launcher.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:20
+log_level	examples/how_to/create_credentials.py	/^log_level = getattr(logging, 'DEBUG')$/;"	kind:variable	line:8
+log_level	examples/how_to/create_nested_views.py	/^log_level = getattr(logging, 'DEBUG')$/;"	kind:variable	line:13
+log_level	examples/how_to/create_slave.py	/^log_level = getattr(logging, 'DEBUG')$/;"	kind:variable	line:10
+logger	examples/how_to/create_credentials.py	/^logger = logging.getLogger()$/;"	kind:variable	line:10
+logger	examples/how_to/create_nested_views.py	/^logger = logging.getLogger()$/;"	kind:variable	line:15
+logger	examples/how_to/create_slave.py	/^logger = logging.getLogger()$/;"	kind:variable	line:12
+logger	examples/how_to/create_views.py	/^logger = logging.getLogger()$/;"	kind:variable	line:9
+logger	jenkinsapi/utils/crumb_requester.py	/^logger = logging.getLogger(__name__)$/;"	kind:variable	line:7
+logger	jenkinsapi_tests/conftest.py	/^    logger = logging.getLogger(module_name)$/;"	kind:variable	line:12
+logging	examples/how_to/create_credentials.py	/^import logging$/;"	kind:namespace	line:4
+logging	examples/how_to/create_nested_views.py	/^import logging$/;"	kind:namespace	line:8
+logging	examples/how_to/create_slave.py	/^import logging$/;"	kind:namespace	line:4
+logging	examples/how_to/create_views.py	/^import logging$/;"	kind:namespace	line:4
+logging	examples/how_to/delete_all_the_nodes_except_master.py	/^import logging$/;"	kind:namespace	line:5
+logging	examples/low_level/post_watcher.py	/^import logging$/;"	kind:namespace	line:21
+logging	jenkinsapi/api.py	/^import logging$/;"	kind:namespace	line:9
+logging	jenkinsapi/artifact.py	/^import logging$/;"	kind:namespace	line:12
+logging	jenkinsapi/build.py	/^import logging$/;"	kind:namespace	line:12
+logging	jenkinsapi/command_line/jenkins_invoke.py	/^import logging$/;"	kind:namespace	line:7
+logging	jenkinsapi/credential.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi/credentials.py	/^import logging$/;"	kind:namespace	line:6
+logging	jenkinsapi/executor.py	/^import logging$/;"	kind:namespace	line:6
+logging	jenkinsapi/executors.py	/^import logging$/;"	kind:namespace	line:6
+logging	jenkinsapi/fingerprint.py	/^import logging$/;"	kind:namespace	line:11
+logging	jenkinsapi/jenkins.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi/jenkinsbase.py	/^import logging$/;"	kind:namespace	line:7
+logging	jenkinsapi/job.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi/jobs.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi/label.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi/node.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi/nodes.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi/plugins.py	/^import logging$/;"	kind:namespace	line:6
+logging	jenkinsapi/queue.py	/^import logging$/;"	kind:namespace	line:7
+logging	jenkinsapi/utils/crumb_requester.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi/view.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi/views.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_tests/conftest.py	/^import logging$/;"	kind:namespace	line:2
+logging	jenkinsapi_tests/systests/conftest.py	/^import logging$/;"	kind:namespace	line:2
+logging	jenkinsapi_tests/systests/test_credentials.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi_tests/systests/test_crumbs_requester.py	/^import logging$/;"	kind:namespace	line:3
+logging	jenkinsapi_tests/systests/test_downstream_upstream.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_tests/systests/test_executors.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_tests/systests/test_invocation.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_tests/systests/test_nodes.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi_tests/systests/test_queue.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_tests/systests/test_restart.py	/^import logging$/;"	kind:namespace	line:8
+logging	jenkinsapi_tests/systests/test_views.py	/^import logging$/;"	kind:namespace	line:4
+logging	jenkinsapi_utils/jenkins_launcher.py	/^import logging$/;"	kind:namespace	line:5
+logging	jenkinsapi_utils/simple_post_logger.py	/^import logging$/;"	kind:namespace	line:5
+login_with_auth.py	examples/low_level/login_with_auth.py	1;"	kind:file	line:1
+long_description	setup.py	/^    long_description=DESCRIPTION,$/;"	kind:variable	line:58
+main	jenkinsapi/command_line/jenkins_invoke.py	/^    def main(cls):$/;"	kind:member	line:41
+main	jenkinsapi/command_line/jenkins_invoke.py	/^def main():$/;"	kind:function	line:75
+main	jenkinsapi/command_line/jenkinsapi_version.py	/^def main():$/;"	kind:function	line:7
+mjn	examples/how_to/query_a_build.py	/^mjn = build.get_master_job_name()$/;"	kind:variable	line:16
+mk_json_from_build_parameters	jenkinsapi/job.py	/^    def mk_json_from_build_parameters(build_params, file_params=None):$/;"	kind:member	line:166
+mkparser	jenkinsapi/command_line/jenkins_invoke.py	/^    def mkparser(cls):$/;"	kind:member	line:21
+mock	jenkinsapi_tests/unittests/test_executors.py	/^import mock$/;"	kind:namespace	line:2
+mock	jenkinsapi_tests/unittests/test_job.py	/^import mock$/;"	kind:namespace	line:3
+mock	jenkinsapi_tests/unittests/test_job_folders.py	/^import mock$/;"	kind:namespace	line:2
+mock	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^import mock$/;"	kind:namespace	line:1
+mock	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^import mock$/;"	kind:namespace	line:1
+mock	jenkinsapi_tests/unittests/test_plugins.py	/^import mock$/;"	kind:namespace	line:4
+mock	jenkinsapi_tests/unittests/test_result_set.py	/^import mock$/;"	kind:namespace	line:1
+mock	jenkinsapi_tests/unittests/test_view.py	/^import mock$/;"	kind:namespace	line:1
+modify_scm_branch	jenkinsapi/job.py	/^    def modify_scm_branch(self, new_branch, old_branch=None):$/;"	kind:member	line:513
+modify_scm_url	jenkinsapi/job.py	/^    def modify_scm_url(self, new_source_url, old_source_url=None):$/;"	kind:member	line:537
+modules	jenkinsapi_tests/conftest.py	/^modules = ['requests.packages.urllib3.connectionpool']$/;"	kind:variable	line:10
+moves	jenkinsapi/api.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:12
+moves	jenkinsapi/jenkins.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+moves	jenkinsapi/job.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:7
+moves	jenkinsapi/utils/requester.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+mutable_jenkins_thing.py	jenkinsapi/mutable_jenkins_thing.py	1;"	kind:file	line:1
+my_job	examples/how_to/create_a_job.py	/^my_job = jenkins[job_name]$/;"	kind:variable	line:17
+my_job	examples/how_to/create_views.py	/^my_job = jenkins.create_job(jobname=job_name, xml=xml)$/;"	kind:variable	line:38
+my_node	examples/how_to/create_slave.py	/^my_node = jenkins.nodes['My new SSH node']$/;"	kind:variable	line:77
+my_private_key	examples/how_to/create_credentials.py	/^my_private_key = '\/home\/jenkins\/.ssh\/special_key'$/;"	kind:variable	line:49
+my_private_key	examples/how_to/create_credentials.py	/^my_private_key = get_private_key_from_file()$/;"	kind:variable	line:37
+my_view	examples/how_to/create_views.py	/^my_view = jenkins.views.create(test_view_name)$/;"	kind:variable	line:32
+name	jenkinsapi/build.py	/^    def name(self):$/;"	kind:member	line:68
+name	jenkinsapi/queue.py	/^    def name(self):$/;"	kind:member	line:99
+name	jenkinsapi/result_set.py	/^    def name(self):$/;"	kind:member	line:31
+name	setup.py	/^    name=PROJECT_NAME.lower(),$/;"	kind:variable	line:39
+needs_encoding	jenkinsapi_utils/compat.py	/^def needs_encoding(data):$/;"	kind:function	line:7
+new_conf	examples/how_to/add_command.py	/^new_conf = new_job.get_config()$/;"	kind:variable	line:31
+new_jnlp_node	examples/how_to/create_slave.py	/^new_jnlp_node = jenkins.nodes.create_node('My new webstart node', node_dict)$/;"	kind:variable	line:30
+new_job	examples/how_to/add_command.py	/^new_job = J.create_job(jobname, EMPTY_JOB_CONFIG)$/;"	kind:variable	line:30
+new_ssh_node	examples/how_to/create_slave.py	/^new_ssh_node = jenkins.nodes.create_node('My new SSH node', node_dict)$/;"	kind:variable	line:64
+new_view	examples/how_to/create_views.py	/^    new_view = jenkins.views.create(test_view_name)$/;"	kind:variable	line:21
+node	jenkinsapi_tests/unittests/test_node.py	/^def node(monkeypatch, mocker):$/;"	kind:function	line:42
+node.py	jenkinsapi/node.py	1;"	kind:file	line:1
+node_dict	examples/how_to/create_slave.py	/^node_dict = {$/;"	kind:variable	line:23
+node_dict	examples/how_to/create_slave.py	/^node_dict = {$/;"	kind:variable	line:32
+nodes	jenkinsapi/jenkins.py	/^    def nodes(self):$/;"	kind:member	line:272
+nodes	jenkinsapi_tests/unittests/test_nodes.py	/^def nodes(monkeypatch):$/;"	kind:function	line:192
+nodes.py	jenkinsapi/nodes.py	1;"	kind:file	line:1
+optparse	jenkinsapi/command_line/jenkins_invoke.py	/^import optparse$/;"	kind:namespace	line:8
+os	jenkinsapi/api.py	/^import os$/;"	kind:namespace	line:7
+os	jenkinsapi/artifact.py	/^import os$/;"	kind:namespace	line:11
+os	jenkinsapi/command_line/jenkins_invoke.py	/^import os$/;"	kind:namespace	line:5
+os	jenkinsapi_tests/conftest.py	/^import os$/;"	kind:namespace	line:1
+os	jenkinsapi_tests/systests/conftest.py	/^import os$/;"	kind:namespace	line:1
+os	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import os$/;"	kind:namespace	line:4
+os	jenkinsapi_utils/jenkins_launcher.py	/^import os$/;"	kind:namespace	line:1
+os	setup.py	/^import os$/;"	kind:namespace	line:1
+packages	setup.py	/^    packages=[$/;"	kind:variable	line:43
+params	examples/how_to/start_parameterized_build.py	/^params = {'VERSION': '1.2.3', 'PYTHON_VER': '2.7'}$/;"	kind:variable	line:10
+params	examples/low_level/create_a_view_low_level.py	/^params = {}  # {'name': str_view_name}$/;"	kind:variable	line:12
+password	examples/how_to/create_slave.py	/^password = "default_password"$/;"	kind:variable	line:16
+pkg_resources	jenkinsapi/__init__.py	/^    import pkg_resources$/;"	kind:namespace	line:68
+plugin	examples/how_to/get_plugin_information.py	/^plugin = jenkins.get_plugins()[plugin_name]$/;"	kind:variable	line:10
+plugin.py	jenkinsapi/plugin.py	1;"	kind:file	line:1
+plugin_name	examples/how_to/get_plugin_information.py	/^plugin_name = 'subversion'$/;"	kind:variable	line:8
+plugins	jenkinsapi/jenkins.py	/^    def plugins(self):$/;"	kind:member	line:356
+plugins.py	jenkinsapi/plugins.py	1;"	kind:file	line:1
+poll	jenkinsapi/jenkinsbase.py	/^    def poll(self, tree=None):$/;"	kind:member	line:56
+poll	jenkinsapi/job.py	/^    def poll(self, tree=None):$/;"	kind:member	line:91
+poll	jenkinsapi/jobs.py	/^    def poll(self, tree='jobs[name,color,url]'):$/;"	kind:member	line:36
+poll	jenkinsapi/views.py	/^    def poll(self, tree=None):$/;"	kind:member	line:31
+posixpath	jenkinsapi_utils/jenkins_launcher.py	/^import posixpath$/;"	kind:namespace	line:8
+post_and_confirm_status	jenkinsapi/utils/requester.py	/^    def post_and_confirm_status($/;"	kind:member	line:122
+post_url	jenkinsapi/utils/crumb_requester.py	/^    def post_url(self, url, params=None, data=None, files=None,$/;"	kind:member	line:19
+post_url	jenkinsapi/utils/requester.py	/^    def post_url(self, url, params=None, data=None, files=None,$/;"	kind:member	line:106
+post_watcher.py	examples/low_level/post_watcher.py	1;"	kind:file	line:1
+post_xml_and_confirm_status	jenkinsapi/utils/requester.py	/^    def post_xml_and_confirm_status($/;"	kind:member	line:116
+pprint	jenkinsapi/jenkinsbase.py	/^    def pprint(self):$/;"	kind:member	line:88
+pprint	jenkinsapi/jenkinsbase.py	/^import pprint$/;"	kind:namespace	line:6
+print_function	examples/how_to/add_command.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/create_a_job.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/create_nested_views.py	/^from __future__ import print_function$/;"	kind:namespace	line:7
+print_function	examples/how_to/delete_all_the_nodes_except_master.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/get_config.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/get_plugin_information.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/get_version_info_from_last_good_build.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/query_a_build.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/search_artifact_by_regexp.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/search_artifacts.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/how_to/start_parameterized_build.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/low_level/copy_a_job.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	examples/low_level/create_a_view_low_level.py	/^from __future__ import print_function$/;"	kind:namespace	line:5
+print_function	examples/low_level/example_param_build.py	/^from __future__ import print_function$/;"	kind:namespace	line:1
+print_function	examples/low_level/login_with_auth.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	jenkinsapi/plugins.py	/^from __future__ import print_function$/;"	kind:namespace	line:4
+print_function	jenkinsapi_tests/test_utils/random_strings.py	/^from __future__ import print_function$/;"	kind:namespace	line:1
+print_function	jenkinsapi_tests/unittests/test_requester.py	/^from __future__ import print_function$/;"	kind:namespace	line:1
+print_function	jenkinsapi_utils/simple_post_logger.py	/^from __future__ import print_function$/;"	kind:namespace	line:1
+process_job_folder	jenkinsapi/jenkinsbase.py	/^    def process_job_folder(self, folder, folder_path):$/;"	kind:member	line:102
+pytest	jenkinsapi_tests/systests/conftest.py	/^import pytest$/;"	kind:namespace	line:3
+pytest	jenkinsapi_tests/systests/test_credentials.py	/^import pytest$/;"	kind:namespace	line:5
+pytest	jenkinsapi_tests/systests/test_crumbs_requester.py	/^import pytest$/;"	kind:namespace	line:4
+pytest	jenkinsapi_tests/systests/test_downstream_upstream.py	/^import pytest$/;"	kind:namespace	line:6
+pytest	jenkinsapi_tests/systests/test_invocation.py	/^import pytest$/;"	kind:namespace	line:6
+pytest	jenkinsapi_tests/systests/test_jenkins.py	/^import pytest$/;"	kind:namespace	line:4
+pytest	jenkinsapi_tests/systests/test_nodes.py	/^import pytest$/;"	kind:namespace	line:5
+pytest	jenkinsapi_tests/systests/test_restart.py	/^import pytest$/;"	kind:namespace	line:9
+pytest	jenkinsapi_tests/unittests/test_artifact.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_build.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_build_scm_git.py	/^import pytest$/;"	kind:namespace	line:2
+pytest	jenkinsapi_tests/unittests/test_executors.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_fingerprint.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_jenkins.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_job.py	/^import pytest$/;"	kind:namespace	line:2
+pytest	jenkinsapi_tests/unittests/test_job_folders.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_label.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_node.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_nodes.py	/^import pytest$/;"	kind:namespace	line:1
+pytest	jenkinsapi_tests/unittests/test_requester.py	/^import pytest$/;"	kind:namespace	line:2
+python_api_url	jenkinsapi/jenkinsbase.py	/^    def python_api_url(cls, url):$/;"	kind:member	line:118
+pytz	jenkinsapi/build.py	/^import pytz$/;"	kind:namespace	line:17
+pytz	jenkinsapi_tests/unittests/test_build.py	/^import pytz$/;"	kind:namespace	line:2
+qi	examples/how_to/start_parameterized_build.py	/^qi = job.invoke(build_params=params)$/;"	kind:variable	line:19
+query_a_build.py	examples/how_to/query_a_build.py	1;"	kind:file	line:1
+queue	jenkinsapi_utils/jenkins_launcher.py	/^from six.moves import queue$/;"	kind:namespace	line:14
+queue.py	jenkinsapi/queue.py	1;"	kind:file	line:1
+queue_id	jenkinsapi/queue.py	/^    def queue_id(self):$/;"	kind:member	line:95
+quote	jenkinsapi/build.py	/^from six.moves.urllib.parse import quote$/;"	kind:namespace	line:26
+random	jenkinsapi_tests/test_utils/random_strings.py	/^import random$/;"	kind:namespace	line:3
+random	jenkinsapi_utils/jenkins_launcher.py	/^import random$/;"	kind:namespace	line:3
+random_string	examples/low_level/copy_a_job.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:9
+random_string	jenkinsapi_tests/systests/test_credentials.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:6
+random_string	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:10
+random_string	jenkinsapi_tests/systests/test_executors.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:7
+random_string	jenkinsapi_tests/systests/test_invocation.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:9
+random_string	jenkinsapi_tests/systests/test_jenkins.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:11
+random_string	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:11
+random_string	jenkinsapi_tests/systests/test_jenkins_matrix.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:7
+random_string	jenkinsapi_tests/systests/test_nodes.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:8
+random_string	jenkinsapi_tests/systests/test_parameterized_builds.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:7
+random_string	jenkinsapi_tests/systests/test_queue.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:9
+random_string	jenkinsapi_tests/systests/test_views.py	/^from jenkinsapi_tests.test_utils.random_strings import random_string$/;"	kind:namespace	line:11
+random_string	jenkinsapi_tests/test_utils/random_strings.py	/^def random_string(length=10):$/;"	kind:function	line:7
+random_strings.py	jenkinsapi_tests/test_utils/random_strings.py	1;"	kind:file	line:1
+re	examples/how_to/search_artifact_by_regexp.py	/^import re$/;"	kind:namespace	line:5
+re	jenkinsapi/constants.py	/^import re$/;"	kind:namespace	line:5
+re	jenkinsapi/fingerprint.py	/^import re$/;"	kind:namespace	line:8
+re	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import re$/;"	kind:namespace	line:5
+re	jenkinsapi_tests/systests/test_jenkins_matrix.py	/^import re$/;"	kind:namespace	line:4
+rename	jenkinsapi/jobs.py	/^    def rename(self, job_name, new_job_name):$/;"	kind:member	line:171
+rename_job	jenkinsapi/jenkins.py	/^    def rename_job(self, jobname, newjobname):$/;"	kind:member	line:175
+requester	examples/how_to/create_slave.py	/^                  requester=Requester(username, password,$/;"	kind:variable	line:19
+requester	jenkinsapi_tests/unittests/test_jenkins.py	/^                      requester=mock_requester)$/;"	kind:variable	line:198
+requester	jenkinsapi_tests/unittests/test_jenkins.py	/^                      requester=mock_requester)$/;"	kind:variable	line:214
+requester.py	jenkinsapi/utils/requester.py	1;"	kind:file	line:1
+requests	examples/how_to/create_slave.py	/^import requests$/;"	kind:namespace	line:5
+requests	examples/low_level/copy_a_job.py	/^import requests$/;"	kind:namespace	line:6
+requests	examples/low_level/create_a_view_low_level.py	/^import requests$/;"	kind:namespace	line:7
+requests	examples/low_level/example_param_build.py	/^import requests$/;"	kind:namespace	line:4
+requests	jenkinsapi/fingerprint.py	/^import requests$/;"	kind:namespace	line:9
+requests	jenkinsapi/utils/requester.py	/^import requests$/;"	kind:namespace	line:4
+requests	jenkinsapi_tests/unittests/test_requester.py	/^import requests$/;"	kind:namespace	line:3
+requests	jenkinsapi_utils/jenkins_launcher.py	/^import requests$/;"	kind:namespace	line:9
+resolve_job_folders	jenkinsapi/jenkinsbase.py	/^    def resolve_job_folders(self, jobs):$/;"	kind:member	line:94
+resource_stream	jenkinsapi_utils/jenkins_launcher.py	/^from pkg_resources import resource_stream$/;"	kind:namespace	line:12
+resource_string	examples/how_to/create_a_job.py	/^from pkg_resources import resource_string$/;"	kind:namespace	line:5
+resource_string	examples/how_to/create_nested_views.py	/^from pkg_resources import resource_string$/;"	kind:namespace	line:9
+resource_string	examples/how_to/create_views.py	/^from pkg_resources import resource_string$/;"	kind:namespace	line:5
+resource_string	examples/low_level/copy_a_job.py	/^from pkg_resources import resource_string$/;"	kind:namespace	line:7
+response	examples/low_level/copy_a_job.py	/^response = requests.post(url, data='dysjsjsjs', headers=h)$/;"	kind:variable	line:23
+result	examples/how_to/search_artifact_by_regexp.py	/^result = search_artifact_by_regexp(jenkinsurl, jobid, artifact_regexp)$/;"	kind:variable	line:11
+result	examples/how_to/search_artifacts.py	/^result = search_artifacts(jenkinsurl, jobid, artifact_ids)$/;"	kind:variable	line:11
+result	examples/low_level/create_a_view_low_level.py	/^result = requests.post(url, params=params, data=data, headers=headers)$/;"	kind:variable	line:23
+result.py	jenkinsapi/result.py	1;"	kind:file	line:1
+result_set.py	jenkinsapi/result_set.py	1;"	kind:file	line:1
+return_value	jenkinsapi_tests/unittests/test_jenkins.py	/^        return_value=MockResponse()$/;"	kind:variable	line:194
+return_value	jenkinsapi_tests/unittests/test_jenkins.py	/^        return_value=MockResponse()$/;"	kind:variable	line:210
+return_value	jenkinsapi_tests/unittests/test_jenkins.py	/^        return_value={$/;"	kind:variable	line:216
+root	examples/how_to/add_command.py	/^root = et.fromstring(new_conf.strip())$/;"	kind:variable	line:33
+run	jenkinsapi_utils/jenkins_launcher.py	/^    def run(self):$/;"	kind:member	line:47
+safe_restart	jenkinsapi/jenkins.py	/^    def safe_restart(self):$/;"	kind:member	line:345
+save	jenkinsapi/artifact.py	/^    def save(self, fspath, strict_validation=False):$/;"	kind:member	line:34
+save_to_dir	jenkinsapi/artifact.py	/^    def save_to_dir(self, dirpath, strict_validation=False):$/;"	kind:member	line:125
+search_artifact_by_regexp	examples/how_to/search_artifact_by_regexp.py	/^from jenkinsapi.api import search_artifact_by_regexp$/;"	kind:namespace	line:6
+search_artifact_by_regexp	jenkinsapi/api.py	/^def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,$/;"	kind:function	line:214
+search_artifact_by_regexp.py	examples/how_to/search_artifact_by_regexp.py	1;"	kind:file	line:1
+search_artifacts	examples/how_to/search_artifacts.py	/^from jenkinsapi.api import search_artifacts$/;"	kind:namespace	line:5
+search_artifacts	jenkinsapi/api.py	/^def search_artifacts(jenkinsurl, jobid, artifact_ids=None,$/;"	kind:function	line:88
+search_artifacts.py	examples/how_to/search_artifacts.py	1;"	kind:file	line:1
+setUp	jenkinsapi_tests/unittests/test_artifact.py	/^    def setUp(self):$/;"	kind:member	line:151
+setUp	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def setUp(self):$/;"	kind:member	line:179
+setUp	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def setUp(self):$/;"	kind:member	line:63
+setUp	jenkinsapi_tests/unittests/test_plugins.py	/^    def setUp(self, _poll_jenkins):$/;"	kind:member	line:57
+setUp	jenkinsapi_tests/unittests/test_result_set.py	/^    def setUp(self, _poll):$/;"	kind:member	line:55
+setUp	jenkinsapi_tests/unittests/test_view.py	/^    def setUp(self, _view_poll, _job_poll):$/;"	kind:member	line:66
+set_offline	jenkinsapi/node.py	/^    def set_offline(self, message="requested from jenkinsapi"):$/;"	kind:member	line:219
+set_online	jenkinsapi/node.py	/^    def set_online(self):$/;"	kind:member	line:192
+setup	setup.py	/^from setuptools import setup$/;"	kind:namespace	line:2
+setup.py	setup.py	1;"	kind:file	line:1
+shell	examples/how_to/add_command.py	/^shell = et.SubElement(builders, 'hudson.tasks.Shell')$/;"	kind:variable	line:36
+shutdown	jenkinsapi/jenkins.py	/^    def shutdown(self):$/;"	kind:member	line:402
+shutil	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import shutil$/;"	kind:namespace	line:8
+shutil	jenkinsapi_utils/jenkins_launcher.py	/^import shutil$/;"	kind:namespace	line:4
+simple_post_logger.py	jenkinsapi_utils/simple_post_logger.py	1;"	kind:file	line:1
+six	jenkinsapi/api.py	/^import six$/;"	kind:namespace	line:10
+six	jenkinsapi/api.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:12
+six	jenkinsapi/jenkins.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+six	jenkinsapi/job.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:7
+six	jenkinsapi/utils/requester.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+six	jenkinsapi/view.py	/^import six$/;"	kind:namespace	line:4
+six	jenkinsapi_tests/unittests/test_build_scm_git.py	/^import six$/;"	kind:namespace	line:1
+six	jenkinsapi_tests/unittests/test_compat.py	/^import six$/;"	kind:namespace	line:2
+six	jenkinsapi_utils/compat.py	/^import six$/;"	kind:namespace	line:4
+slave_names	examples/how_to/create_slave.py	/^slave_names = jenkins.nodes.keys()$/;"	kind:variable	line:74
+sleep	jenkinsapi/build.py	/^from time import sleep$/;"	kind:namespace	line:16
+socket	jenkinsapi_utils/jenkins_launcher.py	/^            import socket$/;"	kind:namespace	line:76
+socketserver	examples/low_level/post_watcher.py	/^from six.moves import SimpleHTTPServer, socketserver$/;"	kind:namespace	line:20
+start	jenkinsapi_utils/jenkins_launcher.py	/^    def start(self, timeout=60):$/;"	kind:member	line:172
+start_parameterized_build.py	examples/how_to/start_parameterized_build.py	1;"	kind:file	line:1
+state	jenkinsapi_tests/systests/conftest.py	/^state = {}$/;"	kind:variable	line:8
+status_code	jenkinsapi_tests/unittests/test_artifact.py	/^        status_code = 404$/;"	kind:variable	line:104
+status_code	jenkinsapi_tests/unittests/test_artifact.py	/^        status_code = 404$/;"	kind:variable	line:75
+status_code	jenkinsapi_tests/unittests/test_fingerprint.py	/^        status_code = 401$/;"	kind:variable	line:71
+status_code	jenkinsapi_tests/unittests/test_fingerprint.py	/^        status_code = 404$/;"	kind:variable	line:42
+status_code	jenkinsapi_tests/unittests/test_jenkins.py	/^        status_code = 200$/;"	kind:variable	line:188
+status_code	jenkinsapi_tests/unittests/test_jenkins.py	/^        status_code = 200$/;"	kind:variable	line:204
+status_code	jenkinsapi_tests/unittests/test_jenkins.py	/^        status_code = 200$/;"	kind:variable	line:47
+stop	jenkinsapi/build.py	/^    def stop(self):$/;"	kind:member	line:468
+stop	jenkinsapi_utils/jenkins_launcher.py	/^    def stop(self):$/;"	kind:member	line:143
+stop	jenkinsapi_utils/jenkins_launcher.py	/^    def stop(self):$/;"	kind:member	line:41
+stopped	jenkinsapi_utils/jenkins_launcher.py	/^    def stopped(self):$/;"	kind:member	line:44
+str_view_name	examples/low_level/create_a_view_low_level.py	/^str_view_name = "blahblah123"$/;"	kind:variable	line:11
+string	jenkinsapi_tests/test_utils/random_strings.py	/^import string$/;"	kind:namespace	line:4
+strip_trailing_slash	jenkinsapi/jenkinsbase.py	/^    def strip_trailing_slash(cls, url):$/;"	kind:member	line:51
+sub_view	examples/how_to/create_nested_views.py	/^sub_view = top_view.views.create('SubView')$/;"	kind:variable	line:35
+subprocess	jenkinsapi_utils/jenkins_launcher.py	/^import subprocess$/;"	kind:namespace	line:11
+sys	jenkinsapi/__init__.py	/^import sys$/;"	kind:namespace	line:48
+sys	jenkinsapi/command_line/jenkins_invoke.py	/^import sys$/;"	kind:namespace	line:6
+sys	jenkinsapi/command_line/jenkinsapi_version.py	/^import sys$/;"	kind:namespace	line:4
+tempfile	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import tempfile$/;"	kind:namespace	line:9
+tempfile	jenkinsapi_utils/jenkins_launcher.py	/^import tempfile$/;"	kind:namespace	line:7
+testBuildComponents	jenkinsapi_tests/unittests/test_result_set.py	/^    def testBuildComponents(self):$/;"	kind:member	line:74
+testName	jenkinsapi_tests/unittests/test_result_set.py	/^    def testName(self):$/;"	kind:member	line:68
+testName	jenkinsapi_tests/unittests/test_view.py	/^    def testName(self):$/;"	kind:member	line:79
+testRepr	jenkinsapi_tests/unittests/test_result_set.py	/^    def testRepr(self):$/;"	kind:member	line:64
+testRepr	jenkinsapi_tests/unittests/test_view.py	/^    def testRepr(self):$/;"	kind:member	line:75
+test__add_missing_builds_no_builds	jenkinsapi_tests/unittests/test_job.py	/^def test__add_missing_builds_no_builds(job, mocker):$/;"	kind:function	line:231
+test__add_missing_builds_no_first_build	jenkinsapi_tests/unittests/test_job.py	/^def test__add_missing_builds_no_first_build(job, mocker):$/;"	kind:function	line:217
+test__add_missing_builds_not_all_loaded	jenkinsapi_tests/unittests/test_job.py	/^def test__add_missing_builds_not_all_loaded(jenkins, monkeypatch):$/;"	kind:function	line:195
+test__clone	jenkinsapi_tests/unittests/test_jenkins.py	/^def test__clone(jenkins):$/;"	kind:function	line:34
+test__mk_json_from_build_parameters	jenkinsapi_tests/unittests/test_job.py	/^def test__mk_json_from_build_parameters(job):$/;"	kind:function	line:281
+test_add_existing_job	jenkinsapi_tests/unittests/test_view.py	/^    def test_add_existing_job(self):$/;"	kind:member	line:149
+test_add_job	jenkinsapi_tests/unittests/test_view.py	/^    def test_add_job(self, _poll, _view_poll):$/;"	kind:member	line:123
+test_add_job_to_view	jenkinsapi_tests/systests/test_views.py	/^def test_add_job_to_view(jenkins):$/;"	kind:function	line:40
+test_add_to_view_after_copy	jenkinsapi_tests/systests/test_views.py	/^def test_add_to_view_after_copy(jenkins):$/;"	kind:function	line:145
+test_add_wrong_job	jenkinsapi_tests/unittests/test_view.py	/^    def test_add_wrong_job(self, _get_jenkins):$/;"	kind:member	line:144
+test_artefacts	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^def test_artefacts(jenkins):$/;"	kind:function	line:14
+test_artifact.py	jenkinsapi_tests/unittests/test_artifact.py	1;"	kind:file	line:1
+test_baseurl	jenkinsapi_tests/unittests/test_nodes.py	/^def test_baseurl(nodes):$/;"	kind:function	line:211
+test_build.py	jenkinsapi_tests/unittests/test_build.py	1;"	kind:file	line:1
+test_build_scm_git.py	jenkinsapi_tests/unittests/test_build_scm_git.py	1;"	kind:file	line:1
+test_called_in__poll	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_called_in__poll(jenkinsbase, monkeypatch, mocker):$/;"	kind:function	line:11
+test_check_url	jenkinsapi_tests/unittests/test_executors.py	/^def test_check_url(jenkins):$/;"	kind:function	line:268
+test_compat.py	jenkinsapi_tests/unittests/test_compat.py	1;"	kind:file	line:1
+test_complete_builds_list_will_call_jenkins_once	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def test_complete_builds_list_will_call_jenkins_once(self):$/;"	kind:member	line:202
+test_copy_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_copy_job(jenkins):$/;"	kind:function	line:173
+test_create_and_delete_views	jenkinsapi_tests/systests/test_views.py	/^def test_create_and_delete_views(jenkins):$/;"	kind:function	line:73
+test_create_and_delete_views_by_url	jenkinsapi_tests/systests/test_views.py	/^def test_create_and_delete_views_by_url(jenkins):$/;"	kind:function	line:82
+test_create_dup_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_create_dup_job(jenkins):$/;"	kind:function	line:41
+test_create_jnlp_node	jenkinsapi_tests/systests/test_nodes.py	/^def test_create_jnlp_node(jenkins):$/;"	kind:function	line:33
+test_create_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_create_job(jenkins):$/;"	kind:function	line:27
+test_create_job_through_jobs_dict	jenkinsapi_tests/systests/test_jenkins.py	/^def test_create_job_through_jobs_dict(jenkins):$/;"	kind:function	line:60
+test_create_job_with_plus	jenkinsapi_tests/systests/test_jenkins.py	/^def test_create_job_with_plus(jenkins):$/;"	kind:function	line:33
+test_create_new_job_fail	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_create_new_job_fail(mocker, monkeypatch):$/;"	kind:function	line:88
+test_create_secret_text_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_create_secret_text_credential(jenkins):$/;"	kind:function	line:144
+test_create_ssh_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_create_ssh_credential(jenkins):$/;"	kind:function	line:68
+test_create_ssh_node	jenkinsapi_tests/systests/test_nodes.py	/^def test_create_ssh_node(jenkins):$/;"	kind:function	line:48
+test_create_user_pass_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_create_user_pass_credential(jenkins):$/;"	kind:function	line:28
+test_credentials.py	jenkinsapi_tests/systests/test_credentials.py	1;"	kind:file	line:1
+test_crumbs_requester.py	jenkinsapi_tests/systests/test_crumbs_requester.py	1;"	kind:file	line:1
+test_delete	jenkinsapi_tests/unittests/test_view.py	/^    def test_delete(self):$/;"	kind:member	line:106
+test_delete_all_nodes	jenkinsapi_tests/systests/test_nodes.py	/^def test_delete_all_nodes(jenkins):$/;"	kind:function	line:105
+test_delete_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_delete_credential(jenkins):$/;"	kind:function	line:128
+test_delete_inexistant_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_delete_inexistant_credential(jenkins):$/;"	kind:function	line:21
+test_delete_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_delete_job(jenkins):$/;"	kind:function	line:155
+test_delete_node	jenkinsapi_tests/systests/test_nodes.py	/^def test_delete_node(jenkins):$/;"	kind:function	line:86
+test_delete_view_which_does_not_exist	jenkinsapi_tests/systests/test_views.py	/^def test_delete_view_which_does_not_exist(jenkins):$/;"	kind:function	line:96
+test_downstream	jenkinsapi_tests/unittests/test_build.py	/^def test_downstream(build):$/;"	kind:function	line:79
+test_downstream_upstream.py	jenkinsapi_tests/systests/test_downstream_upstream.py	1;"	kind:file	line:1
+test_duration	jenkinsapi_tests/unittests/test_build.py	/^def test_duration(build):$/;"	kind:function	line:50
+test_empty_folder	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_empty_folder(jenkinsbase, monkeypatch, mocker):$/;"	kind:function	line:70
+test_enable_disable_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_enable_disable_job(jenkins):$/;"	kind:function	line:66
+test_executors.py	jenkinsapi_tests/systests/test_executors.py	1;"	kind:file	line:1
+test_executors.py	jenkinsapi_tests/unittests/test_executors.py	1;"	kind:file	line:1
+test_fingerprint.py	jenkinsapi_tests/unittests/test_fingerprint.py	1;"	kind:file	line:1
+test_folder_job_mix	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_folder_job_mix(jenkinsbase, monkeypatch, mocker):$/;"	kind:function	line:91
+test_get_and_confirm_status	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_and_confirm_status(monkeypatch):$/;"	kind:function	line:219
+test_get_and_confirm_status_bad_result	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_and_confirm_status_bad_result(monkeypatch):$/;"	kind:function	line:237
+test_get_block_until_build_complete	jenkinsapi_tests/systests/test_invocation.py	/^def test_get_block_until_build_complete(jenkins):$/;"	kind:function	line:49
+test_get_block_until_build_running	jenkinsapi_tests/systests/test_invocation.py	/^def test_get_block_until_build_running(jenkins):$/;"	kind:function	line:28
+test_get_build_by_params	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_by_params(jenkins, monkeypatch, mocker):$/;"	kind:function	line:302
+test_get_build_by_params_not_found	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_by_params_not_found(jenkins, monkeypatch, mocker):$/;"	kind:function	line:333
+test_get_build_dict	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_dict(job_tree):$/;"	kind:function	line:148
+test_get_build_dict	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def test_get_build_dict(self):$/;"	kind:member	line:185
+test_get_build_ids	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_ids(job):$/;"	kind:function	line:166
+test_get_build_ids	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def test_get_build_ids(self):$/;"	kind:member	line:221
+test_get_build_metadata	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_metadata(job_tree):$/;"	kind:function	line:154
+test_get_build_triggerurl	jenkinsapi_tests/unittests/test_job.py	/^def test_get_build_triggerurl(job):$/;"	kind:function	line:96
+test_get_causes	jenkinsapi_tests/unittests/test_build.py	/^def test_get_causes(build):$/;"	kind:function	line:58
+test_get_create_url	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_create_url(monkeypatch):$/;"	kind:function	line:227
+test_get_credentials	jenkinsapi_tests/systests/test_credentials.py	/^def test_get_credentials(jenkins):$/;"	kind:function	line:16
+test_get_current_executable	jenkinsapi_tests/unittests/test_executors.py	/^def test_get_current_executable(jenkins, monkeypatch):$/;"	kind:function	line:323
+test_get_description	jenkinsapi_tests/unittests/test_build.py	/^def test_get_description(build):$/;"	kind:function	line:66
+test_get_description	jenkinsapi_tests/unittests/test_job.py	/^def test_get_description(job):$/;"	kind:function	line:92
+test_get_executors	jenkinsapi_tests/systests/test_executors.py	/^def test_get_executors(jenkins):$/;"	kind:function	line:12
+test_get_executors	jenkinsapi_tests/unittests/test_executors.py	/^def test_get_executors(jenkins, monkeypatch):$/;"	kind:function	line:272
+test_get_jenkins_obj	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_jenkins_obj(mocker, monkeypatch):$/;"	kind:function	line:141
+test_get_jenkins_obj_from_url	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_jenkins_obj_from_url(mocker, monkeypatch):$/;"	kind:function	line:114
+test_get_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_job(jenkins):$/;"	kind:function	line:115
+test_get_job_and_update_config	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_job_and_update_config(jenkins):$/;"	kind:function	line:81
+test_get_job_config	jenkinsapi_tests/systests/test_views.py	/^def test_get_job_config(jenkins):$/;"	kind:function	line:157
+test_get_job_dict	jenkinsapi_tests/unittests/test_view.py	/^    def test_get_job_dict(self):$/;"	kind:member	line:90
+test_get_job_that_does_not_exist	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_job_that_does_not_exist(jenkins):$/;"	kind:function	line:138
+test_get_job_url	jenkinsapi_tests/unittests/test_view.py	/^    def test_get_job_url(self):$/;"	kind:member	line:110
+test_get_jobs	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_jobs(jenkins):$/;"	kind:function	line:124
+test_get_jobs_info	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_jobs_info(jenkins):$/;"	kind:function	line:49
+test_get_jobs_list	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_jobs_list(jenkins):$/;"	kind:function	line:104
+test_get_jobs_list	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_jobs_list(monkeypatch):$/;"	kind:function	line:68
+test_get_json_for_many_params	jenkinsapi_tests/unittests/test_job.py	/^def test_get_json_for_many_params():$/;"	kind:function	line:271
+test_get_json_for_single_param	jenkinsapi_tests/unittests/test_job.py	/^def test_get_json_for_single_param():$/;"	kind:function	line:264
+test_get_last_buildnumber	jenkinsapi_tests/unittests/test_job.py	/^def test_get_last_buildnumber(job):$/;"	kind:function	line:138
+test_get_last_completed_buildnumber	jenkinsapi_tests/unittests/test_job.py	/^def test_get_last_completed_buildnumber(job):$/;"	kind:function	line:143
+test_get_last_failed_buildnumber	jenkinsapi_tests/unittests/test_job.py	/^def test_get_last_failed_buildnumber(job):$/;"	kind:function	line:133
+test_get_last_good_buildnumber	jenkinsapi_tests/unittests/test_job.py	/^def test_get_last_good_buildnumber(job):$/;"	kind:function	line:123
+test_get_last_stable_buildnumber	jenkinsapi_tests/unittests/test_job.py	/^def test_get_last_stable_buildnumber(job):$/;"	kind:function	line:128
+test_get_master_data	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_master_data(jenkins):$/;"	kind:function	line:185
+test_get_master_data	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_master_data(mocker):$/;"	kind:function	line:202
+test_get_master_node	jenkinsapi_tests/unittests/test_nodes.py	/^def test_get_master_node(nodes, monkeypatch):$/;"	kind:function	line:215
+test_get_missing_plugin	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_missing_plugin(jenkins):$/;"	kind:function	line:190
+test_get_nested_view_dict	jenkinsapi_tests/unittests/test_view.py	/^    def test_get_nested_view_dict(self):$/;"	kind:member	line:153
+test_get_node_labels	jenkinsapi_tests/systests/test_nodes.py	/^def test_get_node_labels(jenkins):$/;"	kind:function	line:114
+test_get_nonmaster_node	jenkinsapi_tests/unittests/test_nodes.py	/^def test_get_nonmaster_node(nodes, monkeypatch):$/;"	kind:function	line:225
+test_get_params	jenkinsapi_tests/unittests/test_build.py	/^def test_get_params(build):$/;"	kind:function	line:84
+test_get_params	jenkinsapi_tests/unittests/test_job.py	/^def test_get_params(job):$/;"	kind:function	line:244
+test_get_params_different_order	jenkinsapi_tests/unittests/test_build.py	/^def test_get_params_different_order(build):$/;"	kind:function	line:102
+test_get_params_list	jenkinsapi_tests/unittests/test_job.py	/^def test_get_params_list(job):$/;"	kind:function	line:249
+test_get_plugin_details	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_get_plugin_details(self, _poll_plugins):$/;"	kind:member	line:167
+test_get_plugins	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_get_plugins(self, _poll_plugins):$/;"	kind:member	line:63
+test_get_queue	jenkinsapi_tests/systests/test_queue.py	/^def test_get_queue(jenkins):$/;"	kind:function	line:15
+test_get_request_dict_auth	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_auth():$/;"	kind:function	line:8
+test_get_request_dict_correct_headers	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_correct_headers():$/;"	kind:function	line:59
+test_get_request_dict_correct_params	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_correct_params():$/;"	kind:function	line:33
+test_get_request_dict_data_not_passed	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_data_not_passed():$/;"	kind:function	line:87
+test_get_request_dict_data_passed	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_data_passed():$/;"	kind:function	line:73
+test_get_request_dict_wrong_headers	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_wrong_headers():$/;"	kind:function	line:47
+test_get_request_dict_wrong_params	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_request_dict_wrong_params():$/;"	kind:function	line:21
+test_get_revision_no_scm	jenkinsapi_tests/unittests/test_build.py	/^def test_get_revision_no_scm(build):$/;"	kind:function	line:74
+test_get_single_plugin	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_single_plugin(jenkins):$/;"	kind:function	line:196
+test_get_single_plugin_depth_2	jenkinsapi_tests/systests/test_jenkins.py	/^def test_get_single_plugin_depth_2(jenkins):$/;"	kind:function	line:203
+test_get_slave	jenkinsapi_tests/unittests/test_build.py	/^def test_get_slave(build):$/;"	kind:function	line:70
+test_get_tied_job_names	jenkinsapi_tests/unittests/test_label.py	/^def test_get_tied_job_names(label):$/;"	kind:function	line:90
+test_get_url_get	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_url_get(monkeypatch):$/;"	kind:function	line:100
+test_get_url_post	jenkinsapi_tests/unittests/test_requester.py	/^def test_get_url_post(monkeypatch):$/;"	kind:function	line:115
+test_get_version	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_version(monkeypatch):$/;"	kind:function	line:165
+test_get_version_nonexistent	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_get_version_nonexistent(mocker):$/;"	kind:function	line:186
+test_getitem	jenkinsapi_tests/unittests/test_view.py	/^    def test_getitem(self, _poll):$/;"	kind:member	line:102
+test_git_revision_branch	jenkinsapi_tests/unittests/test_build_scm_git.py	/^def test_git_revision_branch(build):$/;"	kind:function	line:42
+test_git_scm	jenkinsapi_tests/unittests/test_build_scm_git.py	/^def test_git_scm(build):$/;"	kind:function	line:34
+test_give_params_on_non_parameterized_job	jenkinsapi_tests/systests/test_invocation.py	/^def test_give_params_on_non_parameterized_job(jenkins):$/;"	kind:function	line:116
+test_has_invalid_lcl_copy_dl_but_invalid	jenkinsapi_tests/unittests/test_artifact.py	/^    def test_has_invalid_lcl_copy_dl_but_invalid($/;"	kind:member	line:188
+test_has_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_has_job(jenkins):$/;"	kind:function	line:143
+test_has_no_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_has_no_job(jenkins):$/;"	kind:function	line:150
+test_has_plugin	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_has_plugin(monkeypatch):$/;"	kind:function	line:242
+test_hg_attributes	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def test_hg_attributes(self):$/;"	kind:member	line:99
+test_hg_attributes_default_branch	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    def test_hg_attributes_default_branch(self):$/;"	kind:member	line:106
+test_idle_executors	jenkinsapi_tests/systests/test_executors.py	/^def test_idle_executors(jenkins):$/;"	kind:function	line:58
+test_incomplete_builds_list_will_call_jenkins_twice	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def test_incomplete_builds_list_will_call_jenkins_twice(self):$/;"	kind:member	line:193
+test_install_plugin_bad_input	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_install_plugin_bad_input(self, _post):$/;"	kind:member	line:177
+test_install_plugin_good_input	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_install_plugin_good_input(self, _post):$/;"	kind:member	line:182
+test_install_plugins_good_input_no_restart	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_install_plugins_good_input_no_restart(self, _restart, _post):$/;"	kind:member	line:193
+test_install_plugins_good_input_with_restart	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_install_plugins_good_input_with_restart(self, _restart, _post):$/;"	kind:member	line:200
+test_invalid_for_401	jenkinsapi_tests/unittests/test_fingerprint.py	/^def test_invalid_for_401(jenkins, dummy_md5, monkeypatch):$/;"	kind:function	line:69
+test_invocation.py	jenkinsapi_tests/systests/test_invocation.py	1;"	kind:file	line:1
+test_invocation_object	jenkinsapi_tests/systests/test_invocation.py	/^def test_invocation_object(jenkins):$/;"	kind:function	line:18
+test_invocation_object	jenkinsapi_tests/systests/test_jenkins.py	/^def test_invocation_object(jenkins):$/;"	kind:function	line:97
+test_invoke_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_invoke_job(jenkins):$/;"	kind:function	line:90
+test_invoke_job_parameterized	jenkinsapi_tests/systests/test_parameterized_builds.py	/^def test_invoke_job_parameterized(jenkins):$/;"	kind:function	line:35
+test_invoke_job_with_file	jenkinsapi_tests/systests/test_crumbs_requester.py	/^def test_invoke_job_with_file(crumbed_jenkins):$/;"	kind:function	line:80
+test_invoke_job_with_file	jenkinsapi_tests/systests/test_parameterized_builds.py	/^def test_invoke_job_with_file(jenkins):$/;"	kind:function	line:13
+test_invoke_job_with_file_and_params	jenkinsapi_tests/systests/test_parameterized_builds.py	/^def test_invoke_job_with_file_and_params(jenkins):$/;"	kind:function	line:96
+test_invoke_many_jobs	jenkinsapi_tests/systests/test_queue.py	/^def test_invoke_many_jobs(jenkins):$/;"	kind:function	line:20
+test_invoke_matrix_job	jenkinsapi_tests/systests/test_jenkins_matrix.py	/^def test_invoke_matrix_job(jenkins):$/;"	kind:function	line:10
+test_iteritems	jenkinsapi_tests/unittests/test_view.py	/^    def test_iteritems(self, _poll):$/;"	kind:member	line:85
+test_jenkins.py	jenkinsapi_tests/systests/test_jenkins.py	1;"	kind:file	line:1
+test_jenkins.py	jenkinsapi_tests/unittests/test_jenkins.py	1;"	kind:file	line:1
+test_jenkins_artifacts.py	jenkinsapi_tests/systests/test_jenkins_artifacts.py	1;"	kind:file	line:1
+test_jenkins_matrix.py	jenkinsapi_tests/systests/test_jenkins_matrix.py	1;"	kind:file	line:1
+test_jenkinsapi_version	jenkinsapi_tests/unittests/test_misc.py	/^def test_jenkinsapi_version():$/;"	kind:function	line:4
+test_job.py	jenkinsapi_tests/unittests/test_job.py	1;"	kind:file	line:1
+test_job_folders.py	jenkinsapi_tests/unittests/test_job_folders.py	1;"	kind:file	line:1
+test_job_get_all_builds.py	jenkinsapi_tests/unittests/test_job_get_all_builds.py	1;"	kind:file	line:1
+test_job_scm_hg.py	jenkinsapi_tests/unittests/test_job_scm_hg.py	1;"	kind:file	line:1
+test_label.py	jenkinsapi_tests/unittests/test_label.py	1;"	kind:file	line:1
+test_lastcompleted_build_number	jenkinsapi_tests/unittests/test_job.py	/^def test_lastcompleted_build_number(job):$/;"	kind:function	line:78
+test_lastgood_build_number	jenkinsapi_tests/unittests/test_job.py	/^def test_lastgood_build_number(job):$/;"	kind:function	line:82
+test_len	jenkinsapi_tests/unittests/test_view.py	/^    def test_len(self):$/;"	kind:member	line:96
+test_likely_stuck	jenkinsapi_tests/unittests/test_executors.py	/^def test_likely_stuck(jenkins, monkeypatch):$/;"	kind:function	line:311
+test_make_nested_views	jenkinsapi_tests/systests/test_views.py	/^def test_make_nested_views(jenkins):$/;"	kind:function	line:117
+test_make_views	jenkinsapi_tests/systests/test_views.py	/^def test_make_views(jenkins):$/;"	kind:function	line:21
+test_mi_and_delete_build	jenkinsapi_tests/systests/test_invocation.py	/^def test_mi_and_delete_build(jenkins):$/;"	kind:function	line:88
+test_mi_and_get_build_number	jenkinsapi_tests/systests/test_invocation.py	/^def test_mi_and_get_build_number(jenkins):$/;"	kind:function	line:76
+test_mi_and_get_last_build	jenkinsapi_tests/systests/test_invocation.py	/^def test_mi_and_get_last_build(jenkins):$/;"	kind:function	line:57
+test_misc.py	jenkinsapi_tests/unittests/test_misc.py	1;"	kind:file	line:1
+test_multiple_folder_levels	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_multiple_folder_levels(jenkinsbase, monkeypatch, mocker):$/;"	kind:function	line:198
+test_multiple_folders	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_multiple_folders(jenkinsbase, monkeypatch, mocker):$/;"	kind:function	line:137
+test_name	jenkinsapi_tests/unittests/test_build.py	/^def test_name(build):$/;"	kind:function	line:44
+test_name	jenkinsapi_tests/unittests/test_job.py	/^def test_name(job):$/;"	kind:function	line:68
+test_name	jenkinsapi_tests/unittests/test_label.py	/^def test_name(label):$/;"	kind:function	line:84
+test_name	jenkinsapi_tests/unittests/test_node.py	/^def test_name(node):$/;"	kind:function	line:57
+test_needs_encoding_py2	jenkinsapi_tests/unittests/test_compat.py	/^def test_needs_encoding_py2():$/;"	kind:function	line:9
+test_next_build_number	jenkinsapi_tests/unittests/test_job.py	/^def test_next_build_number(job):$/;"	kind:function	line:74
+test_no_folders	jenkinsapi_tests/unittests/test_job_folders.py	/^def test_no_folders(jenkinsbase):$/;"	kind:function	line:42
+test_no_plugins_str	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_no_plugins_str(self, _poll_plugins):$/;"	kind:member	line:70
+test_nobuilds_get_build_dict	jenkinsapi_tests/unittests/test_job.py	/^def test_nobuilds_get_build_dict(job_tree_empty):$/;"	kind:function	line:161
+test_nobuilds_get_build_dict	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    def test_nobuilds_get_build_dict(self):$/;"	kind:member	line:210
+test_nobuilds_get_last_build	jenkinsapi_tests/unittests/test_job.py	/^def test_nobuilds_get_last_build(jenkins, monkeypatch):$/;"	kind:function	line:184
+test_nobuilds_get_revision_dict	jenkinsapi_tests/unittests/test_job.py	/^def test_nobuilds_get_revision_dict(jenkins, monkeypatch):$/;"	kind:function	line:174
+test_node.py	jenkinsapi_tests/unittests/test_node.py	1;"	kind:file	line:1
+test_nodes.py	jenkinsapi_tests/systests/test_nodes.py	1;"	kind:file	line:1
+test_nodes.py	jenkinsapi_tests/unittests/test_nodes.py	1;"	kind:file	line:1
+test_object_creation	jenkinsapi_tests/unittests/test_fingerprint.py	/^def test_object_creation(jenkins, dummy_md5, monkeypatch):$/;"	kind:function	line:28
+test_online	jenkinsapi_tests/unittests/test_label.py	/^def test_online(label):$/;"	kind:function	line:94
+test_online	jenkinsapi_tests/unittests/test_node.py	/^def test_online(node):$/;"	kind:function	line:63
+test_online_offline	jenkinsapi_tests/systests/test_nodes.py	/^def test_online_offline(jenkins):$/;"	kind:function	line:13
+test_only_ParametersAction_parameters_considered	jenkinsapi_tests/unittests/test_build.py	/^def test_only_ParametersAction_parameters_considered(build):$/;"	kind:function	line:133
+test_parameterized_builds.py	jenkinsapi_tests/systests/test_parameterized_builds.py	1;"	kind:file	line:1
+test_parameterized_job_build_queuing	jenkinsapi_tests/systests/test_parameterized_builds.py	/^def test_parameterized_job_build_queuing(jenkins):$/;"	kind:function	line:50
+test_parameterized_multiple_builds_get_the_same_queue_item	jenkinsapi_tests/systests/test_parameterized_builds.py	/^def test_parameterized_multiple_builds_get_the_same_queue_item(jenkins):$/;"	kind:function	line:80
+test_plugin_get_by_name	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugin_get_by_name(self, _poll_plugins):$/;"	kind:member	line:141
+test_plugin_repr	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugin_repr(self):$/;"	kind:member	line:205
+test_plugins.py	jenkinsapi_tests/unittests/test_plugins.py	1;"	kind:file	line:1
+test_plugins_contains	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_contains(self, _poll_plugins):$/;"	kind:member	line:91
+test_plugins_empty	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_empty(self, _poll_plugins):$/;"	kind:member	line:133
+test_plugins_keys	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_keys(self, _poll_plugins):$/;"	kind:member	line:125
+test_plugins_len	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_len(self, _poll_plugins):$/;"	kind:member	line:84
+test_plugins_str	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_str(self, _poll_plugins):$/;"	kind:member	line:77
+test_plugins_values	jenkinsapi_tests/unittests/test_plugins.py	/^    def test_plugins_values(self, _poll_plugins):$/;"	kind:member	line:99
+test_post_and_confirm_status_bad_result	jenkinsapi_tests/unittests/test_requester.py	/^def test_post_and_confirm_status_bad_result(monkeypatch):$/;"	kind:function	line:198
+test_post_and_confirm_status_empty_data	jenkinsapi_tests/unittests/test_requester.py	/^def test_post_and_confirm_status_empty_data(monkeypatch):$/;"	kind:function	line:164
+test_post_and_confirm_status_some_data	jenkinsapi_tests/unittests/test_requester.py	/^def test_post_and_confirm_status_some_data(monkeypatch):$/;"	kind:function	line:179
+test_post_xml_and_confirm_status_some_xml	jenkinsapi_tests/unittests/test_requester.py	/^def test_post_xml_and_confirm_status_some_xml(monkeypatch):$/;"	kind:function	line:145
+test_post_xml_empty_xml	jenkinsapi_tests/unittests/test_requester.py	/^def test_post_xml_empty_xml(monkeypatch):$/;"	kind:function	line:130
+test_queue.py	jenkinsapi_tests/systests/test_queue.py	1;"	kind:file	line:1
+test_queueitem_for_why_field	jenkinsapi_tests/systests/test_queue.py	/^def test_queueitem_for_why_field(jenkins):$/;"	kind:function	line:73
+test_reload	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_reload(monkeypatch):$/;"	kind:function	line:45
+test_rename_job	jenkinsapi_tests/systests/test_jenkins.py	/^def test_rename_job(jenkins):$/;"	kind:function	line:163
+test_repr	jenkinsapi_tests/unittests/test_executors.py	/^def test_repr(jenkins):$/;"	kind:function	line:263
+test_repr	jenkinsapi_tests/unittests/test_job.py	/^def test_repr(job):$/;"	kind:function	line:63
+test_repr	jenkinsapi_tests/unittests/test_label.py	/^def test_repr(label):$/;"	kind:function	line:79
+test_repr	jenkinsapi_tests/unittests/test_node.py	/^def test_repr(node):$/;"	kind:function	line:52
+test_repr	jenkinsapi_tests/unittests/test_nodes.py	/^def test_repr(nodes):$/;"	kind:function	line:206
+test_requester.py	jenkinsapi_tests/unittests/test_requester.py	1;"	kind:file	line:1
+test_restart.py	jenkinsapi_tests/systests/test_restart.py	1;"	kind:file	line:1
+test_result_set.py	jenkinsapi_tests/unittests/test_result_set.py	1;"	kind:file	line:1
+test_running_executor	jenkinsapi_tests/systests/test_executors.py	/^def test_running_executor(jenkins):$/;"	kind:function	line:30
+test_safe_restart	jenkinsapi_tests/systests/test_restart.py	/^def test_safe_restart(jenkins):$/;"	kind:function	line:40
+test_save_has_invalid_local_copy_dl_again	jenkinsapi_tests/unittests/test_artifact.py	/^    def test_save_has_invalid_local_copy_dl_again(self, mock_exists):$/;"	kind:member	line:174
+test_save_has_no_local_copy	jenkinsapi_tests/unittests/test_artifact.py	/^    def test_save_has_no_local_copy(self, mock_exists):$/;"	kind:member	line:204
+test_save_has_valid_local_copy	jenkinsapi_tests/unittests/test_artifact.py	/^    def test_save_has_valid_local_copy(self, mock_exists):$/;"	kind:member	line:162
+test_scm.py	jenkinsapi_tests/systests/test_scm.py	1;"	kind:file	line:1
+test_special_urls	jenkinsapi_tests/unittests/test_job.py	/^def test_special_urls(job):$/;"	kind:function	line:86
+test_start_and_stop_long_running_job	jenkinsapi_tests/systests/test_queue.py	/^def test_start_and_stop_long_running_job(jenkins):$/;"	kind:function	line:55
+test_stored_passwords	jenkinsapi_tests/unittests/test_jenkins.py	/^def test_stored_passwords(jenkins):$/;"	kind:function	line:40
+test_stream_relationship	jenkinsapi_tests/systests/test_downstream_upstream.py	/^def test_stream_relationship(jenkins):$/;"	kind:function	line:89
+test_suite	setup.py	/^    test_suite='nose.collector',$/;"	kind:variable	line:53
+test_timestamp	jenkinsapi_tests/unittests/test_build.py	/^def test_timestamp(build):$/;"	kind:function	line:35
+test_to_string	jenkinsapi_tests/unittests/test_compat.py	/^def test_to_string():$/;"	kind:function	line:19
+test_unicode_mk_json	jenkinsapi_tests/unittests/test_job.py	/^def test_unicode_mk_json(job):$/;"	kind:function	line:108
+test_update_user_pass_credential	jenkinsapi_tests/systests/test_credentials.py	/^def test_update_user_pass_credential(jenkins):$/;"	kind:function	line:49
+test_update_view_config	jenkinsapi_tests/systests/test_views.py	/^def test_update_view_config(jenkins):$/;"	kind:function	line:102
+test_valid_for_404	jenkinsapi_tests/unittests/test_fingerprint.py	/^def test_valid_for_404(jenkins, dummy_md5, monkeypatch):$/;"	kind:function	line:40
+test_verify_dl_valid_negative_strict	jenkinsapi_tests/unittests/test_artifact.py	/^def test_verify_dl_valid_negative_strict(artifact, monkeypatch):$/;"	kind:function	line:97
+test_verify_download_invalid	jenkinsapi_tests/unittests/test_artifact.py	/^def test_verify_download_invalid(artifact, monkeypatch):$/;"	kind:function	line:124
+test_verify_download_valid_negative	jenkinsapi_tests/unittests/test_artifact.py	/^def test_verify_download_valid_negative(artifact, monkeypatch):$/;"	kind:function	line:68
+test_verify_download_valid_positive	jenkinsapi_tests/unittests/test_artifact.py	/^def test_verify_download_valid_positive(artifact, monkeypatch):$/;"	kind:function	line:26
+test_verify_download_valid_positive_with_rename	jenkinsapi_tests/unittests/test_artifact.py	/^def test_verify_download_valid_positive_with_rename(artifact, monkeypatch):$/;"	kind:function	line:47
+test_view.py	jenkinsapi_tests/unittests/test_view.py	1;"	kind:file	line:1
+test_view_name	examples/how_to/create_views.py	/^test_view_name = 'SimpleListView'$/;"	kind:variable	line:17
+test_views.py	jenkinsapi_tests/systests/test_views.py	1;"	kind:file	line:1
+test_wrong__mk_json_from_build_parameters	jenkinsapi_tests/unittests/test_job.py	/^def test_wrong__mk_json_from_build_parameters(job):$/;"	kind:function	line:101
+test_wrong_field__build_id_for_type	jenkinsapi_tests/unittests/test_job.py	/^def test_wrong_field__build_id_for_type(job):$/;"	kind:function	line:118
+test_wrong_get_job_url	jenkinsapi_tests/unittests/test_view.py	/^    def test_wrong_get_job_url(self):$/;"	kind:member	line:115
+test_wrong_mk_json_from_build_parameters	jenkinsapi_tests/unittests/test_job.py	/^def test_wrong_mk_json_from_build_parameters(job):$/;"	kind:function	line:295
+testis_idle	jenkinsapi_tests/unittests/test_executors.py	/^def testis_idle(jenkins, monkeypatch):$/;"	kind:function	line:291
+tests_require	setup.py	/^    tests_require=tests_require,$/;"	kind:variable	line:54
+tests_require	setup.py	/^tests_require = [line.strip()$/;"	kind:variable	line:34
+text	jenkinsapi_tests/unittests/test_artifact.py	/^        text = '{}'$/;"	kind:variable	line:105
+text	jenkinsapi_tests/unittests/test_artifact.py	/^        text = '{}'$/;"	kind:variable	line:76
+text	jenkinsapi_tests/unittests/test_fingerprint.py	/^        text = '{}'$/;"	kind:variable	line:43
+text	jenkinsapi_tests/unittests/test_fingerprint.py	/^        text = '{}'$/;"	kind:variable	line:72
+text	jenkinsapi_tests/unittests/test_jenkins.py	/^        text = '{}'$/;"	kind:variable	line:190
+text	jenkinsapi_tests/unittests/test_jenkins.py	/^        text = '{}'$/;"	kind:variable	line:206
+text	jenkinsapi_tests/unittests/test_jenkins.py	/^        text = '{}'$/;"	kind:variable	line:48
+threading	jenkinsapi_utils/jenkins_launcher.py	/^import threading$/;"	kind:namespace	line:10
+time	jenkinsapi/api.py	/^import time$/;"	kind:namespace	line:8
+time	jenkinsapi/build.py	/^import time$/;"	kind:namespace	line:11
+time	jenkinsapi/queue.py	/^import time$/;"	kind:namespace	line:8
+time	jenkinsapi_tests/systests/test_crumbs_requester.py	/^import time$/;"	kind:namespace	line:1
+time	jenkinsapi_tests/systests/test_downstream_upstream.py	/^import time$/;"	kind:namespace	line:4
+time	jenkinsapi_tests/systests/test_executors.py	/^import time$/;"	kind:namespace	line:4
+time	jenkinsapi_tests/systests/test_invocation.py	/^import time$/;"	kind:namespace	line:4
+time	jenkinsapi_tests/systests/test_jenkins_artifacts.py	/^import time$/;"	kind:namespace	line:6
+time	jenkinsapi_tests/systests/test_jenkins_matrix.py	/^import time$/;"	kind:namespace	line:5
+time	jenkinsapi_tests/systests/test_parameterized_builds.py	/^import time$/;"	kind:namespace	line:4
+time	jenkinsapi_tests/systests/test_queue.py	/^import time$/;"	kind:namespace	line:4
+time	jenkinsapi_tests/systests/test_restart.py	/^import time$/;"	kind:namespace	line:7
+time	jenkinsapi_utils/jenkins_launcher.py	/^import time$/;"	kind:namespace	line:2
+to_string	jenkinsapi/job.py	/^from jenkinsapi_utils.compat import to_string$/;"	kind:namespace	line:23
+to_string	jenkinsapi_utils/compat.py	/^def to_string(data, encoding='utf-8'):$/;"	kind:function	line:17
+toggle_temporarily_offline	jenkinsapi/node.py	/^    def toggle_temporarily_offline(self, message="requested from jenkinsapi"):$/;"	kind:member	line:235
+top_view	examples/how_to/create_nested_views.py	/^top_view = jenkins.views.create('TopView', Views.NESTED_VIEW)$/;"	kind:variable	line:26
+unittest	jenkinsapi_tests/unittests/test_artifact.py	/^    import unittest$/;"	kind:namespace	line:15
+unittest	jenkinsapi_tests/unittests/test_artifact.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:13
+unittest	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    import unittest$/;"	kind:namespace	line:6
+unittest	jenkinsapi_tests/unittests/test_job_get_all_builds.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:4
+unittest	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    import unittest$/;"	kind:namespace	line:6
+unittest	jenkinsapi_tests/unittests/test_job_scm_hg.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:4
+unittest	jenkinsapi_tests/unittests/test_plugins.py	/^    import unittest$/;"	kind:namespace	line:10
+unittest	jenkinsapi_tests/unittests/test_plugins.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:8
+unittest	jenkinsapi_tests/unittests/test_result_set.py	/^    import unittest$/;"	kind:namespace	line:6
+unittest	jenkinsapi_tests/unittests/test_result_set.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:4
+unittest	jenkinsapi_tests/unittests/test_view.py	/^    import unittest$/;"	kind:namespace	line:5
+unittest	jenkinsapi_tests/unittests/test_view.py	/^    import unittest2 as unittest$/;"	kind:namespace	line:3
+update_config	jenkinsapi/job.py	/^    def update_config(self, config, full_response=False):$/;"	kind:member	line:563
+update_config	jenkinsapi/view.py	/^    def update_config(self, config):$/;"	kind:member	line:150
+update_config	jenkinsapi_utils/jenkins_launcher.py	/^    def update_config(self):$/;"	kind:member	line:115
+update_war	jenkinsapi_utils/jenkins_launcher.py	/^    def update_war(self):$/;"	kind:member	line:104
+upload_config	jenkinsapi/node.py	/^    def upload_config(self, config_xml):$/;"	kind:member	line:288
+url	examples/low_level/create_a_view_low_level.py	/^url = 'http:\/\/localhost:8080\/createView'$/;"	kind:variable	line:9
+url	setup.py	/^    url=PROJECT_URL,$/;"	kind:variable	line:56
+urlencode	jenkinsapi/credentials.py	/^from six.moves.urllib.parse import urlencode$/;"	kind:namespace	line:8
+urlencode	jenkinsapi/nodes.py	/^from six.moves.urllib.parse import urlencode$/;"	kind:namespace	line:6
+urljoin	jenkinsapi_tests/systests/test_crumbs_requester.py	/^from six.moves.urllib.parse import urljoin$/;"	kind:namespace	line:7
+urllib	jenkinsapi/api.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:12
+urllib	jenkinsapi/jenkins.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+urllib	jenkinsapi/job.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:7
+urllib	jenkinsapi/utils/requester.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+urlparse	jenkinsapi/api.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:12
+urlparse	jenkinsapi/jenkins.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+urlparse	jenkinsapi/job.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:7
+urlparse	jenkinsapi/utils/requester.py	/^import six.moves.urllib.parse as urlparse$/;"	kind:namespace	line:5
+urlparse	jenkinsapi_utils/jenkins_launcher.py	/^from six.moves.urllib.parse import urlparse$/;"	kind:namespace	line:15
+urlquote	jenkinsapi/jenkins.py	/^from six.moves.urllib.parse import quote as urlquote$/;"	kind:namespace	line:7
+urlquote	jenkinsapi/node.py	/^from six.moves.urllib.parse import quote as urlquote$/;"	kind:namespace	line:12
+username	examples/how_to/create_slave.py	/^username = "default_user"  # In case Jenkins requires authentication$/;"	kind:variable	line:15
+valid	jenkinsapi/fingerprint.py	/^    def valid(self):$/;"	kind:member	line:39
+validate	jenkinsapi/fingerprint.py	/^    def validate(self):$/;"	kind:member	line:96
+validate_fingerprint	jenkinsapi/jenkins.py	/^    def validate_fingerprint(self, id_):$/;"	kind:member	line:74
+validate_fingerprint_for_build	jenkinsapi/jenkins.py	/^    def validate_fingerprint_for_build(self, digest, filename, job, build):$/;"	kind:member	line:88
+validate_for_build	jenkinsapi/fingerprint.py	/^    def validate_for_build(self, filename, job, build):$/;"	kind:member	line:69
+values	jenkinsapi/plugins.py	/^    def values(self):$/;"	kind:member	line:40
+values	jenkinsapi/queue.py	/^    def values(self):$/;"	kind:member	line:52
+values	jenkinsapi/view.py	/^    def values(self):$/;"	kind:member	line:59
+version	jenkinsapi/command_line/jenkinsapi_version.py	/^from jenkinsapi import __version__ as version$/;"	kind:namespace	line:3
+version	jenkinsapi/jenkins.py	/^    def version(self):$/;"	kind:member	line:375
+version	setup.py	/^    version=REVISION,$/;"	kind:variable	line:40
+view	examples/how_to/create_views.py	/^view = jenkins.views.create('My categorized jobs view',$/;"	kind:variable	line:72
+view.py	jenkinsapi/view.py	1;"	kind:file	line:1
+view_configs.py	jenkinsapi_tests/systests/view_configs.py	1;"	kind:file	line:1
+views	jenkinsapi/jenkins.py	/^    def views(self):$/;"	kind:member	line:207
+views	jenkinsapi/view.py	/^    def views(self):$/;"	kind:member	line:162
+views.py	jenkinsapi/views.py	1;"	kind:file	line:1
+wait_for_reboot	jenkinsapi_tests/systests/test_restart.py	/^def wait_for_reboot(jenkins):$/;"	kind:function	line:15
+warnings	jenkinsapi/build.py	/^import warnings$/;"	kind:namespace	line:13
+why	jenkinsapi/queue.py	/^    def why(self):$/;"	kind:member	line:103
+xml	examples/how_to/add_command.py	/^import xml.etree.ElementTree as et$/;"	kind:namespace	line:5
+xml	examples/how_to/create_a_job.py	/^xml = resource_string('examples', 'addjob.xml')$/;"	kind:variable	line:10
+xml	examples/how_to/create_nested_views.py	/^xml = resource_string('examples', 'addjob.xml')$/;"	kind:variable	line:21
+xml	examples/how_to/create_views.py	/^xml = resource_string('examples', 'addjob.xml')$/;"	kind:variable	line:36
+xml	examples/low_level/copy_a_job.py	/^xml = resource_string('examples', 'addjob.xml')$/;"	kind:variable	line:18
+xml	jenkinsapi/job.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:6
+xml	jenkinsapi/node.py	/^import xml.etree.ElementTree as ET$/;"	kind:namespace	line:7
+zip_safe	setup.py	/^    zip_safe=True,$/;"	kind:variable	line:50

@@ -72,6 +72,16 @@ class Node(JenkinsBase):
                     'key':'TEST2',
                     'value':'value2'
                 }
+            ],
+            'tool_location': [
+                {
+                    "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
+                    "home": "/home/apache-maven-3.0.5/"
+                },
+                {
+                    "key": "hudson.plugins.git.GitTool$DescriptorImpl@Default",
+                    "home": "/home/git-3.0.5/"
+                },
             ]
         }
 
@@ -140,17 +150,21 @@ class Node(JenkinsBase):
                 'idleDelay': na['ondemand_idle_delay']
             }
 
+        node_props = {
+            'stapler-class-bag': 'true'
+        }
         if 'env' in na:
-            node_props = {
-                'stapler-class-bag': 'true',
+            node_props.update({
                 'hudson-slaves-EnvironmentVariablesNodeProperty': {
                     'env': na['env']
                 }
-            }
-        else:
-            node_props = {
-                'stapler-class-bag': 'true'
-            }
+            })
+        if 'tool_location' in na:
+            node_props.update({
+                "hudson-tools-ToolLocationNodeProperty": {
+                    "locations": na['tool_location']
+                }
+            })
 
         params = {
             'name': self.name,
