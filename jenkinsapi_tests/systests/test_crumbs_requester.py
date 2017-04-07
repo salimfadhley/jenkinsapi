@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import logging
@@ -14,6 +15,7 @@ from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE
 log = logging.getLogger(__name__)
 
 DEFAULT_JENKINS_PORT = 8080
+
 ENABLE_CRUMBS_CONFIG = {
     '': '0',
     'markupFormatter': {
@@ -33,7 +35,13 @@ ENABLE_CRUMBS_CONFIG = {
     'jenkins-model-DownloadSettings': {
         'useBrowser': False
     },
-    'core:apply': '',
+    'org-jenkinsci-main-modules-sshd-SSHD': {
+        'port': {
+            'value': '',
+            'type': 'random'
+        }
+    },
+    'core:apply': ''
 }
 
 DISABLE_CRUMBS_CONFIG = {
@@ -49,9 +57,21 @@ DISABLE_CRUMBS_CONFIG = {
     'core:apply': ''
 }
 
+JENKINS2_SSHD_SETTINGS = {
+    'org-jenkinsci-main-modules-sshd-SSHD': {
+        'port': {
+            'value': '',
+            'type': 'random'
+        }
+    }
+}
 
 @pytest.fixture(scope='function')
 def crumbed_jenkins(jenkins):
+    if '2.x' in os.environ.get('JENKINS_VERSION', '1.x'):
+        ENABLE_CRUMBS_CONFIG.update(JENKINS2_SSHD_SETTINGS)
+        DISABLE_CRUMBS_CONFIG.update(JENKINS2_SSHD_SETTINGS)
+
     jenkins.requester.post_and_confirm_status(
         urljoin(jenkins.baseurl, '/configureSecurity/configure'),
         data={
