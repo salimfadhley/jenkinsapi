@@ -633,7 +633,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def is_enabled(self):
         data = self.poll(tree='color')
-        return data.get('color', None) != 'disabled'
+        return 'disabled' in data.get('color', '')
 
     def disable(self):
         """
