@@ -5,7 +5,7 @@ test:
 
 lint:
 	pep8 --ignore=E501 jenkinsapi/*.py
-	pylint --rcfile=pylintrc jenkinsapi/*.py --disable R0912
+	pylint --rcfile=./pylintrc jenkinsapi/*.py --disable R0912
 
 tox:
 	tox

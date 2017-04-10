@@ -4,8 +4,11 @@ python:
 - '3.4'
 - '3.5'
 env:
-- JENKINS_VERSION=1.x
-- JENKINS_VERSION=2.x
+  matrix:
+  - JENKINS_VERSION=1.x
+  - JENKINS_VERSION=2.x
+  global:
+    secure: KmZxx18hIoC/yxro6qEKdkA+6ehQq1hKwsDaZti4ZjrO+iYGmtD2sUVl2fROF60n/iCl4A/akxwwuFStrY814+F34KgX0LjIfv9q4HWl4mDNep9ZwiHVN0iDtZbf6sD6bvgROqJcBTGZzXRDRseWuL0hPkj9YWVXvsPGh2TwbZY=
 install:
 - pip install -r requirements/dev-requirements.txt
 - python setup.py develop
@@ -13,4 +16,15 @@ script:
 - make lint
 - make coverage
 after_success:
-   - codecov
+- codecov
+deploy:
+  provider: pypi
+  user: lechat
+  password:
+    secure: gJZGDwomlaKRZ7MxGPkKu8r1Oe05umRlmjLHOycDyemkmPNz2f/+L+omJ/Vp1tWtPTcWZ/cXYS4AM/pmNCcRFI9h7/oG3l6qDGOEa31/h0nuX2UbywhLWmfEx3ADZjvMVL/gELKntq0503cOPn2PjOBFkZMWi54zqIks17zMdDY=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: pycontribs/jenkinsapi
+after_deploy:
+- after_deploy.sh
