@@ -6,8 +6,8 @@ python:
 - '3.4'
 - '3.5'
 env:
-- JENKINS_VERSION=1.x
-- JENKINS_VERSION=2.x
+- JENKINS_VERSION=stable
+- JENKINS_VERSION=latest
 before_install:
 - jdk_switcher use oraclejdk8
 install:
@@ -17,4 +17,4 @@ script:
 - make lint
 - make coverage
 after_success:
-   - codecov
+- codecov

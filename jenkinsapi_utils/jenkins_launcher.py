@@ -1,6 +1,5 @@
 import os
 import time
-import random
 import shutil
 import logging
 import datetime
@@ -96,9 +95,9 @@ class JenkinsLancher(object):
         self.jenkins_process = None
         self.queue = queue.Queue()
         self.plugin_urls = plugin_urls or []
-        if os.environ.get('JENKINS_VERSION', '1.x') == '1.x':
+        if os.environ.get('JENKINS_VERSION', 'stable') == 'stable':
             self.JENKINS_WAR_URL = (
-                'http://mirrors.jenkins-ci.org/war-stable/1.651.3/jenkins.war'
+                'http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war'
             )
 
     def update_war(self):
