@@ -58,6 +58,8 @@ DISABLE_CRUMBS_CONFIG = {
 }
 
 JENKINS2_SSHD_SETTINGS = {
+    'jenkins-security-s2m-MasterKillSwitchConfiguration': {
+    },
     'org-jenkinsci-main-modules-sshd-SSHD': {
         'port': {
             'value': '',
@@ -66,6 +68,14 @@ JENKINS2_SSHD_SETTINGS = {
     },
     'jenkins-CLI': {
         'enabled': False
+    },
+    # This is not required if envinject plugin is not installed
+    # but since it is installed for test suite - we must have this config
+    # If this is not present - Jenkins will return error
+    'org-jenkinsci-plugins-envinject-EnvInjectPluginConfiguration': {
+        'enablePermissions': False,
+        'hideInjectedVars': False,
+        'enableLoadingFromMaster': False
     }
 }
 
