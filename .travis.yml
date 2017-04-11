@@ -6,6 +6,8 @@ python:
 env:
 - JENKINS_VERSION=1.x
 - JENKINS_VERSION=2.x
+jdk:
+- oraclejdk8
 install:
 - pip install -r requirements/dev-requirements.txt
 - python setup.py develop
