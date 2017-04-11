@@ -63,8 +63,12 @@ JENKINS2_SSHD_SETTINGS = {
             'value': '',
             'type': 'random'
         }
+    },
+    'jenkins-CLI': {
+        'enabled': False
     }
 }
+
 
 @pytest.fixture(scope='function')
 def crumbed_jenkins(jenkins):
