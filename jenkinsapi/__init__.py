@@ -20,6 +20,10 @@ This library can help you:
  * username/password auth support for jenkins instances with auth turned on
  * Ability to search for builds by subversion revision
  * Ability to add/remove/query jenkins slaves
+ * Ability to add/remove/update/copy/rename jenkins jobs
+ * Ability to add/remove jenkins views
+ * Ability to add job to view
+ * Ability to query jenkins for plugin data
 
 Installing JenkinsAPI
 =====================
