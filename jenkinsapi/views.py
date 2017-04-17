@@ -89,6 +89,12 @@ class Views(object):
         Return a list of the names of all views
         """
         return list(self.iterkeys())
+    
+    def get(self, view_name) :
+        """
+        return the view object
+        """
+        return self[view_name]
 
     def create(self, view_name, view_type=LIST_VIEW, config=None):
         """
