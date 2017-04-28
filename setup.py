@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 PROJECT_ROOT, _ = os.path.split(__file__)
-REVISION = open(os.path.join(PROJECT_ROOT, '.next_version.txt')).read()
+REVISION = open(os.path.join(PROJECT_ROOT, '.next_version.txt')).read().strip()
 PROJECT_NAME = 'JenkinsAPI'
 PROJECT_AUTHORS = 'Salim Fadhley, Aleksey Maksimov'
 # Please see readme.rst for a complete list of contributors
