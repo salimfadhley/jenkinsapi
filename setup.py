@@ -31,9 +31,16 @@ install_requires = [
     'six>=1.10.0',
 ]
 
-tests_require = [line.strip()
-                 for line in open('requirements/dev-requirements.txt')
-                 if line.strip()]
+tests_require = [
+    'pytest',
+    'pytest-mock',
+    'pytest-cov',
+    'pep8',
+    'astroid==1.4.8',
+    'pylint==1.6.4',
+    'tox==2.3.1',
+    'mock'
+]
 
 setup(
     name=PROJECT_NAME.lower(),
