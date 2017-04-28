@@ -10,6 +10,7 @@ env:
   global:
     secure: KmZxx18hIoC/yxro6qEKdkA+6ehQq1hKwsDaZti4ZjrO+iYGmtD2sUVl2fROF60n/iCl4A/akxwwuFStrY814+F34KgX0LjIfv9q4HWl4mDNep9ZwiHVN0iDtZbf6sD6bvgROqJcBTGZzXRDRseWuL0hPkj9YWVXvsPGh2TwbZY=
 install:
+- pip install pep8 pylint==1.6.4
 - python setup.py develop
 script:
 - make lint
