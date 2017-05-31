@@ -466,6 +466,16 @@ class Build(JenkinsBase):
         else:
             raise JenkinsAPIException('Unknown content type for console')
 
+    def get_estimated_duration(self):
+        """
+        Return the estimated build duration (in seconds) or none.
+        """
+        try:
+            eta_ms = self._data["estimatedDuration"]
+            return max(0, eta_ms / 1000.0)
+        except KeyError:
+            return None
+
     def stop(self):
         """
         Stops the build execution if it's running
