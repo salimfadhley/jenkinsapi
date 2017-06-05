@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 PROJECT_ROOT, _ = os.path.split(__file__)
-REVISION = '0.3.5'
+REVISION = open(os.path.join(PROJECT_ROOT, '.next_version.txt')).read().strip()
 PROJECT_NAME = 'JenkinsAPI'
 PROJECT_AUTHORS = 'Salim Fadhley, Aleksey Maksimov'
 # Please see readme.rst for a complete list of contributors
@@ -31,9 +31,16 @@ install_requires = [
     'six>=1.10.0',
 ]
 
-tests_require = [line.strip()
-                 for line in open('requirements/dev-requirements.txt')
-                 if line.strip()]
+tests_require = [
+    'pytest',
+    'pytest-mock',
+    'pytest-cov',
+    'pep8',
+    'astroid==1.4.8',
+    'pylint==1.6.4',
+    'tox==2.3.1',
+    'mock'
+]
 
 setup(
     name=PROJECT_NAME.lower(),
@@ -50,7 +57,7 @@ setup(
     zip_safe=True,
     include_package_data=False,
     install_requires=install_requires,
-    test_suite='nose.collector',
+    setup_requires=['pytest-runner'],
     tests_require=tests_require,
     entry_points=GLOBAL_ENTRY_POINTS,
     url=PROJECT_URL,
