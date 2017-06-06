@@ -63,6 +63,7 @@ class Node(JenkinsBase):
             'retention': str ('Always' or 'OnDemand')
             'ondemand_delay': int (only for OnDemand retention)
             'ondemand_idle_delay': int (only for OnDemand retention)
+            'connector': str (Cloudbees for NIO SSH agent)
             'env': [
                 {
                     'key':'TEST',
@@ -124,9 +125,10 @@ class Node(JenkinsBase):
 
             retries = na['max_num_retries'] if 'max_num_retries' in na else ''
             re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''
+            sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher' if na['connector'] == 'Cloudbees' else 'hudson.plugins.sshslaves.SSHLauncher'
             launcher = {
-                'stapler-class': 'hudson.plugins.sshslaves.SSHLauncher',
-                '$class': 'hudson.plugins.sshslaves.SSHLauncher',
+                'stapler-class': sshslave_class,
+                '$class': sshslave_class,
                 'host': na['host'],
                 'port': na['port'],
                 'credentialsId': credential.credential_id,
