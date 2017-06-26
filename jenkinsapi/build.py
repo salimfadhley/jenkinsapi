@@ -40,19 +40,10 @@ class Build(JenkinsBase):
     STR_TPL_NOTESTS_ERR = ("%s has status %s, and does not have "
                            "any test results")
 
-    def __init__(self, url, buildno, job, depth=1):
-        """
-        depth=1 is for backward compatibility consideration
-
-        About depth, the deeper it is, the more build data you get back. If
-        depth=0 is sufficient for you, don't go up to 1. See section 'Depth
-        control' of
-        https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API
-        """
+    def __init__(self, url, buildno, job):
         assert isinstance(buildno, int)
         self.buildno = buildno
         self.job = job
-        self.depth = depth
         JenkinsBase.__init__(self, url)
 
     def _poll(self, tree=None):
@@ -60,7 +51,7 @@ class Build(JenkinsBase):
         # upstream builds so we override the poll to get at the extra
         # data for build objects
         url = self.python_api_url(self.baseurl)
-        return self.get_data(url, params={'depth': self.depth}, tree=tree)
+        return self.get_data(url, tree=tree)
 
     def __str__(self):
         return self._data['fullDisplayName']
