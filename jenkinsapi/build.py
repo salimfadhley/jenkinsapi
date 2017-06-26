@@ -24,7 +24,7 @@ from jenkinsapi.custom_exceptions import NoResults
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 from six.moves.urllib.parse import quote
-from requests import HTTPError
+from requests import HTTPError, ConnectionError
 
 
 log = logging.getLogger(__name__)
@@ -357,7 +357,11 @@ class Build(JenkinsBase):
         """
         Return a bool if running.
         """
-        data = self.poll(tree='building')
+        try:
+            data = self.poll(tree='building')
+        except ConnectionError:
+            log.warn("ConnectionError in is_running, will retry")
+            return True
         return data.get('building', False)
 
     def block(self):
