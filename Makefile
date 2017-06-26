@@ -1,7 +1,7 @@
 .PHONY: test lint tox coverage dist
 
 test:
-	py.test -sv jenkinsapi_tests
+	py.test -sv --force-flaky jenkinsapi_tests
 
 lint:
 	pycodestyle
@@ -14,4 +14,4 @@ dist:
 	python setup.py sdist bdist_wheel
 
 coverage:
-	py.test -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
+	py.test -sv --force-flaky --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
