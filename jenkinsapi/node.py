@@ -125,21 +125,37 @@ class Node(JenkinsBase):
 
             retries = na['max_num_retries'] if 'max_num_retries' in na else ''
             re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''
-            sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher' if na['connector'] == 'Cloudbees' else 'hudson.plugins.sshslaves.SSHLauncher'
-            launcher = {
-                'stapler-class': sshslave_class,
-                '$class': sshslave_class,
-                'host': na['host'],
-                'port': na['port'],
-                'credentialsId': credential.credential_id,
-                'jvmOptions': na['jvm_options'],
-                'javaPath': na['java_path'],
-                'prefixStartSlaveCmd': na['prefix_start_slave_cmd'],
-                'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
-                'maxNumRetries': retries,
-                'retryWaitTime': re_wait
-            }
-
+            if na['connector'] == 'Cloudbees':
+                sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher'
+                launcher = {
+                    'stapler-class': sshslave_class,
+                    '$class': sshslave_class,
+                    'host': na['host'],
+                    'connectionDetails': {
+                        'port': na['port'],
+                        'credentialsId': credential.credential_id,
+                        'jvmOptions': na['jvm_options'],
+                        'javaPath': na['java_path'],
+                        'prefixStartSlaveCmd': na['prefix_start_slave_cmd'],
+                        'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
+                        'displayEnvironment': 'false'
+                    }
+                }
+            else:
+                sshslave_class = 'hudson.plugins.sshslaves.SSHLauncher'
+                launcher = {
+                    'stapler-class': sshslave_class,
+                    '$class': sshslave_class,
+                    'host': na['host'],
+                    'port': na['port'],
+                    'credentialsId': credential.credential_id,
+                    'jvmOptions': na['jvm_options'],
+                    'javaPath': na['java_path'],
+                    'prefixStartSlaveCmd': na['prefix_start_slave_cmd'],
+                    'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
+                    'maxNumRetries': retries,
+                    'retryWaitTime': re_wait
+                }
         retention = {
             'stapler-class': 'hudson.slaves.RetentionStrategy$Always',
             '$class': 'hudson.slaves.RetentionStrategy$Always'
