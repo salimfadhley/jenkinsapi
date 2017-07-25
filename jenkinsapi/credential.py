@@ -259,10 +259,10 @@ class AmazonWebServicesCredentials(Credential):
     def __init__(self, cred_dict):
         super(AmazonWebServicesCredentials, self).__init__(cred_dict)
 
-        self.accessKey = cred_dict['accessKey']
-        self.secretKey = cred_dict['secretKey']
-        self.iamRoleArn = cred_dict.get('iamRoleArn', '')
-        self.iamMfaSerialNumber = cred_dict.get('iamMfaSerialNumber', '')
+        self.access_key = cred_dict['accessKey']
+        self.secret_key = cred_dict['secretKey']
+        self.iam_role_arn = cred_dict.get('iamRoleArn', '')
+        self.iam_mfa_serial_number = cred_dict.get('iamMfaSerialNumber', '')
 
     def get_attributes(self):
         """
@@ -282,10 +282,10 @@ class AmazonWebServicesCredentials(Credential):
                     'stapler-class': c_class,
                     '$class': c_class,
                     'id': c_id,
-                    'accessKey': self.accessKey,
-                    'secretKey': self.secretKey,
-                    'iamRoleArn': self.iamRoleArn,
-                    'iamMfaSerialNumber': self.iamMfaSerialNumber,
+                    'accessKey': self.access_key,
+                    'secretKey': self.secret_key,
+                    'iamRoleArn': self.iam_role_arn,
+                    'iamMfaSerialNumber': self.iam_mfa_serial_number,
                     'description': self.description
                 }
             }
