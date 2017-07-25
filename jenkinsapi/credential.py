@@ -234,3 +234,59 @@ class SSHKeyCredential(Credential):
                 }
             }
         }
+
+
+class AmazonWebServicesCredentials(Credential):
+    """
+    AWS credential using the CloudBees AWS Credentials Plugin
+    See https://wiki.jenkins.io/display/JENKINS/CloudBees+AWS+Credentials+Plugin
+
+    Constructor expects following dict:
+        {
+            'credential_id': str,   Automatically set by jenkinsapi
+            'displayName': str,     Automatically set by Jenkins
+            'fullName': str,        Automatically set by Jenkins
+            'description': str,
+            'accessKey': str,
+            'secretKey': str,
+            'iamRoleArn': str,
+            'iamMfaSerialNumber': str
+        }
+
+    When creating credential via jenkinsapi automatic fields not need to be in
+    dict
+    """
+    def __init__(self, cred_dict):
+        super(AmazonWebServicesCredentials, self).__init__(cred_dict)
+
+        self.accessKey = cred_dict['accessKey']
+        self.secretKey = cred_dict['secretKey']
+        self.iamRoleArn = cred_dict.get('iamRoleArn', '')
+        self.iamMfaSerialNumber = cred_dict.get('iamMfaSerialNumber', '')
+
+    def get_attributes(self):
+        """
+        Used by Credentials object to create credential in Jenkins
+        """
+        c_class = (
+            'com.cloudbees.jenkins.plugins.awscredentials.'
+            'AWSCredentialsImpl'
+        )
+        c_id = '' if self.credential_id is None else self.credential_id
+        return {
+            'stapler-class': c_class,
+            'Submit': 'OK',
+            'json': {
+                '': '1',
+                'credentials': {
+                    'stapler-class': c_class,
+                    '$class': c_class,
+                    'id': c_id,
+                    'accessKey': self.accessKey,
+                    'secretKey': self.secretKey,
+                    'iamRoleArn': self.iamRoleArn,
+                    'iamMfaSerialNumber': self.iamMfaSerialNumber,
+                    'description': self.description
+                }
+            }
+        }
