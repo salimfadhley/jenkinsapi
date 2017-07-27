@@ -218,7 +218,8 @@ class SSHKeyCredential(Credential):
         """
         We need one more attr when using the key file on master.
         """
-        if self.key_type == 1: attrs['privateKeyFile'] = self.key_value
+        if self.key_type == 1: 
+            attrs['privateKeyFile'] = self.key_value
 
         c_id = '' if self.credential_id is None else self.credential_id
 
