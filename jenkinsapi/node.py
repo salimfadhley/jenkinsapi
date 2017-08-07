@@ -201,7 +201,7 @@ class Node(JenkinsBase):
         return self._data['jnlpAgent']
 
     def is_idle(self):
-        return self._data['idle']
+        return self.poll(tree='idle')['idle']
 
     def set_online(self):
         """
