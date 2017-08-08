@@ -125,8 +125,9 @@ class Node(JenkinsBase):
 
             retries = na['max_num_retries'] if 'max_num_retries' in na else ''
             re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''
+            connector = na.get('connector', 'hudson.plugins.sshslaves.SSHLauncher')
+            sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher' if connector == 'Cloudbees' else connector
             if na['connector'] == 'Cloudbees':
-                sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher'
                 launcher = {
                     'stapler-class': sshslave_class,
                     '$class': sshslave_class,
@@ -142,7 +143,6 @@ class Node(JenkinsBase):
                     }
                 }
             else:
-                sshslave_class = 'hudson.plugins.sshslaves.SSHLauncher'
                 launcher = {
                     'stapler-class': sshslave_class,
                     '$class': sshslave_class,
