@@ -184,8 +184,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             params['token'] = securitytoken
 
         # Either copy the params dict or make a new one.
-        build_params = build_params and dict(
-            build_params.items()) or {}  # Via POSTed JSON
+        build_params = dict(build_params.items()) \
+            if build_params else {}  # Via POSTed JSON
 
         url = self.get_build_triggerurl()
         if cause:
@@ -720,7 +720,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
     @staticmethod
     def get_full_name_from_url_and_baseurl(url, baseurl):
         """
-        Get the full name for a job (including parent folders) from the job URL.
+        Get the full name for a job (including parent folders) from the
+        job URL.
         """
         path = url.replace(baseurl, '')
         split = path.split('/')

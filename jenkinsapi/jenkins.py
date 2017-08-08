@@ -68,8 +68,7 @@ class Jenkins(JenkinsBase):
     def base_server_url(self):
         if config.JENKINS_API in self.baseurl:
             return self.baseurl[:-(len(config.JENKINS_API))]
-        else:
-            return self.baseurl
+        return self.baseurl
 
     def validate_fingerprint(self, id_):
         obj_fingerprint = Fingerprint(self.baseurl, id_, jenkins_obj=self)
@@ -391,9 +390,9 @@ class Jenkins(JenkinsBase):
         if int(self.plugins['credentials'].version[0:1]) == 1:
             url = '%s/credential-store/domain/_/' % self.baseurl
             return Credentials(url, self)
-        else:
-            url = '%s/credentials/store/system/domain/_/' % self.baseurl
-            return Credentials2x(url, self)
+
+        url = '%s/credentials/store/system/domain/_/' % self.baseurl
+        return Credentials2x(url, self)
 
     @property
     def credentials(self):

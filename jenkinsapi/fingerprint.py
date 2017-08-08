@@ -61,8 +61,8 @@ class Fingerprint(JenkinsBase):
                     "enabled")
                 self.unknown = True
                 return True
-            else:
-                return False
+
+            return False
 
         return True
 

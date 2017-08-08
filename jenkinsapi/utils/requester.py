@@ -23,6 +23,8 @@ from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired
 # requests_log.setLevel(logging.DEBUG)
 # requests_log.propagate = True
 
+requests.adapters.DEFAULT_RETRIES = 5
+
 
 class Requester(object):
 
@@ -104,13 +106,14 @@ class Requester(object):
         return requests.get(self._update_url_scheme(url), **requestKwargs)
 
     def post_url(self, url, params=None, data=None, files=None,
-                 headers=None, allow_redirects=True):
+                 headers=None, allow_redirects=True, **kwargs):
         requestKwargs = self.get_request_dict(
             params=params,
             data=data,
             files=files,
             headers=headers,
-            allow_redirects=allow_redirects)
+            allow_redirects=allow_redirects,
+            **kwargs)
         return requests.post(self._update_url_scheme(url), **requestKwargs)
 
     def post_xml_and_confirm_status(

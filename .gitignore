@@ -13,9 +13,12 @@ jenkins.war
 nosetests.xml
 coverage*/
 .idea/
-bin/
 include/
 lib/
 *.egg
 .tox/*
 *.sw?
+/jenkinsapi_tests/systests/coverage.xml
+/.cache
+/AUTHORS
+/ChangeLog

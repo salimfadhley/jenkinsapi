@@ -17,7 +17,8 @@ class KrbRequester(Requester):
         :param ssl_verify: flag indicating if server certificate in HTTPS requests should be
                            verified
         :param baseurl: Jenkins' base URL
-        :param mutual_auth: type of mutual authentication, use one of REQUIRED, OPTIONAL or DISABLED
+        :param mutual_auth: type of mutual authentication, use one of
+                            REQUIRED, OPTIONAL or DISABLED
                             from requests_kerberos package
         """
         args = {}
@@ -30,8 +31,11 @@ class KrbRequester(Requester):
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
-        req_dict = super(KrbRequester, self).get_request_dict(params=params, data=data, files=files,
-                                                              headers=headers)
+        req_dict = super(KrbRequester, self) \
+            .get_request_dict(params=params,
+                              data=data,
+                              files=files,
+                              headers=headers)
         if self.mutual_auth:
             auth = HTTPKerberosAuth(self.mutual_auth)
         else:
