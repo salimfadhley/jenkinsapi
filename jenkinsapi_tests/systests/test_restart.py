@@ -12,38 +12,49 @@ from requests import HTTPError, ConnectionError
 log = logging.getLogger(__name__)
 
 
-def wait_for_reboot(jenkins):
-    wait = 5
+def wait_for_restart(jenkins):
+    wait = 15
     count = 0
     max_count = 30
     success = False
-    while count < max_count:
+    msg = (
+        'Jenkins has not restarted yet! (This is try %s of %s, '
+        'waited %s seconds so far) '
+        'Sleeping %s seconds and trying again...'
+    )
+
+    while count < max_count or not success:
         time.sleep(wait)
         try:
             jenkins.poll()
+            log.info('Jenkins restarted successfully.')
             success = True
-        except (HTTPError, ConnectionError):
-            msg = ("Jenkins has not restarted yet!  (This is"
-                   " try {0} of {1}, waited {2} seconds so far)"
-                   "  Sleeping and trying again..")
-            msg = msg.format(count, max_count, count*wait)
-            log.debug(msg)
+            break
+        except HTTPError as ex:
+            log.info(ex)
+        except ConnectionError as ex:
+            log.info(ex)
+
+        log.info(msg, count + 1, max_count, count * wait, wait)
         count += 1
+
     if not success:
-        msg = ("Jenkins did not come back from safe restart! "
-               "Waited {0} seconds altogether.  This "
-               "failure may cause other failures.")
+        msg = ('Jenkins did not come back from safe restart! '
+               'Waited {0} seconds altogether.  This '
+               'failure may cause other failures.')
         log.critical(msg.format(count*wait))
-        pytest.fail("msg")
+        pytest.fail(msg)
 
 
 def test_safe_restart(jenkins):
     jenkins.poll()  # jenkins should be alive
     jenkins.safe_restart()
-    with pytest.raises(HTTPError):
+    # Jenkins sleeps for 10 seconds before actually restarting
+    time.sleep(11)
+    with pytest.raises((HTTPError, ConnectionError)):
         # this is a 503: jenkins is still restarting
         jenkins.poll()
     # the test is now complete, but other tests cannot run until
     # jenkins has finished restarted.  to avoid cascading failure
     # we have to wait for reboot to finish.
-    wait_for_reboot(jenkins)
+    wait_for_restart(jenkins)
