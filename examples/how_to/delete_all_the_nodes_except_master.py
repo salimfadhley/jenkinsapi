@@ -1,12 +1,16 @@
+"""
+How to delete slaves/nodes
+"""
+from __future__ import print_function
 import logging
+from jenkinsapi.jenkins import Jenkins
 logging.basicConfig()
 
-from jenkinsapi.jenkins import Jenkins
 
 j = Jenkins('http://localhost:8080')
 
 for node_id, _ in j.get_nodes().iteritems():
-    if not node_id == 'master':
+    if node_id != 'master':
         print(node_id)
         j.delete_node(node_id)
 

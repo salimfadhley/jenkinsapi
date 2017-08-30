@@ -1,54 +1,95 @@
-import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import pytest
 import hashlib
-import requests
-
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.utils.requester import Requester
+from requests.exceptions import HTTPError
 
 
-class TestFingerprint(unittest.TestCase):
+@pytest.fixture(scope='function')
+def jenkins(monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
 
-    def setUp(self):
-        self.baseurl = 'http://localhost:8080'
-        m = hashlib.md5()
-        m.update("some dummy string".encode('ascii'))
-        self.dummy_md5 = m.hexdigest()
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
 
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(JenkinsBase, '_poll')
-    def test_object_creation(self, _poll, _basepoll):
-        J = Jenkins(self.baseurl, username='foouser', password='foopassword')
-        self.fp_instance = Fingerprint(self.baseurl, self.dummy_md5, J)
-        self.assertTrue(isinstance(self.fp_instance, Fingerprint))
-        self.assertEquals(str(self.fp_instance), self.dummy_md5)
-        self.assertTrue(self.fp_instance.valid())
+    return Jenkins('http://localhost:8080',
+                   username='foouser', password='foopassword')
 
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(JenkinsBase, '_poll')
-    def test_valid_with_requests_HTTPError_404(self, _poll, _basepoll):
-        resp_obj = requests.models.Response()
-        resp_obj.status_code = 404
-        _poll.side_effect = requests.exceptions.HTTPError(response=resp_obj)
-        J = Jenkins(self.baseurl, username='foouser', password='foopassword')
-        fp = Fingerprint(self.baseurl, self.dummy_md5, J)
-        self.assertTrue(fp.valid())
 
-    @mock.patch.object(Jenkins, '_poll')
-    @mock.patch.object(JenkinsBase, '_poll')
-    def test_valid_with_requests_HTTPError_Not404(self, _poll, _basepoll):
-        resp_obj = requests.models.Response()
-        resp_obj.status_code = 401
-        _poll.side_effect = requests.exceptions.HTTPError(response=resp_obj)
-        J = Jenkins(self.baseurl, username='foouser', password='foopassword')
-        fp = Fingerprint(self.baseurl, self.dummy_md5, J)
-        self.assertFalse(fp.valid())
+@pytest.fixture(scope='module')
+def dummy_md5():
+    md = hashlib.md5()
+    md.update("some dummy string".encode('ascii'))
+    return md.hexdigest()
 
-if __name__ == '__main__':
-    unittest.main()
+
+def test_object_creation(jenkins, dummy_md5, monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_poll)
+    fp_instance = Fingerprint('http://foo:8080', dummy_md5, jenkins)
+
+    assert isinstance(fp_instance, Fingerprint)
+    assert str(fp_instance) == dummy_md5
+    assert fp_instance.valid()
+
+
+def test_valid_for_404(jenkins, dummy_md5, monkeypatch):
+    class FakeResponse(object):
+        status_code = 404
+        text = '{}'
+
+    class FakeHTTPError(HTTPError):
+        def __init__(self):
+            self.response = FakeResponse()
+
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        raise FakeHTTPError()
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_poll)
+
+    def fake_get_url(
+            url,  # pylint: disable=unused-argument
+            params=None,  # pylint: disable=unused-argument
+            headers=None,  # pylint: disable=unused-argument
+            allow_redirects=True,  # pylint: disable=unused-argument
+            stream=False):  # pylint: disable=unused-argument
+
+        return FakeResponse()
+
+    monkeypatch.setattr(Requester, 'get_url', fake_get_url)
+
+    fingerprint = Fingerprint('http://foo:8080', dummy_md5, jenkins)
+    assert fingerprint.valid() is True
+
+
+def test_invalid_for_401(jenkins, dummy_md5, monkeypatch):
+    class FakeResponse(object):
+        status_code = 401
+        text = '{}'
+
+    class FakeHTTPError(HTTPError):
+        def __init__(self):
+            self.response = FakeResponse()
+
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        raise FakeHTTPError()
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_poll)
+
+    def fake_get_url(
+            url,  # pylint: disable=unused-argument
+            params=None,  # pylint: disable=unused-argument
+            headers=None,  # pylint: disable=unused-argument
+            allow_redirects=True,  # pylint: disable=unused-argument
+            stream=False):  # pylint: disable=unused-argument
+
+        return FakeResponse()
+
+    monkeypatch.setattr(Requester, 'get_url', fake_get_url)
+
+    fingerprint = Fingerprint('http://foo:8080', dummy_md5, jenkins)
+    assert fingerprint.valid() is not True

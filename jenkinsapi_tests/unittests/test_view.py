@@ -155,5 +155,6 @@ class TestView(unittest.TestCase):
         self.assertTrue(isinstance(result, dict))
         self.assertEquals(len(result), 0)
 
+
 if __name__ == '__main__':
     unittest.main()

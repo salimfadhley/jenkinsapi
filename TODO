@@ -1,9 +1,6 @@
 TODO:
 
-* Add a testsuite (preferably nose or py.test) which doesn't rely on a local jenkins setup (or instantiates one during test)
 * Clean up the fingerprint code
 * Clean up the resultset and results code
-* Make all objects inherit off jenkins_base where that makes sense
-* Add ability to add/modify/delete jobs
-* Add ability to query jenkins for plugin data
+* Add support for Jenkins 2.x features
 

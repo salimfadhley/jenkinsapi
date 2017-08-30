@@ -1,20 +1,15 @@
 """
 Module for jenkinsapi Node class
 """
-
-from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.custom_exceptions import PostRequired
-from jenkinsapi.custom_exceptions import JenkinsAPIException
 import json
 import logging
 
 import xml.etree.ElementTree as ET
 
-try:
-    from urllib import quote as urlquote
-except ImportError:
-    # Python3
-    from urllib.parse import quote as urlquote
+from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.custom_exceptions import PostRequired
+from jenkinsapi.custom_exceptions import JenkinsAPIException
+from six.moves.urllib.parse import quote as urlquote
 
 log = logging.getLogger(__name__)
 
@@ -77,6 +72,16 @@ class Node(JenkinsBase):
                     'key':'TEST2',
                     'value':'value2'
                 }
+            ],
+            'tool_location': [
+                {
+                    "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
+                    "home": "/home/apache-maven-3.0.5/"
+                },
+                {
+                    "key": "hudson.plugins.git.GitTool$DescriptorImpl@Default",
+                    "home": "/home/git-3.0.5/"
+                },
             ]
         }
 
@@ -145,17 +150,21 @@ class Node(JenkinsBase):
                 'idleDelay': na['ondemand_idle_delay']
             }
 
+        node_props = {
+            'stapler-class-bag': 'true'
+        }
         if 'env' in na:
-            node_props = {
-                'stapler-class-bag': 'true',
+            node_props.update({
                 'hudson-slaves-EnvironmentVariablesNodeProperty': {
                     'env': na['env']
                 }
-            }
-        else:
-            node_props = {
-                'stapler-class-bag': 'true'
-            }
+            })
+        if 'tool_location' in na:
+            node_props.update({
+                "hudson-tools-ToolLocationNodeProperty": {
+                    "locations": na['tool_location']
+                }
+            })
 
         params = {
             'name': self.name,
@@ -289,6 +298,14 @@ class Node(JenkinsBase):
         without generating new requests.
         """
         self._config = self.get_config()
+
+    def upload_config(self, config_xml):
+        """
+        Uploads config_xml to the config.xml for the node.
+        """
+        self.jenkins.requester.post_and_confirm_status(
+            "%(baseurl)s/config.xml" % self.__dict__,
+            data=config_xml.encode('utf-8'))
 
     def get_labels(self):
         """

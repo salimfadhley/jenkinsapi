@@ -26,6 +26,7 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             logging.error(item)
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
 
+
 Handler = ServerHandler
 
 httpd = SocketServer.TCPServer(("", PORT), Handler)

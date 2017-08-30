@@ -7,12 +7,9 @@ hence they have simple string arguments.
 import os
 import time
 import logging
+import six
 
-try:
-    from urllib import parse as urlparse
-except ImportError:
-    # Python3
-    from urllib2 import urlparse
+import six.moves.urllib.parse as urlparse
 
 from jenkinsapi import constants
 from jenkinsapi.jenkins import Jenkins
@@ -95,7 +92,7 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None,
     If same_build is true then ensure that all artifacts come from the
     same build of the job
     """
-    if len(artifact_ids) == 0 or artifact_ids is None:
+    if not artifact_ids:
         return []
 
     jenkinsci = Jenkins(jenkinsurl, username=username, password=password,
@@ -149,8 +146,9 @@ def block_until_complete(jenkinsurl, jobs, maxwait=12000, interval=30,
         if not still_running:
             return
         str_still_running = ", ".join('"%s"' % str(a) for a in still_running)
-        log.warn(msg="Waiting for jobs %s to complete. Will wait another %is"
-                 % (str_still_running, time_left))
+        log.warning(
+            "Waiting for jobs %s to complete. Will wait another %is",
+            str_still_running, time_left)
         time.sleep(interval)
     if raise_on_timeout:
         # noinspection PyUnboundLocalVariable
@@ -194,7 +192,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl,
     for reldir, artifactnames in dirstruct.items():
         destdir = os.path.join(installdir, reldir)
         if not os.path.exists(destdir):
-            log.warn(msg="Making install directory %s" % destdir)
+            log.warning("Making install directory %s", destdir)
             os.makedirs(destdir)
         else:
             assert os.path.isdir(destdir)
@@ -215,7 +213,7 @@ def install_artifacts(artifacts, dirstruct, installdir, basestaticurl,
 
 def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,
                               username=None, password=None, ssl_verify=True):
-    '''
+    """
     Search the entire history of a hudson job for a build which has an
     artifact whose name matches a supplied regular expression.
     Return only that artifact.
@@ -226,7 +224,7 @@ def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,
         (not a re-string)
     @param username: Jenkins login user name, optional
     @param password: Jenkins login password, optional
-    '''
+    """
     job = Jenkins(jenkinsurl, username=username, password=password,
                   ssl_verify=ssl_verify)
     j = job[jobid]
@@ -237,12 +235,7 @@ def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,
         build = j.get_build(build_id)
 
         artifacts = build.get_artifact_dict()
-
-        try:
-            it = artifacts.iteritems()
-        except AttributeError:
-            # Python3
-            it = artifacts.items()
+        it = six.iteritems(artifacts)
 
         for name, art in it:
             md_match = artifactRegExp.search(name)

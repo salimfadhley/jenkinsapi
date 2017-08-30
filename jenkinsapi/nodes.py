@@ -1,13 +1,9 @@
 """
 Module for jenkinsapi nodes
 """
-
 import logging
-try:
-    from urllib import urlencode
-except ImportError:
-    # Python3
-    from urllib.parse import urlencode
+
+from six.moves.urllib.parse import urlencode
 from jenkinsapi.node import Node
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException

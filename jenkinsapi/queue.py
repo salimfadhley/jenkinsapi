@@ -99,6 +99,10 @@ class QueueItem(JenkinsBase):
     def name(self):
         return self._data['task']['name']
 
+    @property
+    def why(self):
+        return self._data.get('why')
+
     def get_jenkins_obj(self):
         return self.jenkins
 

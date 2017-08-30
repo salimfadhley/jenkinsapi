@@ -1,130 +1,191 @@
+import requests
+import warnings
+import pytest
 import pytz
-import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+from . import configs
 import datetime
-
 from jenkinsapi.build import Build
+from jenkinsapi.job import Job
 
 
-class test_build(unittest.TestCase):
+@pytest.fixture(scope='function')
+def jenkins(mocker):
+    return mocker.MagicMock()
 
-    DATA = {
-        'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
-                                 'userId': None,
-                                 'userName': 'anonymous'}]},
-                    None,
-                    {'causes': []}],
-        'artifacts': [],
-        'building': False,
-        'builtOn': 'localhost',
-        'changeSet': {'items': [], 'kind': None},
-        'culprits': [],
-        'description': 'Best build ever!',
-        "duration": 5782,
-        'estimatedDuration': 106,
-        'executor': None,
-        "fingerprint": [{"fileName": "BuildId.json",
-                         "hash": "e3850a45ab64aa34c1aa66e30c1a8977",
-                         "original": {"name": "ArtifactGenerateJob",
-                                      "number": 469},
-                         "timestamp": 1380270162488,
-                         "usage": [{"name": "SingleJob",
-                                    "ranges": {"ranges": [{"end": 567,
-                                                           "start": 566}]}},
-                                   {"name": "MultipleJobs",
-                                    "ranges": {"ranges": [{"end": 150,
-                                                           "start": 139}]}}]
-                         }],
-        'fullDisplayName': 'foo #1',
-        'id': '2013-05-31_23-15-40',
-        'keepLog': False,
-        'number': 1,
-        'result': 'SUCCESS',
-        'timestamp': 1370042140000,
-        'url': 'http://localhost:8080/job/foo/1/',
-        'runs': [{'number': 1,
-                  'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/1/'},
-                 {'number': 2,
-                  'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/2/'}]
+
+@pytest.fixture(scope='function')
+def job(monkeypatch, jenkins):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.JOB_DATA
+
+    monkeypatch.setattr(Job, '_poll', fake_poll)
+
+    fake_job = Job('http://', 'Fake_Job', jenkins)
+    return fake_job
+
+
+@pytest.fixture(scope='function')
+def build(job, monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.BUILD_DATA
+
+    monkeypatch.setattr(Build, '_poll', fake_poll)
+
+    return Build('http://', 97, job)
+
+
+def test_timestamp(build):
+    assert isinstance(build.get_timestamp(), datetime.datetime)
+
+    expected = pytz.utc.localize(
+        datetime.datetime(2013, 5, 31, 23, 15, 40))
+
+    assert build.get_timestamp() == expected
+
+
+def test_name(build):
+    with pytest.raises(AttributeError):
+        build.id()
+    assert build.name == 'foo #1'
+
+
+def test_duration(build):
+    expected = datetime.timedelta(milliseconds=5782)
+    assert build.get_duration() == expected
+    assert build.get_duration().seconds == 5
+    assert build.get_duration().microseconds == 782000
+    assert str(build.get_duration()) == '0:00:05.782000'
+
+
+def test_get_causes(build):
+    assert build.get_causes() == [{
+        'shortDescription': 'Started by user anonymous',
+        'userId': None,
+        'userName': 'anonymous'
+    }]
+
+
+def test_get_description(build):
+    assert build.get_description() == 'Best build ever!'
+
+
+def test_get_slave(build):
+    assert build.get_slave() == 'localhost'
+
+
+def test_get_revision_no_scm(build):
+    """ with no scm, get_revision should return None """
+    assert build.get_revision() is None
+
+
+def test_downstream(build):
+    expected = ['test1', 'test2']
+    assert build.get_downstream_job_names() == expected
+
+
+def test_get_params(build):
+    expected = {
+        'first_param': 'first_value',
+        'second_param': 'second_value',
     }
-
-    @mock.patch.object(Build, '_poll')
-    def setUp(self, _poll):
-        _poll.return_value = self.DATA
-        self.j = mock.MagicMock()  # Job
-        self.j.name = 'FooJob'
-
-        self.b = Build('http://', 97, self.j)
-
-    def test_timestamp(self):
-        self.assertIsInstance(self.b.get_timestamp(), datetime.datetime)
-
-        expected = pytz.utc.localize(
-            datetime.datetime(2013, 5, 31, 23, 15, 40))
-
-        self.assertEqual(self.b.get_timestamp(), expected)
-
-    def testName(self):
-        with self.assertRaises(AttributeError):
-            self.b.id()
-        self.assertEquals(self.b.name, 'foo #1')
-
-    def test_duration(self):
-        expected = datetime.timedelta(milliseconds=5782)
-        self.assertEquals(self.b.get_duration(), expected)
-        self.assertEquals(self.b.get_duration().seconds, 5)
-        self.assertEquals(self.b.get_duration().microseconds, 782000)
-        self.assertEquals(str(self.b.get_duration()), '0:00:05.782000')
-
-    def test_get_causes(self):
-        self.assertEquals(self.b.get_causes(),
-                          [{'shortDescription': 'Started by user anonymous',
-                            'userId': None,
-                            'userName': 'anonymous'}])
-
-    def test_get_description(self):
-        self.assertEquals(self.b.get_description(),
-                          'Best build ever!')
-
-    def test_get_slave(self):
-        self.assertEquals(self.b.get_slave(),
-                          'localhost')
-
-    @mock.patch.object(Build, 'get_data')
-    def test_build_depth(self, get_data_mock):
-        Build('http://halob:8080/job/foo/98', 98, self.j, depth=0)
-        get_data_mock.assert_called_with('http://halob:8080/job/foo/98/api/'
-                                         'python',
-                                         tree=None, params={'depth': 0})
-
-    def test_get_revision_no_scm(self):
-        """ with no scm, get_revision should return None """
-        self.assertEqual(self.b.get_revision(), None)
-
-    def test_get_revision_no_scm(self):
-        """ with no scm, get_revision should return None """
-        self.assertEqual(self.b.get_revision(), None)
-
-    @mock.patch.object(Build, '__init__')
-    def test_get_matrix_runs(self, build_init_mock):
-        build_init_mock.return_value = None
-        for build in self.b.get_matrix_runs():
-            continue
-        build_init_mock.assert_called_once_with('http//localhost:8080/job/foo/SHARD_NUM=1/1/',
-                                                1, self.j)
-
-    # TEST DISABLED - DOES NOT WORK
-    # def test_downstream(self):
-    #     expected = ['SingleJob','MultipleJobs']
-    #     self.assertEquals(self.b.get_downstream_job_names(), expected)
+    build._data = {
+        'actions': [{
+            '_class': 'hudson.model.ParametersAction',
+            'parameters': [
+                {'name': 'first_param', 'value': 'first_value'},
+                {'name': 'second_param', 'value': 'second_value'},
+            ]
+        }]
+    }
+    params = build.get_params()
+    assert params == expected
 
 
-def main():
-    unittest.main(verbosity=2)
+def test_get_params_different_order(build):
+    """
+    Dictionary with `parameters` key is not always the first element in
+    `actions` list, so we need to search through whole array. This test
+    covers such a case
+    """
+    expected = {
+        'first_param': 'first_value',
+        'second_param': 'second_value',
+    }
+    build._data = {
+        'actions': [
+            {
+                'not_parameters': 'some_data',
+            },
+            {
+                'another_action': 'some_value',
+            },
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'first_param', 'value': 'first_value'},
+                    {'name': 'second_param', 'value': 'second_value'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
 
-if __name__ == '__main__':
-    main()
+
+def test_only_ParametersAction_parameters_considered(build):
+    """Actions other than ParametersAction can have dicts called parameters."""
+    expected = {
+        'param': 'value',
+    }
+    build._data = {
+        'actions': [
+            {
+                '_class': 'hudson.model.SomeOtherAction',
+                'parameters': [
+                    {'name': 'Not', 'value': 'OurValue'},
+                ]
+            },
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'param', 'value': 'value'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
+
+
+def test_build_env_vars(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        return configs.BUILD_ENV_VARS
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+    assert build.get_env_vars() == configs.BUILD_ENV_VARS['envMap']
+
+
+def test_build_env_vars_wo_injected_env_vars_plugin(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        raise requests.HTTPError('404')
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+
+    with pytest.raises(requests.HTTPError) as excinfo:
+        with pytest.warns(None) as record:
+            build.get_env_vars()
+    assert '404' == str(excinfo.value)
+    assert len(record) == 1
+    expected = UserWarning('Make sure the Environment Injector '
+                           'plugin is installed.')
+    assert str(record[0].message) == str(expected)
+
+
+def test_build_env_vars_other_exception(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        raise ValueError()
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+
+    with pytest.raises(Exception) as excinfo:
+        with pytest.warns(None) as record:
+            build.get_env_vars()
+    assert '' == str(excinfo.value)
+    assert len(record) == 0

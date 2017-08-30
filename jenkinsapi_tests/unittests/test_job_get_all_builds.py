@@ -192,8 +192,8 @@ class TestJobGetAllBuilds(unittest.TestCase):
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_incomplete_builds_list_will_call_jenkins_twice(self):
         # The job data contains only one build, so we expect that the
-        # remaining jobs will be fetched automatically, and to have two calls to
-        # the Jenkins API
+        # remaining jobs will be fetched automatically, and to have two calls
+        # to the Jenkins API
         TestJobGetAllBuilds.__get_data_call_count = 0
         self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
         self.assertEquals(TestJobGetAllBuilds.__get_data_call_count, 2)

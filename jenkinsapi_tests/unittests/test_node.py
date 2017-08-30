@@ -1,61 +1,64 @@
-import mock
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
+import pytest
 from jenkinsapi.node import Node
 
 
-class TestNode(unittest.TestCase):
+DATA = {
+    "actions": [],
+    "displayName": "bobnit",
+    "executors": [{}],
+    "icon": "computer.png",
+    "idle": True,
+    "jnlpAgent": False,
+    "launchSupported": True,
+    "loadStatistics": {},
+    "manualLaunchAllowed": True,
+    "monitorData": {
+        "hudson.node_monitors.SwapSpaceMonitor": {
+            "availablePhysicalMemory": 7681417216,
+            "availableSwapSpace": 12195983360,
+            "totalPhysicalMemory": 8374497280,
+            "totalSwapSpace": 12195983360
+        },
+        "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
+        "hudson.node_monitors.ResponseTimeMonitor": {"average": 64},
+        "hudson.node_monitors.TemporarySpaceMonitor": {
+            "path": "/tmp", "size": 250172776448
+        },
+        "hudson.node_monitors.DiskSpaceMonitor": {
+            "path": "/home/sal/jenkins",
+            "size": 170472026112
+        },
+        "hudson.node_monitors.ClockMonitor": {"diff": 6736}
+    },
+    "numExecutors": 1,
+    "offline": False,
+    "offlineCause": None,
+    "oneOffExecutors": [],
+    "temporarilyOffline": False
+}
 
-    DATA = {"actions": [],
-            "displayName": "bobnit",
-            "executors": [{}],
-            "icon": "computer.png",
-            "idle": True,
-            "jnlpAgent": False,
-            "launchSupported": True,
-            "loadStatistics": {},
-            "manualLaunchAllowed": True,
-            "monitorData": {"hudson.node_monitors.SwapSpaceMonitor": {"availablePhysicalMemory": 7681417216,
-                                                                      "availableSwapSpace": 12195983360,
-                                                                      "totalPhysicalMemory": 8374497280,
-                                                                      "totalSwapSpace": 12195983360},
-                            "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
-                            "hudson.node_monitors.ResponseTimeMonitor": {"average": 64},
-                            "hudson.node_monitors.TemporarySpaceMonitor": {"path": "/tmp", "size": 250172776448},
-                            "hudson.node_monitors.DiskSpaceMonitor": {"path": "/home/sal/jenkins", "size": 170472026112},
-                            "hudson.node_monitors.ClockMonitor": {"diff": 6736}},
-            "numExecutors": 1,
-            "offline": False,
-            "offlineCause": None,
-            "oneOffExecutors": [],
-            "temporarilyOffline": False}
 
-    @mock.patch.object(Node, '_poll')
-    def setUp(self, _poll):
-        _poll.return_value = self.DATA
+@pytest.fixture(scope='function')
+def node(monkeypatch, mocker):
+    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return DATA
 
-        # def __init__(self, baseurl, nodename, jenkins_obj):
+    monkeypatch.setattr(Node, '_poll', fake_poll)
+    jenkins = mocker.MagicMock()
 
-        self.J = mock.MagicMock()  # Jenkins object
-        self.n = Node(self.J, 'http://', 'bobnit', {})
+    return Node(jenkins, 'http://foo:8080', 'bobnit', {})
 
-    def testRepr(self):
-        # Can we produce a repr string for this object
-        repr(self.n)
 
-    def testName(self):
-        with self.assertRaises(AttributeError):
-            self.n.id()
-        self.assertEquals(self.n.name, 'bobnit')
+def test_repr(node):
+    # Can we produce a repr string for this object
+    repr(node)
 
-    @mock.patch.object(Node, '_poll')
-    def test_online(self, _poll):
-        _poll.return_value = self.DATA
-        return self.assertEquals(self.n.is_online(), True)
 
-if __name__ == '__main__':
-    unittest.main()
+def test_name(node):
+    with pytest.raises(AttributeError):
+        node.id()
+    assert node.name == 'bobnit'
+
+
+def test_online(node):
+    assert node.is_online() is True

@@ -149,7 +149,7 @@ gzip &lt; out.txt &gt; out.gz</command>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Fingerprinter>
-      <targets></targets>
+      <targets>*.*</targets>
       <recordBuildArtifacts>true</recordBuildArtifacts>
     </hudson.tasks.Fingerprinter>
   </publishers>
@@ -268,7 +268,7 @@ echo $B &gt; b.txt</command>
     </hudson.tasks.Fingerprinter>
   </publishers>
   <buildWrappers/>
-</project>""".strip()
+</project>""".strip()  # noqa
 
 JOB_WITH_FILE_AND_PARAMS = """
 <?xml version='1.0' encoding='UTF-8'?>
@@ -311,3 +311,31 @@ JOB_WITH_FILE_AND_PARAMS = """
   </publishers>
   <buildWrappers/>
 </project>""".strip()
+
+JOB_WITH_ENV_VARS = '''\
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers/>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@1.93.1">
+      <info>
+        <groovyScriptContent>
+          return [\'key1\': \'value1\', \'key2\': \'value2\']
+        </groovyScriptContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+  </buildWrappers>
+</project>
+'''.strip()

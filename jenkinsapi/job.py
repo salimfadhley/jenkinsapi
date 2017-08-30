@@ -1,6 +1,10 @@
 """
 Module for jenkinsapi Job
 """
+import json
+import logging
+import xml.etree.ElementTree as ET
+import six.moves.urllib.parse as urlparse
 
 from collections import defaultdict
 from jenkinsapi.build import Build
@@ -16,17 +20,7 @@ from jenkinsapi.custom_exceptions import (
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
-import json
-import logging
-
-import xml.etree.ElementTree as ET
-
-
-try:
-    import urlparse
-except ImportError:
-    # Python3
-    import urllib.parse as urlparse
+from jenkinsapi_utils.compat import to_string
 
 
 SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
@@ -71,28 +65,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             None: lambda element_tree: []
         }
         self.url = url
-        if self.url is None:
-            self.url = self._find_job_url(name)
         JenkinsBase.__init__(self, self.url)
-
-    def _find_job_url(self, job_name):
-        search_result = self.jenkins.requester.get_url(
-            self.jenkins.baseurl + '/search/suggest?query=' + job_name,
-            headers={
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            allow_redirects=False)
-        if search_result.status_code != 200:
-            raise NotFound('Job %s not found in Jenkins', job_name)
-        full_job_name = search_result.json()['suggestions'][0]['name']
-        search_result = self.jenkins.requester.get_url(
-            self.jenkins.baseurl + '/search/?q=' + full_job_name,
-            allow_redirects=False)
-        if search_result.status_code != 302:
-            raise NotFound('Job %s not found in Jenkins', job_name)
-
-        return search_result.headers['Location']
 
     def __str__(self):
         return self.name
@@ -137,7 +110,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # do not call _buildid_for_type here: it would poll and do an infinite
         # loop
         oldest_loaded_build_number = data["builds"][-1]["number"]
-        if not self._data['firstBuild']:
+        if 'firstBuild' not in self._data or not self._data['firstBuild']:
             first_build_number = oldest_loaded_build_number
         else:
             first_build_number = self._data["firstBuild"]["number"]
@@ -160,11 +133,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_build_triggerurl(self, files, build_params=None):
-        if (files and build_params) or (not self.has_params()):
-            # If job has file parameters and non-file parameters - it must be
-            # triggered using "/build", not by "/buildWithParameters"
-            # "/buildWithParameters" will ignore non-file parameters
+    def get_build_triggerurl(self):
+        if not self.has_params():
             return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
 
@@ -175,11 +145,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Key-Value pairs would be far too simple, no no!
         Watch and read on and behold!
         """
-        assert isinstance(
-            build_params, dict), 'Build parameters must be a dict'
+        if not isinstance(build_params, dict):
+            raise ValueError('Build parameters must be a dict')
 
-        build_p = [{'name': k, 'value': str(v)}
+        build_p = [{'name': k, 'value': to_string(v)}
                    for k, v in sorted(build_params.items())]
+
         out = {'parameter': build_p}
         if file_params:
             file_p = [{'name': k, 'file': k}
@@ -213,10 +184,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
             params['token'] = securitytoken
 
         # Either copy the params dict or make a new one.
-        build_params = build_params and dict(
-            build_params.items()) or {}  # Via POSTed JSON
+        build_params = dict(build_params.items()) \
+            if build_params else {}  # Via POSTed JSON
 
-        url = self.get_build_triggerurl(files, build_params)
+        url = self.get_build_triggerurl()
         if cause:
             build_params['cause'] = cause
 
@@ -241,12 +212,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         redirect_url = response.headers['location']
 
         if not redirect_url.startswith("%s/queue/item" % self.jenkins.baseurl):
-            if files:
-                raise ValueError('Builds with file parameters are not '
-                                 'supported by this jenkinsapi version. '
-                                 'Please use previous version.')
-            else:
-                raise ValueError("Not a Queue URL: %s" % redirect_url)
+            raise ValueError("Not a Queue URL: %s" % redirect_url)
 
         qi = QueueItem(redirect_url, self.jenkins)
         if block:
@@ -254,7 +220,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return qi
 
     def _buildid_for_type(self, buildtype):
-        """Gets a buildid for a given type of build"""
+        """
+        Gets a buildid for a given type of build
+        """
         KNOWNBUILDTYPES = [
             "lastStableBuild",
             "lastSuccessfulBuild",
@@ -291,7 +259,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_last_failed_buildnumber(self):
         """
-        Get the numerical ID of the last good build.
+        Get the numerical ID of the last failed build.
         """
         return self._buildid_for_type(buildtype="lastFailedBuild")
 
@@ -321,6 +289,22 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # I don't think that builds *can* be false here, so I don't
         # understand the test above.
         return dict((build["number"], build["url"]) for build in builds)
+
+    def get_build_by_params(self, build_params, order=1):
+        first_build_number = self.get_first_buildnumber()
+        last_build_number = self.get_last_buildnumber()
+        if order != 1 and order != -1:
+            raise ValueError(
+                'Direction should be ascending or descending (1/-1)')
+
+        for number in range(first_build_number,
+                            last_build_number + 1)[::order]:
+            build = self.get_build(number)
+            if build.get_params() == build_params:
+                return build
+
+        raise NoBuildData(
+            'No build with such params {params}'.format(params=build_params))
 
     def get_revision_dict(self):
         """
@@ -407,8 +391,26 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_build(self, buildnumber):
         assert isinstance(buildnumber, int)
-        url = self.get_build_dict()[buildnumber]
-        return Build(url, buildnumber, job=self)
+        try:
+            url = self.get_build_dict()[buildnumber]
+            return Build(url, buildnumber, job=self)
+        except KeyError:
+            raise NotFound('Build #%s not found' % buildnumber)
+
+    def delete_build(self, build_number):
+        """
+        Remove build
+
+        :param int build_number:    Build number
+        :raises NotFound:           When build is not found
+        """
+        try:
+            url = self.get_build_dict()[build_number]
+            url = "%s/doDelete" % url
+            self.jenkins.requester.post_and_confirm_status(url, data='')
+            self.jenkins.poll()
+        except KeyError:
+            raise NotFound('Build #%s not found' % build_number)
 
     def get_build_metadata(self, buildnumber):
         """
@@ -416,9 +418,17 @@ class Job(JenkinsBase, MutableJenkinsThing):
         tons of tests, this method is faster than get_build by returning less
         data.
         """
-        assert isinstance(buildnumber, int)
-        url = self.get_build_dict()[buildnumber]
-        return Build(url, buildnumber, job=self, depth=0)
+        if not isinstance(buildnumber, int):
+            raise ValueError('Parameter "buildNumber" must be int')
+
+        try:
+            url = self.get_build_dict()[buildnumber]
+            return Build(url, buildnumber, job=self, depth=0)
+        except KeyError:
+            raise NotFound('Build #%s not found' % buildnumber)
+
+    def __delitem__(self, build_number):
+        self.delete_build(build_number)
 
     def __getitem__(self, buildnumber):
         return self.get_build(buildnumber)
@@ -455,7 +465,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return False
 
     def get_config(self):
-        '''Returns the config.xml from the job'''
+        """
+        Returns the config.xml from the job
+        """
         response = self.jenkins.requester.get_and_confirm_status(
             "%(baseurl)s/config.xml" % self.__dict__)
         return response.text
@@ -557,14 +569,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             Useful for debugging and validation workflows.
         """
         url = self.get_config_xml_url()
-        try:
-            if isinstance(
-                    config, unicode):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python3 already a str
-            pass
-
+        config = str(config)  # cast unicode in case of Python 2
         response = self.jenkins.requester.post_url(url, params={}, data=config)
         self._element_tree = ET.fromstring(config)
 
@@ -631,12 +636,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return data.get('color', None) != 'disabled'
 
     def disable(self):
-        '''Disable job'''
+        """
+        Disable job
+        """
         url = "%s/disable" % self.baseurl
         return self.get_jenkins_obj().requester.post_url(url, data='')
 
     def enable(self):
-        '''Enable job'''
+        """
+        Enable job
+        """
         url = "%s/enable" % self.baseurl
         return self.get_jenkins_obj().requester.post_url(url, data='')
 
@@ -649,7 +658,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotInQueue()
         queue_id = self._data['queueItem']['id']
         url = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
-                               'cancelItem?id=%s' % queue_id)
+                               'queue/cancelItem?id=%s' % queue_id)
         self.get_jenkins_obj().requester.post_and_confirm_status(url, data='')
         return True
 
@@ -698,10 +707,29 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return False
 
     def has_queued_build(self, build_params):
-        """Returns True if a build with build_params is currently queued."""
+        """
+        Returns True if a build with build_params is currently queued.
+        """
         queue = self.jenkins.get_queue()
         queued_builds = queue.get_queue_items_for_job(self.name)
         for build in queued_builds:
             if build.get_parameters() == build_params:
                 return True
         return False
+
+    @staticmethod
+    def get_full_name_from_url_and_baseurl(url, baseurl):
+        """
+        Get the full name for a job (including parent folders) from the
+        job URL.
+        """
+        path = url.replace(baseurl, '')
+        split = path.split('/')
+        split = [urlparse.unquote(part) for part in split[::2] if part]
+        return '/'.join(split)
+
+    def get_full_name(self):
+        """
+        Get the full name for a job (including parent folders) from the job URL.
+        """
+        return Job.get_full_name_from_url_and_baseurl(self.url, self.jenkins.baseurl)

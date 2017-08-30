@@ -1,4 +1,5 @@
-"""jenkinsapi_tests.test_plugins
+"""
+jenkinsapi_tests.test_plugins
 """
 import mock
 
@@ -208,6 +209,7 @@ class TestPlugins(unittest.TestCase):
             }
         )
         self.assertEquals(repr(p), '<jenkinsapi.plugin.Plugin subversion>')
+
 
 if __name__ == '__main__':
     unittest.main()

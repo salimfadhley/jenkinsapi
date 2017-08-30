@@ -9,11 +9,12 @@ Build objects can be associated with Results and Artifacts.g
 """
 
 import time
-import pytz
 import logging
 import warnings
 import datetime
+
 from time import sleep
+import pytz
 from jenkinsapi import config
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.result_set import ResultSet
@@ -22,12 +23,9 @@ from jenkinsapi.constants import STATUS_SUCCESS
 from jenkinsapi.custom_exceptions import NoResults
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
+from six.moves.urllib.parse import quote
+from requests import HTTPError
 
-try:
-    from urllib import quote
-except ImportError:
-    # Python3
-    from urllib.parse import quote
 
 log = logging.getLogger(__name__)
 
@@ -91,6 +89,25 @@ class Build(JenkinsBase):
         vcs = self._data['changeSet']['kind'] or 'git'
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
+    def get_params(self):
+        """
+        Return a dictionary of params names and their values or None
+        if no parameters present
+        """
+        # This is what a parameter action looks like:
+        # {'_class': 'hudson.model.ParametersAction', 'parameters': [
+        #     {'_class': 'hudson.model.StringParameterValue',
+        #      'value': '12',
+        #      'name': 'FOO_BAR_BAZ'}]}
+        actions = self._data.get('actions')
+        if actions:
+            parameters = {}
+            for elem in actions:
+                if elem.get('_class') == 'hudson.model.ParametersAction':
+                    parameters = elem.get('parameters', {})
+                    break
+            return {pair['name']: pair['value'] for pair in parameters}
+
     def get_changeset_items(self):
         """
         Returns a list of changeSet items.
@@ -118,8 +135,7 @@ class Build(JenkinsBase):
         """
         if 'items' in self._data['changeSet']:
             return self._data['changeSet']['items']
-        else:
-            return []
+        return []
 
     def _get_svn_rev(self):
         warnings.warn(
@@ -136,7 +152,7 @@ class Build(JenkinsBase):
         _actions = [x for x in self._data['actions']
                     if x and "lastBuiltRevision" in x]
 
-        if len(_actions) > 0:
+        if _actions:
             return _actions[0]["lastBuiltRevision"]["SHA1"]
 
         return None
@@ -170,7 +186,8 @@ class Build(JenkinsBase):
         for afinfo in data["artifacts"]:
             url = "%s/artifact/%s" % (self.baseurl,
                                       quote(afinfo["relativePath"]))
-            af = Artifact(afinfo["fileName"], url, self)
+            af = Artifact(afinfo["fileName"], url, self,
+                          relative_path=afinfo["relativePath"])
             yield af
 
     def get_artifact_dict(self):
@@ -195,8 +212,7 @@ class Build(JenkinsBase):
         """
         if self.get_upstream_job_name():
             return self.get_jenkins_obj().get_job(self.get_upstream_job_name())
-        else:
-            return None
+        return None
 
     def get_upstream_build_number(self):
         """
@@ -216,8 +232,8 @@ class Build(JenkinsBase):
         upstream_job = self.get_upstream_job()
         if upstream_job:
             return upstream_job.get_build(self.get_upstream_build_number())
-        else:
-            return None
+
+        return None
 
     def get_master_job_name(self):
         """
@@ -239,8 +255,8 @@ class Build(JenkinsBase):
             "(get_master_job).")
         if self.get_master_job_name():
             return self.get_jenkins_obj().get_job(self.get_master_job_name())
-        else:
-            return None
+
+        return None
 
     def get_master_build_number(self):
         """
@@ -266,8 +282,8 @@ class Build(JenkinsBase):
         master_job = self.get_master_job()
         if master_job:
             return master_job.get_build(self.get_master_build_number())
-        else:
-            return None
+
+        return None
 
     def get_downstream_jobs(self):
         """
@@ -310,7 +326,7 @@ class Build(JenkinsBase):
         """
         downstream_job_names = self.get_downstream_job_names()
         downstream_builds = []
-        try:
+        try:  # pylint: disable=R1702
             fingerprints = self._data["fingerprint"]
             for fingerprint in fingerprints:
                 for job_usage in fingerprint['usage']:
@@ -409,12 +425,12 @@ class Build(JenkinsBase):
         return all_actions
 
     def get_causes(self):
-        '''
+        """
         Returns a list of causes. There can be multiple causes lists and
         some of the can be empty. For instance, when a build is manually
         aborted, Jenkins could add an empty causes list to the actions
         dict. Empty ones are ignored.
-        '''
+        """
         all_causes = []
         for dct_action in self._data["actions"]:
             if dct_action is None:
@@ -424,9 +440,9 @@ class Build(JenkinsBase):
         return all_causes
 
     def get_timestamp(self):
-        '''
+        """
         Returns build timestamp in UTC
-        '''
+        """
         # Java timestamps are given in miliseconds since the epoch start!
         naive_timestamp = datetime.datetime(
             *time.gmtime(self._data['timestamp'] / 1000.0)[:6])
@@ -448,6 +464,16 @@ class Build(JenkinsBase):
         else:
             raise JenkinsAPIException('Unknown content type for console')
 
+    def get_estimated_duration(self):
+        """
+        Return the estimated build duration (in seconds) or none.
+        """
+        try:
+            eta_ms = self._data["estimatedDuration"]
+            return max(0, eta_ms / 1000.0)
+        except KeyError:
+            return None
+
     def stop(self):
         """
         Stops the build execution if it's running
@@ -456,6 +482,26 @@ class Build(JenkinsBase):
         """
         if self.is_running():
             url = "%s/stop" % self.baseurl
-            self.job.jenkins.requester.post_and_confirm_status(url, data='')
+            # Starting from Jenkins 2.7 stop function sometimes breaks
+            # on redirect to job page. Call to stop works fine, and
+            # we don't need to have job page here.
+            self.job.jenkins.requester.post_and_confirm_status(
+                url, data='', valid=[302, 200, 500, ])
             return True
         return False
+
+    def get_env_vars(self):
+        """
+        Return the environment variables.
+
+        This method is using the Environment Injector plugin:
+        https://wiki.jenkins-ci.org/display/JENKINS/EnvInject+Plugin
+        """
+        url = self.python_api_url('%s/injectedEnvVars' % self.baseurl)
+        try:
+            data = self.get_data(url, params={'depth': self.depth})
+        except HTTPError as ex:
+            warnings.warn('Make sure the Environment Injector plugin '
+                          'is installed.')
+            raise ex
+        return data['envMap']

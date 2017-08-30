@@ -25,10 +25,11 @@ class Artifact(object):
     generated as a by-product of executing a Jenkins build.
     """
 
-    def __init__(self, filename, url, build):
+    def __init__(self, filename, url, build, relative_path=None):
         self.filename = filename
         self.url = url
         self.build = build
+        self.relative_path = relative_path
 
     def save(self, fspath, strict_validation=False):
         """
@@ -40,15 +41,15 @@ class Artifact(object):
         """
         log.info(msg="Saving artifact @ %s to %s" % (self.url, fspath))
         if not fspath.endswith(self.filename):
-            log.warn(
-                msg="Attempt to change the filename of artifact %s on save." %
+            log.warning(
+                "Attempt to change the filename of artifact %s on save.",
                 self.filename)
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath, strict_validation):
                         log.info(
-                            msg="Local copy of %s is already up to date." %
+                            "Local copy of %s is already up to date.",
                             self.filename)
                         return fspath
                 except ArtifactBroken:
@@ -77,8 +78,11 @@ class Artifact(object):
         """
         Download the the artifact to a path.
         """
+        data = self.get_jenkins_obj().requester.get_and_confirm_status(
+            self.url, stream=True)
         with open(fspath, "wb") as out:
-            out.write(self.get_data())
+            for chunk in data.iter_content(chunk_size=1024):
+                out.write(chunk)
         return fspath
 
     def _verify_download(self, fspath, strict_validation):
@@ -92,9 +96,13 @@ class Artifact(object):
             local_md5,
             self.build.job.jenkins)
         valid = fp.validate_for_build(
-            os.path.basename(fspath), self.build.job.name, self.build.buildno)
-        if not valid or (fp.unknown and strict_validation):  # strict = 404 as invalid
-            raise ArtifactBroken("Artifact %s seems to be broken, check %s" % (local_md5, baseurl))
+            self.filename, self.build.job.get_full_name(), self.build.buildno)
+        if not valid or (fp.unknown and strict_validation):
+            # strict = 404 as invalid
+            raise ArtifactBroken(
+                "Artifact %s seems to be broken, check %s"
+                % (local_md5, baseurl)
+            )
         return True
 
     def _md5sum(self, fspath, chunksize=2 ** 20):
@@ -103,15 +111,12 @@ class Artifact(object):
         used by Jenkins.
         """
         md5 = hashlib.md5()
-        try:
-            with open(fspath, 'rb') as f:
-                for chunk in iter(lambda: f.read(chunksize), ''):
-                    if chunk:
-                        md5.update(chunk)
-                    else:
-                        break
-        except:
-            raise
+        with open(fspath, 'rb') as f:
+            for chunk in iter(lambda: f.read(chunksize), ''):
+                if chunk:
+                    md5.update(chunk)
+                else:
+                    break
         return md5.hexdigest()
 
     def save_to_dir(self, dirpath, strict_validation=False):

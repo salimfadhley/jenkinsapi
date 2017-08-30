@@ -2,21 +2,23 @@
 About this library
 ==================
 
-Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi.
-This API makes Jenkins even easier to use by providing an easy to use conventional python interface.
+Jenkins is the market leading continuous integration system, originally created
+by Kohsuke Kawaguchi. This API makes Jenkins even easier to use by providing an
+ easy to use conventional python interface.
 
-Jenkins (and It's predecessor Hudson) are fantastic projects - but they are somewhat Java-centric.
-Thankfully the designers have provided an excellent and complete REST interface. This library
-wraps up that interface as more conventional python objects in order to make most Jenkins oriented
+Jenkins (and It's predecessor Hudson) are fantastic projects - but they are
+somewhat Java-centric. Thankfully the designers have provided an excellent and
+complete REST interface. This library wraps up that interface as more
+conventional python objects in order to make most Jenkins oriented
 tasks simpler.
 
 This library can help you:
 
  * Query the test-results of a completed build
  * Get a objects representing the latest builds of a job
- * Search for artefacts by simple criteria
+ * Search for artifacts by simple criteria
  * Block until jobs are complete
- * Install artefacts to custom-specified directory structures
+ * Install artifacts to custom-specified directory structures
  * username/password auth support for jenkins instances with auth turned on
  * Ability to search for builds by subversion revision
  * Ability to add/remove/query jenkins slaves
@@ -24,8 +26,8 @@ This library can help you:
 Installing JenkinsAPI
 =====================
 
-Egg-files for this project are hosted on PyPi. Most Python users should be able to use pip or distribute
-to automatically install this project.
+Egg-files for this project are hosted on PyPi. Most Python users should be able
+to use pip or distribute to automatically install this project.
 
 Most users can do the following:
 
@@ -52,14 +54,16 @@ from jenkinsapi import (
     utils,
 
     # Files
-    api, artifact, build, config, constants, custom_exceptions, fingerprint, executors, executor,
+    api, artifact, build, config, constants, custom_exceptions,
+    fingerprint, executors, executor,
     jenkins, jenkinsbase, job, node, result_set, result, view
 )
 
 __all__ = [
     "command_line", "utils",
-    "api", "artifact", "build", "config", "constants", "custom_exceptions", "executors", "executor",
-    "fingerprint", "jenkins", "jenkinsbase", "job", "node", "result_set", "result", "view"
+    "api", "artifact", "build", "config", "constants", "custom_exceptions",
+    "executors", "executor", "fingerprint", "jenkins", "jenkinsbase",
+    "job", "node", "result_set", "result", "view"
 ]
 __docformat__ = "epytext"
 # In case of jenkinsapi is not installed in 'develop' mode
@@ -67,7 +71,5 @@ __version__ = '99.99.99'
 try:
     import pkg_resources
     __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version
-except ImportError:
-    pass
-except KeyError:
+except (ImportError, KeyError):
     pass
