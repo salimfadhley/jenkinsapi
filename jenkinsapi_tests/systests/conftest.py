@@ -26,7 +26,8 @@ PLUGIN_DEPENDENCIES = [
     "https://updates.jenkins-ci.org/latest/ssh-slaves.hpi",
     "https://updates.jenkins-ci.org/latest/structs.hpi",
     "http://updates.jenkins-ci.org/latest/plain-credentials.hpi",
-    "http://updates.jenkins-ci.org/latest/envinject.hpi"
+    "http://updates.jenkins-ci.org/latest/envinject.hpi",
+    "http://updates.jenkins-ci.org/latest/envinject-api.hpi"
 ]
 
 

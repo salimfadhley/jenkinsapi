@@ -209,7 +209,7 @@ class JenkinsLancher(object):
                     if isinstance(line, bytes):
                         line = line.decode('UTF-8')
                 except queue.Empty:
-                    log.warn("Input ended unexpectedly")
+                    log.warning("Input ended unexpectedly")
                     break
                 else:
                     if line:
