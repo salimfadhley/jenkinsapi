@@ -72,6 +72,16 @@ class Build(JenkinsBase):
     def get_description(self):
         return self._data["description"]
 
+    def set_description(self, description):
+        url = "%s/submitDescription" % self.baseurl
+        self.job.jenkins.requester.post_and_confirm_status(
+            url,
+            params={"Submit": "submit", "description": description},
+            data="",
+            valid=[200]
+        )
+        self._data["description"] = description
+
     def get_number(self):
         return self._data["number"]
 
