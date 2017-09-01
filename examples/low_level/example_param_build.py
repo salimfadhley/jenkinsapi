@@ -16,5 +16,6 @@ def foo():
     response = requests.post(url, data=form, headers=headers)
     print(response.text.encode('UTF-8'))
 
+
 if __name__ == '__main__':
     foo()

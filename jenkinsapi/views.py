@@ -107,7 +107,7 @@ class Views(object):
         url = '%s/createView' % self.jenkins.baseurl
 
         if view_type == self.CATEGORIZED_VIEW:
-            if config is None or len(config) == 0:
+            if not config:
                 raise JenkinsAPIException(
                     'Job XML config cannot be empty for CATEGORIZED_VIEW')
 

@@ -163,8 +163,7 @@ class ArtifactTest(unittest.TestCase):
         artifact = self._artifact
         artifact._verify_download = Mock(return_value=True)
 
-        assert artifact.save('/tmp/artifact.zip') == \
-                         '/tmp/artifact.zip'
+        assert artifact.save('/tmp/artifact.zip') == '/tmp/artifact.zip'
 
         mock_exists.assert_called_once_with('/tmp/artifact.zip')
         artifact._verify_download.assert_called_once_with(
@@ -176,8 +175,7 @@ class ArtifactTest(unittest.TestCase):
         artifact._verify_download = Mock(side_effect=[ArtifactBroken, True])
         artifact._do_download = Mock(return_value='/tmp/artifact.zip')
 
-        assert artifact.save('/tmp/artifact.zip', True) == \
-                         '/tmp/artifact.zip'
+        assert artifact.save('/tmp/artifact.zip', True) == '/tmp/artifact.zip'
 
         mock_exists.assert_called_once_with('/tmp/artifact.zip')
         artifact._do_download.assert_called_once_with('/tmp/artifact.zip')
@@ -206,8 +204,7 @@ class ArtifactTest(unittest.TestCase):
         artifact._do_download = Mock(return_value='/tmp/artifact.zip')
         artifact._verify_download = Mock(return_value=True)
 
-        assert artifact.save('/tmp/artifact.zip') == \
-                         '/tmp/artifact.zip'
+        assert artifact.save('/tmp/artifact.zip') == '/tmp/artifact.zip'
 
         mock_exists.assert_called_once_with('/tmp/artifact.zip')
         artifact._do_download.assert_called_once_with('/tmp/artifact.zip')

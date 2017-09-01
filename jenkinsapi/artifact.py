@@ -111,15 +111,12 @@ class Artifact(object):
         used by Jenkins.
         """
         md5 = hashlib.md5()
-        try:
-            with open(fspath, 'rb') as f:
-                for chunk in iter(lambda: f.read(chunksize), ''):
-                    if chunk:
-                        md5.update(chunk)
-                    else:
-                        break
-        except:
-            raise
+        with open(fspath, 'rb') as f:
+            for chunk in iter(lambda: f.read(chunksize), ''):
+                if chunk:
+                    md5.update(chunk)
+                else:
+                    break
         return md5.hexdigest()
 
     def save_to_dir(self, dirpath, strict_validation=False):
