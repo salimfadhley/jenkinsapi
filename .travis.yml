@@ -17,11 +17,6 @@ script:
 - tox
 after_success:
 - codecov
-branches:
-  only:
-  - master
-  - develop
-  - /^(\d+)\.(\d+)\.(\d+)$/
 jobs:
   include:
     - stage: release
@@ -38,5 +33,6 @@ jobs:
         - AUTHORS
         skip_cleanup: true
         on:
+          branch: master
           repo: pycontribs/jenkinsapi
           tags: true
