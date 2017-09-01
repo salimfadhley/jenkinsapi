@@ -23,7 +23,7 @@ class Jobs(object):
         self._data = []
 
     def _del_data(self, job_name):
-        if len(self._data) == 0:
+        if not self._data:
             return
         for num, job_data in enumerate(self._data):
             if job_data['name'] == job_name:
@@ -80,7 +80,9 @@ class Jobs(object):
         if job_name in self:
             job_data = [job_row for job_row in self._data
                         if job_row['name'] == job_name or
-                        Job.get_full_name_from_url_and_baseurl(job_row['url'], self.jenkins.baseurl) == job_name][0]
+                        Job.get_full_name_from_url_and_baseurl(
+                            job_row['url'],
+                            self.jenkins.baseurl) == job_name][0]
             return Job(job_data['url'], job_data['name'], self.jenkins)
         else:
             raise UnknownJob(job_name)
@@ -104,18 +106,21 @@ class Jobs(object):
         """
         Iterate over the names of all available jobs
         """
-        if len(self._data) == 0:
+        if not self._data:
             self._data = self.poll().get('jobs', [])
         for row in self._data:
             yield row['name']
-            if row['name'] != Job.get_full_name_from_url_and_baseurl(row['url'], self.jenkins.baseurl):
-                yield Job.get_full_name_from_url_and_baseurl(row['url'], self.jenkins.baseurl)
+            if row['name'] != \
+                Job.get_full_name_from_url_and_baseurl(row['url'],
+                                                       self.jenkins.baseurl):
+                yield Job.get_full_name_from_url_and_baseurl(
+                    row['url'], self.jenkins.baseurl)
 
     def itervalues(self):
         """
         Iterate over all available jobs
         """
-        if len(self._data) == 0:
+        if not self._data:
             self._data = self.poll().get('jobs', [])
         for row in self._data:
             yield Job(row['url'], row['name'], self.jenkins)
@@ -137,7 +142,7 @@ class Jobs(object):
         if job_name in self:
             return self[job_name]
 
-        if config is None or len(config) == 0:
+        if not config:
             raise JenkinsAPIException('Job XML config cannot be empty')
 
         params = {'name': job_name}
@@ -199,8 +204,8 @@ class Jobs(object):
         :param kwargs:          Parameters for Job.invoke() function
         :returns QueueItem:     Object to track build progress
         """
-        if params is not None:
+        if params:
             assert isinstance(params, dict)
             return self[job_name].invoke(build_params=params, **kwargs)
-        else:
-            return self[job_name].invoke(**kwargs)
+
+        return self[job_name].invoke(**kwargs)

@@ -42,7 +42,7 @@ class JenkinsInvoke(object):
         parser = cls.mkparser()
         options, args = parser.parse_args()
         try:
-            assert len(args) > 0, "Need to specify at least one job name"
+            assert args, "Need to specify at least one job name"
         except AssertionError as err:
             log.critical(err.message)
             parser.print_help()

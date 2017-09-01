@@ -268,7 +268,7 @@ echo $B &gt; b.txt</command>
     </hudson.tasks.Fingerprinter>
   </publishers>
   <buildWrappers/>
-</project>""".strip()
+</project>""".strip()  # noqa
 
 JOB_WITH_FILE_AND_PARAMS = """
 <?xml version='1.0' encoding='UTF-8'?>

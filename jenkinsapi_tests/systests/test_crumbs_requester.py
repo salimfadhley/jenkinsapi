@@ -14,12 +14,8 @@ from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE
 log = logging.getLogger(__name__)
 
 DEFAULT_JENKINS_PORT = 8080
+
 ENABLE_CRUMBS_CONFIG = {
-    '': '0',
-    'markupFormatter': {
-        'stapler-class': 'hudson.markup.EscapedMarkupFormatter',
-        '$class': 'hudson.markup.EscapedMarkupFormatter'
-    },
     'hudson-security-csrf-GlobalCrumbIssuerConfiguration': {
         'csrf': {
             'issuer': {
@@ -29,22 +25,46 @@ ENABLE_CRUMBS_CONFIG = {
                 'excludeClientIPFromCrumb': False
             }
         }
-    },
-    'jenkins-model-DownloadSettings': {
-        'useBrowser': False
-    },
-    'core:apply': '',
+    }
 }
 
 DISABLE_CRUMBS_CONFIG = {
+    'hudson-security-csrf-GlobalCrumbIssuerConfiguration': {},
+}
+
+SECURITY_SETTINGS = {
     '': '0',
     'markupFormatter': {
         'stapler-class': 'hudson.markup.EscapedMarkupFormatter',
         '$class': 'hudson.markup.EscapedMarkupFormatter'
     },
-    'hudson-security-csrf-GlobalCrumbIssuerConfiguration': {},
+    'jenkins-security-s2m-MasterKillSwitchConfiguration': {
+    },
+    'org-jenkinsci-main-modules-sshd-SSHD': {
+        'port': {
+            'value': '',
+            'type': 'random'
+        }
+    },
+    'jenkins-CLI': {
+        'enabled': False
+    },
+    # This is not required if envinject plugin is not installed
+    # but since it is installed for test suite - we must have this config
+    # If this is not present - Jenkins will return error
+    'org-jenkinsci-plugins-envinject-EnvInjectPluginConfiguration': {
+        'enablePermissions': False,
+        'hideInjectedVars': False,
+        'enableLoadingFromMaster': False
+    },
     'jenkins-model-DownloadSettings': {
         'useBrowser': False
+    },
+    'org-jenkinsci-main-modules-sshd-SSHD': {
+        'port': {
+            'value': '',
+            'type': 'random'
+        }
     },
     'core:apply': ''
 }
@@ -52,6 +72,9 @@ DISABLE_CRUMBS_CONFIG = {
 
 @pytest.fixture(scope='function')
 def crumbed_jenkins(jenkins):
+    ENABLE_CRUMBS_CONFIG.update(SECURITY_SETTINGS)
+    DISABLE_CRUMBS_CONFIG.update(SECURITY_SETTINGS)
+
     jenkins.requester.post_and_confirm_status(
         urljoin(jenkins.baseurl, '/configureSecurity/configure'),
         data={
@@ -65,6 +88,7 @@ def crumbed_jenkins(jenkins):
         jenkins.baseurl,
         requester=CrumbRequester(baseurl=jenkins.baseurl)
     )
+
     yield crumbed
 
     crumbed.requester.post_and_confirm_status(

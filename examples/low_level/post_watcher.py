@@ -22,7 +22,7 @@ import logging
 import cgi
 
 PORT = 8081  # <-- change this to be the actual port you want to run on
-I = "localhost"
+INTERFACE = "localhost"
 
 
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
@@ -55,6 +55,6 @@ httpd = socketserver.TCPServer(("", PORT), Handler)
 print(
     "Serving at: http://%(interface)s:%(port)s" %
     dict(
-        interface=I or "localhost",
+        interface=INTERFACE or "localhost",
         port=PORT))
 httpd.serve_forever()
