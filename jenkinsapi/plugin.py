@@ -43,13 +43,17 @@ class Plugin(object):
         """
         Used by Plugins object to install plugins in Jenkins
         """
-        return "<jenkins> <install plugin=\"%s@%s\" /> </jenkins>" % (self.shortName, self.version)
+        return (
+            "<jenkins> <install plugin=\"%s@%s\" /> </jenkins>"
+            % (self.shortName, self.version)
+        )
 
     def is_latest(self, update_center_dict):
         """
         Used by Plugins object to determine if plugin can be
-        installed through the update center (when plugin version is latest version),
-        or must be installed by uploading the plugin hpi file.
+        installed through the update center (when plugin version is
+        latest version), or must be installed by uploading
+        the plugin hpi file.
         """
         if self.version == 'latest':
             return True
@@ -57,6 +61,10 @@ class Plugin(object):
         return center_plugin['version'] == self.version
 
     def get_download_link(self, update_center_dict):
-        latest_version = update_center_dict['plugins'][self.shortName]['version']
+        latest_version = update_center_dict[
+            'plugins'][self.shortName]['version']
         latest_url = update_center_dict['plugins'][self.shortName]['url']
-        return latest_url.replace("/".join((self.shortName, latest_version)), "/".join((self.shortName, self.version)))
+        return latest_url.replace(
+            "/".join(
+                (self.shortName, latest_version)),
+            "/".join((self.shortName, self.version)))

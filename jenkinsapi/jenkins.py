@@ -1,10 +1,12 @@
 """
 Module for jenkinsapi Jenkins object
 """
+import time
 import logging
 import six.moves.urllib.parse as urlparse
 
 from six.moves.urllib.parse import quote as urlquote
+from requests import HTTPError, ConnectionError
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import Credentials2x
@@ -331,13 +333,15 @@ class Jenkins(JenkinsBase):
             plugin = Plugin(plugin)
         self.plugins[plugin.shortName] = plugin
 
-    def install_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
+    def install_plugins(self, plugin_list, restart=False,
+                        wait_for_reboot=False):
         """
         Install a list of plugins and optionally restart jenkins.
         @param plugin_list: list of plugins to be installed
         @param restart: Boolean, restart jenkins after plugin installation
         """
-        plugins = [p if isinstance(p, Plugin) else Plugin(p) for p in plugin_list]
+        plugins = [p if isinstance(p, Plugin) else Plugin(p)
+                   for p in plugin_list]
         for plugin in plugins:
             self.install_plugin(plugin)
         if restart and self.plugins.restart_required:
@@ -356,19 +360,20 @@ class Jenkins(JenkinsBase):
         return resp
 
     def _wait_for_reboot(self):
-        # We need to make sure all jobs have finished, and that jenkins is actually restarting.
+        # We need to make sure all jobs have finished,
+        # and that jenkins is actually restarting.
         # One way to be sure is to make sure jenkins is really down.
         wait = 5
         count = 0
         max_count = 30
-        self.__jenkins_is_unavailable()  # Blocks until jenkins is really restarting
+        self.__jenkins_is_unavailable()  # Blocks until jenkins is restarting
         while count < max_count:
             time.sleep(wait)
             try:
                 self.poll()
                 len(self.plugins)  # Make sure jenkins is fully started
                 return  # By this time jenkins is back online
-            except (requests.HTTPError, requests.ConnectionError):
+            except (HTTPError, ConnectionError):
                 msg = ("Jenkins has not restarted yet!  (This is"
                        " try {0} of {1}, waited {2} seconds so far)"
                        "  Sleeping and trying again..")
@@ -376,20 +381,22 @@ class Jenkins(JenkinsBase):
                 log.debug(msg)
             count += 1
         msg = ("Jenkins did not come back from safe restart! "
-               "Waited {0} seconds altogether.  This "
+               "Waited %s seconds altogether.  This "
                "failure may cause other failures.")
-        log.critical(msg.format(count * wait))
+        log.critical(msg, count * wait)
 
     def __jenkins_is_unavailable(self):
         while True:
             try:
-                self.requester.get_and_confirm_status(self.baseurl, valid=[503, 500])
+                self.requester.get_and_confirm_status(
+                    self.baseurl, valid=[503, 500])
                 return True
-            except requests.ConnectionError:
+            except ConnectionError:
                 # This is also a possibility while Jenkins is restarting
                 return True
-            except requests.HTTPError:
-                # This is a return code that is not 503, so Jenkins is likely available
+            except HTTPError:
+                # This is a return code that is not 503,
+                # so Jenkins is likely available
                 time.sleep(1)
 
     @property
