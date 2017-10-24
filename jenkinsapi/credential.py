@@ -215,6 +215,10 @@ class SSHKeyCredential(Credential):
             'privateKey': self.key_value,
             'stapler-class': c_class
         }
+        # We need one more attr when using the key file on master.
+        if self.key_type == 1:
+            attrs['privateKeyFile'] = self.key_value
+
         c_id = '' if self.credential_id is None else self.credential_id
 
         return {
@@ -231,6 +235,62 @@ class SSHKeyCredential(Credential):
                     'passphrase': self.passphrase,
                     'stapler-class': base_class,
                     '$class': base_class
+                }
+            }
+        }
+
+
+class AmazonWebServicesCredentials(Credential):
+    """
+    AWS credential using the CloudBees AWS Credentials Plugin
+    See https://wiki.jenkins.io/display/JENKINS/CloudBees+AWS+Credentials+Plugin
+
+    Constructor expects following dict:
+        {
+            'credential_id': str,   Automatically set by jenkinsapi
+            'displayName': str,     Automatically set by Jenkins
+            'fullName': str,        Automatically set by Jenkins
+            'description': str,
+            'accessKey': str,
+            'secretKey': str,
+            'iamRoleArn': str,
+            'iamMfaSerialNumber': str
+        }
+
+    When creating credential via jenkinsapi automatic fields not need to be in
+    dict
+    """
+    def __init__(self, cred_dict):
+        super(AmazonWebServicesCredentials, self).__init__(cred_dict)
+
+        self.access_key = cred_dict['accessKey']
+        self.secret_key = cred_dict['secretKey']
+        self.iam_role_arn = cred_dict.get('iamRoleArn', '')
+        self.iam_mfa_serial_number = cred_dict.get('iamMfaSerialNumber', '')
+
+    def get_attributes(self):
+        """
+        Used by Credentials object to create credential in Jenkins
+        """
+        c_class = (
+            'com.cloudbees.jenkins.plugins.awscredentials.'
+            'AWSCredentialsImpl'
+        )
+        c_id = '' if self.credential_id is None else self.credential_id
+        return {
+            'stapler-class': c_class,
+            'Submit': 'OK',
+            'json': {
+                '': '1',
+                'credentials': {
+                    'stapler-class': c_class,
+                    '$class': c_class,
+                    'id': c_id,
+                    'accessKey': self.access_key,
+                    'secretKey': self.secret_key,
+                    'iamRoleArn': self.iam_role_arn,
+                    'iamMfaSerialNumber': self.iam_mfa_serial_number,
+                    'description': self.description
                 }
             }
         }
