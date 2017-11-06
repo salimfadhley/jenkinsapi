@@ -633,7 +633,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def is_enabled(self):
         data = self.poll(tree='color')
-        return data.get('color', None) != 'disabled'
+        return 'disabled' not in data.get('color', '')
 
     def disable(self):
         """
@@ -730,6 +730,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_full_name(self):
         """
-        Get the full name for a job (including parent folders) from the job URL.
+        Get the full name for a job (including parent folders)
+        from the job URL.
         """
-        return Job.get_full_name_from_url_and_baseurl(self.url, self.jenkins.baseurl)
+        return Job.get_full_name_from_url_and_baseurl(
+            self.url, self.jenkins.baseurl)
