@@ -382,15 +382,20 @@ class Jenkins(JenkinsBase):
     def get_credentials(self):
         """
         Return credentials
+        In order to run the code below, the account needs admin access since
+        there is no RBAC toggles to control user access to the list of installed
+        plugins (only users granted admin privileges can view the list of
+        installed plugins or add/remove plugins).
+        Since it is a huge security risk, it will be assumed that the
+        credentials plugin is installed and that Jenkins is running verion 2.x
+        of the master
         """
-
-        if 'credentials' not in self.plugins:
-            raise JenkinsAPIException('Credentials plugin not installed')
-
-        if int(self.plugins['credentials'].version[0:1]) == 1:
-            url = '%s/credential-store/domain/_/' % self.baseurl
-            return Credentials(url, self)
-
+        # if 'credentials' not in self.plugins:
+        #     raise JenkinsAPIException('Credentials plugin not installed')
+        #
+        # if int(self.plugins['credentials'].version[0:1]) == 1:
+        #     url = '%s/credential-store/domain/_/' % self.baseurl
+        #     return Credentials(url, self)
         url = '%s/credentials/store/system/domain/_/' % self.baseurl
         return Credentials2x(url, self)
 
