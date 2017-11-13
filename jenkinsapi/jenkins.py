@@ -8,6 +8,7 @@ from six.moves.urllib.parse import quote as urlquote
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import Credentials2x
+from jenkinsapi.credentials import CredentialsById
 from jenkinsapi.executors import Executors
 from jenkinsapi.jobs import Jobs
 from jenkinsapi.view import View
@@ -379,7 +380,7 @@ class Jenkins(JenkinsBase):
         version_key = 'X-Jenkins'
         return response.headers.get(version_key, '0.0')
 
-    def get_credentials(self):
+    def get_credentials(self, cred_class):
         """
         Return credentials
         """
@@ -392,11 +393,15 @@ class Jenkins(JenkinsBase):
             return Credentials(url, self)
 
         url = '%s/credentials/store/system/domain/_/' % self.baseurl
-        return Credentials2x(url, self)
+        return cred_class(url, self)
 
     @property
     def credentials(self):
-        return self.get_credentials()
+        return self.get_credentials(Credentials2x)
+
+    @property
+    def credentials_by_id(self):
+        return self.get_credentials(CredentialsById)
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl
