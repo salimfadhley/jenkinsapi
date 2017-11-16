@@ -128,15 +128,14 @@ class Node(JenkinsBase):
             connector = na.get('connector', 'hudson.plugins.sshslaves.SSHLauncher')
             sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher' if connector == 'Cloudbees' else connector
             sshslaves_verification_class_prefix = 'com.cloudbees.jenkins.plugins.sshslaves.verification'
-            verification_strategy = na.get('keyVerificationStrategy', '{}.{}'.format(sshslaves_verification_class_prefix, 'BlindTrustConnectionVerificationStrategy'))
-            if verification_strategy.lower() == 'manually trusted key':
+            if na['keyVerificationStrategy'].lower() == 'manually trusted key':
                 ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'TrustInitialConnectionVerificationStrategy')
-            elif verification_strategy.lower() == 'manually provided key':
+            elif na['keyVerificationStrategy'].lower() == 'manually provided key':
                 ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'ManuallyConnectionVerificationStrategy')
-            elif verification_strategy.lower() == 'known_hosts file':
+            elif na['keyVerificationStrategy'].lower() == 'known_hosts file':
                 ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'KnownHostsConnectionVerificationStrategy')
             else:
-                 ssh_key_verification_strategy_class = verification_strategy
+                 ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'BlindTrustConnectionVerificationStrategy')
 
             if na['connector'] == 'Cloudbees':
                 launcher = {
@@ -152,8 +151,7 @@ class Node(JenkinsBase):
                         'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
                         'displayEnvironment': 'false',
                         'keyVerificationStrategy': {
-                            'stapler-class': ssh_key_verification_strategy_class,
-                            '$class': ssh_key_verification_strategy_class,
+                            'stapler-class': ssh_key_verification_strategy_class
                         }
                     }
                 }
