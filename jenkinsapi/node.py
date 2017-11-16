@@ -127,6 +127,15 @@ class Node(JenkinsBase):
             re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''
             connector = na.get('connector', 'hudson.plugins.sshslaves.SSHLauncher')
             sshslave_class = 'com.cloudbees.jenkins.plugins.sshslaves.SSHLauncher' if connector == 'Cloudbees' else connector
+            sshslaves_verification_class_prefix = 'com.cloudbees.jenkins.plugins.sshslaves.verification'
+            ssh_key_verification_strategy = na.get('keyVerificationStrategy', '{}.{}'.format(sshslaves_verification_class_prefix, 'BlindTrustConnectionVerificationStrategy'))
+            if verification_strategy.lower() == 'manually trusted key':
+                ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'TrustInitialConnectionVerificationStrategy')
+            elif verification_strategy.lower() == 'manually provided key':
+                ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'ManuallyConnectionVerificationStrategy')
+            elif verification_strategy.lower() == 'known_hosts file':
+                ssh_key_verification_strategy_class = '{}.{}'.format(sshslaves_verification_class_prefix, 'KnownHostsConnectionVerificationStrategy')
+
             if na['connector'] == 'Cloudbees':
                 launcher = {
                     'stapler-class': sshslave_class,
@@ -154,7 +163,11 @@ class Node(JenkinsBase):
                     'prefixStartSlaveCmd': na['prefix_start_slave_cmd'],
                     'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
                     'maxNumRetries': retries,
-                    'retryWaitTime': re_wait
+                    'retryWaitTime': re_wait,
+                    'keyVerificationStrategy': {
+                        'stapler-class': ssh_key_verification_strategy_class,
+                        '$class': ssh_key_verification_strategy_class,
+                    }
                 }
         retention = {
             'stapler-class': 'hudson.slaves.RetentionStrategy$Always',
