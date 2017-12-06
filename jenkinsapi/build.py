@@ -106,7 +106,7 @@ class Build(JenkinsBase):
                 if elem.get('_class') == 'hudson.model.ParametersAction':
                     parameters = elem.get('parameters', {})
                     break
-            return {pair['name']: pair['value'] for pair in parameters}
+            return {pair['name']: pair.get('value') for pair in parameters}
 
     def get_changeset_items(self):
         """
