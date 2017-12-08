@@ -58,7 +58,6 @@ def test_parameterized_job_build_queuing(jenkins):
         param_B = random_string()
         params = {'B': param_B}
         job.invoke(build_params=params)
-        time.sleep(0.25)
 
     assert job.has_queued_build(params) is True
 
