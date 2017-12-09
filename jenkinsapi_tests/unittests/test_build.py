@@ -157,6 +157,25 @@ def test_only_ParametersAction_parameters_considered(build):
     assert params == expected
 
 
+def test_ParametersWithNoValueSetValueNone_issue_583(build):
+    """SecretParameters don't share their value in the API."""
+    expected = {
+        'some-secret': None,
+    }
+    build._data = {
+        'actions': [
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'some-secret'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
+
+
 def test_build_env_vars(monkeypatch, build):
     def fake_get_data(cls, tree=None, params=None):
         return configs.BUILD_ENV_VARS

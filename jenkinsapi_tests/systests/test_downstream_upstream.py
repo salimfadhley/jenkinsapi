@@ -93,6 +93,8 @@ def test_stream_relationship(jenkins):
     for job_name, job_config in JOB_CONFIGS.items():
         jenkins.create_job(job_name, job_config)
 
+    time.sleep(1)
+
     jenkins['A'].invoke()
 
     for _ in range(10):

@@ -25,6 +25,10 @@ def test_invoke_many_jobs(jenkins):
         log.info('Sleeping to get queue empty...')
         time.sleep(1)
 
+    master = jenkins.nodes['master']
+    num_executors = master.get_num_executors()
+    master.set_num_executors(0)
+
     for job_name in job_names:
         j = jenkins.create_job(job_name, LONG_RUNNING_JOB)
         jobs.append(j)
@@ -51,6 +55,8 @@ def test_invoke_many_jobs(jenkins):
 
     assert len(queue) == 0
 
+    master.set_num_executors(num_executors)
+
 
 def test_start_and_stop_long_running_job(jenkins):
     job_name = random_string()
@@ -71,8 +77,12 @@ def test_start_and_stop_long_running_job(jenkins):
 
 
 def test_queueitem_for_why_field(jenkins):
-    # Make some jobs just in case there aren't any.
     job_names = [random_string() for _ in range(2)]
+
+    master = jenkins.nodes['master']
+    num_executors = master.get_num_executors()
+    master.set_num_executors(0)
+
     jobs = []
     for job_name in job_names:
         j = jenkins.create_job(job_name, LONG_RUNNING_JOB)
@@ -86,3 +96,5 @@ def test_queueitem_for_why_field(jenkins):
     # Clean up after ourselves
     for _, item in queue.iteritems():
         queue.delete_item(item)
+
+    master.set_num_executors(num_executors)

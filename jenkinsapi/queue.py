@@ -158,7 +158,7 @@ class QueueItem(JenkinsBase):
     def get_build_number(self):
         try:
             return self._data['executable']['number']
-        except KeyError:
+        except (KeyError, TypeError):
             raise NotBuiltYet()
 
     def get_job_name(self):
