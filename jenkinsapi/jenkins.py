@@ -34,7 +34,7 @@ class Jenkins(JenkinsBase):
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
-            ssl_verify=True):
+            ssl_verify=True, timeout=10):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -47,7 +47,10 @@ class Jenkins(JenkinsBase):
             username,
             password,
             baseurl=baseurl,
-            ssl_verify=ssl_verify)
+            ssl_verify=ssl_verify,
+            timeout=timeout
+        )
+        self.requester.timeout = timeout
         self.lazy = lazy
         self.jobs_container = None
         JenkinsBase.__init__(self, baseurl, poll=not lazy)

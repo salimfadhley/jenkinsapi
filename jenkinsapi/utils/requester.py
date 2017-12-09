@@ -39,7 +39,9 @@ class Requester(object):
     VALID_STATUS_CODES = [200, ]
 
     def __init__(
-            self, username=None, password=None, ssl_verify=True, baseurl=None):
+            self, username=None, password=None,
+            ssl_verify=True, baseurl=None,
+            timeout=10):
         if username:
             assert password, 'Cannot set a username without a password!'
 
@@ -48,6 +50,7 @@ class Requester(object):
         self.username = username
         self.password = password
         self.ssl_verify = ssl_verify
+        self.timeout = timeout
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
@@ -75,6 +78,8 @@ class Requester(object):
 
         if files:
             requestKwargs['files'] = files
+
+        requestKwargs['timeout'] = self.timeout
 
         return requestKwargs
 
