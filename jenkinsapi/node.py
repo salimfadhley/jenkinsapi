@@ -316,7 +316,7 @@ class Node(JenkinsBase):
 
         self.jenkins.requester.post_and_confirm_status(
             "%(baseurl)s/config.xml" % self.__dict__,
-            data=config_xml.encode('utf-8'))
+            data=config_xml)
 
     def get_labels(self):
         """
