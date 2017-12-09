@@ -38,12 +38,10 @@ SECURITY_SETTINGS = {
         'stapler-class': 'hudson.markup.EscapedMarkupFormatter',
         '$class': 'hudson.markup.EscapedMarkupFormatter'
     },
-    'jenkins-security-s2m-MasterKillSwitchConfiguration': {
-    },
     'org-jenkinsci-main-modules-sshd-SSHD': {
         'port': {
             'value': '',
-            'type': 'random'
+            'type': 'disabled'
         }
     },
     'jenkins-CLI': {
@@ -60,12 +58,17 @@ SECURITY_SETTINGS = {
     'jenkins-model-DownloadSettings': {
         'useBrowser': False
     },
-    'org-jenkinsci-main-modules-sshd-SSHD': {
-        'port': {
-            'value': '',
-            'type': 'random'
-        }
+    'slaveAgentPort': {
+        'value': '',
+        'type': 'disable'
     },
+    'agentProtocol': [
+        'CLI-connect',
+        'CLI2-connect',
+        'JNLP-connect',
+        'JNLP2-connect',
+        'JNLP4-connect'
+    ],
     'core:apply': ''
 }
 
