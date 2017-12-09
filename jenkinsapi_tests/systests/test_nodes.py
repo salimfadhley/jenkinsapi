@@ -135,4 +135,52 @@ def test_get_node_labels(jenkins):
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
     assert node.get_labels() == node_labels
+
     del jenkins.nodes[node_name]
+
+
+def test_get_executors(jenkins):
+    node_name = random_string()
+    node_labels = 'LABEL1 LABEL2'
+    node_dict = {
+        'num_executors': 1,
+        'node_description': 'Test Node with Labels',
+        'remote_fs': '/tmp',
+        'labels': node_labels,
+        'exclusive': True
+    }
+    node = jenkins.nodes.create_node(node_name, node_dict)
+
+    with pytest.raises(AttributeError):
+        assert node.get_config_element('executors') == '1'
+
+    assert node.get_config_element('numExecutors') == '1'
+
+    del jenkins.nodes[node_name]
+
+
+def test_set_executors(jenkins):
+    node_name = random_string()
+    node_labels = 'LABEL1 LABEL2'
+    node_dict = {
+        'num_executors': 1,
+        'node_description': 'Test Node with Labels',
+        'remote_fs': '/tmp',
+        'labels': node_labels,
+        'exclusive': True
+    }
+    node = jenkins.nodes.create_node(node_name, node_dict)
+
+    assert node.set_config_element('numExecutors', '5') is None
+
+    assert node.get_config_element('numExecutors') == '5'
+
+    del jenkins.nodes[node_name]
+
+
+def test_set_master_executors(jenkins):
+    node = jenkins.nodes['master']
+
+    assert node.get_num_executors() == 2
+    node.set_num_executors(5)
+    assert node.get_num_executors() == 5
