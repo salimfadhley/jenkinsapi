@@ -9,6 +9,10 @@ state = {}
 
 # Extra plugins required by the systests
 PLUGIN_DEPENDENCIES = [
+    "http://updates.jenkins-ci.org/latest/"
+    "apache-httpcomponents-client-4-api.hpi",
+    "http://updates.jenkins-ci.org/latest/jsch.hpi",
+    "http://updates.jenkins-ci.org/latest/workflow-api.hpi",
     "http://updates.jenkins-ci.org/latest/display-url-api.hpi",
     "http://updates.jenkins-ci.org/latest/workflow-step-api.hpi",
     "http://updates.jenkins-ci.org/latest/workflow-scm-step.hpi",
