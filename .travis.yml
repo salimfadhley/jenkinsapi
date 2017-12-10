@@ -15,8 +15,6 @@ install:
 - python setup.py -q sdist bdist_wheel
 script:
 - tox
-after_success:
-- codecov
 jobs:
   include:
     - stage: release
