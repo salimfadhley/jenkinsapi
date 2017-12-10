@@ -54,6 +54,7 @@ def test_install_uninstall_plugin(jenkins):
     del plugins[plugin_name]
     assert plugins[plugin_name].deleted
 
+
 def test_install_multiple_plugins(jenkins):
     plugin_one_name = 'jenkins-cloudformation-plugin'
     plugin_one_version = 'latest'
