@@ -205,3 +205,8 @@ BUILD_SCM_DATA = {
     'timestamp': 1372553675652,
     'url': 'http://localhost:8080/job/git_yssrtigfds/3/'
 }
+
+BUILD_ENV_VARS = {
+    '_class': 'org.jenkinsci.plugins.envinject.EnvInjectVarList',
+    'envMap': {'KEY': 'VALUE'}
+}

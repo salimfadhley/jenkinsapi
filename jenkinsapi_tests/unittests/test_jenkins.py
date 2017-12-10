@@ -11,10 +11,10 @@ DATA = {}
 TWO_JOBS_DATA = {
     'jobs': [
         {'name': 'job_one',
-         'url': 'http://localhost:8080/job_one',
+         'url': 'http://localhost:8080/job/job_one',
          'color': 'blue'},
         {'name': 'job_two',
-         'url': 'http://localhost:8080/job_two',
+         'url': 'http://localhost:8080/job/job_two',
          'color': 'blue'},
     ]
 }

@@ -92,7 +92,7 @@ def search_artifacts(jenkinsurl, jobid, artifact_ids=None,
     If same_build is true then ensure that all artifacts come from the
     same build of the job
     """
-    if len(artifact_ids) == 0 or artifact_ids is None:
+    if not artifact_ids:
         return []
 
     jenkinsci = Jenkins(jenkinsurl, username=username, password=password,

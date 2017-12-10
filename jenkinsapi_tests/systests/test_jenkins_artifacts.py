@@ -11,7 +11,7 @@ from jenkinsapi_tests.systests.job_configs import JOB_WITH_ARTIFACTS
 from jenkinsapi_tests.test_utils.random_strings import random_string
 
 
-def test_artefacts(jenkins):
+def test_artifacts(jenkins):
     job_name = 'create_%s' % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_ARTIFACTS)
     job.invoke(block=True)

@@ -1,5 +1,5 @@
 """
-Search for job artefacts using regexp
+Search for job artifacts using regexp
 """
 from __future__ import print_function
 import re

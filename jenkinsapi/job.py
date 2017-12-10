@@ -187,8 +187,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             params['token'] = securitytoken
 
         # Either copy the params dict or make a new one.
-        build_params = build_params and dict(
-            build_params.items()) or {}  # Via POSTed JSON
+        build_params = dict(build_params.items()) \
+            if build_params else {}  # Via POSTed JSON
 
         url = self.get_build_triggerurl()
         if cause:
@@ -266,7 +266,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_last_failed_buildnumber(self):
         """
-        Get the numerical ID of the last good build.
+        Get the numerical ID of the last failed build.
         """
         return self._buildid_for_type(buildtype="lastFailedBuild")
 
@@ -640,7 +640,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def is_enabled(self):
         data = self.poll(tree='color')
-        return data.get('color', None) != 'disabled'
+        return 'disabled' not in data.get('color', '')
 
     def disable(self):
         """
@@ -723,3 +723,22 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build.get_parameters() == build_params:
                 return True
         return False
+
+    @staticmethod
+    def get_full_name_from_url_and_baseurl(url, baseurl):
+        """
+        Get the full name for a job (including parent folders) from the
+        job URL.
+        """
+        path = url.replace(baseurl, '')
+        split = path.split('/')
+        split = [urlparse.unquote(part) for part in split[::2] if part]
+        return '/'.join(split)
+
+    def get_full_name(self):
+        """
+        Get the full name for a job (including parent folders)
+        from the job URL.
+        """
+        return Job.get_full_name_from_url_and_baseurl(
+            self.url, self.jenkins.baseurl)

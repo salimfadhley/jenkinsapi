@@ -28,9 +28,9 @@ This library allows you to automate most common Jenkins operations using Python.
     * Query the results of a completed build
     * Block until jobs are complete or run jobs asyncronously
     * Get objects representing the latest builds of a job
-* Work with build artefacts:
-    * Search for artefacts by simple criteria
-    * Install artefacts to custom-specified directory structures
+* Work with build artifacts:
+    * Search for artifacts by simple criteria
+    * Install artifacts to custom-specified directory structures
 * Ability to search for builds by source code revision
 * Ability to add/remove/query:
     * Slaves (Webstart and SSH slaves)

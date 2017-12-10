@@ -96,7 +96,7 @@ class Artifact(object):
             local_md5,
             self.build.job.jenkins)
         valid = fp.validate_for_build(
-            os.path.basename(fspath), self.build.job.name, self.build.buildno)
+            self.filename, self.build.job.get_full_name(), self.build.buildno)
         if not valid or (fp.unknown and strict_validation):
             # strict = 404 as invalid
             raise ArtifactBroken(
@@ -111,15 +111,12 @@ class Artifact(object):
         used by Jenkins.
         """
         md5 = hashlib.md5()
-        try:
-            with open(fspath, 'rb') as f:
-                for chunk in iter(lambda: f.read(chunksize), ''):
-                    if chunk:
-                        md5.update(chunk)
-                    else:
-                        break
-        except:
-            raise
+        with open(fspath, 'rb') as f:
+            for chunk in iter(lambda: f.read(chunksize), ''):
+                if chunk:
+                    md5.update(chunk)
+                else:
+                    break
         return md5.hexdigest()
 
     def save_to_dir(self, dirpath, strict_validation=False):

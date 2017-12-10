@@ -46,7 +46,7 @@ class CrumbRequester(Requester):
         crumb_issuer_response = ast.literal_eval(response.text)
         crumb_request_field = crumb_issuer_response['crumbRequestField']
         crumb = crumb_issuer_response['crumb']
-        logger.debug('Fetched crumb: %s' % crumb)
+        logger.debug('Fetched crumb: %s', crumb)
         return {crumb_request_field: crumb}
 
     def _post_url_with_crumb(self, crumb_data, url, params, data,

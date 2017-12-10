@@ -1,5 +1,5 @@
 """
-Search for job artefacts
+Search for job artifacts
 """
 from __future__ import print_function
 from jenkinsapi.api import search_artifacts

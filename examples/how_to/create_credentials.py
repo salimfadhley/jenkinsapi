@@ -34,6 +34,7 @@ creds[creds_description1] = UsernamePasswordCredential(cred_dict)
 def get_private_key_from_file():
     return '-----BEGIN RSA PRIVATE KEY-----'
 
+
 my_private_key = get_private_key_from_file()
 
 creds_description2 = 'My_ssh_cred1'

@@ -1,3 +1,5 @@
+import requests
+import warnings
 import pytest
 import pytz
 from . import configs
@@ -88,6 +90,7 @@ def test_get_params(build):
     }
     build._data = {
         'actions': [{
+            '_class': 'hudson.model.ParametersAction',
             'parameters': [
                 {'name': 'first_param', 'value': 'first_value'},
                 {'name': 'second_param', 'value': 'second_value'},
@@ -95,7 +98,6 @@ def test_get_params(build):
         }]
     }
     params = build.get_params()
-
     assert params == expected
 
 
@@ -118,6 +120,7 @@ def test_get_params_different_order(build):
                 'another_action': 'some_value',
             },
             {
+                '_class': 'hudson.model.ParametersAction',
                 'parameters': [
                     {'name': 'first_param', 'value': 'first_value'},
                     {'name': 'second_param', 'value': 'second_value'},
@@ -126,5 +129,82 @@ def test_get_params_different_order(build):
         ]
     }
     params = build.get_params()
-
     assert params == expected
+
+
+def test_only_ParametersAction_parameters_considered(build):
+    """Actions other than ParametersAction can have dicts called parameters."""
+    expected = {
+        'param': 'value',
+    }
+    build._data = {
+        'actions': [
+            {
+                '_class': 'hudson.model.SomeOtherAction',
+                'parameters': [
+                    {'name': 'Not', 'value': 'OurValue'},
+                ]
+            },
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'param', 'value': 'value'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
+
+
+def test_ParametersWithNoValueSetValueNone_issue_583(build):
+    """SecretParameters don't share their value in the API."""
+    expected = {
+        'some-secret': None,
+    }
+    build._data = {
+        'actions': [
+            {
+                '_class': 'hudson.model.ParametersAction',
+                'parameters': [
+                    {'name': 'some-secret'},
+                ]
+            }
+        ]
+    }
+    params = build.get_params()
+    assert params == expected
+
+
+def test_build_env_vars(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        return configs.BUILD_ENV_VARS
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+    assert build.get_env_vars() == configs.BUILD_ENV_VARS['envMap']
+
+
+def test_build_env_vars_wo_injected_env_vars_plugin(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        raise requests.HTTPError('404')
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+
+    with pytest.raises(requests.HTTPError) as excinfo:
+        with pytest.warns(None) as record:
+            build.get_env_vars()
+    assert '404' == str(excinfo.value)
+    assert len(record) == 1
+    expected = UserWarning('Make sure the Environment Injector '
+                           'plugin is installed.')
+    assert str(record[0].message) == str(expected)
+
+
+def test_build_env_vars_other_exception(monkeypatch, build):
+    def fake_get_data(cls, tree=None, params=None):
+        raise ValueError()
+    monkeypatch.setattr(Build, 'get_data', fake_get_data)
+
+    with pytest.raises(Exception) as excinfo:
+        with pytest.warns(None) as record:
+            build.get_env_vars()
+    assert '' == str(excinfo.value)
+    assert len(record) == 0
