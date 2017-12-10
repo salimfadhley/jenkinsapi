@@ -2,97 +2,90 @@
 System tests for `jenkinsapi.plugins` module.
 '''
 import logging
-# To run unittests on python 2.6 please use unittest2 library
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-import jenkinsapi_tests.systests
-from jenkinsapi_tests.systests.base import BaseSystemTest
-from jenkinsapi_tests.systests.base import DEFAULT_JENKINS_PORT
+import pytest
 from jenkinsapi_tests.test_utils.random_strings import random_string
-from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.plugin import Plugin
 
 log = logging.getLogger(__name__)
 
 
-class TestPlugins(BaseSystemTest):
+def test_get_missing_plugin(jenkins):
+    plugins = jenkins.get_plugins()
+    with pytest.raises(KeyError):
+        plugins["lsdajdaslkjdlkasj"]  # this plugin surely does not exist!
 
-    @classmethod
-    def setUpClass(cls):
-        try:
-            port = jenkinsapi_tests.systests.state['launcher'].http_port
-        except KeyError:
-            log.warning(
-                "Jenkins was not launched from the test-framework, "
-                "assuming port %i" %
-                DEFAULT_JENKINS_PORT)
-            port = DEFAULT_JENKINS_PORT
-        jenkins = Jenkins('http://localhost:%d' % port)
+
+def test_get_single_plugin(jenkins):
+    plugins = jenkins.get_plugins()
+    plugin_name, plugin = next(plugins.iteritems())
+
+    assert isinstance(plugin_name, str)
+    assert isinstance(plugin, Plugin)
+
+
+def test_get_single_plugin_depth_2(jenkins):
+    plugins = jenkins.get_plugins(depth=2)
+    _, plugin = next(plugins.iteritems())
+
+
+def test_delete_inexistant_plugin(jenkins):
+    with pytest.raises(KeyError):
         plugins = jenkins.plugins
-        plugins.check_updates_server()
 
-    def test_delete_inexistant_plugin(self):
-        with self.assertRaises(KeyError):
-            plugins = self.jenkins.plugins
+        del plugins[random_string()]
 
-            del plugins[random_string()]
 
-    def test_install_uninstall_plugin(self):
-        plugins = self.jenkins.plugins
-        plugin_name = 'async-http-client'
+def test_install_uninstall_plugin(jenkins):
+    plugins = jenkins.plugins
+    plugin_name = 'async-http-client'
 
-        plugin_dict = {
-            'shortName': plugin_name,
-            'version': 'latest',
-        }
-        plugins[plugin_name] = Plugin(plugin_dict)
+    plugin_dict = {
+        'shortName': plugin_name,
+        'version': 'latest',
+    }
+    plugins[plugin_name] = Plugin(plugin_dict)
 
-        self.assertTrue(plugin_name in plugins)
-        plugin = plugins[plugin_name]
-        self.assertIsInstance(plugin, Plugin)
-        self.assertEquals(plugin.shortName, plugin_name)
+    assert plugin_name in plugins
 
-        del plugins[plugin_name]
-        self.assertTrue(plugins[plugin_name].deleted)
+    plugin = plugins[plugin_name]
+    assert isinstance(plugin, Plugin)
+    assert plugin.shortName == plugin_name
 
-    def test_install_multiple_plugins(self):
-        plugin_one_name = 'jenkins-cloudformation-plugin'
-        plugin_one_version = 'latest'
-        plugin_one = "@".join((plugin_one_name, plugin_one_version))
-        plugin_two = Plugin({'shortName': 'anything-goes-formatter', 'version': 'latest'})
-        self.assertIsInstance(plugin_two, Plugin)
-        plugin_list = [plugin_one, plugin_two]
-        self.jenkins.install_plugins(plugin_list)
-        self.assertIn(plugin_one_name, self.jenkins.plugins)
-        self.assertIn(plugin_two.shortName, self.jenkins.plugins)
+    del plugins[plugin_name]
+    assert plugins[plugin_name].deleted
 
-    def test_downgrade_plugin(self):
-        plugin_name = 'amazon-ecs'
-        plugin_version = '1.5'  # This is explicitly not the latest version
-        plugin = Plugin({'shortName': plugin_name, 'version': plugin_version})
-        self.assertIsInstance(plugin, Plugin)
-        # Need to restart when not installing the latest version
-        self.jenkins.install_plugins([plugin], restart=True, wait_for_reboot=True)
-        installed_plugin = self.jenkins.plugins[plugin_name]
-        self.assertEquals(installed_plugin.version, '1.5')
-        older_plugin = Plugin({'shortName': plugin_name, 'version': '1.4'})
-        self.jenkins.install_plugins([older_plugin], restart=True, wait_for_reboot=True)
-        installed_older_plugin = self.jenkins.plugins[plugin_name]
-        self.assertEquals(installed_older_plugin.version, '1.4')
+def test_install_multiple_plugins(jenkins):
+    plugin_one_name = 'jenkins-cloudformation-plugin'
+    plugin_one_version = 'latest'
+    plugin_one = "@".join((plugin_one_name, plugin_one_version))
+    plugin_two = Plugin({'shortName': 'anything-goes-formatter', 'version': 'latest'})
 
-    def test_get_missing_plugin(self):
-        plugins = self.jenkins.get_plugins()
-        with self.assertRaises(KeyError):
-            plugins["lsdajdaslkjdlkasj"]  # this plugin surely does not exist!
+    assert isinstance(plugin_two, Plugin)
 
-    def test_get_single_plugin(self):
-        plugins = self.jenkins.get_plugins()
-        plugin_name, plugin = next(plugins.iteritems())
-        self.assertIsInstance(plugin_name, str)
-        self.assertIsInstance(plugin, Plugin)
+    plugin_list = [plugin_one, plugin_two]
 
-    def test_get_single_plugin_depth_2(self):
-        plugins = self.jenkins.get_plugins(depth=2)
-        _, plugin = next(plugins.iteritems())
+    jenkins.install_plugins(plugin_list)
+
+    assert plugin_one_name in jenkins.plugins
+    assert plugin_two.shortName in jenkins.plugins
+
+
+def test_downgrade_plugin(jenkins):
+    plugin_name = 'amazon-ecs'
+    plugin_version = '1.5'  # This is explicitly not the latest version
+    plugin = Plugin({'shortName': plugin_name, 'version': plugin_version})
+
+    assert isinstance(plugin, Plugin)
+
+    # Need to restart when not installing the latest version
+    jenkins.install_plugins([plugin], restart=True, wait_for_reboot=True)
+
+    installed_plugin = jenkins.plugins[plugin_name]
+
+    assert installed_plugin.version == '1.5'
+
+    older_plugin = Plugin({'shortName': plugin_name, 'version': '1.4'})
+    jenkins.install_plugins([older_plugin], restart=True, wait_for_reboot=True)
+    installed_older_plugin = jenkins.plugins[plugin_name]
+
+    assert installed_older_plugin.version == '1.4'
