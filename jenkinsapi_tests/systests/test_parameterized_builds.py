@@ -54,12 +54,20 @@ def test_parameterized_job_build_queuing(jenkins):
     job_name = 'create_%s' % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_PARAMETERS)
 
+    # Latest Jenkins schedules builds to run right away, so remove all
+    # executors from master node to investigate queue
+    master = jenkins.nodes['master']
+    num_executors = master.get_num_executors()
+    master.set_num_executors(0)
+
     for i in range(3):
         param_B = random_string()
         params = {'B': param_B}
         job.invoke(build_params=params)
 
     assert job.has_queued_build(params) is True
+
+    master.set_num_executors(num_executors)
 
     while job.has_queued_build(params):
         time.sleep(0.25)
