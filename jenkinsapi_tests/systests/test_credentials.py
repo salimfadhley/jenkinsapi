@@ -59,10 +59,12 @@ def test_update_user_pass_credential(jenkins):
 
     cred = creds[cred_descr]
     cred.userName = 'anotheruser'
-    cred.password = 'password'
+    cred.password = 'password2'
 
-    with pytest.raises(JenkinsAPIException):
-        creds[cred_descr] = cred
+    cred = creds[cred_descr]
+    assert isinstance(cred, UsernamePasswordCredential) is True
+    assert cred.userName == 'anotheruser'
+    assert cred.password == 'password2'
 
 
 def test_create_ssh_credential(jenkins):

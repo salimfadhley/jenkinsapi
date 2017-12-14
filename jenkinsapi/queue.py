@@ -64,7 +64,7 @@ class Queue(JenkinsBase):
 
     def _get_queue_items_for_job(self, job_name):
         for item in self._data["items"]:
-            if item['task']['name'] == job_name:
+            if 'name' in item['task'] and item['task']['name'] == job_name:
                 yield QueueItem(self.get_queue_item_url(item),
                                 jenkins_obj=self.jenkins)
 
@@ -158,7 +158,7 @@ class QueueItem(JenkinsBase):
     def get_build_number(self):
         try:
             return self._data['executable']['number']
-        except KeyError:
+        except (KeyError, TypeError):
             raise NotBuiltYet()
 
     def get_job_name(self):
