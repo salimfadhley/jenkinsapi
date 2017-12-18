@@ -15,22 +15,16 @@ install:
 - python setup.py -q sdist bdist_wheel
 script:
 - tox
-after_success:
-- codecov
 jobs:
   include:
     - stage: release
       python: 2.7
-      script: python setup.py -q sdist bdist_wheel
       deploy:
-        provider: releases
-        api_key:
-          secure: Ac6anfwQu0WyVj7q9GqD1OJI3WTM3Lk0xO42oJwh4EphXpRCFGvgE4XjaPxh4qVHlgIw8AQ4Phpm0UYal/XTLVNuJDPHOdOUUxUJdJYQkW3hT2odOSCPU47Xa0/pGHIrgX3gEOTO0hAjziL5c41cGR2wMWFp6/CObIg3+gqtrzk=
-        file_glob: true
-        file:
-        - dist/*
-        - ChangeLog
-        - AUTHORS
+        provider: pypi
+        user: lechat
+        password:
+          secure: gJZGDwomlaKRZ7MxGPkKu8r1Oe05umRlmjLHOycDyemkmPNz2f/+L+omJ/Vp1tWtPTcWZ/cXYS4AM/pmNCcRFI9h7/oG3l6qDGOEa31/h0nuX2UbywhLWmfEx3ADZjvMVL/gELKntq0503cOPn2PjOBFkZMWi54zqIks17zMdDY=
+        distributions: "sdist bdist_wheel"
         skip_cleanup: true
         on:
           branch: master
