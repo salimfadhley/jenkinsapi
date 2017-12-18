@@ -213,9 +213,3 @@ class CredentialsById(Credentials2x):
 
         raise KeyError('Credential with credential_id "%s" not found'
                        % credential_id)
-
-    def __setitem__(self, credential_id, credential):
-        super(CredentialsById, self).__setitem__(credential_id, credential)
-
-    def __delitem__(self, credential_id):
-        super(CredentialsById, self).__delitem__(credential_id)
