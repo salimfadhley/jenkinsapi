@@ -92,8 +92,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         data = super(Job, self).poll(tree=tree)
         if not tree:
             self._data = self._add_missing_builds(self._data)
-        else:
-            return data
+
+        return data
 
     # pylint: disable=E1123
     # Unexpected keyword arg 'params'
