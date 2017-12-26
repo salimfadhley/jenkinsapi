@@ -12,6 +12,7 @@ from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import Credentials2x
 from jenkinsapi.executors import Executors
 from jenkinsapi.jobs import Jobs
+from jenkinsapi.job import Job
 from jenkinsapi.view import View
 from jenkinsapi.label import Label
 from jenkinsapi.nodes import Nodes
@@ -37,7 +38,7 @@ class Jenkins(JenkinsBase):
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
-            ssl_verify=True, timeout=10):
+            ssl_verify=True, timeout=10, job_cls=Job):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -56,6 +57,7 @@ class Jenkins(JenkinsBase):
         self.requester.timeout = timeout
         self.lazy = lazy
         self.jobs_container = None
+        self.job_cls = job_cls
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
     def _poll(self, tree=None):
@@ -111,7 +113,7 @@ class Jenkins(JenkinsBase):
     @property
     def jobs(self):
         if self.jobs_container is None:
-            self.jobs_container = Jobs(self)
+            self.jobs_container = Jobs(self, job_cls=self.job_cls)
 
         return self.jobs_container
 

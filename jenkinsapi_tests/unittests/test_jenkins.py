@@ -65,6 +65,33 @@ def test_reload(monkeypatch):
     jenkins.poll()
 
 
+def test_custom_job_cls(monkeypatch):
+
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return TWO_JOBS_DATA
+
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    class MyJob(Job):
+
+        PREFIX = "Custom-"
+
+        def __str__(self):
+            return self.PREFIX + self.name
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(MyJob, '_poll', fake_job_poll)
+
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword',
+                      job_cls=MyJob)
+
+    for job in jenkins.jobs:
+        assert str(job).startswith(MyJob.PREFIX)
+
+
 def test_get_jobs_list(monkeypatch):
     def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
         return TWO_JOBS_DATA
