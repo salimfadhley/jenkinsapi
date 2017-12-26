@@ -18,8 +18,9 @@ class Jobs(object):
     jenkinsapi.Job objects.
     """
 
-    def __init__(self, jenkins):
+    def __init__(self, jenkins, job_cls=Job):
         self.jenkins = jenkins
+        self.job_cls = job_cls
         self._data = []
 
     def _del_data(self, job_name):
@@ -80,10 +81,10 @@ class Jobs(object):
         if job_name in self:
             job_data = [job_row for job_row in self._data
                         if job_row['name'] == job_name or
-                        Job.get_full_name_from_url_and_baseurl(
+                        self.job_cls.get_full_name_from_url_and_baseurl(
                             job_row['url'],
                             self.jenkins.baseurl) == job_name][0]
-            return Job(job_data['url'], job_data['name'], self.jenkins)
+            return self.job_cls(job_data['url'], job_data['name'], self.jenkins)
         else:
             raise UnknownJob(job_name)
 
@@ -111,9 +112,9 @@ class Jobs(object):
         for row in self._data:
             yield row['name']
             if row['name'] != \
-                Job.get_full_name_from_url_and_baseurl(row['url'],
-                                                       self.jenkins.baseurl):
-                yield Job.get_full_name_from_url_and_baseurl(
+                self.job_cls.get_full_name_from_url_and_baseurl(
+                    row['url'], self.jenkins.baseurl):
+                yield self.job_cls.get_full_name_from_url_and_baseurl(
                     row['url'], self.jenkins.baseurl)
 
     def itervalues(self):
@@ -123,7 +124,7 @@ class Jobs(object):
         if not self._data:
             self._data = self.poll().get('jobs', [])
         for row in self._data:
-            yield Job(row['url'], row['name'], self.jenkins)
+            yield self.job_cls(row['url'], row['name'], self.jenkins)
 
     def keys(self):
         """
