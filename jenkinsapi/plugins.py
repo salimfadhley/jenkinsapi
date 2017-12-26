@@ -264,7 +264,7 @@ class Plugins(JenkinsBase):
         for _ in range(maxwait, 0, -interval):
             self.poll()
             if self._plugin_has_finished_installation(plugin):
-                return
+                return True
             if plugin.shortName in self:
                 return True  # for Jenkins 1.X
             time.sleep(interval)
@@ -274,6 +274,7 @@ class Plugins(JenkinsBase):
         else:
             log.warning("Plugin '%s' not found in loaded plugins."
                         "You may need to restart Jenkins.", plugin.shortName)
+            return False
 
     def __contains__(self, plugin_name):
         """

@@ -59,6 +59,8 @@ class Views(object):
             if row['name'] == view_name:
                 return View(row['url'], row['name'], self.jenkins)
 
+        raise KeyError('View %s not found' % view_name)
+
     def iteritems(self):
         """
         Get the names & objects for all views

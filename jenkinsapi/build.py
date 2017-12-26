@@ -108,6 +108,8 @@ class Build(JenkinsBase):
                     break
             return {pair['name']: pair.get('value') for pair in parameters}
 
+        return {}
+
     def get_changeset_items(self):
         """
         Returns a list of changeSet items.

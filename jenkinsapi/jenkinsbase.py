@@ -59,8 +59,8 @@ class JenkinsBase(object):
             data['jobs'] = self.resolve_job_folders(data['jobs'])
         if not tree:
             self._data = data
-        else:
-            return data
+
+        return data
 
     def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
