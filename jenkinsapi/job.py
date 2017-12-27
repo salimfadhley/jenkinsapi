@@ -450,7 +450,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         if not self.is_queued():
             raise UnknownQueueItem()
-        return QueueItem(self.jenkins, **self._data['queueItem'])
+        q_item = self.poll(tree='queueItem[url]')
+        qi_url = urlparse.urljoin(
+            self.jenkins.baseurl, q_item['queueItem']['url']
+        )
+        return QueueItem(qi_url, self.jenkins)
 
     def is_running(self):
         # self.poll()
