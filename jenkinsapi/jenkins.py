@@ -428,7 +428,7 @@ class Jenkins(JenkinsBase):
         version_key = 'X-Jenkins'
         return response.headers.get(version_key, '0.0')
 
-    def get_credentials(self, cred_class):
+    def get_credentials(self, cred_class=Credentials2x):
         """
         Return credentials
         """
