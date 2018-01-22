@@ -92,8 +92,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         data = super(Job, self).poll(tree=tree)
         if not tree:
             self._data = self._add_missing_builds(self._data)
-        else:
-            return data
+
+        return data
 
     # pylint: disable=E1123
     # Unexpected keyword arg 'params'
@@ -450,7 +450,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         if not self.is_queued():
             raise UnknownQueueItem()
-        return QueueItem(self.jenkins, **self._data['queueItem'])
+        q_item = self.poll(tree='queueItem[url]')
+        qi_url = urlparse.urljoin(
+            self.jenkins.baseurl, q_item['queueItem']['url']
+        )
+        return QueueItem(qi_url, self.jenkins)
 
     def is_running(self):
         # self.poll()

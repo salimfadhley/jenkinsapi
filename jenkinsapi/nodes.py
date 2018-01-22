@@ -94,7 +94,7 @@ class Nodes(JenkinsBase):
         :return: node obj
         """
         if name in self:
-            return
+            return self[name]
 
         node = Node(jenkins_obj=self.jenkins, baseurl=None, nodename=name,
                     node_dict=node_dict, poll=False)
