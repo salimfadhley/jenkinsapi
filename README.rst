@@ -39,7 +39,7 @@ This library allows you to automate most common Jenkins operations using Python,
 * Username/password auth support for jenkins instances with auth turned on
 * Ability to script jenkins installation including plugins
 
-For a full documentation spec of what this library support see: http://jenkinsapi.readthedocs.io/en/latest/index.html
+For a full documentation spec of what this library supports see: http://jenkinsapi.readthedocs.io/en/latest/index.html
 
 Python versions
 ---------------
