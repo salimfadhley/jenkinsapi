@@ -21,7 +21,7 @@ Jenkins is the market leading continuous integration system, originally created 
 
 Jenkins (and It's predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make many Jenkins oriented tasks easier to automate.
 
-This library allows you to automate most common Jenkins operations using Python.
+This library allows you to automate most common Jenkins operations using Python, such as:
 
 * Ability to add/remove/query Jenkins jobs
 * Ability to execute jobs and:
@@ -38,6 +38,8 @@ This library allows you to automate most common Jenkins operations using Python.
     * Credentials (username/password and ssh key)
 * Username/password auth support for jenkins instances with auth turned on
 * Ability to script jenkins installation including plugins
+
+For a full documentation spec of what this library support see: http://jenkinsapi.readthedocs.io/en/latest/index.html
 
 Python versions
 ---------------
