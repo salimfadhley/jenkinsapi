@@ -453,13 +453,14 @@ class Jenkins(JenkinsBase):
     def credentials_by_id(self):
         return self.get_credentials(CredentialsById)
 
-    def get_csrf_header(self,csrf_path="crumbIssuer/api/python"):
-        response = self.requester.get_and_confirm_status("%s/%s" %(self.baseurl,csrf_path))
+    def get_csrf_header(self, csrf_path="crumbIssuer/api/python"):
+        response = self.requester.get_and_confirm_status(
+            "%s/%s" % (self.baseurl, csrf_path))
         import json
         token = json.loads(response.text)
         header_name = token['crumbRequestField']
         header_content = token['crumb']
-        return {header_name:header_content}
+        return {header_name: header_content}
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl

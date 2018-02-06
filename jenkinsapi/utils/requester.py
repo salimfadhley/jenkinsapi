@@ -51,8 +51,9 @@ class Requester(object):
         self.password = password
         self.ssl_verify = ssl_verify
         self.timeout = timeout
+        self.csrf_header = None
 
-    def update_csrf_header(self,header=None):
+    def update_csrf_header(self, header=None):
         self.csrf_header = header
 
     def get_request_dict(
