@@ -58,6 +58,8 @@ class Jenkins(JenkinsBase):
         self.lazy = lazy
         self.jobs_container = None
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
+        self.csrf_header = self.get_csrf_header()
+        self.requester.update_csrf_header(self.csrf_header)
 
     def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
@@ -450,6 +452,14 @@ class Jenkins(JenkinsBase):
     @property
     def credentials_by_id(self):
         return self.get_credentials(CredentialsById)
+
+    def get_csrf_header(self,csrf_path="crumbIssuer/api/python"):
+        response = self.requester.get_and_confirm_status("%s/%s" %(self.baseurl,csrf_path))
+        import json
+        token = json.loads(response.text)
+        header_name = token['crumbRequestField']
+        header_content = token['crumb']
+        return {header_name:header_content}
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl

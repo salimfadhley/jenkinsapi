@@ -52,6 +52,9 @@ class Requester(object):
         self.ssl_verify = ssl_verify
         self.timeout = timeout
 
+    def update_csrf_header(self,header=None):
+        self.csrf_header = header
+
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
         requestKwargs = kwargs
@@ -119,6 +122,10 @@ class Requester(object):
             headers=headers,
             allow_redirects=allow_redirects,
             **kwargs)
+        if not headers:
+            headers = self.csrf_header
+        else:
+            headers = headers.update(self.csrf_header)
         return requests.post(self._update_url_scheme(url), **requestKwargs)
 
     def post_xml_and_confirm_status(
