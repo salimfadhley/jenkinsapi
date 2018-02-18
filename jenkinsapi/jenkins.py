@@ -450,3 +450,11 @@ class Jenkins(JenkinsBase):
     def shutdown(self):
         url = "%s/exit" % self.baseurl
         self.requester.post_and_confirm_status(url, data='')
+
+    def quiet_down(self):
+        url = "%s/quietDown" % self.baseurl
+        self.requester.post_and_confirm_status(url, data='')
+
+    def cancel_quiet_down(self):
+        url = "%s/cancelQuietDown" % self.baseurl
+        self.requester.post_and_confirm_status(url, data='')
