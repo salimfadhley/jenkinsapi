@@ -185,3 +185,31 @@ class Credentials2x(Credentials):
         data['credentials'] = new_creds
 
         return data
+
+
+class CredentialsById(Credentials2x):
+    """
+    This class provides a container-like API which gives
+    access to all global credentials on a Jenkins node.
+
+    Returns a list of Credential Objects.
+    """
+
+    def __iter__(self):
+        for cred in self.credentials.values():
+            yield cred.credential_id
+
+    def __contains__(self, credential_id):
+        return credential_id in self.keys()
+
+    def iteritems(self):
+        for cred in self.credentials.values():
+            yield cred.credential_id, cred
+
+    def __getitem__(self, credential_id):
+        for cred in self.credentials.values():
+            if cred.credential_id == credential_id:
+                return cred
+
+        raise KeyError('Credential with credential_id "%s" not found'
+                       % credential_id)
