@@ -107,7 +107,7 @@ class Jenkins(JenkinsBase):
 
     def get_nodes_url(self):
         # This only ever needs to work on the base object
-        return '%s/computer' % self.baseurl
+        return self.nodes.baseurl
 
     @property
     def jobs(self):
@@ -252,7 +252,7 @@ class Jenkins(JenkinsBase):
 
     def get_node(self, nodename):
         """Get a node object for a specific node"""
-        return self.get_nodes()[nodename]
+        return self.nodes[nodename]
 
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
@@ -271,8 +271,7 @@ class Jenkins(JenkinsBase):
         return Queue(queue_url, self)
 
     def get_nodes(self):
-        url = self.get_nodes_url()
-        return Nodes(url, self)
+        return Nodes(self.baseurl, self)
 
     @property
     def nodes(self):
@@ -295,9 +294,6 @@ class Jenkins(JenkinsBase):
         :param nodename: string holding a hostname
         :return: None
         """
-        assert self.has_node(nodename), \
-            "This node: %s is not registered as a slave" % nodename
-        assert nodename != "master", "you cannot delete the master node"
         del self.nodes[nodename]
 
     def create_node(self, name, num_executors=2, node_description=None,

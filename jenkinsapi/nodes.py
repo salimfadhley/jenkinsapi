@@ -24,7 +24,9 @@ class Nodes(JenkinsBase):
         Handy access to all of the nodes on your Jenkins server
         """
         self.jenkins = jenkins_obj
-        JenkinsBase.__init__(self, baseurl)
+        JenkinsBase.__init__(self, baseurl.rstrip('/')
+                             if '/computer' in baseurl
+                             else baseurl.rstrip('/') + '/computer')
 
     def get_jenkins_obj(self):
         return self.jenkins
@@ -56,11 +58,14 @@ class Nodes(JenkinsBase):
                 raise JenkinsAPIException('Unable to iterate nodes')
 
     def __getitem__(self, nodename):
-        self_as_dict = dict(self.iteritems())
-        if nodename in self_as_dict:
-            return self_as_dict[nodename]
-        else:
-            raise UnknownNode(nodename)
+        if nodename in self:
+            if nodename.lower() == 'master':
+                nodeurl = '%s/(%s)' % (self.baseurl, nodename)
+            else:
+                nodeurl = '%s/%s' % (self.baseurl, nodename)
+            return Node(self.jenkins, nodeurl, nodename, node_dict={})
+
+        raise UnknownNode(nodename)
 
     def __len__(self):
         return len(self.keys())
@@ -76,7 +81,9 @@ class Nodes(JenkinsBase):
             self.poll()
         else:
             if item != 'master':
-                raise KeyError('Node %s does not exist' % item)
+                raise UnknownNode('Node %s does not exist' % item)
+            else:
+                log.info('Requests to remove master node ignored')
 
     def __setitem__(self, name, node_dict):
         if not isinstance(node_dict, dict):
