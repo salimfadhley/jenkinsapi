@@ -155,6 +155,15 @@ class QueueItem(JenkinsBase):
         except NotBuiltYet:
             return False
 
+    def is_queued(self):
+        """Return True if this queued item is queued.
+        """
+        try:
+            self.get_build()
+            return False
+        except NotBuiltYet:
+            return True
+
     def get_build_number(self):
         try:
             return self._data['executable']['number']
