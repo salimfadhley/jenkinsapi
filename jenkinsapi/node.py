@@ -374,3 +374,99 @@ class Node(JenkinsBase):
         self._et.find(el_name).text = value
         xml_str = ET.tostring(self._et)
         self.upload_config(xml_str)
+
+    def get_monitor(self, monitor_name, poll_monitor=True):
+        """
+        Polls the node returning one of the monitors in the monitorData branch of the
+        returned node api tree.
+        """
+        monitor_data_key = 'monitorData'
+        if poll_monitor:
+            # polling as monitors like response time can be updated
+            monitor_data = self.poll(tree=monitor_data_key)[monitor_data_key]
+        else:
+            monitor_data = self._data[monitor_data_key]
+
+        full_monitor_name = 'hudson.node_monitors.{0}'.format(monitor_name)
+        if full_monitor_name not in monitor_data:
+            raise AssertionError('Node monitor %s not found' % monitor_name)
+
+        return monitor_data[full_monitor_name]
+
+    def get_available_physical_memory(self):
+        """
+        Returns the node's available physical memory in bytes.
+        """
+        monitor_data = self.get_monitor('SwapSpaceMonitor')
+        return monitor_data['availablePhysicalMemory']
+
+    def get_available_swap_space(self):
+        """
+        Returns the node's available swap space in bytes.
+        """
+        monitor_data = self.get_monitor('SwapSpaceMonitor')
+        return monitor_data['availableSwapSpace']
+
+    def get_total_physical_memory(self):
+        """
+        Returns the node's total physical memory in bytes.
+        """
+        monitor_data = self.get_monitor('SwapSpaceMonitor')
+        return monitor_data['totalPhysicalMemory']
+
+    def get_total_swap_space(self):
+        """
+        Returns the node's total swap space in bytes.
+        """
+        monitor_data = self.get_monitor('SwapSpaceMonitor')
+        return monitor_data['totalSwapSpace']
+
+    def get_workspace_path(self):
+        """
+        Returns the local path to the node's Jenkins workspace directory.
+        """
+        monitor_data = self.get_monitor('DiskSpaceMonitor')
+        return monitor_data['path']
+
+    def get_workspace_size(self):
+        """
+        Returns the size in bytes of the node's Jenkins workspace directory.
+        """
+        monitor_data = self.get_monitor('DiskSpaceMonitor')
+        return monitor_data['size']
+
+    def get_temp_path(self):
+        """
+        Returns the local path to the node's temp directory.
+        """
+        monitor_data = self.get_monitor('TemporarySpaceMonitor')
+        return monitor_data['path']
+
+    def get_temp_size(self):
+        """
+        Returns the size in bytes of the node's temp directory.
+        """
+        monitor_data = self.get_monitor('TemporarySpaceMonitor')
+        return monitor_data['size']
+
+    def get_architecture(self):
+        """
+        Returns the system architecture of the node eg. "Linux (amd64)".
+        """
+        # no need to poll as the architecture will never change
+        return self.get_monitor('ArchitectureMonitor', poll_monitor=False)
+
+    def get_response_time(self):
+        """
+        Returns the node's average response time.
+        """
+        monitor_data = self.get_monitor('ResponseTimeMonitor')
+        return monitor_data['average']
+
+    def get_clock_difference(self):
+        """
+        Returns the difference between the node's clock and the master Jenkins clock.
+        Used to detect out of sync clocks.
+        """
+        monitor_data = self.get_monitor('ClockMonitor')
+        return monitor_data['diff']
