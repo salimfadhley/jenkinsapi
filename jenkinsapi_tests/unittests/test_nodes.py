@@ -203,6 +203,16 @@ def nodes(monkeypatch):
     return jenkins.get_nodes()
 
 
+def fake_node_poll(self, tree=None):  # pylint: disable=unused-argument
+    """
+    Fakes a poll of data by returning the correct section of the DATA1 test block.
+    """
+    for node_poll in DATA1['computer']:
+        if node_poll['displayName'] == self.name:
+            return node_poll
+    return DATA2
+
+
 def test_repr(nodes):
     # Can we produce a repr string for this object
     repr(nodes)
@@ -213,20 +223,41 @@ def test_baseurl(nodes):
 
 
 def test_get_master_node(nodes, monkeypatch):
-    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
-        return DATA2
-
-    monkeypatch.setattr(Node, '_poll', fake_poll)
+    monkeypatch.setattr(Node, '_poll', fake_node_poll)
 
     node = nodes['master']
     assert isinstance(node, Node)
 
 
 def test_get_nonmaster_node(nodes, monkeypatch):
-    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
-        return DATA2
-
-    monkeypatch.setattr(Node, '_poll', fake_poll)
+    monkeypatch.setattr(Node, '_poll', fake_node_poll)
 
     node = nodes['halob']
     assert isinstance(node, Node)
+
+
+def test_iterkeys(nodes):
+    expected_names = set(['master', 'bobnit', 'halob'])
+    actual_names = set([n for n in nodes.iterkeys()])
+    assert actual_names == expected_names
+
+
+def test_keys(nodes):
+    expected_names = set(['master', 'bobnit', 'halob'])
+    actual_names = set(nodes.keys())
+    assert actual_names == expected_names
+
+
+def test_iteritems(nodes, monkeypatch):
+    monkeypatch.setattr(Node, '_poll', fake_node_poll)
+
+    expected_names = set(['master', 'bobnit', 'halob'])
+
+    actual_names = set()
+    for name, node in nodes.iteritems():
+        assert name == node.name
+        assert isinstance(node, Node)
+
+        actual_names.add(name)
+
+    assert actual_names == expected_names
