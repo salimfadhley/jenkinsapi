@@ -78,6 +78,31 @@ class Nodes(JenkinsBase):
             except Exception:
                 raise JenkinsAPIException('Unable to iterate nodes')
 
+    def items(self):
+        """
+        Return a copy of the container's list of (name, node) pairs.
+        """
+        return list(self.iteritems())
+
+    def itervalues(self):
+        """
+        Return an iterator over the container's nodes.
+
+        Using itervalues() while creating nodes may raise a RuntimeError or fail to iterate over
+        all entries.
+        """
+        for item in self._data['computer']:
+            try:
+                yield self._make_node(item['displayName'])
+            except Exception:
+                raise JenkinsAPIException('Unable to iterate nodes')
+
+    def values(self):
+        """
+        Return a copy of the container's list of nodes.
+        """
+        return list(self.itervalues())
+
     def __getitem__(self, nodename):
         if nodename in self:
             return self._make_node(nodename)

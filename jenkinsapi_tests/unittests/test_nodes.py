@@ -248,16 +248,45 @@ def test_keys(nodes):
     assert actual_names == expected_names
 
 
-def test_iteritems(nodes, monkeypatch):
+def items_test_case(nodes_method, monkeypatch):
     monkeypatch.setattr(Node, '_poll', fake_node_poll)
 
     expected_names = set(['master', 'bobnit', 'halob'])
 
     actual_names = set()
-    for name, node in nodes.iteritems():
+    for name, node in nodes_method():
         assert name == node.name
         assert isinstance(node, Node)
 
         actual_names.add(name)
 
     assert actual_names == expected_names
+
+
+def test_iteritems(nodes, monkeypatch):
+    items_test_case(nodes.iteritems, monkeypatch)
+
+
+def test_items(nodes, monkeypatch):
+    items_test_case(nodes.items, monkeypatch)
+
+
+def values_test_case(nodes_method, monkeypatch):
+    monkeypatch.setattr(Node, '_poll', fake_node_poll)
+
+    expected_names = set(['master', 'bobnit', 'halob'])
+
+    actual_names = set()
+    for node in nodes_method():
+        assert isinstance(node, Node)
+        actual_names.add(node.name)
+
+    assert actual_names == expected_names
+
+
+def test_itervalues(nodes, monkeypatch):
+    values_test_case(nodes.itervalues, monkeypatch)
+
+
+def test_values(nodes, monkeypatch):
+    values_test_case(nodes.values, monkeypatch)
