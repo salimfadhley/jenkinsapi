@@ -3,7 +3,7 @@ A selection of view objects used in testing.
 """
 
 VIEW_WITH_FILTER_AND_REGEX = """
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.1" encoding="UTF-8"?>
 <hudson.model.ListView>
   <name>%s</name>
   <filterExecutors>true</filterExecutors>
