@@ -44,27 +44,28 @@ class Nodes(JenkinsBase):
     def keys(self):
         return list(self.iterkeys())
 
+    def _make_node(self, nodename):
+        """
+        Creates an instance of Node for the given nodename.
+        This function assumes the returned node exists.
+        """
+        if nodename.lower() == 'master':
+            nodeurl = '%s/(%s)' % (self.baseurl, nodename)
+        else:
+            nodeurl = '%s/%s' % (self.baseurl, nodename)
+        return Node(self.jenkins, nodeurl, nodename, node_dict={})
+
     def iteritems(self):
         for item in self._data['computer']:
             nodename = item['displayName']
-            if nodename.lower() == 'master':
-                nodeurl = '%s/(%s)' % (self.baseurl, nodename)
-            else:
-                nodeurl = '%s/%s' % (self.baseurl, nodename)
             try:
-                yield item['displayName'], Node(self.jenkins, nodeurl,
-                                                nodename, node_dict={})
+                yield nodename, self._make_node(nodename)
             except Exception:
                 raise JenkinsAPIException('Unable to iterate nodes')
 
     def __getitem__(self, nodename):
         if nodename in self:
-            if nodename.lower() == 'master':
-                nodeurl = '%s/(%s)' % (self.baseurl, nodename)
-            else:
-                nodeurl = '%s/%s' % (self.baseurl, nodename)
-            return Node(self.jenkins, nodeurl, nodename, node_dict={})
-
+            return self._make_node(nodename)
         raise UnknownNode(nodename)
 
     def __len__(self):
