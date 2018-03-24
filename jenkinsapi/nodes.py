@@ -38,10 +38,19 @@ class Nodes(JenkinsBase):
         return node_name in self.keys()
 
     def iterkeys(self):
+        """
+        Return an iterator over the container's node names.
+
+        Using iterkeys() while creating nodes may raise a RuntimeError or fail to iterate over all
+        entries.
+        """
         for item in self._data['computer']:
             yield item['displayName']
 
     def keys(self):
+        """
+        Return a copy of the container's list of node names.
+        """
         return list(self.iterkeys())
 
     def _make_node(self, nodename):
@@ -56,6 +65,12 @@ class Nodes(JenkinsBase):
         return Node(self.jenkins, nodeurl, nodename, node_dict={})
 
     def iteritems(self):
+        """
+        Return an iterator over the container's (name, node) pairs.
+
+        Using iteritems() while creating nodes may raise a RuntimeError or fail to iterate over all
+        entries.
+        """
         for item in self._data['computer']:
             nodename = item['displayName']
             try:
