@@ -6,6 +6,7 @@ import logging
 import six.moves.urllib.parse as urlparse
 
 from six.moves.urllib.parse import quote as urlquote
+from six.moves.urllib.parse import urlencode
 from requests import HTTPError, ConnectionError
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
@@ -450,3 +451,26 @@ class Jenkins(JenkinsBase):
     def shutdown(self):
         url = "%s/exit" % self.baseurl
         self.requester.post_and_confirm_status(url, data='')
+
+    def run_groovy_script(self, script):
+        """
+        Runs the requested groovy script on the Jenkins server returning the
+        result as text.
+        Raises a JenkinsAPIException if the returned HTTP response code from
+        the POST request is not 200 OK.
+
+        Example:
+
+            server = Jenkins(...)
+            script = 'println "Hello world!"'
+            result = server.run_groovy_script(script)
+            print(result) # will print "Hello world!"
+        """
+        url = "%s/scriptText" % self.baseurl
+        data = urlencode({'script': script})
+
+        response = self.requester.post_and_confirm_status(url, data=data)
+        if response.status_code != 200:
+            raise JenkinsAPIException('Unexpected response %d.' % response.status_code)
+
+        return response.text
