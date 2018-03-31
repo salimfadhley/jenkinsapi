@@ -85,20 +85,20 @@ class View(JenkinsBase):
     def get_jenkins_obj(self):
         return self.jenkins_obj
 
-    def add_job(self, str_job_name, job=None):
+    def add_job(self, job_name, job=None):
         """
         Add job to a view
 
-        :param str_job_name: name of the job to be added
+        :param job_name: name of the job to be added
         :param job: Job object to be added
         :return: True if job has been added, False if job already exists or
          job not known to Jenkins
         """
         if not job:
-            if str_job_name in self.get_job_dict():
+            if job_name in self.get_job_dict():
                 log.warning(
                     'Job %s is already in the view %s',
-                    str_job_name, self.name)
+                    job_name, self.name)
                 return False
             else:
                 # Since this call can be made from nested view,
@@ -107,18 +107,18 @@ class View(JenkinsBase):
                 # http://jenkins:8080/view/CRT/view/CRT-FB/view/CRT-SCRT-1301/
                 top_jenkins = self.get_jenkins_obj().get_jenkins_obj_from_url(
                     self.baseurl.split('view/')[0])
-                if not top_jenkins.has_job(str_job_name):
+                if not top_jenkins.has_job(job_name):
                     log.error(
                         msg='Job "%s" is not known to Jenkins' %
-                        str_job_name)
+                        job_name)
                     return False
                 else:
-                    job = top_jenkins.get_job(str_job_name)
+                    job = top_jenkins.get_job(job_name)
 
-        log.info(msg='Creating job %s in view %s' % (str_job_name, self.name))
+        log.info(msg='Creating job %s in view %s' % (job_name, self.name))
 
         url = '%s/addJobToView' % self.baseurl
-        params = {'name': str_job_name}
+        params = {'name': job_name}
 
         self.get_jenkins_obj().requester.post_and_confirm_status(
             url,
@@ -127,6 +127,31 @@ class View(JenkinsBase):
         self.poll()
         log.debug(msg='Job "%s" has been added to a view "%s"' %
                   (job.name, self.name))
+        return True
+
+    def remove_job(self, job_name):
+        """
+        Remove job from a view
+
+        :param job_name: name of the job to be removed
+        :return: True if job has been removed,
+            False if job not assigned to this view
+        """
+        if job_name not in self:
+            return False
+
+        url = '%s/removeJobFromView' % self.baseurl
+        params = {'name': job_name}
+
+        self.get_jenkins_obj().requester.post_and_confirm_status(
+            url,
+            data={},
+            params=params)
+        self.poll()
+        log.debug(
+            msg='Job "%s" has been added to a view "%s"'
+            % (job_name, self.name)
+        )
         return True
 
     def _get_nested_views(self):
