@@ -39,7 +39,7 @@ class Jenkins(JenkinsBase):
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
-            ssl_verify=True, timeout=10):
+            ssl_verify=True, cert=None, timeout=10):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -53,6 +53,7 @@ class Jenkins(JenkinsBase):
             password,
             baseurl=baseurl,
             ssl_verify=ssl_verify,
+            cert=cert,
             timeout=timeout
         )
         self.requester.timeout = timeout
