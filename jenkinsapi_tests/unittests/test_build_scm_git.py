@@ -51,9 +51,9 @@ def test_git_revision_branch(build):
     assert build.get_revision_branch()[0]['name'] == 'origin/unstable'
 
 
-def test_git_repo_url(self):
+def test_git_repo_url(build):
     """
     Can we extract git repo url for a given build
     """
-    self.assertIsInstance(self.b.get_repo_url(), six.string_types)
-    self.assertEquals(self.b.get_repo_url(), 'https://github.com/salimfadhley/jenkinsapi.git')
+    build.assertIsInstance(build.get_repo_url(), six.string_types)
+    build.assertEquals(build.get_repo_url(), 'https://github.com/salimfadhley/jenkinsapi.git')
