@@ -89,6 +89,10 @@ class Build(JenkinsBase):
         vcs = self._data['changeSet']['kind'] or 'git'
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
+    def get_repo_url(self):
+        vcs = self._data['changeSet']['kind'] or 'git'
+        return getattr(self, '_get_%s_repo_url' % vcs, lambda: None)()
+
     def get_params(self):
         """
         Return a dictionary of params names and their values or None
@@ -179,6 +183,20 @@ class Build(JenkinsBase):
 
     def _get_hg_rev_branch(self):
         raise NotImplementedError('_get_hg_rev_branch is not yet implemented')
+
+    def _get_git_repo_url(self):
+        # Sometimes we have None as part of actions. Filter those actions
+        # which have lastBuiltRevision in them
+        _actions = [x for x in self._data['actions']
+                    if x and "lastBuiltRevision" in x]
+
+        return _actions[0]["remoteUrl"]
+
+    def _get_svn_repo_url(self):
+        raise NotImplementedError('_get_svn_repo_url is not yet implemented')
+
+    def _get_hg_repo_url(self):
+        raise NotImplementedError('_get_hg_repo_url is not yet implemented')
 
     def get_duration(self):
         return datetime.timedelta(milliseconds=self._data["duration"])
