@@ -57,7 +57,5 @@ def test_git_repo_url(build):
     """
     if not isinstance(build.get_repo_url(), basestring):
         raise AssertionError
-    if not len(build.get_repo_url) == 1:
-        raise AssertionError
     if not build.get_repo_url() == 'https://github.com/salimfadhley/jenkinsapi.git':
         raise AssertionError
