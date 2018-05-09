@@ -55,7 +55,7 @@ def test_git_repo_url(build):
     """
     Can we extract git repo url for a given build
     """
-    if not type(build.get_repo_url()) == basestring:
+    if not isinstance(build.get_repo_url(), basestring):
         raise AssertionError
     if not len(build.get_repo_url) == 1:
         raise AssertionError
