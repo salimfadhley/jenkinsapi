@@ -55,7 +55,7 @@ def test_git_repo_url(build):
     """
     Can we extract git repo url for a given build
     """
-    if not isinstance(build.get_repo_url(), basestring):
+    if not isinstance(build.get_repo_url(), str):
         raise AssertionError
     if not build.get_repo_url() == 'https://github.com/salimfadhley/jenkinsapi.git':
         raise AssertionError
