@@ -189,8 +189,11 @@ class Build(JenkinsBase):
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
                     if x and "lastBuiltRevision" in x]
-
-        return _actions[0]["remoteUrl"]
+        # old Jenkins version have key remoteUrl v/s the new version has a list remoteUrls
+        result = _actions[0].get("remoteUrls", _actions[0].get("remoteUrl"))
+        if isinstance(result, list):
+            result = result[0]
+        return result
 
     def _get_svn_repo_url(self):
         raise NotImplementedError('_get_svn_repo_url is not yet implemented')
