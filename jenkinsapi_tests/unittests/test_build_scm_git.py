@@ -54,5 +54,5 @@ def test_git_repo_url(self):
     """
     Can we extract git repo url for a given build
     """
-    self.assertIsInstance(self.b.get_repo_url(), basestring)
+    self.assertIsInstance(self.b.get_repo_url(), six.string_types)
     self.assertEquals(self.b.get_repo_url(), 'https://github.com/salimfadhley/jenkinsapi.git')
