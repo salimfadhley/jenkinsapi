@@ -57,4 +57,3 @@ def test_git_repo_url(build):
     """
     assert isinstance(build.get_repo_url(), str)
     assert build.get_repo_url() == 'https://github.com/salimfadhley/jenkinsapi.git'
-    assert len(build.get_repo_url()) == 1
