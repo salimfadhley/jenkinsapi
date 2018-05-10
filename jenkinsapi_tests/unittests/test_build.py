@@ -105,7 +105,8 @@ def test_get_build_url(build):
     expected = "http://foo/1"
     build._data = {"url": "http://foo/1"}
     url = build.get_build_url()
-    assert url == expected
+    if not url == expected:
+        raise AssertionError()
 
 
 def test_get_params_different_order(build):
