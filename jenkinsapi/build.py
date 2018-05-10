@@ -183,6 +183,9 @@ class Build(JenkinsBase):
     def get_duration(self):
         return datetime.timedelta(milliseconds=self._data["duration"])
 
+    def get_build_url(self):
+        return self._data['url']
+
     def get_artifacts(self):
         data = self.poll(tree='artifacts[relativePath,fileName]')
         for afinfo in data["artifacts"]:
