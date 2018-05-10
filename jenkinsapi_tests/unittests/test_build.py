@@ -102,8 +102,8 @@ def test_get_params(build):
 
 
 def test_get_build_url(build):
-    expected ={ 'url': "http://foo/1"}
-    build._data= { "url" : "http://foo/1"}
+    expected = "http://foo/1"
+    build._data = {"url": "http://foo/1"}
     url = build.get_build_url()
     assert url == expected
 
