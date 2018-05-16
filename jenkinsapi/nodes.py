@@ -38,33 +38,74 @@ class Nodes(JenkinsBase):
         return node_name in self.keys()
 
     def iterkeys(self):
+        """
+        Return an iterator over the container's node names.
+
+        Using iterkeys() while creating nodes may raise a RuntimeError or fail to iterate over all
+        entries.
+        """
         for item in self._data['computer']:
             yield item['displayName']
 
     def keys(self):
+        """
+        Return a copy of the container's list of node names.
+        """
         return list(self.iterkeys())
 
+    def _make_node(self, nodename):
+        """
+        Creates an instance of Node for the given nodename.
+        This function assumes the returned node exists.
+        """
+        if nodename.lower() == 'master':
+            nodeurl = '%s/(%s)' % (self.baseurl, nodename)
+        else:
+            nodeurl = '%s/%s' % (self.baseurl, nodename)
+        return Node(self.jenkins, nodeurl, nodename, node_dict={})
+
     def iteritems(self):
+        """
+        Return an iterator over the container's (name, node) pairs.
+
+        Using iteritems() while creating nodes may raise a RuntimeError or fail to iterate over all
+        entries.
+        """
         for item in self._data['computer']:
             nodename = item['displayName']
-            if nodename.lower() == 'master':
-                nodeurl = '%s/(%s)' % (self.baseurl, nodename)
-            else:
-                nodeurl = '%s/%s' % (self.baseurl, nodename)
             try:
-                yield item['displayName'], Node(self.jenkins, nodeurl,
-                                                nodename, node_dict={})
+                yield nodename, self._make_node(nodename)
             except Exception:
                 raise JenkinsAPIException('Unable to iterate nodes')
 
+    def items(self):
+        """
+        Return a copy of the container's list of (name, node) pairs.
+        """
+        return list(self.iteritems())
+
+    def itervalues(self):
+        """
+        Return an iterator over the container's nodes.
+
+        Using itervalues() while creating nodes may raise a RuntimeError or fail to iterate over
+        all entries.
+        """
+        for item in self._data['computer']:
+            try:
+                yield self._make_node(item['displayName'])
+            except Exception:
+                raise JenkinsAPIException('Unable to iterate nodes')
+
+    def values(self):
+        """
+        Return a copy of the container's list of nodes.
+        """
+        return list(self.itervalues())
+
     def __getitem__(self, nodename):
         if nodename in self:
-            if nodename.lower() == 'master':
-                nodeurl = '%s/(%s)' % (self.baseurl, nodename)
-            else:
-                nodeurl = '%s/%s' % (self.baseurl, nodename)
-            return Node(self.jenkins, nodeurl, nodename, node_dict={})
-
+            return self._make_node(nodename)
         raise UnknownNode(nodename)
 
     def __len__(self):

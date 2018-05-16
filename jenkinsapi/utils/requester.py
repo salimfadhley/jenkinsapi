@@ -40,7 +40,7 @@ class Requester(object):
 
     def __init__(
             self, username=None, password=None,
-            ssl_verify=True, baseurl=None,
+            ssl_verify=True, cert=None, baseurl=None,
             timeout=10):
         if username:
             assert password, 'Cannot set a username without a password!'
@@ -50,6 +50,7 @@ class Requester(object):
         self.username = username
         self.password = password
         self.ssl_verify = ssl_verify
+        self.cert = cert
         self.timeout = timeout
 
     def get_request_dict(
@@ -70,6 +71,7 @@ class Requester(object):
             requestKwargs['headers'] = headers
 
         requestKwargs['verify'] = self.ssl_verify
+        requestKwargs['cert'] = self.cert
 
         if data:
             # It may seem odd, but some Jenkins operations require posting

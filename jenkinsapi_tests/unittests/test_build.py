@@ -101,6 +101,13 @@ def test_get_params(build):
     assert params == expected
 
 
+def test_get_build_url(build):
+    expected = "http://foo/1"
+    build._data = {"url": "http://foo/1"}
+    url = build.get_build_url()
+    assert url == expected
+
+
 def test_get_params_different_order(build):
     """
     Dictionary with `parameters` key is not always the first element in

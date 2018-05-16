@@ -165,3 +165,25 @@ def test_get_job_config(jenkins):
     assert '<?xml' in jenkins.get_job(job.name).get_config()
     for _, job in jenkins.views[view_name].items():
         assert '<?xml' in job.get_config()
+
+
+def test_remove_job_from_view(jenkins):
+    job_name = random_string()
+    create_job(jenkins, job_name)
+
+    view_name = random_string()
+    assert view_name not in jenkins.views
+    new_view = jenkins.views.create(view_name)
+    assert view_name in jenkins.views
+    assert isinstance(new_view, View)
+
+    assert job_name not in new_view
+    assert new_view.add_job(job_name)
+    assert job_name in new_view
+    assert isinstance(new_view[job_name], Job) is True
+
+    assert new_view.remove_job(job_name)
+    assert job_name not in new_view
+    assert new_view.remove_job(job_name) is False
+
+    del jenkins.views[view_name]

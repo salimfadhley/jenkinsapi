@@ -203,3 +203,9 @@ def test_get_single_plugin(jenkins):
 def test_get_single_plugin_depth_2(jenkins):
     plugins = jenkins.get_plugins(depth=2)
     _, plugin = next(plugins.iteritems())
+
+
+def test_run_groovy_script(jenkins):
+    expected_result = 'Hello world!'
+    result = jenkins.run_groovy_script('print "%s"' % expected_result)
+    assert result == 'Hello world!'

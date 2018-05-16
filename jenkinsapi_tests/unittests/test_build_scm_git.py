@@ -49,3 +49,11 @@ def test_git_revision_branch(build):
     assert build.get_revision_branch()[0]['SHA1'] == \
         '7def9ed6e92580f37d00e4980c36c4d36e68f702'
     assert build.get_revision_branch()[0]['name'] == 'origin/unstable'
+
+
+def test_git_repo_url(build):
+    """
+     Can we Extract git repo url for a given build
+    """
+    assert isinstance(build.get_repo_url(), str)
+    assert build.get_repo_url() == 'https://github.com/salimfadhley/jenkinsapi.git'

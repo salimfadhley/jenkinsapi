@@ -104,10 +104,14 @@ def test_queueitem_for_why_field(jenkins, no_executors):
 
 
 def test_queueitem_from_job(jenkins, no_executors):
-    j = jenkins.create_job(random_string(), LONG_RUNNING_JOB)
+    job_name = random_string()
+    j = jenkins.create_job(job_name, LONG_RUNNING_JOB)
     j.invoke()
 
     qi = j.get_queue_item()
     assert isinstance(qi, QueueItem)
     assert qi.get_job() == j
+    assert qi.get_job_name() == job_name
+    assert qi.name == job_name
+    assert qi.is_queued()
     assert not qi.is_running()
