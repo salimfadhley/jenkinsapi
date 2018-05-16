@@ -53,7 +53,7 @@ def test_git_revision_branch(build):
 
 def test_git_repo_url(build):
     """
-    Can we extract git repo url for a given build
+     Can we Extract git repo url for a given build
     """
     assert isinstance(build.get_repo_url(), str)
     assert build.get_repo_url() == 'https://github.com/salimfadhley/jenkinsapi.git'
