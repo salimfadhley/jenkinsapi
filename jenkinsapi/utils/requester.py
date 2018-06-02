@@ -39,19 +39,21 @@ class Requester(object):
     VALID_STATUS_CODES = [200, ]
 
     def __init__(
-            self, username=None, password=None,
-            ssl_verify=True, cert=None, baseurl=None,
-            timeout=10):
-        if username:
-            assert password, 'Cannot set a username without a password!'
+#            self, username=None, password=None,
+#            ssl_verify=True, cert=None, baseurl=None,
+#            timeout=10):
+         self, *args, **kwargs):
+        if kwargs.get('username', None):
+            assert kwargs.get('password', None), 'Cannot set a username without a password!'
 
+        baseurl = kwargs.get('baseurl', None)
         self.base_scheme = urlparse.urlsplit(
-            baseurl).scheme if baseurl else None
-        self.username = username
-        self.password = password
-        self.ssl_verify = ssl_verify
-        self.cert = cert
-        self.timeout = timeout
+                baseurl).scheme if baseurl else None
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.ssl_verify = kwargs.get('ssl_verify', True)
+        self.cert = kwargs.get('cert', None)
+        self.timeout = kwargs.get('timeout', 10)
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
