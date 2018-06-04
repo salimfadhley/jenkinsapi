@@ -41,13 +41,13 @@ class Requester(object):
     def __init__(self, *args, **kwargs):
 
         if args:
-            username, password = args
+            try:
+                username, password = args
+            except ValueError:
+                'Cannot set a username without a password!'
         else:
             username = None
             password = None
-
-        if username:
-            assert password, 'Cannot set a username without a password!'
 
         baseurl = kwargs.get('baseurl', None)
         self.base_scheme = urlparse.urlsplit(
