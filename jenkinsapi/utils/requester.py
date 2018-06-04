@@ -49,6 +49,7 @@ class Requester(object):
             username = None
             password = None
 
+
         baseurl = kwargs.get('baseurl', None)
         self.base_scheme = urlparse.urlsplit(
             baseurl).scheme if baseurl else None
