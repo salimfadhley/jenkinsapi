@@ -44,7 +44,7 @@ class Requester(object):
             try:
                 username, password = args
             except ValueError:
-                'Cannot set a username without a password!'
+                raise AssertionError('Cannot set a username without a password!')
         else:
             username = None
             password = None
