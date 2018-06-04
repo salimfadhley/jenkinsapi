@@ -44,7 +44,6 @@ class Requester(object):
             try:
                 username, password = args
             except ValueError as Error:
-                print(Error.message)
                 raise Error
         else:
             username = None
