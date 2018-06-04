@@ -40,7 +40,11 @@ class Requester(object):
 
     def __init__(self, *args, **kwargs):
 
-        username, password = args
+        if args:
+            username, password = args
+        else:
+            username = None
+            password = None
 
         if username:
             assert password, 'Cannot set a username without a password!'
