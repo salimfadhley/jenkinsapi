@@ -49,8 +49,8 @@ class Jenkins(JenkinsBase):
         self.username = username
         self.password = password
         self.requester = requester or Requester(
-            username=username,
-            password=password,
+            username,
+            password,
             baseurl=baseurl,
             ssl_verify=ssl_verify,
             cert=cert,
