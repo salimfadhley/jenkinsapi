@@ -43,9 +43,9 @@ class Requester(object):
         if args:
             try:
                 username, password = args
-            except ValueError as e:
-                print e.message
-                raise e
+            except ValueError as Error:
+                print Error.message
+                raise Error
         else:
             username = None
             password = None
