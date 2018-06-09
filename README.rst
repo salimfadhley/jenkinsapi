@@ -48,7 +48,8 @@ The project has been tested against Python versions:
 
 * 2.7
 * 3.4
-* 3.5 
+* 3.5
+* 3.5-dev
 * 3.6
 * 3.6-dev 
 * 3.7-dev
