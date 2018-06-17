@@ -184,7 +184,8 @@ class TestKeys:
     def test_returns_key_when_called(self, view):
         keys = view.keys()
 
-        assert ['foo', 'test_jenkinsapi'] == list(keys)
+        assert 'foo' in list(keys)
+        assert 'test_jenkinsapi' in list(keys)
 
 
 class TestAddJob:
