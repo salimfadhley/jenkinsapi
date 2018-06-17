@@ -60,13 +60,13 @@ JOB_DATA = {
 
 @pytest.fixture
 def jenkins():
-    jenkins = mock.MagicMock()
+    jenkins = mock.MagicMock(auto_spec=True)
     jenkins.has_job.return_value = False
     return jenkins
 
 
-@mock.patch.object(Job, '_poll')
-@mock.patch.object(View, '_poll')
+@mock.patch.object(Job, '_poll', auto_spec=True)
+@mock.patch.object(View, '_poll', auto_spec=True)
 @pytest.fixture
 def view(_view_poll, _job_poll, jenkins):
     _view_poll.return_value = DATA
@@ -74,6 +74,32 @@ def view(_view_poll, _job_poll, jenkins):
     return View('http://localhost:800/view/FodFanFo',
                 'FodFanFo',
                 jenkins)
+
+
+@pytest.fixture
+def jenkins_patch():
+
+    class Jenkins:
+        def has_job(self, job_name):
+            return False
+
+        def get_jenkins_obj_from_url(self, url):
+            return self
+
+    return Jenkins
+
+
+@pytest.fixture
+def busy_patch():
+
+    class Jenkins:
+        def has_job(self, job_name):
+            return True
+
+        def get_jenkins_obj_from_url(self, url):
+            return self
+
+    return Jenkins
 
 
 class TestView:
@@ -128,27 +154,10 @@ class TestView:
         with pytest.raises(NotFound):
             view.get_job_url('bar')
 
-    @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_add_job(self, _poll, _view_poll, view):
-        _poll.return_value = DATA
-        _view_poll.return_value = DATA
-
-        result = view.add_job('bar')
-
-        assert result is True
-
     @mock.patch.object(View, 'get_jenkins_obj')
-    def test_returns_false_when_adding_wrong_job(self, _get_jenkins, view):
-
-        class SelfPatchJenkins(object):
-            def has_job(self, job_name):
-                return False
-
-            def get_jenkins_obj_from_url(self, url):
-                return self
-
-        _get_jenkins.return_value = SelfPatchJenkins()
+    def test_returns_false_when_adding_wrong_job(
+            self, _get_jenkins, view, jenkins_patch):
+        _get_jenkins.return_value = jenkins_patch()
         result = view.add_job('bar')
 
         assert result is False
@@ -164,6 +173,11 @@ class TestView:
         assert isinstance(result, dict)
         assert len(result) == 0
 
+    def test_returns_jenkins_obj_when_get_jenkins_obj_is_called(self, view):
+        obj = view.get_jenkins_obj()
+
+        assert obj == view.jenkins_obj
+
 
 class TestKeys:
 
@@ -171,3 +185,51 @@ class TestKeys:
         keys = view.keys()
 
         assert ['foo', 'test_jenkinsapi'] == list(keys)
+
+
+class TestAddJob:
+
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(View, '_poll')
+    def test_returns_true_when_no_job_provided(
+            self, _poll, _view_poll, view):
+        _poll.return_value = DATA
+        _view_poll.return_value = DATA
+
+        result = view.add_job('bar')
+
+        assert result is True
+
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(View, '_poll')
+    def test_returns_false_when_already_registered(
+                self, _poll, _view_poll, view):
+        _poll.return_value = DATA
+        _view_poll.return_value = DATA
+
+        result = view.add_job('foo')
+
+        assert result is False
+
+    @mock.patch.object(View, 'get_jenkins_obj')
+    def test_returns_false_when_jenkins_has_job(
+            self, _get_jenkins, view, jenkins_patch):
+        _get_jenkins.return_value = jenkins_patch()
+
+        result = view.add_job('Foo')
+
+        _get_jenkins.assert_called()
+        assert result is False
+
+    @mock.patch.object(View, 'get_jenkins_obj')
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(View, '_poll')
+    def test_returns_true_when_jenkins_has_job(
+            self, _poll, _view_poll, _get_jenkins, view, jenkins):
+        _get_jenkins.return_value = jenkins()
+        _poll.return_value = DATA
+        _view_poll.return_value = DATA
+        result = view.add_job('Foo')
+
+        _get_jenkins.assert_called()
+        assert result is True
