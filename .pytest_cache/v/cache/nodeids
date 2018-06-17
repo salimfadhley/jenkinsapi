@@ -1,0 +1,17 @@
+[
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_add_job",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_delete",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_get_job_url",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_get_nested_view_dict",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_getitem",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_iteritems",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_raises_error_when_is_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_dict_of_job_info_when_job_dict_method_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_false_when_add_existing_job",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_false_when_adding_wrong_job",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_len_when_len_is_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_name_when_name_property_is_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_name_when_repr_is_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_returns_name_when_str_method_called",
+  "jenkinsapi_tests/unittests/test_view.py::TestView::test_wrong_get_job_url"
+]

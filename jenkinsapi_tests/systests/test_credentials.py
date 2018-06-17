@@ -8,7 +8,6 @@ from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import UsernamePasswordCredential
 from jenkinsapi.credentials import SecretTextCredential
 from jenkinsapi.credential import SSHKeyCredential
-from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 log = logging.getLogger(__name__)
 

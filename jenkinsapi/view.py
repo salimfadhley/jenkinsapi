@@ -27,6 +27,9 @@ class View(JenkinsBase):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return self.name
+
     def __getitem__(self, job_name):
         assert isinstance(job_name, str)
         api_url = self.python_api_url(self.get_job_url(job_name))

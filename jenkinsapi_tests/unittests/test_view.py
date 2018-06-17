@@ -67,54 +67,58 @@ class TestView(unittest.TestCase):
         _view_poll.return_value = self.DATA
         _job_poll.return_value = self.JOB_DATA
 
-        # def __init__(self, url, name, jenkins_obj)
-        self.J = mock.MagicMock()  # Jenkins object
-        self.J.has_job.return_value = False
-        self.v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
+        self.jenkins = mock.MagicMock()
+        self.jenkins.has_job.return_value = False
+        self.view = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.jenkins)
 
-    def testRepr(self):
-        # Can we produce a repr string for this object
-        repr(self.v)
+    def test_returns_name_when_repr_is_called(self):
+        assert repr(self.view) == 'FodFanFo'
 
-    def testName(self):
+    def test_returns_name_when_str_method_called(self):
+        assert str(self.view) == 'FodFanFo'
+
+    def test_raises_error_when_is_called(self):
         with self.assertRaises(AttributeError):
-            self.v.id()
-        self.assertEquals(self.v.name, 'FodFanFo')
+            self.view.id()
+
+    def test_returns_name_when_name_property_is_called(self):
+        assert self.view.name == 'FodFanFo'
 
     @mock.patch.object(JenkinsBase, '_poll')
     def test_iteritems(self, _poll):
         _poll.return_value = self.JOB_DATA
-        for job_name, job_obj in self.v.iteritems():
+        for job_name, job_obj in self.view.iteritems():
             self.assertTrue(isinstance(job_obj, Job))
 
-    def test_get_job_dict(self):
-        jobs = self.v.get_job_dict()
-        self.assertEquals(jobs, {
+    def test_returns_dict_of_job_info_when_job_dict_method_called(self):
+        jobs = self.view.get_job_dict()
+        assert jobs == {
             'foo': 'http://halob:8080/job/foo/',
-            'test_jenkinsapi': 'http://halob:8080/job/test_jenkinsapi/'})
+            'test_jenkinsapi': 'http://halob:8080/job/test_jenkinsapi/'
+        }
 
-    def test_len(self):
-        self.assertEquals(len(self.v), 2)
+    def test_returns_len_when_len_is_called(self):
+        assert len(self.view) == 2
 
     # We have to re-patch JenkinsBase here because by the time
     # it get to create Job, MagicMock will already expire
     @mock.patch.object(JenkinsBase, '_poll')
     def test_getitem(self, _poll):
         _poll.return_value = self.JOB_DATA
-        self.assertTrue(isinstance(self.v['foo'], Job))
+        self.assertTrue(isinstance(self.view['foo'], Job))
 
     def test_delete(self):
-        self.v.delete()
-        self.assertTrue(self.v.deleted)
+        self.view.delete()
+        self.assertTrue(self.view.deleted)
 
     def test_get_job_url(self):
         self.assertEquals(
-            self.v.get_job_url('foo'),
+            self.view.get_job_url('foo'),
             'http://halob:8080/job/foo/')
 
     def test_wrong_get_job_url(self):
         with self.assertRaises(NotFound):
-            self.v.get_job_url('bar')
+            self.view.get_job_url('bar')
 
     # We have to re-patch JenkinsBase here because by the time
     # it get to create Job, MagicMock will already expire
@@ -125,35 +129,38 @@ class TestView(unittest.TestCase):
         _view_poll.return_value = self.DATA
         J = mock.MagicMock()  # Jenkins object
         J.has_job.return_value = True
-        v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
+        v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.jenkins)
 
         result = v.add_job('bar')
         self.assertTrue(result)
 
-    class SelfPatchJenkins(object):
-
-        def has_job(self, job_name):
-            return False
-
-        def get_jenkins_obj_from_url(self, url):
-            return self
-
     # We have to re-patch JenkinsBase here because by the time
     # it get to create Job, MagicMock will already expire
     @mock.patch.object(View, 'get_jenkins_obj')
-    def test_add_wrong_job(self, _get_jenkins):
-        _get_jenkins.return_value = TestView.SelfPatchJenkins()
-        result = self.v.add_job('bar')
-        self.assertFalse(result)
+    def test_returns_false_when_adding_wrong_job(self, _get_jenkins):
 
-    def test_add_existing_job(self):
-        result = self.v.add_job('foo')
-        self.assertFalse(result)
+        class SelfPatchJenkins(object):
+            def has_job(self, job_name):
+                return False
+
+            def get_jenkins_obj_from_url(self, url):
+                return self
+
+        _get_jenkins.return_value = SelfPatchJenkins()
+        result = self.view.add_job('bar')
+
+        assert result is False
+
+    def test_returns_false_when_add_existing_job(self):
+        result = self.view.add_job('foo')
+
+        assert result is False
 
     def test_get_nested_view_dict(self):
-        result = self.v.get_nested_view_dict()
-        self.assertTrue(isinstance(result, dict))
-        self.assertEquals(len(result), 0)
+        result = self.view.get_nested_view_dict()
+
+        assert isinstance(result, dict)
+        assert len(result) == 0
 
 
 if __name__ == '__main__':
