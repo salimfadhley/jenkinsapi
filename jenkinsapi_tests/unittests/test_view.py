@@ -171,7 +171,7 @@ class TestView:
         result = view.get_nested_view_dict()
 
         assert isinstance(result, dict)
-        assert len(result) == 0
+        assert len(result) is None
 
     def test_returns_jenkins_obj_when_get_jenkins_obj_is_called(self, view):
         obj = view.get_jenkins_obj()
@@ -192,8 +192,7 @@ class TestAddJob:
 
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(View, '_poll')
-    def test_returns_true_when_no_job_provided(
-            self, _poll, _view_poll, view):
+    def test_returns_true_when_no_job_provided(self, _poll, _view_poll, view):
         _poll.return_value = DATA
         _view_poll.return_value = DATA
 
@@ -203,8 +202,7 @@ class TestAddJob:
 
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(View, '_poll')
-    def test_returns_false_when_already_registered(
-                self, _poll, _view_poll, view):
+    def test_returns_false_when_already_registered(self, _poll, _view_poll, view):
         _poll.return_value = DATA
         _view_poll.return_value = DATA
 
@@ -213,8 +211,7 @@ class TestAddJob:
         assert result is False
 
     @mock.patch.object(View, 'get_jenkins_obj')
-    def test_returns_false_when_jenkins_has_job(
-            self, _get_jenkins, view, jenkins_patch):
+    def test_returns_false_when_jenkins_has_job(self, _get_jenkins, view, jenkins_patch):
         _get_jenkins.return_value = jenkins_patch()
 
         result = view.add_job('Foo')
@@ -225,8 +222,7 @@ class TestAddJob:
     @mock.patch.object(View, 'get_jenkins_obj')
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(View, '_poll')
-    def test_returns_true_when_jenkins_has_job(
-            self, _poll, _view_poll, _get_jenkins, view, jenkins):
+    def test_returns_true_when_jenkins_has_job(self, _poll, _view_poll, _get_jenkins, view, jenkins):
         _get_jenkins.return_value = jenkins()
         _poll.return_value = DATA
         _view_poll.return_value = DATA
@@ -239,8 +235,7 @@ class TestAddJob:
 class TestRemove:
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(View, '_poll')
-    def test_returns_true_when_job_has_been_removed(
-            self, _poll, _view_poll, view):
+    def test_returns_true_when_job_has_been_removed(self, _poll, _view_poll, view):
         _poll.return_value = DATA
         _view_poll.return_value = DATA
 
@@ -250,8 +245,7 @@ class TestRemove:
 
     @mock.patch.object(JenkinsBase, '_poll')
     @mock.patch.object(View, '_poll')
-    def test_returns_false_when_job_does_not_exist(
-            self, _poll, _view_poll, view):
+    def test_returns_false_when_job_does_not_exist(self, _poll, _view_poll, view):
         _poll.return_value = DATA
         _view_poll.return_value = DATA
 
