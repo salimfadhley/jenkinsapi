@@ -122,6 +122,7 @@ class TestView:
         _poll.return_value = JOB_DATA
         for job_name, job_obj in view.iteritems():
             assert isinstance(job_obj, Job)
+            assert job_name in ['foo', 'test_jenkinsapi']
 
     def test_returns_dict_of_job_info_when_job_dict_method_called(self, view):
         jobs = view.get_job_dict()
@@ -171,7 +172,6 @@ class TestView:
         result = view.get_nested_view_dict()
 
         assert isinstance(result, dict)
-        assert len(result) is None
 
     def test_returns_jenkins_obj_when_get_jenkins_obj_is_called(self, view):
         obj = view.get_jenkins_obj()
