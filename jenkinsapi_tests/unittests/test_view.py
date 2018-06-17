@@ -191,20 +191,16 @@ class TestKeys:
 class TestAddJob:
 
     @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_returns_true_when_no_job_provided(self, _poll, _view_poll, view):
+    def test_returns_true_when_no_job_provided(self, _poll, view):
         _poll.return_value = DATA
-        _view_poll.return_value = DATA
 
         result = view.add_job('bar')
 
         assert result is True
 
     @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_returns_false_when_already_registered(self, _poll, _view_poll, view):
+    def test_returns_false_when_already_registered(self, _poll, view):
         _poll.return_value = DATA
-        _view_poll.return_value = DATA
 
         result = view.add_job('foo')
 
@@ -221,11 +217,9 @@ class TestAddJob:
 
     @mock.patch.object(View, 'get_jenkins_obj')
     @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_returns_true_when_jenkins_has_job(self, _poll, _view_poll, _get_jenkins, view, jenkins):
+    def test_returns_true_when_jenkins_has_job(self, _poll, _get_jenkins, view, jenkins):
         _get_jenkins.return_value = jenkins()
         _poll.return_value = DATA
-        _view_poll.return_value = DATA
         result = view.add_job('Foo')
 
         _get_jenkins.assert_called()
@@ -234,20 +228,16 @@ class TestAddJob:
 
 class TestRemove:
     @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_returns_true_when_job_has_been_removed(self, _poll, _view_poll, view):
+    def test_returns_true_when_job_has_been_removed(self, _poll, view):
         _poll.return_value = DATA
-        _view_poll.return_value = DATA
 
         result = view.remove_job('foo')
 
         assert result is True
 
     @mock.patch.object(JenkinsBase, '_poll')
-    @mock.patch.object(View, '_poll')
-    def test_returns_false_when_job_does_not_exist(self, _poll, _view_poll, view):
+    def test_returns_false_when_job_does_not_exist(self, _poll, view):
         _poll.return_value = DATA
-        _view_poll.return_value = DATA
 
         result = view.remove_job('Non-existant Foo')
 
