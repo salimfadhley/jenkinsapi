@@ -233,3 +233,27 @@ class TestAddJob:
 
         _get_jenkins.assert_called()
         assert result is True
+
+
+class TestRemove:
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(View, '_poll')
+    def test_returns_true_when_job_has_been_removed(
+            self, _poll, _view_poll, view):
+        _poll.return_value = DATA
+        _view_poll.return_value = DATA
+
+        result = view.remove_job('foo')
+
+        assert result is True
+
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(View, '_poll')
+    def test_returns_false_when_job_does_not_exist(
+            self, _poll, _view_poll, view):
+        _poll.return_value = DATA
+        _view_poll.return_value = DATA
+
+        result = view.remove_job('Non-existant Foo')
+
+        assert result is False
