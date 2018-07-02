@@ -1,18 +1,26 @@
 from __future__ import print_function
 
-import SimpleHTTPServer
-import SocketServer
+try:
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
+except ImportError:
+    from http.server import SimpleHTTPRequestHandler
+
+try:
+    import SocketServer as socketserver
+except ImportError:
+    import socketserver
+
 import logging
 import cgi
 
 PORT = 8080
 
 
-class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class ServerHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         logging.error(self.headers)
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        super().do_GET()
 
     def do_POST(self):
         logging.error(self.headers)
@@ -24,12 +32,12 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                      })
         for item in form.list:
             logging.error(item)
-        SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        super().do_GET()
 
 
 Handler = ServerHandler
 
-httpd = SocketServer.TCPServer(("", PORT), Handler)
+httpd = socketserver.TCPServer(("", PORT), Handler)
 
 print("serving at port", PORT)
 httpd.serve_forever()

@@ -44,8 +44,13 @@ For a full documentation spec of what this library supports see: http://jenkinsa
 Python versions
 ---------------
 
-The project have been tested and working on Python 2.7, 3.3 and 3.4.
-It was tested previously on Python 2.6, so it may work on this version too.
+The project has been tested against Python versions:
+
+* 2.7
+* 3.4
+* 3.5
+* 3.6
+* 3.7
 
 Jenkins versions
 ----------------
