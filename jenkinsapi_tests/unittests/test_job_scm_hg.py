@@ -62,6 +62,8 @@ class TestHgJob(unittest.TestCase):
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetData)
     def setUp(self):
         self.J = mock.MagicMock()  # Jenkins object
+        self.J.base_server_url.return_value = ''
+        self.J.get_use_baseurl.return_value = False
         self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
 
     def configtree_with_branch(self):

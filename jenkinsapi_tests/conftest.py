@@ -1,5 +1,16 @@
 import os
 import logging
+from jenkinsapi.jenkins import Jenkins
+
+
+def create_jenkins_object(monkeypatch, jenkins_url, use_baseurl=False):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    new_jenkins = Jenkins(jenkins_url, use_baseurl=use_baseurl)
+
+    return new_jenkins
 
 
 logging.basicConfig(

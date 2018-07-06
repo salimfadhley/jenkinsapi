@@ -39,11 +39,17 @@ class Jenkins(JenkinsBase):
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
-            ssl_verify=True, cert=None, timeout=10):
+            ssl_verify=True, cert=None, timeout=10, use_baseurl=False):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
         :param password: password for jenkins auth, str
+        :param requester: , Requester
+        :param lazy: delay polling of data, bool
+        :param ssl_verify: requests lib Verify SSL (See requests lib), bool.
+        :param cert: requests lib certificate (See requests lib), String or tuple.
+        :param timeout: requests lib timeout (See requests lib), float or tuple.
+        :param use_baseurl: If jenkins baseurl is diff from job url, use jenkins baseurl, bool.
         :return: a Jenkins obj
         """
         self.username = username
@@ -59,6 +65,7 @@ class Jenkins(JenkinsBase):
         self.requester.timeout = timeout
         self.lazy = lazy
         self.jobs_container = None
+        self.use_baseurl = use_baseurl
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
     def _poll(self, tree=None):
@@ -267,6 +274,10 @@ class Jenkins(JenkinsBase):
     def get_queue_url(self):
         url = "%s/%s" % (self.base_server_url(), 'queue')
         return url
+
+    @property
+    def get_use_baseurl(self):
+        return self.use_baseurl
 
     def get_queue(self):
         queue_url = self.get_queue_url()

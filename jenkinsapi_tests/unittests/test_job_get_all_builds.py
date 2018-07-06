@@ -179,6 +179,8 @@ class TestJobGetAllBuilds(unittest.TestCase):
     def setUp(self):
         TestJobGetAllBuilds.__get_data_call_count = 0
         self.J = mock.MagicMock()  # Jenkins object
+        self.J.base_server_url.return_value = ''
+        self.J.get_use_baseurl.return_value = False
         self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)

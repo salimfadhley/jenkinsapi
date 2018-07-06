@@ -70,6 +70,8 @@ class TestView(unittest.TestCase):
         # def __init__(self, url, name, jenkins_obj)
         self.J = mock.MagicMock()  # Jenkins object
         self.J.has_job.return_value = False
+        self.J.base_server_url.return_value = ''
+        self.J.get_use_baseurl.return_value = False
         self.v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
 
     def testRepr(self):

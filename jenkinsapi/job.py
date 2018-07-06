@@ -64,7 +64,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'hg': self._get_hg_branch,
             None: lambda element_tree: []
         }
-        self.url = url
+
+        self.url = JenkinsBase.construct_url(url, jenkins_obj)
         JenkinsBase.__init__(self, self.url)
 
     def __str__(self):

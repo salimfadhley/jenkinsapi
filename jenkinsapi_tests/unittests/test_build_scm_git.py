@@ -3,11 +3,18 @@ import pytest
 from . import configs
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
+from jenkinsapi.jenkins import Jenkins
 
 
 @pytest.fixture(scope='function')
-def jenkins(mocker):
-    return mocker.MagicMock()
+def jenkins(monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    fake_jenkins = Jenkins('http://')
+
+    return fake_jenkins
 
 
 @pytest.fixture(scope='function')
@@ -16,7 +23,6 @@ def job(monkeypatch, jenkins):
         return configs.JOB_DATA
 
     monkeypatch.setattr(Job, '_poll', fake_poll)
-
     fake_job = Job('http://', 'Fake_Job', jenkins)
     return fake_job
 

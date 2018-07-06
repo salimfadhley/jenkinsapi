@@ -5,19 +5,14 @@ import json
 from . import configs
 from jenkinsapi.job import Job
 from jenkinsapi.build import Build
-from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import NoBuildData
+from jenkinsapi_tests.conftest import create_jenkins_object
 
 
 @pytest.fixture(scope='function')
 def jenkins(monkeypatch):
-    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
-        return {}
-
-    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
-    new_jenkins = Jenkins('http://halob:8080/')
-
+    new_jenkins = create_jenkins_object(monkeypatch, 'http://halob:8080/')
     return new_jenkins
 
 
@@ -27,10 +22,35 @@ def job(jenkins, monkeypatch):
         return configs.JOB_DATA
 
     monkeypatch.setattr(JenkinsBase, 'get_data', fake_get_data)
-
     new_job = Job('http://halob:8080/job/foo/', 'foo', jenkins)
 
     return new_job
+
+
+@pytest.fixture(scope='function')
+def jenkins_with_diff_baseurl(monkeypatch):
+    fake_jenkins = create_jenkins_object(monkeypatch, 'http://localhostdiff', use_baseurl=True)
+    return fake_jenkins
+
+
+@pytest.fixture(scope='function')
+def job_with_diff_baseurl(monkeypatch, jenkins_with_diff_baseurl):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.JOB_DATA
+
+    monkeypatch.setattr(Job, '_poll', fake_poll)
+    fake_job = Job('http://localhost', 'Fake_Job', jenkins_with_diff_baseurl)
+    return fake_job
+
+
+@pytest.fixture(scope='function')
+def job_with_same_baseurl(monkeypatch, jenkins_with_diff_baseurl):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.JOB_DATA
+
+    monkeypatch.setattr(Job, '_poll', fake_poll)
+    fake_job = Job('http://localhostdiff', 'Fake_Job', jenkins_with_diff_baseurl)
+    return fake_job
 
 
 @pytest.fixture(scope='function')
@@ -42,7 +62,6 @@ def job_tree(jenkins, monkeypatch):
             return {'lastBuild': configs.JOB_DATA['lastBuild']}
 
     monkeypatch.setattr(Job, 'get_data', fake_get_data)
-
     new_job = Job('http://halob:8080/job/foo/', 'foo', jenkins)
 
     return new_job
@@ -54,7 +73,6 @@ def job_tree_empty(jenkins, monkeypatch):
         return {}
 
     monkeypatch.setattr(Job, 'get_data', fake_get_data)
-
     new_job = Job('http://halob:8080/job/foo/', 'foo', jenkins)
 
     return new_job
@@ -69,6 +87,18 @@ def test_name(job):
     with pytest.raises(AttributeError):
         job.id()
     assert job.name == 'foo'
+
+
+def test_get_job_url_diff_baseurl(job_with_diff_baseurl):
+    expected = "http://localhostdiff"
+    url = job_with_diff_baseurl.url
+    assert url == expected
+
+
+def test_get_job_url_same_baseurl(job_with_same_baseurl):
+    expected = "http://localhostdiff"
+    url = job_with_same_baseurl.url
+    assert url == expected
 
 
 def test_next_build_number(job):
@@ -176,6 +206,7 @@ def test_nobuilds_get_revision_dict(jenkins, monkeypatch):
         return {"name": "foo"}
 
     monkeypatch.setattr(Job, '_poll', fake_poll)
+
     job = Job('http://halob:8080/job/foo/', 'foo', jenkins)
     with pytest.raises(NoBuildData):
         job.get_revision_dict()
@@ -186,7 +217,6 @@ def test_nobuilds_get_last_build(jenkins, monkeypatch):
         return {"name": "foo"}
 
     monkeypatch.setattr(Job, '_poll', fake_poll)
-
     job = Job('http://halob:8080/job/foo/', 'foo', jenkins)
     with pytest.raises(NoBuildData):
         job.get_last_build()
@@ -320,7 +350,6 @@ def test_get_build_by_params(jenkins, monkeypatch, mocker):
     monkeypatch.setattr(Job, 'get_build', fake_get_build)
     mocker.spy(Build, 'get_params')
     mocker.spy(Job, 'get_build')
-
     job = Job('http://localhost/jobs/foo', 'foo', jenkins)
 
     result = job.get_build_by_params(build_params)
@@ -351,7 +380,6 @@ def test_get_build_by_params_not_found(jenkins, monkeypatch, mocker):
     monkeypatch.setattr(Job, 'get_build', fake_get_build)
     mocker.spy(Build, 'get_params')
     mocker.spy(Job, 'get_build')
-
     job = Job('http://localhost/jobs/foo', 'foo', jenkins)
 
     with pytest.raises(NoBuildData):

@@ -53,7 +53,9 @@ class Build(JenkinsBase):
         self.buildno = buildno
         self.job = job
         self.depth = depth
-        JenkinsBase.__init__(self, url)
+
+        real_url = JenkinsBase.construct_url(url, job.get_jenkins_obj())
+        JenkinsBase.__init__(self, real_url)
 
     def _poll(self, tree=None):
         # For build's we need more information for downstream and

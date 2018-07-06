@@ -7,6 +7,7 @@ import pprint
 import logging
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+from six.moves.urllib.parse import urlparse
 
 
 class JenkinsBase(object):
@@ -124,3 +125,14 @@ class JenkinsBase(object):
             else:
                 fmt = "%s/%s"
             return fmt % (url, config.JENKINS_API)
+
+    @staticmethod
+    def construct_url(jobUrl, jenkinsObj):
+        if jenkinsObj.base_server_url() and jenkinsObj.use_baseurl:
+            build_hostname = urlparse(jobUrl).netloc
+            jenkins_obj_hostname = urlparse(jenkinsObj.base_server_url()).netloc
+            if build_hostname != jenkins_obj_hostname:
+                real_url = jobUrl.replace(build_hostname, jenkins_obj_hostname)
+                return real_url
+
+        return jobUrl

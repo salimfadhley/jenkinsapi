@@ -6,11 +6,18 @@ from . import configs
 import datetime
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
+from jenkinsapi.jenkins import Jenkins
 
 
 @pytest.fixture(scope='function')
-def jenkins(mocker):
-    return mocker.MagicMock()
+def jenkins(monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    fake_jenkins = Jenkins('http://')
+
+    return fake_jenkins
 
 
 @pytest.fixture(scope='function')
@@ -19,7 +26,6 @@ def job(monkeypatch, jenkins):
         return configs.JOB_DATA
 
     monkeypatch.setattr(Job, '_poll', fake_poll)
-
     fake_job = Job('http://', 'Fake_Job', jenkins)
     return fake_job
 
@@ -32,6 +38,36 @@ def build(job, monkeypatch):
     monkeypatch.setattr(Build, '_poll', fake_poll)
 
     return Build('http://', 97, job)
+
+
+@pytest.fixture(scope='function')
+def jenkins_with_diff_baseurl(monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    fake_jenkins = Jenkins('http://localhostdiff', use_baseurl=True)
+
+    return fake_jenkins
+
+
+@pytest.fixture(scope='function')
+def job_with_diff_baseurl(monkeypatch, jenkins_with_diff_baseurl):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.JOB_DATA
+
+    monkeypatch.setattr(Job, '_poll', fake_poll)
+    fake_job = Job('http://localhost', 'Fake_Job', jenkins_with_diff_baseurl)
+    return fake_job
+
+
+@pytest.fixture(scope='function')
+def build_with_diff_baseurl(job_with_diff_baseurl, monkeypatch):
+    def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
+        return configs.BUILD_DATA
+
+    monkeypatch.setattr(Build, '_poll', fake_poll)
+    return Build('http://localhost', 97, job_with_diff_baseurl)
 
 
 def test_timestamp(build):
@@ -47,6 +83,12 @@ def test_name(build):
     with pytest.raises(AttributeError):
         build.id()
     assert build.name == 'foo #1'
+
+
+def test_name_build_with_diff_baseurl(build_with_diff_baseurl):
+    with pytest.raises(AttributeError):
+        build_with_diff_baseurl.id()
+    assert build_with_diff_baseurl.name == 'foo #1'
 
 
 def test_duration(build):
