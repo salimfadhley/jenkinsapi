@@ -22,3 +22,4 @@ lib/
 /.cache
 /AUTHORS
 /ChangeLog
+.pytest_cache

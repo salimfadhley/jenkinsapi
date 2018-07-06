@@ -24,7 +24,13 @@ class View(JenkinsBase):
         JenkinsBase.__init__(self, url)
         self.deleted = False
 
+    def __len__(self):
+        return len(self.get_job_dict().keys())
+
     def __str__(self):
+        return self.name
+
+    def __repr__(self):
         return self.name
 
     def __getitem__(self, job_name):
@@ -69,9 +75,6 @@ class View(JenkinsBase):
 
     def get_job_dict(self):
         return dict(self._get_jobs())
-
-    def __len__(self):
-        return len(self.get_job_dict().keys())
 
     def get_job_url(self, str_job_name):
         if str_job_name in self:

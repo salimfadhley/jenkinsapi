@@ -96,11 +96,11 @@ class-rgx=[A-Z_][a-zA-Z0-9]+$
 
 # Regular expression which should only match correct function names
 # Amplify: Up to 40 characters long
-function-rgx=[a-z_][a-z0-9_]{2,40}$
+function-rgx=[a-z_][a-z0-9_]+$
 
 # Regular expression which should only match correct method names
 # Amplify: Up to 40 characters long
-method-rgx=[a-z_][a-z0-9_]{2,40}$
+method-rgx=[a-z_][a-z0-9_]+$
 
 # Regular expression which should only match correct instance attribute names
 # Amplify: Up to 40 characters long
