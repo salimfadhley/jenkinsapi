@@ -193,6 +193,10 @@ class SSHKeyCredential(Credential):
     private_key value is parsed to find type of credential to create:
 
     private_key starts with -       the value is private key itself
+
+    These credential variations are no longer supported by SSH Credentials
+    plugin. jenkinsapi will raise ValueError if they are used:
+
     private_key starts with /       the value is a path to key
     private_key starts with ~       the value is a key from ~/.ssh
 
@@ -216,12 +220,6 @@ class SSHKeyCredential(Credential):
             self.key_value = None
         elif cred_dict['private_key'].startswith('-'):
             self.key_type = 0
-            self.key_value = cred_dict['private_key']
-        elif cred_dict['private_key'].startswith('/'):
-            self.key_type = 1
-            self.key_value = cred_dict['private_key']
-        elif cred_dict['private_key'].startswith('~'):
-            self.key_type = 2
             self.key_value = cred_dict['private_key']
         else:
             raise ValueError('Invalid private_key value')
