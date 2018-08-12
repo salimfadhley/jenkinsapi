@@ -69,7 +69,7 @@ def test_create_ssh_node(jenkins):
         'remote_fs': '/tmp',
         'labels': node_name,
         'exclusive': False,
-        'host': 'localhost',
+        'host': '127.0.0.1',
         'port': 22,
         'credential_description': cred_descr,
         'jvm_options': '',
