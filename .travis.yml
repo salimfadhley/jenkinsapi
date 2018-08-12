@@ -14,12 +14,13 @@ before_install:
 install:
 - pip install tox-travis
 - python setup.py -q sdist bdist_wheel
-script:
-- tox
 jobs:
   include:
+    - stage: test
+      script: tox
     - stage: release
       python: 2.7
+      if: branch = master
       deploy:
         provider: pypi
         user: lechat
