@@ -1,12 +1,12 @@
 dist: trusty
 group: edge
+sudo: required
 language: python
 python:
 - '2.7'
 - '3.4'
 - '3.5'
 - '3.6'
-- '3.7'
 env:
 - JENKINS_VERSION=stable
 - JENKINS_VERSION=latest
@@ -19,8 +19,11 @@ script:
 - tox
 jobs:
   include:
+    - stage: test
+      script: tox
     - stage: release
       python: 2.7
+      if: branch = master
       deploy:
         provider: pypi
         user: lechat

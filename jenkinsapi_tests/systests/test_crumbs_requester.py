@@ -86,6 +86,7 @@ def crumbed_jenkins(jenkins):
         },
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
+    log.info('Enabled Jenkins security')
 
     crumbed = Jenkins(
         jenkins.baseurl,
@@ -102,6 +103,7 @@ def crumbed_jenkins(jenkins):
         },
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
+    log.info('Disabled Jenkins security')
 
 
 def test_invoke_job_with_file(crumbed_jenkins):

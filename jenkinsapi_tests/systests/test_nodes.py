@@ -60,7 +60,7 @@ def test_create_ssh_node(jenkins):
         'description': cred_descr,
         'userName': 'username',
         'passphrase': '',
-        'private_key': '~'
+        'private_key': '-----BEGIN RSA PRIVATE KEY-----'
     }
     creds[cred_descr] = SSHKeyCredential(cred_dict)
     node_dict = {
@@ -69,7 +69,7 @@ def test_create_ssh_node(jenkins):
         'remote_fs': '/tmp',
         'labels': node_name,
         'exclusive': False,
-        'host': 'localhost',
+        'host': '127.0.0.1',
         'port': 22,
         'credential_description': cred_descr,
         'jvm_options': '',
@@ -182,5 +182,8 @@ def test_set_master_executors(jenkins):
     node = jenkins.nodes['master']
 
     assert node.get_num_executors() == 2
+
     node.set_num_executors(5)
     assert node.get_num_executors() == 5
+
+    node.set_num_executors(2)

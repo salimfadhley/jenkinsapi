@@ -2,13 +2,17 @@
 System tests for `jenkinsapi.jenkins` module.
 '''
 import os
+from posixpath import join
 import re
 import time
 import gzip
 import shutil
 import tempfile
+import logging
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_ARTIFACTS
 from jenkinsapi_tests.test_utils.random_strings import random_string
+
+log = logging.getLogger(__name__)
 
 
 def test_artifacts(jenkins):
@@ -32,22 +36,21 @@ def test_artifacts(jenkins):
     try:
         # Verify that we can handle text artifacts
         text_artifact.save_to_dir(tempDir, strict_validation=True)
-        assert os.path.exists(os.path.join(tempDir, text_artifact.filename))
-        readBackText = open(
-            os.path.join(tempDir, text_artifact.filename),
-            'rb').read().strip()
-        readBackText = readBackText.decode('ascii')
-        assert re.match(r'^PING \S+ \(127.0.0.1\)', readBackText) is not None
-        assert readBackText.endswith('ms') is True
+        text_file_path = join(tempDir, text_artifact.filename)
+        assert os.path.exists(text_file_path)
+        read_back_text = open(text_file_path, 'rb').read().strip()
+        read_back_text = read_back_text.decode('ascii')
+        log.info('Text artifact: %s', read_back_text)
+        assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
+        assert read_back_text.endswith('ms') is True
 
         # Verify that we can hande binary artifacts
         binary_artifact.save_to_dir(tempDir, strict_validation=True)
-        assert os.path.exists(os.path.join(tempDir, binary_artifact.filename))
-        readBackText = gzip.open(
-            os.path.join(tempDir, binary_artifact.filename,),
-            'rb').read().strip()
-        readBackText = readBackText.decode('ascii')
-        assert re.match(r'^PING \S+ \(127.0.0.1\)', readBackText) is not None
-        assert readBackText.endswith('ms') is True
+        bin_file_path = join(tempDir, binary_artifact.filename)
+        assert os.path.exists(bin_file_path)
+        read_back_text = gzip.open(bin_file_path, 'rb').read().strip()
+        read_back_text = read_back_text.decode('ascii')
+        assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
+        assert read_back_text.endswith('ms') is True
     finally:
         shutil.rmtree(tempDir)
