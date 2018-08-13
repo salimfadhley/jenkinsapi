@@ -139,7 +139,7 @@ JOB_WITH_ARTIFACTS = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 10 127.0.0.1 | tee out.txt
+      <command>ping -c 10 127.0.0.1 > out.txt
 gzip &lt; out.txt &gt; out.gz</command>
     </hudson.tasks.Shell>
   </builders>
