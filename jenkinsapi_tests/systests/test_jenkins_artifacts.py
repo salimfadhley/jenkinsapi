@@ -38,19 +38,21 @@ def test_artifacts(jenkins):
         text_artifact.save_to_dir(tempDir, strict_validation=True)
         text_file_path = join(tempDir, text_artifact.filename)
         assert os.path.exists(text_file_path)
-        read_back_text = open(text_file_path, 'rb').read().strip()
-        read_back_text = read_back_text.decode('ascii')
-        log.info('Text artifact: %s', read_back_text)
-        assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
-        assert read_back_text.endswith('ms') is True
+        with open(text_file_path, 'rb') as f:
+            read_back_text = f.read().strip()
+            read_back_text = read_back_text.decode('ascii')
+            log.info('Text artifact: %s', read_back_text)
+            assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
+            assert read_back_text.endswith('ms') is True
 
         # Verify that we can hande binary artifacts
         binary_artifact.save_to_dir(tempDir, strict_validation=True)
         bin_file_path = join(tempDir, binary_artifact.filename)
         assert os.path.exists(bin_file_path)
-        read_back_text = gzip.open(bin_file_path, 'rb').read().strip()
-        read_back_text = read_back_text.decode('ascii')
-        assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
-        assert read_back_text.endswith('ms') is True
+        with gzip.open(bin_file_path, 'rb') as f:
+            read_back_text = f.read().strip()
+            read_back_text = read_back_text.decode('ascii')
+            assert re.match(r'^PING \S+ \(127.0.0.1\)', read_back_text) is not None
+            assert read_back_text.endswith('ms') is True
     finally:
         shutil.rmtree(tempDir)
