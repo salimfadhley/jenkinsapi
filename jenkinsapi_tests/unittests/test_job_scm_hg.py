@@ -98,13 +98,13 @@ class TestHgJob(unittest.TestCase):
     @mock.patch.object(Job, 'get_config', configtree_with_branch)
     def test_hg_attributes(self):
         expected_url = ['http://cm5/hg/sandbox/v01.0/int']
-        self.assertEquals(self.j.get_scm_type(), 'hg')
-        self.assertEquals(self.j.get_scm_url(), expected_url)
-        self.assertEquals(self.j.get_scm_branch(), ['testme'])
+        self.assertEqual(self.j.get_scm_type(), 'hg')
+        self.assertEqual(self.j.get_scm_url(), expected_url)
+        self.assertEqual(self.j.get_scm_branch(), ['testme'])
 
     @mock.patch.object(Job, 'get_config', configtree_with_default_branch)
     def test_hg_attributes_default_branch(self):
-        self.assertEquals(self.j.get_scm_branch(), ['default'])
+        self.assertEqual(self.j.get_scm_branch(), ['default'])
 
 
 if __name__ == '__main__':

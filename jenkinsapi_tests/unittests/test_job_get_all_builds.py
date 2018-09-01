@@ -187,7 +187,7 @@ class TestJobGetAllBuilds(unittest.TestCase):
         # remaining jobs will be fetched automatically
         ret = self.j.get_build_dict()
         self.assertTrue(isinstance(ret, dict))
-        self.assertEquals(len(ret), 4)
+        self.assertEqual(len(ret), 4)
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_incomplete_builds_list_will_call_jenkins_twice(self):
@@ -196,7 +196,7 @@ class TestJobGetAllBuilds(unittest.TestCase):
         # to the Jenkins API
         TestJobGetAllBuilds.__get_data_call_count = 0
         self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
-        self.assertEquals(TestJobGetAllBuilds.__get_data_call_count, 2)
+        self.assertEqual(TestJobGetAllBuilds.__get_data_call_count, 2)
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_complete_builds_list_will_call_jenkins_once(self):
@@ -204,7 +204,7 @@ class TestJobGetAllBuilds(unittest.TestCase):
         # builds
         TestJobGetAllBuilds.__get_data_call_count = 0
         self.j = Job('http://halob:8080/job/fullfoo/', 'fullfoo', self.J)
-        self.assertEquals(TestJobGetAllBuilds.__get_data_call_count, 1)
+        self.assertEqual(TestJobGetAllBuilds.__get_data_call_count, 1)
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_nobuilds_get_build_dict(self):
@@ -215,7 +215,7 @@ class TestJobGetAllBuilds(unittest.TestCase):
 
         ret = j.get_build_dict()
         self.assertTrue(isinstance(ret, dict))
-        self.assertEquals(len(ret), 0)
+        self.assertEqual(len(ret), 0)
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_get_build_ids(self):
@@ -223,7 +223,7 @@ class TestJobGetAllBuilds(unittest.TestCase):
         # remaining jobs will be fetched automatically
         ret = list(self.j.get_build_ids())
         self.assertTrue(isinstance(ret, list))
-        self.assertEquals(len(ret), 4)
+        self.assertEqual(len(ret), 4)
 
 
 if __name__ == '__main__':

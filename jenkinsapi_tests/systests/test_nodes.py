@@ -17,7 +17,7 @@ def test_online_offline(jenkins):
     # Master node name should be case insensitive
     # mn0 = jenkins.get_node('MaStEr')
     mn = jenkins.get_node('master')
-    # self.assertEquals(mn, mn0)
+    # self.assertEqual(mn, mn0)
 
     mn.set_online()  # It should already be online, hence no-op
     assert mn.is_online() is True
