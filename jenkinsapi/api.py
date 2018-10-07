@@ -248,9 +248,9 @@ def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,
 
 
 def toggle_keep_build_forever(jenkinsurl, jobname, build_no,
-                              username=None, password=None, ssl_verify=True):
+                              username, password, ssl_verify=True):
     """
-    Toggles the keep this build forever flag for the specified build
+    Toggles the keep this build forever flag for the specified build.
     """
     crumb = CrumbRequester(username, password, baseurl=jenkinsurl,
                            ssl_verify=ssl_verify)
