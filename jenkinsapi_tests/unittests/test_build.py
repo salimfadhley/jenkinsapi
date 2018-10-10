@@ -6,7 +6,7 @@ from . import configs
 import datetime
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
-from jenkinsapi.utils.crumb_requester import CrumbRequester 
+from jenkinsapi.utils.crumb_requester import CrumbRequester
 
 
 @pytest.fixture(scope='function')
@@ -220,6 +220,7 @@ def test_build_env_vars_other_exception(monkeypatch, build):
 
 def test_toggle_keep_build_forever(monkeypatch, build):
     def fake_post_url(cls, url):
+        assert isinstance(cls, CrumbRequester)
         assert url == 'http:/job/Fake_Job/97/toggleLogKeep'
     monkeypatch.setattr(CrumbRequester, 'post_url', fake_post_url)
 
