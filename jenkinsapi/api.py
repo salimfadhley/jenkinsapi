@@ -15,7 +15,6 @@ from jenkinsapi import constants
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL
-from jenkinsapi.utils.crumb_requester import CrumbRequester
 
 log = logging.getLogger(__name__)
 
@@ -245,14 +244,3 @@ def search_artifact_by_regexp(jenkinsurl, jobid, artifactRegExp,
                 return art
 
     raise ArtifactsMissing()
-
-
-def toggle_keep_build_forever(jenkinsurl, jobname, build_no,
-                              username, password, ssl_verify=True):
-    """
-    Toggles the keep this build forever flag for the specified build.
-    """
-    crumb = CrumbRequester(username, password, baseurl=jenkinsurl,
-                           ssl_verify=ssl_verify)
-    url = "%s/job/%s/%s/toggleLogKeep" % (jenkinsurl, jobname, build_no)
-    crumb.post_url(url)

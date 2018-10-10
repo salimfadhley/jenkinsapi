@@ -22,6 +22,7 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.constants import STATUS_SUCCESS
 from jenkinsapi.custom_exceptions import NoResults
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+from jenkinsapi.utils.crumb_requester import CrumbRequester
 
 from six.moves.urllib.parse import quote
 from requests import HTTPError
@@ -531,3 +532,16 @@ class Build(JenkinsBase):
                           'is installed.')
             raise ex
         return data['envMap']
+
+    def toggle_keep_build_forever(self):
+        """
+        Toggles the keep this build forever flag for the specified build.
+        """
+        requester = self.job.jenkins.requester
+        if not isinstance(requester, CrumbRequester):
+            requester = CrumbRequester(requester.username, requester.password,
+                                       baseurl=self.baseurl,
+                                       ssl_verify=requester.ssl_verify)
+        url = "%s/job/%s/%s/toggleLogKeep" % (self.baseurl, self.job.name,
+                                              self.buildno)
+        requester.post_url(url)
