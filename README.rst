@@ -158,13 +158,13 @@ Development
 .. code-block:: bash
 
     (venv) pip install -e .
-    (venv) pip install -r requirements/dev-requirements.txt
+    (venv) pip install -r test-requirements.txt
 
 * Make your changes, write tests and check your code
 
 .. code-block:: bash
 
-    (venv) nosetests -v jenkinsapi_tests
+    (venv) tox
 
 
 Project Contributors
