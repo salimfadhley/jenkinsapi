@@ -33,6 +33,7 @@ def build(job, monkeypatch):
 
     return Build('http://', 97, job)
 
+
 @pytest.fixture(scope='function')
 def build_pipeline(job, monkeypatch):
     def fake_poll(cls, tree=None):   # pylint: disable=unused-argument
@@ -41,7 +42,6 @@ def build_pipeline(job, monkeypatch):
     monkeypatch.setattr(Build, '_poll', fake_poll)
 
     return Build('http://', 97, job)
-
 
 
 def test_timestamp(build):
@@ -74,12 +74,13 @@ def test_get_causes(build):
         'userName': 'anonymous'
     }]
 
+
 def test_get_changeset(build):
-    assert build.get_changeset_items() == [        {
+    assert build.get_changeset_items() == [{
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],
-            "author" : {
+            "author": {
                 "absoluteUrl": "http://jenkins_url/user/username79",
                 "fullName": "username"
             },
@@ -95,12 +96,13 @@ def test_get_changeset(build):
             "user": "username"
         }]
 
+
 def test_get_changeset_pipeline(build_pipeline):
-    assert build.get_changeset_items() == [        {
+    assert build.get_changeset_items() == [{
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],
-            "author" : {
+            "author": {
                 "absoluteUrl": "http://jenkins_url/user/username79",
                 "fullName": "username"
             },
@@ -115,7 +117,8 @@ def test_get_changeset_pipeline(build_pipeline):
             "revision": 3097,
             "user": "username"
         }]
-        
+
+
 def test_get_description(build):
     assert build.get_description() == 'Best build ever!'
 

@@ -84,7 +84,7 @@ BUILD_DATA = {
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],
-            "author" : {
+            "author": {
                 "absoluteUrl": "http://jenkins_url/user/username79",
                 "fullName": "username"
             },
@@ -152,7 +152,7 @@ BUILD_DATA_PIPELINE = {
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],
-            "author" : {
+            "author": {
                 "absoluteUrl": "http://jenkins_url/user/username79",
                 "fullName": "username"
             },
