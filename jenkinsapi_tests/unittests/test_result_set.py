@@ -69,7 +69,7 @@ class TestResultSet(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.rs.id()
 
-        self.assertEquals(self.rs.name, 'Test Result for FooBuild')
+        self.assertEqual(self.rs.name, 'Test Result for FooBuild')
 
     def testBuildComponents(self):
         self.assertTrue(self.rs.items())
