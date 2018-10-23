@@ -98,7 +98,7 @@ def test_get_changeset(build):
 
 
 def test_get_changeset_pipeline(build_pipeline):
-    assert build.get_changeset_items() == [{
+    assert build_pipeline.get_changeset_items() == [{
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],

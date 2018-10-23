@@ -139,10 +139,10 @@ class Build(JenkinsBase):
             "user": "username"
         }
         """
-        if 'changeset' in self._data:
+        if 'changeSet' in self._data:
             if 'items' in self._data['changeSet']:
                 return self._data['changeSet']['items']
-        elif 'changesets' in self._data:
+        elif 'changeSets' in self._data:
             if 'items' in self._data['changeSets']:
                 return self._data['changeSets']['items']
         return []
