@@ -148,7 +148,8 @@ BUILD_DATA_PIPELINE = {
     'artifacts': [],
     'building': False,
     'builtOn': 'localhost',
-    'changeSets': {'items': [{
+    'changeSets': {
+        'items': [{
             "affectedPaths": [
                 "content/rcm/v00-rcm-xccdf.xml"
             ],
@@ -166,7 +167,9 @@ BUILD_DATA_PIPELINE = {
             }],
             "revision": 3097,
             "user": "username"
-        }], 'kind': None},
+        }],
+        'kind': None
+    },
     'culprits': [],
     'description': 'Best build ever!',
     "duration": 5782,
