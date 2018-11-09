@@ -12,4 +12,4 @@ jenkins = Jenkins('http://localhost:8080', username='admin', password='password'
                   ))
 
 for job_name in jenkins.jobs:
-    print job_name
+    print (job_name)
