@@ -62,3 +62,68 @@ def test_name(node):
 
 def test_online(node):
     assert node.is_online() is True
+
+
+def test_available_physical_memory(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.SwapSpaceMonitor']
+    expected_value = monitor['availablePhysicalMemory']
+    assert node.get_available_physical_memory() == expected_value
+
+
+def test_available_swap_space(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.SwapSpaceMonitor']
+    expected_value = monitor['availableSwapSpace']
+    assert node.get_available_swap_space() == expected_value
+
+
+def test_total_physical_memory(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.SwapSpaceMonitor']
+    expected_value = monitor['totalPhysicalMemory']
+    assert node.get_total_physical_memory() == expected_value
+
+
+def test_total_swap_space(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.SwapSpaceMonitor']
+    expected_value = monitor['totalSwapSpace']
+    assert node.get_total_swap_space() == expected_value
+
+
+def test_workspace_path(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.DiskSpaceMonitor']
+    expected_value = monitor['path']
+    assert node.get_workspace_path() == expected_value
+
+
+def test_workspace_size(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.DiskSpaceMonitor']
+    expected_value = monitor['size']
+    assert node.get_workspace_size() == expected_value
+
+
+def test_temp_path(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.TemporarySpaceMonitor']
+    expected_value = monitor['path']
+    assert node.get_temp_path() == expected_value
+
+
+def test_temp_size(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.TemporarySpaceMonitor']
+    expected_value = monitor['size']
+    assert node.get_temp_size() == expected_value
+
+
+def test_architecture(node):
+    expected_value = DATA['monitorData']['hudson.node_monitors.ArchitectureMonitor']
+    assert node.get_architecture() == expected_value
+
+
+def test_response_time(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.ResponseTimeMonitor']
+    expected_value = monitor['average']
+    assert node.get_response_time() == expected_value
+
+
+def test_clock_difference(node):
+    monitor = DATA['monitorData']['hudson.node_monitors.ClockMonitor']
+    expected_value = monitor['diff']
+    assert node.get_clock_difference() == expected_value

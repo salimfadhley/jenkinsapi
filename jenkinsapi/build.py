@@ -89,6 +89,10 @@ class Build(JenkinsBase):
         vcs = self._data['changeSet']['kind'] or 'git'
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
+    def get_repo_url(self):
+        vcs = self._data['changeSet']['kind'] or 'git'
+        return getattr(self, '_get_%s_repo_url' % vcs, lambda: None)()
+
     def get_params(self):
         """
         Return a dictionary of params names and their values or None
@@ -135,8 +139,12 @@ class Build(JenkinsBase):
             "user": "username"
         }
         """
-        if 'items' in self._data['changeSet']:
-            return self._data['changeSet']['items']
+        if 'changeSet' in self._data:
+            if 'items' in self._data['changeSet']:
+                return self._data['changeSet']['items']
+        elif 'changeSets' in self._data:
+            if 'items' in self._data['changeSets']:
+                return self._data['changeSets']['items']
         return []
 
     def _get_svn_rev(self):
@@ -180,8 +188,28 @@ class Build(JenkinsBase):
     def _get_hg_rev_branch(self):
         raise NotImplementedError('_get_hg_rev_branch is not yet implemented')
 
+    def _get_git_repo_url(self):
+        # Sometimes we have None as part of actions. Filter those actions
+        # which have lastBuiltRevision in them
+        _actions = [x for x in self._data['actions']
+                    if x and "lastBuiltRevision" in x]
+        # old Jenkins version have key remoteUrl v/s the new version has a list remoteUrls
+        result = _actions[0].get("remoteUrls", _actions[0].get("remoteUrl"))
+        if isinstance(result, list):
+            result = ','.join(result)
+        return result
+
+    def _get_svn_repo_url(self):
+        raise NotImplementedError('_get_svn_repo_url is not yet implemented')
+
+    def _get_hg_repo_url(self):
+        raise NotImplementedError('_get_hg_repo_url is not yet implemented')
+
     def get_duration(self):
         return datetime.timedelta(milliseconds=self._data["duration"])
+
+    def get_build_url(self):
+        return self._data['url']
 
     def get_artifacts(self):
         data = self.poll(tree='artifacts[relativePath,fileName]')
@@ -507,3 +535,14 @@ class Build(JenkinsBase):
                           'is installed.')
             raise ex
         return data['envMap']
+
+    def toggle_keep(self):
+        """
+        Toggle "keep this build forever" on and off
+        """
+        url = '%s/toggleLogKeep' % self.baseurl
+        self.get_jenkins_obj().requester.post_and_confirm_status(url, data={})
+        self._data = self._poll()
+
+    def is_kept_forever(self):
+        return self._data["keepLog"]

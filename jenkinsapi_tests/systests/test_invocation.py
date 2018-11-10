@@ -118,3 +118,22 @@ def test_give_params_on_non_parameterized_job(jenkins):
     job = jenkins.create_job(job_name, EMPTY_JOB)
     with pytest.raises(BadParams):
         job.invoke(build_params={'foo': 'bar', 'baz': 99})
+
+
+def test_keep_build_toggle(jenkins):
+    job_name = 'Ecreate_%s' % random_string()
+
+    job = jenkins.create_job(job_name, EMPTY_JOB)
+
+    qq = job.invoke()
+    qq.block_until_complete(delay=1)
+
+    build = job.get_last_build()
+    assert not build.is_kept_forever()
+    build.toggle_keep()
+    assert build.is_kept_forever()
+
+    build_number = job.get_last_buildnumber()
+    job.toggle_keep_build(build_number)
+    build = job.get_last_build()
+    assert not build.is_kept_forever()

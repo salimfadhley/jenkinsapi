@@ -37,7 +37,7 @@ LONG_RUNNING_JOB = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 50 localhost</command>
+      <command>sleep 100</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -60,7 +60,7 @@ SHORTISH_JOB = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 5 localhost</command>
+      <command>ping -c 5 127.0.0.1</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -139,7 +139,7 @@ JOB_WITH_ARTIFACTS = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 10 localhost | tee out.txt
+      <command>ping -c 10 127.0.0.1 > out.txt
 gzip &lt; out.txt &gt; out.gz</command>
     </hudson.tasks.Shell>
   </builders>
@@ -182,7 +182,7 @@ MATRIX_JOB = """
   </axes>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 10 localhost</command>
+      <command>ping -c 10 127.0.0.1</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -252,7 +252,7 @@ JOB_WITH_PARAMETERS = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 1 localhost | tee out.txt
+      <command>ping -c 1 127.0.0.1 | tee out.txt
 echo $A &gt; a.txt
 echo $B &gt; b.txt</command>
     </hudson.tasks.Shell>

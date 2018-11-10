@@ -38,19 +38,25 @@ class Requester(object):
 
     VALID_STATUS_CODES = [200, ]
 
-    def __init__(
-            self, username=None, password=None,
-            ssl_verify=True, baseurl=None,
-            timeout=10):
-        if username:
-            assert password, 'Cannot set a username without a password!'
+    def __init__(self, *args, **kwargs):
 
+        if args:
+            try:
+                username, password = args
+            except ValueError as Error:
+                raise Error
+        else:
+            username = None
+            password = None
+
+        baseurl = kwargs.get('baseurl', None)
         self.base_scheme = urlparse.urlsplit(
             baseurl).scheme if baseurl else None
         self.username = username
         self.password = password
-        self.ssl_verify = ssl_verify
-        self.timeout = timeout
+        self.ssl_verify = kwargs.get('ssl_verify', True)
+        self.cert = kwargs.get('cert', None)
+        self.timeout = kwargs.get('timeout', 10)
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
@@ -70,6 +76,7 @@ class Requester(object):
             requestKwargs['headers'] = headers
 
         requestKwargs['verify'] = self.ssl_verify
+        requestKwargs['cert'] = self.cert
 
         if data:
             # It may seem odd, but some Jenkins operations require posting

@@ -739,3 +739,6 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         return Job.get_full_name_from_url_and_baseurl(
             self.url, self.jenkins.baseurl)
+
+    def toggle_keep_build(self, build_number):
+        self.get_build(build_number).toggle_keep()

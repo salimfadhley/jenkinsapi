@@ -6,6 +6,7 @@ import logging
 import six.moves.urllib.parse as urlparse
 
 from six.moves.urllib.parse import quote as urlquote
+from six.moves.urllib.parse import urlencode
 from requests import HTTPError, ConnectionError
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
@@ -38,7 +39,7 @@ class Jenkins(JenkinsBase):
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
-            ssl_verify=True, timeout=10):
+            ssl_verify=True, cert=None, timeout=10):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -52,6 +53,7 @@ class Jenkins(JenkinsBase):
             password,
             baseurl=baseurl,
             ssl_verify=ssl_verify,
+            cert=cert,
             timeout=timeout
         )
         self.requester.timeout = timeout
@@ -107,7 +109,7 @@ class Jenkins(JenkinsBase):
 
     def get_nodes_url(self):
         # This only ever needs to work on the base object
-        return '%s/computer' % self.baseurl
+        return self.nodes.baseurl
 
     @property
     def jobs(self):
@@ -252,7 +254,7 @@ class Jenkins(JenkinsBase):
 
     def get_node(self, nodename):
         """Get a node object for a specific node"""
-        return self.get_nodes()[nodename]
+        return self.nodes[nodename]
 
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
@@ -271,8 +273,7 @@ class Jenkins(JenkinsBase):
         return Queue(queue_url, self)
 
     def get_nodes(self):
-        url = self.get_nodes_url()
-        return Nodes(url, self)
+        return Nodes(self.baseurl, self)
 
     @property
     def nodes(self):
@@ -295,9 +296,6 @@ class Jenkins(JenkinsBase):
         :param nodename: string holding a hostname
         :return: None
         """
-        assert self.has_node(nodename), \
-            "This node: %s is not registered as a slave" % nodename
-        assert nodename != "master", "you cannot delete the master node"
         del self.nodes[nodename]
 
     def create_node(self, name, num_executors=2, node_description=None,
@@ -454,3 +452,26 @@ class Jenkins(JenkinsBase):
     def shutdown(self):
         url = "%s/exit" % self.baseurl
         self.requester.post_and_confirm_status(url, data='')
+
+    def run_groovy_script(self, script):
+        """
+        Runs the requested groovy script on the Jenkins server returning the
+        result as text.
+        Raises a JenkinsAPIException if the returned HTTP response code from
+        the POST request is not 200 OK.
+
+        Example:
+
+            server = Jenkins(...)
+            script = 'println "Hello world!"'
+            result = server.run_groovy_script(script)
+            print(result) # will print "Hello world!"
+        """
+        url = "%s/scriptText" % self.baseurl
+        data = urlencode({'script': script})
+
+        response = self.requester.post_and_confirm_status(url, data=data)
+        if response.status_code != 200:
+            raise JenkinsAPIException('Unexpected response %d.' % response.status_code)
+
+        return response.text
