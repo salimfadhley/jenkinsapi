@@ -479,10 +479,18 @@ class Node(JenkinsBase):
         """
         start_time = time.time()
         while not self.is_idle() and (time.time() - start_time) < timeout:
-            log.debug("Waiting for the node to become idle. Elapsed time: {}s".format((time.time() - start_time)))
+            log.debug(
+                "Waiting for the node to become idle. Elapsed time: %s",
+                (time.time() - start_time)
+            )
             time.sleep(poll_time)
 
         if not self.is_idle():
+            raise TimeOut("The node has not become idle after {} minutes.".format(timeout/60))
+            raise TimeOut(
+                "The node has not become idle after {} minutes."
+                .format(timeout/60)
+            )
             raise TimeOut("The node has not become idle after {} minutes.".format(timeout/60))
 
     def get_response_time(self):
