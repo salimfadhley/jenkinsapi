@@ -278,8 +278,11 @@ class Node(JenkinsBase):
         """
 
         if self.is_temporarily_offline():
-            url = node.baseurl + '/changeOfflineCause?offlineMessage=' + urlquote(reason)
-            html_result = self.jenkins.requester.post_and_confirm_status(url, data={})
+            url = self.baseurl + '/changeOfflineCause?offlineMessage=' + urlquote(reason)
+            self.jenkins.requester.post_and_confirm_status(url, data={})
+
+    def offline_reason(self):
+        return self._data['offlineCauseReason']
 
     @property
     def _et(self):

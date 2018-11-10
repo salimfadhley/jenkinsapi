@@ -187,3 +187,26 @@ def test_set_master_executors(jenkins):
     assert node.get_num_executors() == 5
 
     node.set_num_executors(2)
+
+
+def test_offline_reason(jenkins):
+    node_name = random_string()
+    node_labels = 'LABEL1 LABEL2'
+    node_dict = {
+        'num_executors': 1,
+        'node_description': 'Test Node with Labels',
+        'remote_fs': '/tmp',
+        'labels': node_labels,
+        'exclusive': True
+    }
+    node = jenkins.nodes.create_node(node_name, node_dict)
+
+    node.toggle_temporarily_offline('test1')
+    node.poll()
+    assert node.offline_reason() == 'test1'
+
+    node.update_offline_reason('test2')
+    node.poll()
+    assert node.offline_reason() == 'test2'
+
+    del jenkins.nodes[node_name]
