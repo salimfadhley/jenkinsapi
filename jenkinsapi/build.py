@@ -535,3 +535,14 @@ class Build(JenkinsBase):
                           'is installed.')
             raise ex
         return data['envMap']
+
+    def toggle_keep(self):
+        """
+        Toggle "keep this build forever" on and off
+        """
+        url = '%s/toggleLogKeep' % self.baseurl
+        self.get_jenkins_obj().requester.post_and_confirm_status(url, data={})
+        self._data = self._poll()
+
+    def is_kept_forever(self):
+        return self._data["keepLog"]
