@@ -80,7 +80,25 @@ BUILD_DATA = {
     'artifacts': [],
     'building': False,
     'builtOn': 'localhost',
-    'changeSet': {'items': [], 'kind': None},
+    'changeSet': {'items': [{
+        "affectedPaths": [
+            "content/rcm/v00-rcm-xccdf.xml"
+        ],
+        "author": {
+            "absoluteUrl": "http://jenkins_url/user/username79",
+            "fullName": "username"
+        },
+        "commitId": "3097",
+        "timestamp": 1414398423091,
+        "date": "2014-10-27T08:27:03.091288Z",
+        "msg": "commit message",
+        "paths": [{
+            "editType": "edit",
+            "file": "/some/path/of/changed_file"
+        }],
+        "revision": 3097,
+        "user": "username"
+        }], 'kind': None},
     'culprits': [],
     'description': 'Best build ever!',
     "duration": 5782,
@@ -118,6 +136,78 @@ BUILD_DATA = {
         'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/2/'
     }]
 }
+
+BUILD_DATA_PIPELINE = {
+    'actions': [{
+        'causes': [{
+            'shortDescription': 'Started by user anonymous',
+            'userId': None,
+            'userName': 'anonymous'
+        }]
+    }],
+    'artifacts': [],
+    'building': False,
+    'builtOn': 'localhost',
+    'changeSets': {
+        'items': [{
+            "affectedPaths": [
+                "content/rcm/v00-rcm-xccdf.xml"
+            ],
+            "author": {
+                "absoluteUrl": "http://jenkins_url/user/username79",
+                "fullName": "username"
+            },
+            "commitId": "3097",
+            "timestamp": 1414398423091,
+            "date": "2014-10-27T08:27:03.091288Z",
+            "msg": "commit message",
+            "paths": [{
+                "editType": "edit",
+                "file": "/some/path/of/changed_file"
+            }],
+            "revision": 3097,
+            "user": "username"
+        }],
+        'kind': None
+    },
+    'culprits': [],
+    'description': 'Best build ever!',
+    "duration": 5782,
+    'estimatedDuration': 106,
+    'executor': None,
+    "fingerprint": [{
+        "fileName": "BuildId.json",
+        "hash": "e3850a45ab64aa34c1aa66e30c1a8977",
+        "original": {"name": "ArtifactGenerateJob", "number": 469},
+        "timestamp": 1380270162488,
+        "usage": [{
+            "name": "test1",
+            "ranges": {
+                "ranges": [{"end": 567, "start": 566}]
+            }
+        }, {
+            "name": "test2",
+            "ranges": {
+                "ranges": [{"end": 150, "start": 139}]
+            }
+        }]
+    }],
+    'fullDisplayName': 'foo #1',
+    'id': '2013-05-31_23-15-40',
+    'keepLog': False,
+    'number': 1,
+    'result': 'SUCCESS',
+    'timestamp': 1370042140000,
+    'url': 'http://localhost:8080/job/foo/1/',
+    'runs': [{
+        'number': 1,
+        'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/1/'
+    }, {
+        'number': 2,
+        'url': 'http//localhost:8080/job/foo/SHARD_NUM=1/2/'
+    }]
+}
+
 
 BUILD_SCM_DATA = {
     'actions': [{

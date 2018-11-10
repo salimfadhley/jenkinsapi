@@ -194,7 +194,7 @@ class JenkinsLancher(object):
                 StreamThread('out', self.queue, self.jenkins_process.stdout,
                              log.info),
                 StreamThread('err', self.queue, self.jenkins_process.stderr,
-                             log.warn)
+                             log.warning)
             ]
 
             # Start the threads
@@ -223,7 +223,7 @@ class JenkinsLancher(object):
                             log.info(line)
                             return
                     else:
-                        log.warn('Stream %s has terminated', streamName)
+                        log.warning('Stream %s has terminated', streamName)
 
             self.block_until_jenkins_ready(timeout)
 

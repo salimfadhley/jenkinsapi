@@ -139,8 +139,12 @@ class Build(JenkinsBase):
             "user": "username"
         }
         """
-        if 'items' in self._data['changeSet']:
-            return self._data['changeSet']['items']
+        if 'changeSet' in self._data:
+            if 'items' in self._data['changeSet']:
+                return self._data['changeSet']['items']
+        elif 'changeSets' in self._data:
+            if 'items' in self._data['changeSets']:
+                return self._data['changeSets']['items']
         return []
 
     def _get_svn_rev(self):

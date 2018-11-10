@@ -78,21 +78,21 @@ class TestPlugins(unittest.TestCase):
         _poll_plugins.return_value = {}
 
         plugins = self.J.get_plugins()
-        self.assertEquals(str(plugins), "[]")
+        self.assertEqual(str(plugins), "[]")
 
     @mock.patch.object(Plugins, '_poll')
     def test_plugins_str(self, _poll_plugins):
         _poll_plugins.return_value = self.DATA
 
         plugins = self.J.get_plugins()
-        self.assertEquals(str(plugins), "['maven-plugin', 'subversion']")
+        self.assertEqual(str(plugins), "['maven-plugin', 'subversion']")
 
     @mock.patch.object(Plugins, '_poll')
     def test_plugins_len(self, _poll_plugins):
         _poll_plugins.return_value = self.DATA
 
         plugins = self.J.get_plugins()
-        self.assertEquals(len(plugins), 2)
+        self.assertEqual(len(plugins), 2)
 
     @mock.patch.object(Plugins, '_poll')
     def test_plugins_contains(self, _poll_plugins):
@@ -143,7 +143,7 @@ class TestPlugins(unittest.TestCase):
 
         # list() is required here for python 3.x compatibility
         plugins = list(self.J.get_plugins().keys())
-        self.assertEquals([], plugins)
+        self.assertEqual([], plugins)
 
     @mock.patch.object(Plugins, '_poll')
     def test_plugin_get_by_name(self, _poll_plugins):
@@ -170,18 +170,18 @@ class TestPlugins(unittest.TestCase):
         )
 
         plugin = self.J.get_plugins()['subversion']
-        self.assertEquals(p, plugin)
+        self.assertEqual(p, plugin)
 
     @mock.patch.object(Plugins, '_poll')
     def test_get_plugin_details(self, _poll_plugins):
         _poll_plugins.return_value = self.DATA
         plugin = self.J.get_plugins()['subversion']
-        self.assertEquals('1.45', plugin.version)
-        self.assertEquals('subversion', plugin.shortName)
-        self.assertEquals('Jenkins Subversion Plug-in', plugin.longName)
-        self.assertEquals('http://wiki.jenkins-ci.org/display/JENKINS/'
-                          'Subversion+Plugin',
-                          plugin.url)
+        self.assertEqual('1.45', plugin.version)
+        self.assertEqual('subversion', plugin.shortName)
+        self.assertEqual('Jenkins Subversion Plug-in', plugin.longName)
+        self.assertEqual('http://wiki.jenkins-ci.org/display/JENKINS/'
+                         'Subversion+Plugin',
+                         plugin.url)
 
     @mock.patch.object(Requester, 'post_xml_and_confirm_status')
     def test_install_plugin_bad_input(self, _post):
@@ -253,7 +253,7 @@ class TestPlugins(unittest.TestCase):
         _poll_plugins.return_value = self.DATA
         dependencies = self.J.plugins._get_plugin_dependencies(
             downloaded_plugin)
-        self.assertEquals(len(dependencies), 2)
+        self.assertEqual(len(dependencies), 2)
         for dep in dependencies:
             self.assertIsInstance(dep, Plugin)
 
@@ -309,7 +309,7 @@ class TestPlugins(unittest.TestCase):
                 'shortName': 'subversion',
             }
         )
-        self.assertEquals(repr(p), '<jenkinsapi.plugin.Plugin subversion>')
+        self.assertEqual(repr(p), '<jenkinsapi.plugin.Plugin subversion>')
 
 
 if __name__ == '__main__':
