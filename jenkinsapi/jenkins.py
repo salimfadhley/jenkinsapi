@@ -327,16 +327,23 @@ class Jenkins(JenkinsBase):
         # This only ever needs to work on the base object
         return '%s/pluginManager/api/python?depth=%i' % (self.baseurl, depth)
 
-    def install_plugin(self, plugin):
+    def install_plugin(self, plugin, restart=False, wait_for_reboot=False):
+        """
+        Install a plugin and optionally restart jenkins.
+        @param plugin: Plugin to be installed
+        @param restart: Boolean, restart jenkins after plugin installation
+        """
         if not isinstance(plugin, Plugin):
             plugin = Plugin(plugin)
         self.plugins[plugin.shortName] = plugin
+        if restart and self.plugins.restart_required:
+            self.safe_restart(wait_for_reboot=wait_for_reboot)
 
     def install_plugins(self, plugin_list, restart=False,
                         wait_for_reboot=False):
         """
         Install a list of plugins and optionally restart jenkins.
-        @param plugin_list: list of plugins to be installed
+        @param plugin_list: List of plugins to be installed
         @param restart: Boolean, restart jenkins after plugin installation
         """
         plugins = [p if isinstance(p, Plugin) else Plugin(p)
@@ -346,14 +353,30 @@ class Jenkins(JenkinsBase):
         if restart and self.plugins.restart_required:
             self.safe_restart(wait_for_reboot=wait_for_reboot)
 
-    def delete_plugin(self, plugin):
+    def delete_plugin(self, plugin, restart=False, wait_for_reboot=False):
+        """
+        Delete a plugin and optionally restart jenkins. Will not delete
+        dependencies.
+        @param plugin: Plugin to be deleted
+        @param restart: Boolean, restart jenkins after plugin deletion
+        """
         if isinstance(plugin, Plugin):
             plugin = plugin.shortName
         del self.plugins[plugin]
+        if restart and self.plugins.restart_required:
+            self.safe_restart(wait_for_reboot=wait_for_reboot)
 
-    def delete_plugins(self, plugin_list):
+    def delete_plugins(self, plugin_list, restart=False, wait_for_reboot=False):
+        """
+        Delete a list of plugins and optionally restart jenkins. Will not delete
+        dependencies.
+        @param plugin_list: List of plugins to be deleted
+        @param restart: Boolean, restart jenkins after plugin deletion
+        """
         for plugin in plugin_list:
             self.delete_plugin(plugin)
+        if restart and self.plugins.restart_required:
+            self.safe_restart(wait_for_reboot=wait_for_reboot)
 
     def safe_restart(self, wait_for_reboot=False):
         """ restarts jenkins when no jobs are running """
