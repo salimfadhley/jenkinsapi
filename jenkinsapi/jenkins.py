@@ -346,6 +346,15 @@ class Jenkins(JenkinsBase):
         if restart and self.plugins.restart_required:
             self.safe_restart(wait_for_reboot=wait_for_reboot)
 
+    def delete_plugin(self, plugin):
+        if isinstance(plugin, Plugin):
+            plugin = plugin.shortName
+        del self.plugins[plugin]
+
+    def delete_plugins(self, plugin_list):
+        for plugin in plugin_list:
+            self.delete_plugin(plugin)
+
     def safe_restart(self, wait_for_reboot=False):
         """ restarts jenkins when no jobs are running """
         # NB: unlike other methods, the value of resp.status_code
