@@ -45,10 +45,14 @@ def wait_for_restart(jenkins):
         log.critical(msg.format(count*wait))
         pytest.fail(msg)
 
-
-def test_safe_restart(jenkins):
+def test_safe_restart_wait(jenkins):
     jenkins.poll()  # jenkins should be alive
-    jenkins.safe_restart()
+    jenkins.safe_restart() # restart and wait for reboot (default)
+    jenkins.poll() #jenkins should be alive again
+
+def test_safe_restart_dont_wait(jenkins):
+    jenkins.poll()  # jenkins should be alive
+    jenkins.safe_restart(wait_for_reboot=False)
     # Jenkins sleeps for 10 seconds before actually restarting
     time.sleep(11)
     with pytest.raises((HTTPError, ConnectionError)):
