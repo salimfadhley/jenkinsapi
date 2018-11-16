@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import logging
 import time
+import re
 try:
     from StringIO import StringIO
     from urllib import urlencode
@@ -238,6 +239,12 @@ class Plugins(JenkinsBase):
         return False
 
     def __delitem__(self, shortName):
+        if re.match('.*@.*', shortName):
+            real_shortName = re.compile('(.*)@(.*)').search(shortName).group(1)
+            raise ValueError(
+                ("Plugin shortName can't contain version. '%s' should be '%s'")
+                % (shortName, real_shortName)
+            )
         if shortName not in self:
             raise KeyError(
                 'Plugin with ID "%s" not found, cannot uninstall' % shortName)

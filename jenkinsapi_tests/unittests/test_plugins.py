@@ -188,6 +188,11 @@ class TestPlugins(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.J.install_plugin('test')
 
+    @mock.patch.object(Requester, 'post_xml_and_confirm_status')
+    def test_delete_plugin_bad_input(self, _post):
+        with self.assertRaises(ValueError):
+            self.J.delete_plugin('test@latest')
+
     @mock.patch.object(Plugins, '_poll')
     @mock.patch.object(Plugins, 'plugin_version_already_installed')
     @mock.patch.object(Plugins, 'restart_required')
