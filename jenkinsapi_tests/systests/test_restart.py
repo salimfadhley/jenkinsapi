@@ -45,10 +45,12 @@ def wait_for_restart(jenkins):
         log.critical(msg.format(count*wait))
         pytest.fail(msg)
 
+
 def test_safe_restart_wait(jenkins):
     jenkins.poll()  # jenkins should be alive
-    jenkins.safe_restart() # restart and wait for reboot (default)
-    jenkins.poll() #jenkins should be alive again
+    jenkins.safe_restart()  # restart and wait for reboot (default)
+    jenkins.poll()  # jenkins should be alive again
+
 
 def test_safe_restart_dont_wait(jenkins):
     jenkins.poll()  # jenkins should be alive

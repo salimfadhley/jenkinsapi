@@ -204,6 +204,7 @@ def test_get_single_plugin_depth_2(jenkins):
     plugins = jenkins.get_plugins(depth=2)
     _, plugin = next(plugins.iteritems())
 
+
 def test_install_delete_single_plugin_string(jenkins):
     plugin_name = 'antisamy-markup-formatter'
     plugin_version = 'latest'
@@ -220,6 +221,7 @@ def test_install_delete_single_plugin_string(jenkins):
 
     assert plugin_name not in jenkins.plugins
 
+
 def test_install_delete_single_plugin_object(jenkins):
     plugin_name = 'antisamy-markup-formatter'
     plugin_version = 'latest'
@@ -235,6 +237,7 @@ def test_install_delete_single_plugin_object(jenkins):
     jenkins.delete_plugin(plugin, force_restart=True, wait_for_reboot=True)
 
     assert plugin_name not in jenkins.plugins
+
 
 def test_install_delete_multiple_plugins_mix_string_object(jenkins):
     plugin_one_name = 'antisamy-markup-formatter'
@@ -256,6 +259,7 @@ def test_install_delete_multiple_plugins_mix_string_object(jenkins):
                            wait_for_reboot=True)
 
     assert (plugin_one_name and plugin_two_name) not in jenkins.plugins
+
 
 def test_run_groovy_script(jenkins):
     expected_result = 'Hello world!'
