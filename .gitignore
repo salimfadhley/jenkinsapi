@@ -23,3 +23,5 @@ lib/
 /AUTHORS
 /ChangeLog
 .pytest_cache
+.eggs
+coverage.xml

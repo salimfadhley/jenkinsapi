@@ -23,15 +23,13 @@ jobs:
       script: tox
     - stage: release
       script: skip
-      if: branch = master
       deploy:
+        on:
+          repo: pycontribs/jenkinsapi
+          tags: true
         provider: pypi
         user: lechat
         password:
-          secure: gJZGDwomlaKRZ7MxGPkKu8r1Oe05umRlmjLHOycDyemkmPNz2f/+L+omJ/Vp1tWtPTcWZ/cXYS4AM/pmNCcRFI9h7/oG3l6qDGOEa31/h0nuX2UbywhLWmfEx3ADZjvMVL/gELKntq0503cOPn2PjOBFkZMWi54zqIks17zMdDY=
+            secure: "QH20CSAJtRE05y+ayzQBjrGnbtErKD+JbXNXk9ULW7RhSZphfzxCwt1HYdwm3FEziGIUKT+H/s43uXs3OqweltkCNjYMMcTfQQCEKpcuxStEUaJTrIwdgH29TW6TgycBHJemg9wet4NVFpoya68pWFaZt7K1kLUUkzk3MFNP43k="
         distributions: "sdist bdist_wheel"
         skip_cleanup: true
-        on:
-          branch: master
-          repo: pycontribs/jenkinsapi
-          tags: true

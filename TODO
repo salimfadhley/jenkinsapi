@@ -3,4 +3,4 @@ TODO:
 * Clean up the fingerprint code
 * Clean up the resultset and results code
 * Add support for Jenkins 2.x features
-
+* Improve speed for large Jenkins installations
