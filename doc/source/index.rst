@@ -1,9 +1,9 @@
 JenkinsAPI
 ==========
 
-Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi. This API makes Jenkins even easier to use by providing an easy to use conventional python interface.
+Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi. This API makes Jenkins even easier to use by providing an easy to use conventional Python interface.
 
-Jenkins (and It's predecessor Hudson) are fantastic projects - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make most Jenkins oriented tasks simpler.
+Jenkins (and It's predecessor Hudson) are fantastic projects - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional Python objects in order to make most Jenkins oriented tasks simpler.
 
 This library can help you:
 
@@ -30,7 +30,7 @@ Sections
 Important Links
 ---------------
 
-Support & bug-reportst
+Support & bug-reports
     https://github.com/salimfadhley/jenkinsapi/issues?direction=desc&sort=comments&state=open
 
 Project source code
@@ -82,7 +82,7 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 
 JenkinsAPI lets you query the state of a running Jenkins server. It also allows you to change configuration and automate minor tasks on nodes and jobs.
 
-You can use Jenkins to get information about recently completed builds. For example, you can get the revision number of the last succsessful build in order to trigger some kind of release process.::
+You can use Jenkins to get information about recently completed builds. For example, you can get the revision number of the last successful build in order to trigger some kind of release process.::
 
     from jenkinsapi.jenkins import Jenkins
 
@@ -130,7 +130,7 @@ Plus many others, please see the README file for a more complete list of contrib
 Extending and Improving JenkinsAPI
 ==================================
 
-JenkinsAPI is a pure-python project and can be improved with almost any programmer's text-editor or IDE. I'd recomend the following project layout which has been shown to work with both SublimeText2 and Eclipse/PyDev
+JenkinsAPI is a pure-Python project and can be improved with almost any programmer's text-editor or IDE. I'd recommend the following project layout which has been shown to work with both SublimeText2 and Eclipse/PyDev
 
  * Make sure that pip and virtualenv are installed on your computer. On most Linux systems these can be installed directly by the OS package-manager.
  
@@ -153,18 +153,18 @@ JenkinsAPI is a pure-python project and can be improved with almost any programm
  	cd ../src
  	python setup.py develop
  
- * Test the project - this step will automatically download and install the project's test-only dependancies. Having these installed will be helpful during development::
+ * Test the project - this step will automatically download and install the project's test-only dependencies. Having these installed will be helpful during development::
  
  	python setup.py test
 	
- * Set up your IDE/Editor configuration - the **misc** folder contains configuration for Sublime Text 2. I hope in time that other developers will contribute useful configurations for their favourite development tools.
+ * Set up your IDE/Editor configuration - the **misc** folder contains configuration for Sublime Text 2. I hope in time that other developers will contribute useful configurations for their favorite development tools.
 
 Testing
 -------
 
-The project maintainers welcome any code-contributions. Please conside the following when you contribute code back to the project:
+The project maintainers welcome any code-contributions. Please consider the following when you contribute code back to the project:
 
- * All contrubutions should come as github pull-requests. Please do not send code-snippets in email or as attachments to issues.
+ * All contributions should come as github pull-requests. Please do not send code-snippets in email or as attachments to issues.
  * Please take a moment to clearly describe the intended goal of your pull-request.
  * Please ensure that any new feature is covered by a unit-test
 
