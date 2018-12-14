@@ -1,0 +1,62 @@
+SSL Certificate Verification
+============================
+
+There are times, when one would like to skip the SSL certificate verification.
+
+For instance, the system administrator has set a different and new SSL
+certificate to the Jenkins master causing `certificate verify failed` errors:
+
+    SSLError: [Errno 1] _ssl.c:504: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
+
+Unfortunately, he's not available right now, and you have to finish your tasks
+using the JenkinsAPI library by the end of today.
+In these times, skipping the SSL certificate verification can be helpful.
+
+***Note***: It's not recommended to disable SSL verifying on a regular basis.
+To really fix this, please read
+[this post](http://stackoverflow.com/questions/30830901/python-requests-throwing-ssl-errors/30831120#30831120)
+at StackOverflow.
+
+Disabling the SSL verify
+------------------------
+
+Before JenkinsAPI v??, if one wants to disable the SSL certificate
+verification, she/he will have to pass a `Requester` instance specifying that.
+
+It may look like this:
+
+    from jenkinsapi.jenkins import Jenkins
+    username = 'jenkins'
+    password = 'changeme'
+    baseurl = 'https://localhost:8443'
+    jenkins = Jenkins(baseurl, username, password, requester=Requester(username, password, ssl_verify=False))
+
+As you can see, the last line is quite long.
+Not to mention that we pass the `username` and the `password` variables twice.
+
+There must be a better way!
+
+Disabling the SSL verify in JenkinsAPI v??
+------------------------------------------
+
+All these problems are gone thanks to `ssl_verify` argument.
+You're not asked to pass a `Requester` instance anymore for just disabling
+the SSL certificate verification.
+
+This is how it looks like:
+
+    jenkins = Jenkins(baseurl, username, password, ssl_verify=False)
+
+Now, the code is more readable than before.
+
+Notes
+-----
+
+If you specify both `ssl_verify` and `requester` arguments, then the
+`ssl_verify` argument will be ignored.
+
+For example:
+
+    jenkins = jenkinsapi.Jenkins(baseurl, username, password, requester=Requester(username, password, ssl_verify=False), ssl_verify=True)
+
+will do SSL certificate verifying.
