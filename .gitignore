@@ -7,7 +7,7 @@
 /dist
 .settings
 *.DS_Store
-jenkins.war
+localinstance_files/
 .coverage/
 .coverage
 nosetests.xml

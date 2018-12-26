@@ -64,9 +64,15 @@ class JenkinsLancher(object):
     """
     Launch jenkins
     """
-    JENKINS_WAR_URL = "http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
+    JENKINS_WEEKLY_WAR_URL = (
+        "http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
+    )
+    JENKINS_LTS_WAR_URL = (
+        "http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war"
+    )
 
-    def __init__(self, war_path, plugin_urls=None, jenkins_url=None):
+    def __init__(self, local_orig_dir, systests_dir, war_name, plugin_urls=None,
+                 jenkins_url=None):
         if jenkins_url is not None:
             self.jenkins_url = jenkins_url
             self.http_port = urlparse(jenkins_url).port
@@ -83,8 +89,10 @@ class JenkinsLancher(object):
             self.start_new_instance = True
 
         self.threads = []
-        self.war_path = war_path
-        self.war_directory, self.war_filename = os.path.split(self.war_path)
+        self.war_path = os.path.join(local_orig_dir, war_name)
+        self.local_orig_dir = local_orig_dir
+        self.systests_dir = systests_dir
+        self.war_filename = war_name
 
         if 'JENKINS_HOME' not in os.environ:
             self.jenkins_home = tempfile.mkdtemp(prefix='jenkins-home-')
@@ -96,20 +104,22 @@ class JenkinsLancher(object):
         self.queue = queue.Queue()
         self.plugin_urls = plugin_urls or []
         if os.environ.get('JENKINS_VERSION', 'stable') == 'stable':
-            self.JENKINS_WAR_URL = (
-                'http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war'
-            )
+            self.JENKINS_WAR_URL = self.JENKINS_LTS_WAR_URL
+        else:
+            self.JENKINS_WAR_URL = self.JENKINS_WEEKLY_WAR_URL
 
     def update_war(self):
-        os.chdir(self.war_directory)
+        os.chdir(self.systests_dir)
         if os.path.exists(self.war_path):
-            log.info("We already have the War file...")
+            log.info("War file already present, delete it to redownload and"
+                     " update jenkins")
         else:
-            log.info("Redownloading Jenkins")
-            script_dir = os.path.join(self.war_directory,
+            log.info("Downloading Jenkins War")
+            script_dir = os.path.join(self.systests_dir,
                                       'get-jenkins-war.sh')
             subprocess.check_call([script_dir,
-                                   self.JENKINS_WAR_URL, self.war_directory])
+                                   self.JENKINS_WAR_URL, self.local_orig_dir,
+                                   self.war_filename])
 
     def update_config(self):
         tarball = TarFile.open(fileobj=resource_stream(
@@ -117,27 +127,37 @@ class JenkinsLancher(object):
         tarball.extractall(path=self.jenkins_home)
 
     def install_plugins(self):
-        plugin_dir = os.path.join(self.jenkins_home, 'plugins')
-        log.info("Plugins will be installed in '%s'", plugin_dir)
+        plugin_dest_dir = os.path.join(self.jenkins_home, 'plugins')
+        log.info("Plugins will be installed in '%s'", plugin_dest_dir)
 
-        if not os.path.exists(plugin_dir):
-            os.mkdir(plugin_dir)
+        if not os.path.exists(plugin_dest_dir):
+            os.mkdir(plugin_dest_dir)
 
         for url in self.plugin_urls:
-            self.install_plugin(url, plugin_dir)
+            self.install_plugin(url, plugin_dest_dir)
 
-    def install_plugin(self, hpi_url, plugin_dir):
-        log.info("Downloading %s", hpi_url)
+    def install_plugin(self, hpi_url, plugin_dest_dir):
         path = urlparse(hpi_url).path
         filename = posixpath.basename(path)
-        plugin_path = os.path.join(plugin_dir, filename)
-        with open(plugin_path, 'wb') as hpi:
-            request = requests.get(hpi_url)
-            hpi.write(request.content)
+        plugin_orig_dir = os.path.join(self.local_orig_dir, 'plugins')
+        if not os.path.exists(plugin_orig_dir):
+            os.mkdir(plugin_orig_dir)
+        plugin_orig_path = os.path.join(plugin_orig_dir, filename)
+        plugin_dest_path = os.path.join(plugin_dest_dir, filename)
+        if os.path.exists(plugin_orig_path):
+            log.info("%s already locally present, delete the file to redownload"
+                     " and update", filename)
+        else:
+            log.info("Downloading %s from %s", filename, hpi_url)
+            with open(plugin_orig_path, 'wb') as hpi:
+                request = requests.get(hpi_url)
+                hpi.write(request.content)
+        log.info("Installing %s", filename)
+        shutil.copy(plugin_orig_path, plugin_dest_path)
         # Create an empty .pinned file, so that the downloaded plugin
         # will be used, instead of the version bundled in jenkins.war
         # See https://wiki.jenkins-ci.org/display/JENKINS/Pinned+Plugins
-        open(plugin_path + ".pinned", 'a').close()
+        open(plugin_dest_path + ".pinned", 'a').close()
 
     def stop(self):
         if self.start_new_instance:
@@ -176,7 +196,7 @@ class JenkinsLancher(object):
             self.update_config()
             self.install_plugins()
 
-            os.chdir(self.war_directory)
+            os.chdir(self.local_orig_dir)
 
             jenkins_command = ['java',
                                '-Djenkins.install.runSetupWizard=false',
@@ -236,7 +256,8 @@ if __name__ == '__main__':
 
     jl = JenkinsLancher(
         '/home/sal/workspace/jenkinsapi/src/'
-        'jenkinsapi_tests/systests/jenkins.war'
+        'jenkinsapi_tests/systests/',
+        'jenkins.war'
     )
     jl.start()
     log.info("Jenkins was launched...")

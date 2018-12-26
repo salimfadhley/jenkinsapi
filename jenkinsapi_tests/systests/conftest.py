@@ -57,9 +57,12 @@ def _delete_all_credentials(jenkins):
 @pytest.fixture(scope='session')
 def launched_jenkins():
     systests_dir, _ = os.path.split(__file__)
-    war_path = os.path.join(systests_dir, 'jenkins.war')
+    local_orig_dir = os.path.join(systests_dir, 'localinstance_files')
+    if not os.path.exists(local_orig_dir):
+        os.mkdir(local_orig_dir)
+    war_name = 'jenkins.war'
     launcher = JenkinsLancher(
-        war_path, PLUGIN_DEPENDENCIES,
+        local_orig_dir, systests_dir, war_name, PLUGIN_DEPENDENCIES,
         jenkins_url=os.getenv('JENKINS_URL', None)
     )
     launcher.start()
