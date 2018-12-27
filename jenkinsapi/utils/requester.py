@@ -52,8 +52,8 @@ class Requester(object):
         baseurl = kwargs.get('baseurl', None)
         self.base_scheme = urlparse.urlsplit(
             baseurl).scheme if baseurl else None
-        self.username = username
-        self.password = password
+        self.username = kwargs.get('username', username)
+        self.password = kwargs.get('password', password)
         self.ssl_verify = kwargs.get('ssl_verify', True)
         self.cert = kwargs.get('cert', None)
         self.timeout = kwargs.get('timeout', 10)
