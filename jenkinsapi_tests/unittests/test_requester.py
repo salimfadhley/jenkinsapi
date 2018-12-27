@@ -5,6 +5,115 @@ from jenkinsapi.jenkins import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 
+def test_no_parameters_uses_default_values():
+    req = Requester()
+    assert isinstance(req, Requester)
+    assert req.username is None
+    assert req.password is None
+    assert req.ssl_verify
+    assert req.cert is None
+    assert req.base_scheme is None
+    assert req.timeout == 10
+
+
+def test_all_named_parameters():
+    req = Requester(username='foo', password='bar', ssl_verify=False,
+                    cert='foobar', baseurl='http://dummy', timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_mix_one_unnamed_named_parameters():
+    req = Requester('foo', password='bar', ssl_verify=False, cert='foobar',
+                    baseurl='http://dummy', timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_mix_two_unnamed_named_parameters():
+    req = Requester('foo', 'bar', ssl_verify=False, cert='foobar',
+                    baseurl='http://dummy', timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_mix_three_unnamed_named_parameters():
+    req = Requester('foo', 'bar', False, cert='foobar', baseurl='http://dummy',
+                    timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_mix_four_unnamed_named_parameters():
+    req = Requester('foo', 'bar', False, 'foobar', baseurl='http://dummy',
+                    timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_mix_five_unnamed_named_parameters():
+    req = Requester('foo', 'bar', False, 'foobar', 'http://dummy', timeout=5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_all_unnamed_parameters():
+    req = Requester('foo', 'bar', False, 'foobar', 'http://dummy', 5)
+    assert isinstance(req, Requester)
+    assert req.username == 'foo'
+    assert req.password == 'bar'
+    assert not req.ssl_verify
+    assert req.cert == 'foobar'
+    assert req.base_scheme == 'http', 'dummy'
+    assert req.timeout == 5
+
+
+def test_to_much_unnamed_parameters_raises_error():
+    with pytest.raises(Exception):
+        Requester('foo', 'bar', False, 'foobar', 'http://dummy', 5, 'test')
+
+
+def test_username_without_password_raises_error():
+    with pytest.raises(Exception):
+        Requester(username='foo')
+        Requester('foo')
+
+
+def test_password_without_username_raises_error():
+    with pytest.raises(AssertionError):
+        Requester(password='bar')
+
+
 def test_get_request_dict_auth():
     req = Requester('foo', 'bar')
 
