@@ -40,23 +40,42 @@ class Requester(object):
 
     def __init__(self, *args, **kwargs):
 
-        if args:
-            try:
-                username, password = args
-            except ValueError as Error:
-                raise Error
-        else:
-            username = None
-            password = None
+        username = None
+        password = None
+        ssl_verify = True
+        cert = None
+        baseurl = None
+        timeout = 10
 
-        baseurl = kwargs.get('baseurl', None)
+        if len(args) == 1:
+            username, = args
+        elif len(args) == 2:
+            username, password = args
+        elif len(args) == 3:
+            username, password, ssl_verify = args
+        elif len(args) == 4:
+            username, password, ssl_verify, cert = args
+        elif len(args) == 5:
+            username, password, ssl_verify, cert, baseurl = args
+        elif len(args) == 6:
+            username, password, ssl_verify, cert, baseurl, timeout = args
+        elif len(args) > 6:
+            raise ValueError("To much positional arguments given!")
+
+        baseurl = kwargs.get('baseurl', baseurl)
         self.base_scheme = urlparse.urlsplit(
             baseurl).scheme if baseurl else None
         self.username = kwargs.get('username', username)
         self.password = kwargs.get('password', password)
-        self.ssl_verify = kwargs.get('ssl_verify', True)
-        self.cert = kwargs.get('cert', None)
-        self.timeout = kwargs.get('timeout', 10)
+        if self.username:
+            assert self.password, 'Please provide both username and password '\
+                                   'or don\'t provide them at all'
+        if self.password:
+            assert self.username, 'Please provide both username and password '\
+                                   'or don\'t provide them at all'
+        self.ssl_verify = kwargs.get('ssl_verify', ssl_verify)
+        self.cert = kwargs.get('cert', cert)
+        self.timeout = kwargs.get('timeout', timeout)
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
