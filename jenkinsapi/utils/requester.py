@@ -37,6 +37,7 @@ class Requester(object):
     """
 
     VALID_STATUS_CODES = [200, ]
+    AUTH_COOKIE = None
 
     def __init__(self, *args, **kwargs):
 
@@ -93,6 +94,11 @@ class Requester(object):
                 headers, dict), \
                 'headers must be a dict, got %s' % repr(headers)
             requestKwargs['headers'] = headers
+
+        if self.AUTH_COOKIE:
+            currentheaders = requestKwargs.get('headers', {})
+            currentheaders.update({'Cookie': self.AUTH_COOKIE})
+            requestKwargs['headers'] = currentheaders
 
         requestKwargs['verify'] = self.ssl_verify
         requestKwargs['cert'] = self.cert

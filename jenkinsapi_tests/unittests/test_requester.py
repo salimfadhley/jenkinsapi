@@ -3,6 +3,7 @@ import pytest
 import requests
 from jenkinsapi.jenkins import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+from mock import patch
 
 
 def test_no_parameters_uses_default_values():
@@ -125,6 +126,50 @@ def test_get_request_dict_auth():
     assert isinstance(req_return, dict)
     assert req_return.get('auth')
     assert req_return['auth'] == ('foo', 'bar')
+
+
+@patch('jenkinsapi.jenkins.Requester.AUTH_COOKIE', 'FAKE')
+def test_get_request_dict_cookie():
+    req = Requester('foo', 'bar')
+
+    req_return = req.get_request_dict(
+        params={},
+        data=None,
+        headers=None
+    )
+    assert isinstance(req_return, dict)
+    assert req_return.get('headers')
+    assert req_return.get('headers').get('Cookie')
+    assert req_return.get('headers').get('Cookie') == 'FAKE'
+
+
+@patch('jenkinsapi.jenkins.Requester.AUTH_COOKIE', 'FAKE')
+def test_get_request_dict_updatecookie():
+    req = Requester('foo', 'bar')
+
+    req_return = req.get_request_dict(
+        params={},
+        data=None,
+        headers={'key': 'value'}
+    )
+    assert isinstance(req_return, dict)
+    assert req_return.get('headers')
+    assert req_return.get('headers').get('key')
+    assert req_return.get('headers').get('key') == 'value'
+    assert req_return.get('headers').get('Cookie')
+    assert req_return.get('headers').get('Cookie') == 'FAKE'
+
+
+def test_get_request_dict_nocookie():
+    req = Requester('foo', 'bar')
+
+    req_return = req.get_request_dict(
+        params={},
+        data=None,
+        headers=None
+    )
+    assert isinstance(req_return, dict)
+    assert not req_return.get('headers')
 
 
 def test_get_request_dict_wrong_params():

@@ -6,6 +6,7 @@ import logging
 import warnings
 import six.moves.urllib.parse as urlparse
 
+from six.moves.urllib.request import Request, HTTPRedirectHandler, build_opener
 from six.moves.urllib.parse import quote as urlquote
 from six.moves.urllib.parse import urlencode
 from requests import HTTPError, ConnectionError
@@ -543,3 +544,43 @@ class Jenkins(JenkinsBase):
             raise JenkinsAPIException('Unexpected response %d.' % response.status_code)
 
         return response.text
+
+    def use_auth_cookie(self):
+        assert (self.username and
+                self.baseurl), 'Please provide jenkins url, username '\
+                               'and password to get the session ID cookie.'
+
+        login_url = 'j_acegi_security_check'
+        jenkins_url = '{0}/{1}'.format(self.baseurl, login_url)
+        data = urlencode({'j_username': self.username,
+                          'j_password': self.password}).encode("utf-8")
+
+        class SmartRedirectHandler(HTTPRedirectHandler):
+
+            def extract_cookie(self, setcookie):
+                # Extracts the last cookie.
+                # Example of set-cookie value for python2
+                # ('set-cookie', 'JSESSIONID.30blah=blahblahblah;Path=/;
+                #   HttpOnly, JSESSIONID.30ablah=blahblah;Path=/;HttpOnly'),
+                return setcookie.split(',')[-1].split(';')[0].strip('\n\r ')
+
+            def http_error_302(self, req, fp, code, msg, headers):
+                # Jenkins can send several Set-Cookie values sometimes
+                #  The valid one is the last one
+                for header, value in headers.items():
+                    if header.lower() == 'set-cookie':
+                        cookie = self.extract_cookie(value)
+
+                req.headers['Cookie'] = cookie
+                result = HTTPRedirectHandler.http_error_302(self, req, fp,
+                                                            code, msg,
+                                                            headers)
+                result.orig_status = code
+                result.orig_headers = headers
+                result.cookie = cookie
+                return result
+
+        request = Request(jenkins_url, data)
+        opener = build_opener(SmartRedirectHandler())
+        res = opener.open(request)
+        Requester.AUTH_COOKIE = res.cookie
