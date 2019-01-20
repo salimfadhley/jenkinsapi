@@ -7,6 +7,10 @@ from jenkinsapi_utils.jenkins_launcher import JenkinsLancher
 log = logging.getLogger(__name__)
 state = {}
 
+# User/password for authentication testcases
+ADMIN_USER = 'admin'
+ADMIN_PASSWORD = 'admin'
+
 # Extra plugins required by the systests
 PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins-ci.org/latest/"
@@ -54,6 +58,47 @@ def _delete_all_credentials(jenkins):
         del jenkins.credentials[name]
 
 
+def _create_admin_user(launched_jenkins):
+    # Groovy script that creates a user "admin/admin" in jenkins
+    # and enable security. "admin" user will be the only user and
+    # have admin permissions. Anonymous cannot read anything.
+    create_admin_groovy = """
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+
+def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+hudsonRealm.createAccount('{0}','{1}')
+instance.setSecurityRealm(hudsonRealm)
+
+def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+strategy.setAllowAnonymousRead(false)
+instance.setAuthorizationStrategy(strategy)
+    """.format(ADMIN_USER, ADMIN_PASSWORD)
+
+    url = launched_jenkins.jenkins_url
+    jenkins_instance = Jenkins(url)
+    jenkins_instance.run_groovy_script(create_admin_groovy)
+
+
+def _disable_security(launched_jenkins):
+    # Groovy script that disables security in jenkins,
+    # reverting the changes made in "_create_admin_user" function.
+    disable_security_groovy = """
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.getInstance()
+instance.disableSecurity()
+instance.save()
+    """
+
+    url = launched_jenkins.jenkins_url
+    jenkins_instance = Jenkins(url, ADMIN_USER, ADMIN_PASSWORD)
+    jenkins_instance.run_groovy_script(disable_security_groovy)
+
+
 @pytest.fixture(scope='session')
 def launched_jenkins():
     systests_dir, _ = os.path.split(__file__)
@@ -84,3 +129,18 @@ def jenkins(launched_jenkins):
     _delete_all_credentials(jenkins_instance)
 
     return jenkins_instance
+
+
+@pytest.fixture(scope='function')
+def jenkins_admin_admin(launched_jenkins, jenkins):  # pylint: disable=unused-argument
+    # Using "jenkins" fixture makes sure that jobs/views/credentials are
+    # cleaned before security is enabled.
+    url = launched_jenkins.jenkins_url
+
+    _create_admin_user(launched_jenkins)
+    jenkins_admin_instance = Jenkins(url, ADMIN_USER, ADMIN_PASSWORD)
+
+    yield jenkins_admin_instance
+
+    jenkins_admin_instance.requester.__class__.AUTH_COOKIE = None
+    _disable_security(launched_jenkins)
