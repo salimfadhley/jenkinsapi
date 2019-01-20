@@ -1,5 +1,6 @@
 import pytest
 
+import jenkinsapi
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.jenkins import Jenkins
@@ -266,3 +267,28 @@ def test_has_plugin(monkeypatch):
     jenkins = Jenkins('http://localhost:8080/',
                       username='foouser', password='foopassword')
     assert jenkins.has_plugin('subversion') is True
+
+
+def test_get_use_auth_cookie(mocker, monkeypatch):
+    COOKIE_VALUE = 'FAKE_COOKIE'
+
+    def fake_opener(redirect_handler):  # pylint: disable=unused-argument
+        mock_response = mocker.MagicMock()
+        mock_response.cookie = COOKIE_VALUE
+
+        mock_opener = mocker.MagicMock()
+        mock_opener.open.return_value = mock_response
+        return mock_opener
+
+    def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(Jenkins, '_poll', fake_poll)
+    monkeypatch.setattr(Requester, 'AUTH_COOKIE', None)
+    monkeypatch.setattr(jenkinsapi.jenkins, 'build_opener', fake_opener)
+
+    jenkins = Jenkins('http://localhost:8080',
+                      username='foouser', password='foopassword')
+
+    jenkins.use_auth_cookie()
+    assert Requester.AUTH_COOKIE == COOKIE_VALUE
