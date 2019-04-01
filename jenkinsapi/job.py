@@ -211,7 +211,26 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
         redirect_url = response.headers['location']
 
-        if not redirect_url.startswith("%s/queue/item" % self.jenkins.baseurl):
+        #
+        # Enterprise Jenkins implementations such as CloudBees locate their
+        # queue REST API base https://server.domain.com/jenkins/queue/api/
+        # above the team-specific REST API base
+        # https://server.domain.com/jenkins/job/my_team/api/
+        #
+        queue_baseurl_candidates = [self.jenkins.baseurl]
+        scheme, netloc, path, _, query, frag = \
+            urlparse.urlparse(self.jenkins.baseurl)
+        while path:
+            path = '/'.join(path.rstrip('/').split('/')[:-1])
+            queue_baseurl_candidates.append(
+                urlparse.urlunsplit([scheme, netloc, path, query, frag]))
+        redirect_url_valid = False
+        for queue_baseurl_candidate in queue_baseurl_candidates:
+            redirect_url_valid = redirect_url.startswith(
+                "%s/queue/item" % queue_baseurl_candidate)
+            if redirect_url_valid:
+                break
+        if not redirect_url_valid:
             raise ValueError("Not a Queue URL: %s" % redirect_url)
 
         qi = QueueItem(redirect_url, self.jenkins)
