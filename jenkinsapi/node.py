@@ -220,7 +220,8 @@ class Node(JenkinsBase):
                                  "temporarilyOffline = %s" %
                                  (self._data['offline'],
                                   self._data['temporarilyOffline']))
-        elif self._data['offline'] and self._data['temporarilyOffline']:
+
+        if self._data['offline'] and self._data['temporarilyOffline']:
             self.toggle_temporarily_offline()
             if self._data['offline']:
                 raise AssertionError("The node state is still offline, "

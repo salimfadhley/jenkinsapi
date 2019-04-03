@@ -22,9 +22,9 @@ class Plugin(object):
                          '"plugin-name@version", not "{0}"')
             usage_err = usage_err.format(plugin_string)
             raise ValueError(usage_err)
-        else:
-            shortName, version = plugin_string.split('@')
-            return {'shortName': shortName, 'version': version}
+
+        shortName, version = plugin_string.split('@')
+        return {'shortName': shortName, 'version': version}
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
