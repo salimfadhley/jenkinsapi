@@ -123,8 +123,8 @@ class Nodes(JenkinsBase):
         else:
             if item != 'master':
                 raise UnknownNode('Node %s does not exist' % item)
-            else:
-                log.info('Requests to remove master node ignored')
+
+            log.info('Requests to remove master node ignored')
 
     def __setitem__(self, name, node_dict):
         if not isinstance(node_dict, dict):

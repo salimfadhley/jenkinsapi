@@ -192,12 +192,12 @@ class Requester(object):
         if response.status_code not in valid:
             if response.status_code == 405:         # POST required
                 raise PostRequired('POST required for url {0}'.format(url))
-            else:
-                raise JenkinsAPIException(
-                    'Operation failed. url={0}, headers={1}, status={2}, '
-                    'text={3}'.format(
-                        response.url, headers, response.status_code,
-                        response.text.encode('UTF-8')
-                    )
+
+            raise JenkinsAPIException(
+                'Operation failed. url={0}, headers={1}, status={2}, '
+                'text={3}'.format(
+                    response.url, headers, response.status_code,
+                    response.text.encode('UTF-8')
                 )
+            )
         return response

@@ -275,13 +275,14 @@ class Plugins(JenkinsBase):
             if plugin.shortName in self:
                 return True  # for Jenkins 1.X
             time.sleep(interval)
+
         if self.jenkins_obj.version.startswith('2'):
             raise JenkinsAPIException(
                 "Problem installing plugin '%s'." % plugin.shortName)
-        else:
-            log.warning("Plugin '%s' not found in loaded plugins."
-                        "You may need to restart Jenkins.", plugin.shortName)
-            return False
+
+        log.warning("Plugin '%s' not found in loaded plugins."
+                    "You may need to restart Jenkins.", plugin.shortName)
+        return False
 
     def __contains__(self, plugin_name):
         """
