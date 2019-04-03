@@ -1,17 +1,17 @@
-dist: trusty
+dist: xenial
 group: edge
 sudo: required
 language: python
+jdk:
+- oraclejdk8
 python:
 - '2.7'
-- '3.4'
 - '3.5'
 - '3.6'
+- '3.7'
 env:
 - JENKINS_VERSION=stable
 - JENKINS_VERSION=latest
-before_install:
-- jdk_switcher use oraclejdk8
 install:
 - pip install tox-travis
 - python setup.py -q sdist bdist_wheel
