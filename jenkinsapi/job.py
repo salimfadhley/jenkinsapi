@@ -90,7 +90,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def poll(self, tree=None):
         data = super(Job, self).poll(tree=tree)
-        if not tree:
+        if not tree and not self.jenkins.lazy:
             self._data = self._add_missing_builds(self._data)
 
         return data

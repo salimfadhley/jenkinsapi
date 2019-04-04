@@ -132,6 +132,19 @@ def jenkins(launched_jenkins):
 
 
 @pytest.fixture(scope='function')
+def lazy_jenkins(launched_jenkins):
+    url = launched_jenkins.jenkins_url
+
+    jenkins_instance = Jenkins(url, lazy=True)
+
+    _delete_all_jobs(jenkins_instance)
+    _delete_all_views(jenkins_instance)
+    _delete_all_credentials(jenkins_instance)
+
+    return jenkins_instance
+
+
+@pytest.fixture(scope='function')
 def jenkins_admin_admin(launched_jenkins, jenkins):  # pylint: disable=unused-argument
     # Using "jenkins" fixture makes sure that jobs/views/credentials are
     # cleaned before security is enabled.

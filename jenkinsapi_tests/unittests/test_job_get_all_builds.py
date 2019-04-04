@@ -195,8 +195,20 @@ class TestJobGetAllBuilds(unittest.TestCase):
         # remaining jobs will be fetched automatically, and to have two calls
         # to the Jenkins API
         TestJobGetAllBuilds.__get_data_call_count = 0
+        self.J.lazy = False
         self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
         self.assertEqual(TestJobGetAllBuilds.__get_data_call_count, 2)
+
+    @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
+    def test_lazy_builds_list_will_not_call_jenkins_twice(self):
+        # The job data contains only one build, so we expect that the
+        # remaining jobs will be fetched automatically, and to have two calls
+        # to the Jenkins API
+        TestJobGetAllBuilds.__get_data_call_count = 0
+        self.J.lazy = True
+        self.j = Job('http://halob:8080/job/foo/', 'foo', self.J)
+        self.assertEqual(TestJobGetAllBuilds.__get_data_call_count, 1)
+        self.J.lazy = False
 
     @mock.patch.object(JenkinsBase, 'get_data', fakeGetDataTree)
     def test_complete_builds_list_will_call_jenkins_once(self):
