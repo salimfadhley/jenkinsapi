@@ -25,3 +25,4 @@ lib/
 .pytest_cache
 .eggs
 coverage.xml
+.venv/
