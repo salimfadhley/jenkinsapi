@@ -6,6 +6,7 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownQueueItem, NotBuiltYet
 import logging
 import time
+import six.moves.urllib.parse as urlparse
 
 log = logging.getLogger(__name__)
 
@@ -64,9 +65,12 @@ class Queue(JenkinsBase):
 
     def _get_queue_items_for_job(self, job_name):
         for item in self._data["items"]:
-            if 'name' in item['task'] and item['task']['name'] == job_name:
-                yield QueueItem(self.get_queue_item_url(item),
-                                jenkins_obj=self.jenkins)
+            if 'url' in item['task']:
+                full_name = QueueItem.get_full_name_from_url_and_baseurl(item['task']['url'],
+                                                                         self.jenkins.baseurl)
+                if full_name == job_name:
+                    yield QueueItem(self.get_queue_item_url(item),
+                                    jenkins_obj=self.jenkins)
 
     def get_queue_items_for_job(self, job_name):
         return list(self._get_queue_items_for_job(job_name))
@@ -110,7 +114,7 @@ class QueueItem(JenkinsBase):
         """
         Return the job associated with this queue item
         """
-        return self.jenkins[self._data['task']['name']]
+        return self.jenkins[self.get_job_name()]
 
     def get_parameters(self):
         """returns parameters of queue item"""
@@ -172,6 +176,18 @@ class QueueItem(JenkinsBase):
 
     def get_job_name(self):
         try:
-            return self._data['task']['name']
+            return self.get_full_name_from_url_and_baseurl(self._data['task']['url'],
+                                                           self.jenkins.baseurl)
         except KeyError:
             raise NotBuiltYet()
+
+    @staticmethod
+    def get_full_name_from_url_and_baseurl(url, baseurl):
+        """
+        Get the full name for a job (including parent folders) from the
+        job URL.
+        """
+        path = url.replace(baseurl, '')
+        split = path.split('/')
+        split = [urlparse.unquote(part) for part in split[::2] if part]
+        return '/'.join(split)
