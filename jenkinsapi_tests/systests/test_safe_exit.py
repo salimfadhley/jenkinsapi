@@ -5,10 +5,7 @@ and subsequently prevent further tests from running.
 It should probably be placed last.
 
 """
-import time
 import logging
-import pytest
-from requests import HTTPError, ConnectionError
 
 log = logging.getLogger(__name__)
 
