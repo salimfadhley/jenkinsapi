@@ -16,6 +16,7 @@ from jenkinsapi.credentials import Credentials2x
 from jenkinsapi.credentials import CredentialsById
 from jenkinsapi.executors import Executors
 from jenkinsapi.jobs import Jobs
+from jenkinsapi.job import Job
 from jenkinsapi.view import View
 from jenkinsapi.label import Label
 from jenkinsapi.nodes import Nodes
@@ -141,6 +142,15 @@ class Jenkins(JenkinsBase):
         :return: Job obj
         """
         return self.jobs[jobname]
+
+    def get_job_by_url(self, url, job_name):
+        """
+        Get a job by url
+        :param url: jobs' url
+        :param jobname: name of the job, str
+        :return: Job obj
+        """
+        return Job(url, job_name, self)
 
     def has_job(self, jobname):
         """

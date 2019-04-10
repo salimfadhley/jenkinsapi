@@ -1,11 +1,11 @@
 """
 Queue module for jenkinsapi
 """
+import logging
+import time
 from requests import HTTPError
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownQueueItem, NotBuiltYet
-import logging
-import time
 
 log = logging.getLogger(__name__)
 
@@ -110,7 +110,10 @@ class QueueItem(JenkinsBase):
         """
         Return the job associated with this queue item
         """
-        return self.jenkins[self._data['task']['name']]
+        return self.jenkins.get_job_by_url(
+            self._data['task']['url'],
+            self._data['task']['name'],
+        )
 
     def get_parameters(self):
         """returns parameters of queue item"""
@@ -131,8 +134,8 @@ class QueueItem(JenkinsBase):
 
     def get_build(self):
         build_number = self.get_build_number()
-        job_name = self.get_job_name()
-        return self.jenkins[job_name][build_number]
+        job = self.get_job()
+        return job[build_number]
 
     def block_until_complete(self, delay=5):
         build = self.block_until_building(delay)
