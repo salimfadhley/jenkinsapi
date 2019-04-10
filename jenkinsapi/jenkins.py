@@ -463,6 +463,24 @@ class Jenkins(JenkinsBase):
                "failure may cause other failures.")
         log.critical(msg, count * wait)
 
+    def safe_exit(self, wait_for_exit=True):
+        """ restarts jenkins when no jobs are running """
+        # NB: unlike other methods, the value of resp.status_code
+        # here can be 503 even when everything is normal
+        url = '%s/safeExit' % (self.baseurl,)
+        valid = self.requester.VALID_STATUS_CODES + [503, 500]
+        resp = self.requester.post_and_confirm_status(url, data='',
+                                                      valid=valid)
+        if wait_for_exit:
+            self._wait_for_exit()
+        return resp
+
+    def _wait_for_exit(self):
+        # We need to make sure all jobs have finished,
+        # and that jenkins is unavailable
+        # One way to be sure is to make sure jenkins is really down.
+        self.__jenkins_is_unavailable()  # Blocks until jenkins is unavailable
+
     def __jenkins_is_unavailable(self):
         while True:
             try:
