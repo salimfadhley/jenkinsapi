@@ -5,7 +5,7 @@ Module for JenkinsBase class
 import ast
 import pprint
 import logging
-import urllib.parse
+from six.moves.urllib.parse import quote as urlquote
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -101,7 +101,7 @@ class JenkinsBase(object):
         return jobs
 
     def process_job_folder(self, folder, folder_path):
-        folder_path += '/job/%s' % urllib.parse.quote(folder['name'])
+        folder_path += '/job/%s' % urlquote(folder['name'])
         data = self.get_data(self.python_api_url(folder_path),
                              tree='jobs[name,color]')
         result = []
@@ -110,7 +110,7 @@ class JenkinsBase(object):
             if 'color' not in job.keys():
                 result += self.process_job_folder(job, folder_path)
             else:
-                job['url'] = '%s/job/%s' % (folder_path, urllib.parse.quote(job['name']))
+                job['url'] = '%s/job/%s' % (folder_path, urlquote(job['name']))
                 result.append(job)
 
         return result
