@@ -479,7 +479,21 @@ class Jenkins(JenkinsBase):
         # We need to make sure all jobs have finished,
         # and that jenkins is unavailable
         # One way to be sure is to make sure jenkins is really down.
-        self.__jenkins_is_unavailable()  # Blocks until jenkins is unavailable
+        self.__jenkins_is_unresponsive()  # Blocks until jenkins returns ConnectionError
+
+    def __jenkins_is_unresponsive(self):
+        while True:
+            try:
+                self.requester.get_and_confirm_status(
+                    self.baseurl, valid=[503, 500])
+                return True
+            except ConnectionError:
+                # This is also a possibility while Jenkins is restarting
+                return False
+            except HTTPError:
+                # This is a return code that is not 503,
+                # so Jenkins is likely available
+                time.sleep(1)
 
     def __jenkins_is_unavailable(self):
         while True:
