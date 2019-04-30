@@ -529,7 +529,7 @@ class Jenkins(JenkinsBase):
         return resp
 
     def cancel_quiet_down(self):
-        """  Cancel the effect of the “quiet-down” command """
+        """  Cancel the effect of the quiet-down command """
         # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
