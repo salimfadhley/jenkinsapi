@@ -517,6 +517,28 @@ class Jenkins(JenkinsBase):
                 wait += 1
                 is_alive = True
 
+    def quiet_down(self):
+        """ Put Jenkins in a Quiet mode, preparation for restart. no new builds  started"""
+        # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
+        # NB: unlike other methods, the value of resp.status_code
+        # here can be 503 even when everything is normal
+        url = '%s/quietDown' % (self.baseurl,)
+        valid = self.requester.VALID_STATUS_CODES + [503, 500]
+        resp = self.requester.post_and_confirm_status(url, data='',
+                                                      valid=valid)
+        return resp
+
+    def cancel_quiet_down(self):
+        """  Cancel the effect of the “quiet-down” command """
+        # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
+        # NB: unlike other methods, the value of resp.status_code
+        # here can be 503 even when everything is normal
+        url = '%s/cancelQuietDown' % (self.baseurl,)
+        valid = self.requester.VALID_STATUS_CODES + [503, 500]
+        resp = self.requester.post_and_confirm_status(url, data='',
+                                                      valid=valid)
+        return resp
+
     @property
     def plugins(self):
         return self.get_plugins()
