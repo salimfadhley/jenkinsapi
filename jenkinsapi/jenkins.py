@@ -463,38 +463,6 @@ class Jenkins(JenkinsBase):
                "failure may cause other failures.")
         log.critical(msg, count * wait)
 
-    def safe_exit(self, wait_for_exit=True):
-        """ restarts jenkins when no jobs are running """
-        # NB: unlike other methods, the value of resp.status_code
-        # here can be 503 even when everything is normal
-        url = '%s/safeExit' % (self.baseurl,)
-        valid = self.requester.VALID_STATUS_CODES + [503, 500]
-        resp = self.requester.post_and_confirm_status(url, data='',
-                                                      valid=valid)
-        if wait_for_exit:
-            self._wait_for_exit()
-        return resp
-
-    def _wait_for_exit(self):
-        # We need to make sure all jobs have finished,
-        # and that jenkins is unavailable
-        # One way to be sure is to make sure jenkins is really down.
-        self.__jenkins_is_unresponsive()  # Blocks until jenkins returns ConnectionError
-
-    def __jenkins_is_unresponsive(self):
-        while True:
-            try:
-                self.requester.get_and_confirm_status(
-                    self.baseurl, valid=[503, 500])
-                return True
-            except ConnectionError:
-                # This is also a possibility while Jenkins is restarting
-                return False
-            except HTTPError:
-                # This is a return code that is not 503,
-                # so Jenkins is likely available
-                time.sleep(1)
-
     def __jenkins_is_unavailable(self):
         while True:
             try:
@@ -508,6 +476,46 @@ class Jenkins(JenkinsBase):
                 # This is a return code that is not 503,
                 # so Jenkins is likely available
                 time.sleep(1)
+
+    def safe_exit(self, wait_for_exit=True, max_wait=360):
+        """ restarts jenkins when no jobs are running, except for pipeline jobs """
+        # NB: unlike other methods, the value of resp.status_code
+        # here can be 503 even when everything is normal
+        url = '%s/safeExit' % (self.baseurl,)
+        valid = self.requester.VALID_STATUS_CODES + [503, 500]
+        resp = self.requester.post_and_confirm_status(url, data='',
+                                                      valid=valid)
+        if wait_for_exit:
+            self._wait_for_exit(max_wait=max_wait)
+        return resp
+
+    def _wait_for_exit(self, max_wait=360):
+        # We need to make sure all non pipeline jobs have finished,
+        # and that jenkins is unavailable
+        self.__jenkins_is_unresponsive(max_wait=max_wait)
+
+    def __jenkins_is_unresponsive(self, max_wait=360):
+        # Blocks until jenkins returns ConnectionError or JenkinsAPIException
+        # Default wait is one hour
+        is_alive = True
+        wait = 0
+        while is_alive and wait < max_wait:
+            try:
+                self.requester.get_and_confirm_status(
+                    self.baseurl, valid=[200])
+                time.sleep(1)
+                wait += 1
+                is_alive = True
+            except (ConnectionError, JenkinsAPIException):
+                # Jenkins is finally down
+                is_alive = False
+                return True
+            except HTTPError:
+                # This is a return code that is not 503,
+                # so Jenkins is likely available, and we need to wait
+                time.sleep(1)
+                wait += 1
+                is_alive = True
 
     @property
     def plugins(self):
