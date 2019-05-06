@@ -22,12 +22,15 @@ from jenkinsapi.label import Label
 from jenkinsapi.nodes import Nodes
 from jenkinsapi.plugins import Plugins
 from jenkinsapi.plugin import Plugin
+from jenkinsapi.utils.requester import Requester
 from jenkinsapi.views import Views
 from jenkinsapi.queue import Queue
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+
+import ast
+
 
 log = logging.getLogger(__name__)
 
@@ -538,6 +541,21 @@ class Jenkins(JenkinsBase):
         resp = self.requester.post_and_confirm_status(url, data='',
                                                       valid=valid)
         return resp
+
+    def get_api_python_data(self):
+        """  Obtain current state in serverUrl/api/python and return it """
+        # Helpfull for checking any value here like quietingDown
+        # call data = get_api_python_data and access it like this data['quietingDown']
+        url = '%s/api/python' % (self.baseurl,)
+        valid = self.requester.VALID_STATUS_CODES
+        response = self.requester.post_and_confirm_status(url, data='', valid=valid)
+
+        if response.status_code not in [200]:
+            raise RuntimeError('Failed to api/python: %s' % response.text)
+
+        api_python_response = ast.literal_eval(response.text)
+
+        return api_python_response
 
     @property
     def plugins(self):
