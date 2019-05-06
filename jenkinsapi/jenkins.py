@@ -29,8 +29,6 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
-import ast
-
 
 log = logging.getLogger(__name__)
 
@@ -542,21 +540,6 @@ class Jenkins(JenkinsBase):
                                                       valid=valid)
         return resp
 
-    def get_api_python_data(self):
-        """  Obtain current state in serverUrl/api/python and return it """
-        # Helpfull for checking any value here like quietingDown
-        # call data = get_api_python_data and access it like this data['quietingDown']
-        url = '%s/api/python' % (self.baseurl,)
-        valid = self.requester.VALID_STATUS_CODES
-        response = self.requester.post_and_confirm_status(url, data='', valid=valid)
-
-        if response.status_code not in [200]:
-            raise RuntimeError('Failed to api/python: %s' % response.text)
-
-        api_python_response = ast.literal_eval(response.text)
-
-        return api_python_response
-
     @property
     def plugins(self):
         return self.get_plugins()
@@ -607,6 +590,12 @@ class Jenkins(JenkinsBase):
     @property
     def credentials_by_id(self):
         return self.get_credentials(CredentialsById)
+
+    @property
+    def is_quieting_down(self):
+        url = '%s/api/python' % (self.baseurl,)
+        data = self.get_data(url=url)
+        return data['quietingDown']
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl
