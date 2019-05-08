@@ -28,6 +28,8 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+from jenkinsapi.utils.crumb_requester import CrumbRequester
+
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ class Jenkins(JenkinsBase):
     def __init__(
             self, baseurl,
             username=None, password=None,
-            requester=None, lazy=False,
+            requester=None, lazy=False, useCrumb=False,
             ssl_verify=True, cert=None, timeout=10):
         """
         :param baseurl: baseurl for jenkins instance including port, str
@@ -51,14 +53,23 @@ class Jenkins(JenkinsBase):
         """
         self.username = username
         self.password = password
-        self.requester = requester or Requester(
-            username,
-            password,
-            baseurl=baseurl,
-            ssl_verify=ssl_verify,
-            cert=cert,
-            timeout=timeout
-        )
+        if requester is None:
+            if useCrumb:
+                requester = CrumbRequester
+            else:
+                requester = Requester
+
+            self.requester = requester(
+                username,
+                password,
+                baseurl=baseurl,
+                ssl_verify=ssl_verify,
+                cert=cert,
+                timeout=timeout
+            )
+        else:
+            self.requester = requester
+
         self.requester.timeout = timeout
         self.lazy = lazy
         self.jobs_container = None
