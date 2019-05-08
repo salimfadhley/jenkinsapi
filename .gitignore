@@ -26,3 +26,5 @@ lib/
 .eggs
 coverage.xml
 .venv/
+.vscode/
+*.war
