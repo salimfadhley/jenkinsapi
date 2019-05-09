@@ -43,8 +43,9 @@ class Jenkins(JenkinsBase):
     def __init__(
             self, baseurl,
             username=None, password=None,
-            requester=None, lazy=False, useCrumb=False,
-            ssl_verify=True, cert=None, timeout=10):
+            requester=None, lazy=False,
+            ssl_verify=True, cert=None,
+            timeout=10, useCrumb=False):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
