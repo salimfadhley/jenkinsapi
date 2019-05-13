@@ -544,6 +544,14 @@ class Jenkins(JenkinsBase):
         url = "%s/exit" % self.baseurl
         self.requester.post_and_confirm_status(url, data='')
 
+    def generate_new_api_token(self, new_token_name='Token By jenkinsapi python'):
+        subUrl = '/me/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken'
+        url = '%s%s' % (self.baseurl, subUrl)
+        data = urlencode({'newTokenName': new_token_name})
+        response = self.requester.post_and_confirm_status(url, data=data)
+        token = response.json()['data']['tokenValue']
+        return token
+
     def run_groovy_script(self, script):
         """
         Runs the requested groovy script on the Jenkins server returning the
