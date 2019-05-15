@@ -31,7 +31,6 @@ from jenkinsapi.custom_exceptions import JenkinsAPIException
 from jenkinsapi.utils.crumb_requester import CrumbRequester
 
 
-
 log = logging.getLogger(__name__)
 
 
