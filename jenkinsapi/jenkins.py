@@ -184,6 +184,12 @@ class Jenkins(JenkinsBase):
         """
         return self.jobs.create(jobname, xml)
 
+    def create_multibranch_pipeline_job(self, jobname, xml, block=True, delay=60):
+        """
+        :return: list of new Job objects
+        """
+        return self.jobs.create_multibranch_pipeline(jobname, xml, block, delay)
+
     def copy_job(self, jobname, newjobname):
         return self.jobs.copy(jobname, newjobname)
 
