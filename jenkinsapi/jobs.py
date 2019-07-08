@@ -211,9 +211,9 @@ class Jobs(object):
 
         # now search for all jobs created; those who start with job_name + '/'
         jobs = []
-        for name, job in self.jenkins.get_jobs():
+        for name in self.jenkins.get_jobs_list():
             if name.startswith(job_name + '/'):
-                jobs.append(job)
+                jobs.append(self[name])
 
         return jobs
 
