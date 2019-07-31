@@ -166,7 +166,6 @@ class Build(JenkinsBase):
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
                     if x and "build" in x]
-        print(_actions)
 
         if _actions:
             return _actions[0]["build"]["revision"]["SHA1"]
