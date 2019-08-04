@@ -222,7 +222,7 @@ class Build(JenkinsBase):
 
     def get_artifact_dict(self):
         return dict(
-            (af.filename, af) for af in self.get_artifacts()
+            (af.relative_path, af) for af in self.get_artifacts()
         )
 
     def get_upstream_job_name(self):
