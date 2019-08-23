@@ -494,6 +494,27 @@ class Build(JenkinsBase):
         else:
             raise JenkinsAPIException('Unknown content type for console')
 
+    def stream_logs(self, interval=0):
+        """
+        Return generator which streams parts of text console.
+        """
+        url = "%s/logText/progressiveText" % self.baseurl
+        size = 0
+        more_data = True
+        while more_data:
+            resp = self.job.jenkins.requester.get_url(url, params={'start': size})
+            content = resp.content
+            if content:
+                if isinstance(content, str):
+                    yield content
+                elif isinstance(content, bytes):
+                    yield content.decode('ISO-8859-1')
+                else:
+                    raise JenkinsAPIException('Unknown content type for console')
+            size = resp.headers['X-Text-Size']
+            more_data = resp.headers.get('X-More-Data')
+            sleep(interval)
+
     def get_estimated_duration(self):
         """
         Return the estimated build duration (in seconds) or none.
