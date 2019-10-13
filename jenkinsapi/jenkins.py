@@ -353,7 +353,7 @@ class Jenkins(JenkinsBase):
         }
         return self.nodes.create_node(name, node_dict)
 
-    def create_node_with_config(self, name: str, config: dict):
+    def create_node_with_config(self, name, config):
         """
         Create a new slave node with specific configuration.
         Config should be resemble the output of node.get_node_attributes()
