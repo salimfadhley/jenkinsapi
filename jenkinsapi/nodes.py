@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 
 
 class Nodes(JenkinsBase):
-
     """
     Class to hold information on a collection of nodes
     """
@@ -25,8 +24,8 @@ class Nodes(JenkinsBase):
         """
         self.jenkins = jenkins_obj
         JenkinsBase.__init__(self, baseurl.rstrip('/')
-                             if '/computer' in baseurl
-                             else baseurl.rstrip('/') + '/computer')
+        if '/computer' in baseurl
+        else baseurl.rstrip('/') + '/computer')
 
     def get_jenkins_obj(self):
         return self.jenkins
@@ -151,6 +150,27 @@ class Nodes(JenkinsBase):
                % (self.jenkins.baseurl,
                   urlencode(node.get_node_attributes())))
         data = {'json': urlencode(node.get_node_attributes())}
+        self.jenkins.requester.post_and_confirm_status(url, data=data)
+        self.poll()
+        return self[name]
+
+    def create_node_with_config(self, name: str, config: dict):
+        """
+        Create a new slave node with specific configuration.
+        Config should be resemble the output of node.get_node_attributes()
+        :param str name: name of slave
+        :param dict config: Node attributes for Jenkins API request to create node
+            (See function output Node.get_node_attributes())
+        :return: node obj
+        """
+        if name in self:
+            return self[name]
+
+        if type(config) is not dict:
+            return None
+
+        url = f'{self.jenkins.baseurl}/computer/doCreateItem?{urlencode(config)}'
+        data = {'json': urlencode(config)}
         self.jenkins.requester.post_and_confirm_status(url, data=data)
         self.poll()
         return self[name]

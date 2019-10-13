@@ -30,12 +30,10 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 from jenkinsapi.utils.crumb_requester import CrumbRequester
 
-
 log = logging.getLogger(__name__)
 
 
 class Jenkins(JenkinsBase):
-
     """
     Represents a jenkins environment.
     """
@@ -79,7 +77,7 @@ class Jenkins(JenkinsBase):
     def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
         return self.get_data(url, tree='jobs[name,color,url]'
-                             if not tree else tree)
+        if not tree else tree)
 
     def _poll_if_needed(self):
         if self.lazy and self._data is None:
@@ -353,6 +351,17 @@ class Jenkins(JenkinsBase):
         }
         return self.nodes.create_node(name, node_dict)
 
+    def create_node_with_config(self, name: str, config: dict):
+        """
+        Create a new slave node with specific configuration.
+        Config should be resemble the output of node.get_node_attributes()
+        :param str name: name of slave
+        :param dict config: Node attributes for Jenkins API request to create node
+            (See function output Node.get_node_attributes())
+        :return: node obj
+        """
+        return self.nodes.create_node_with_config(name=name, config=config)
+
     def get_plugins_url(self, depth):
         # This only ever needs to work on the base object
         return '%s/pluginManager/api/python?depth=%i' % (self.baseurl, depth)
@@ -377,7 +386,7 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
     def install_plugins(self, plugin_list, restart=True, force_restart=False,
                         wait_for_reboot=True, no_reboot_warning=False):
@@ -399,7 +408,7 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
     def delete_plugin(self, plugin, restart=True, force_restart=False,
                       wait_for_reboot=True, no_reboot_warning=False):
@@ -420,7 +429,7 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
     def delete_plugins(self, plugin_list, restart=True, force_restart=False,
                        wait_for_reboot=True, no_reboot_warning=False):
@@ -441,7 +450,7 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
     def safe_restart(self, wait_for_reboot=True):
         """ restarts jenkins when no jobs are running """
@@ -651,7 +660,7 @@ class Jenkins(JenkinsBase):
 
     def use_auth_cookie(self):
         assert (self.username and
-                self.baseurl), 'Please provide jenkins url, username '\
+                self.baseurl), 'Please provide jenkins url, username ' \
                                'and password to get the session ID cookie.'
 
         login_url = 'j_acegi_security_check'
