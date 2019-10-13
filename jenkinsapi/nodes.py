@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 
 
 class Nodes(JenkinsBase):
+
     """
     Class to hold information on a collection of nodes
     """
@@ -24,8 +25,8 @@ class Nodes(JenkinsBase):
         """
         self.jenkins = jenkins_obj
         JenkinsBase.__init__(self, baseurl.rstrip('/')
-        if '/computer' in baseurl
-        else baseurl.rstrip('/') + '/computer')
+                             if '/computer' in baseurl
+                             else baseurl.rstrip('/') + '/computer')
 
     def get_jenkins_obj(self):
         return self.jenkins
