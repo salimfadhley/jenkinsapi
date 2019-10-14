@@ -167,7 +167,7 @@ class Nodes(JenkinsBase):
         if name in self:
             return self[name]
 
-        if type(config) is not dict:
+        if not isinstance(config, dict):
             return None
         url = ('%s/computer/doCreateItem?%s'
                % (self.jenkins.baseurl,
