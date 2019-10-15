@@ -1,4 +1,5 @@
 import pytest
+from collections import namedtuple
 
 import jenkinsapi
 from jenkinsapi.plugins import Plugins
@@ -19,6 +20,34 @@ TWO_JOBS_DATA = {
          'color': 'blue'},
     ]
 }
+MULTIBRANCH_JOBS_DATA = {
+    'jobs': [
+        {'name': 'multibranch-repo/master',
+         'url': 'http://localhost:8080/job/multibranch-repo/job/master',
+         'color': 'blue'},
+        {'name': 'multibranch-repo/develop',
+         'url': 'http://localhost:8080/job/multibranch-repo/job/develop',
+         'color': 'blue'},
+    ]
+}
+SCAN_MULTIBRANCH_PIPELINE_LOG = """
+Started by timer
+[Fri Jul 05 06:46:00 CEST 2019] Starting branch indexing...
+Connecting to https://stash.macq.eu using Jenkins/****** (jenkins-ldap)
+Repository type: Git
+Looking up internal/base for branches
+Checking branch master from internal/base
+      'Jenkinsfile' found
+    Met criteria
+No changes detected: master (still at 26d4d8a673f57a957fd5a23f5adfe0be02089294)
+
+  1 branches were processed
+Looking up internal/base for pull requests
+
+  0 pull requests were processed
+[Fri Jul 05 06:46:01 CEST 2019] Finished branch indexing. Indexing took 1.1 sec
+Finished: SUCCESS
+"""
 
 
 @pytest.fixture(scope='function')
@@ -110,6 +139,45 @@ def test_create_new_job_fail(mocker, monkeypatch):
         jenkins.create_job('job_new', None)
 
     assert 'Job XML config cannot be empty' in str(ar.value)
+
+
+def test_create_multibranch_pipeline_job(mocker, monkeypatch):
+    def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
+        # return multibranch jobs and other jobs.
+        # create_multibranch_pipeline_job is supposed to filter out the MULTIBRANCH jobs
+        return {
+            'jobs': TWO_JOBS_DATA['jobs'] + MULTIBRANCH_JOBS_DATA['jobs']
+        }
+
+    def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument
+        return {}
+
+    monkeypatch.setattr(JenkinsBase, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Jenkins, '_poll', fake_jenkins_poll)
+    monkeypatch.setattr(Job, '_poll', fake_job_poll)
+
+    mock_requester = Requester(username='foouser', password='foopassword')
+    mock_requester.post_xml_and_confirm_status = mocker.MagicMock(
+        return_value=''
+    )
+    mock_requester.post_and_confirm_status = mocker.MagicMock(
+        return_value=''
+    )
+    get_response = namedtuple('get_response', 'text')
+    mock_requester.get_url = mocker.MagicMock(
+        return_value=get_response(text=SCAN_MULTIBRANCH_PIPELINE_LOG)
+    )
+    jenkins = Jenkins('http://localhost:8080/',
+                      username='foouser', password='foopassword',
+                      requester=mock_requester)
+
+    jobs = jenkins.create_multibranch_pipeline_job("multibranch-repo", "multibranch-xml-content")
+
+    for idx, job_instance in enumerate(jobs):
+        assert job_instance.name == MULTIBRANCH_JOBS_DATA['jobs'][idx]['name']
+
+    # make sure we didn't get more jobs.
+    assert len(MULTIBRANCH_JOBS_DATA['jobs']) == len(jobs)
 
 
 def test_get_jenkins_obj_from_url(mocker, monkeypatch):

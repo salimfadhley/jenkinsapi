@@ -77,6 +77,7 @@ class Requester(object):
         self.ssl_verify = kwargs.get('ssl_verify', ssl_verify)
         self.cert = kwargs.get('cert', cert)
         self.timeout = kwargs.get('timeout', timeout)
+        self.session = requests.Session()
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
@@ -140,7 +141,7 @@ class Requester(object):
             allow_redirects=allow_redirects,
             stream=stream
         )
-        return requests.get(self._update_url_scheme(url), **requestKwargs)
+        return self.session.get(self._update_url_scheme(url), **requestKwargs)
 
     def post_url(self, url, params=None, data=None, files=None,
                  headers=None, allow_redirects=True, **kwargs):
@@ -151,7 +152,7 @@ class Requester(object):
             headers=headers,
             allow_redirects=allow_redirects,
             **kwargs)
-        return requests.post(self._update_url_scheme(url), **requestKwargs)
+        return self.session.post(self._update_url_scheme(url), **requestKwargs)
 
     def post_xml_and_confirm_status(
             self, url, params=None, data=None, valid=None):
