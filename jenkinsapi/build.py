@@ -155,11 +155,13 @@ class Build(JenkinsBase):
         }
         """
         if 'changeSet' in self._data:
-            if 'items' in self._data['changeSet']:
-                return self._data['changeSet']['items']
+            for i in self._data['changeSet']:
+                if 'items' in i:
+                    return i['items']
         elif 'changeSets' in self._data:
-            if 'items' in self._data['changeSets']:
-                return self._data['changeSets']['items']
+            for i in self._data['changeSets']:
+                if 'items' in i:
+                    return i['items']
         return []
 
     def _get_svn_rev(self):
@@ -175,10 +177,10 @@ class Build(JenkinsBase):
         # Sometimes we have None as part of actions. Filter those actions
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
-                    if x and "lastBuiltRevision" in x]
+                    if x and "build" in x]
 
         if _actions:
-            return _actions[0]["lastBuiltRevision"]["SHA1"]
+            return _actions[0]["build"]["revision"]["SHA1"]
 
         return None
 
@@ -196,9 +198,9 @@ class Build(JenkinsBase):
         # Sometimes we have None as part of actions. Filter those actions
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
-                    if x and "lastBuiltRevision" in x]
+                    if x and "build" in x]
 
-        return _actions[0]["lastBuiltRevision"]["branch"]
+        return _actions[0]["build"]["revision"]["branch"][0]["name"]
 
     def _get_hg_rev_branch(self):
         raise NotImplementedError('_get_hg_rev_branch is not yet implemented')
@@ -207,7 +209,7 @@ class Build(JenkinsBase):
         # Sometimes we have None as part of actions. Filter those actions
         # which have lastBuiltRevision in them
         _actions = [x for x in self._data['actions']
-                    if x and "lastBuiltRevision" in x]
+                    if x and "build" in x]
         # old Jenkins version have key remoteUrl v/s the new version has a list remoteUrls
         result = _actions[0].get("remoteUrls", _actions[0].get("remoteUrl"))
         if isinstance(result, list):
