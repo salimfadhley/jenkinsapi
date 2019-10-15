@@ -218,8 +218,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # https://server.domain.com/jenkins/job/my_team/api/
         #
         queue_baseurl_candidates = [self.jenkins.baseurl]
-        scheme, netloc, path, _, query, frag = \
-            urlparse.urlparse(self.jenkins.baseurl)
+        parsed = urlparse.urlparse(self.jenkins.baseurl)
+        scheme, netloc, path, _, query, frag = parsed
+
+        queue_baseurl_candidates.append(
+            urlparse.urlunsplit([scheme, parsed.hostname, path, query, frag]))
         while path:
             path = '/'.join(path.rstrip('/').split('/')[:-1])
             queue_baseurl_candidates.append(
