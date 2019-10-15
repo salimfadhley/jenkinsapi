@@ -16,7 +16,7 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/"
     "apache-httpcomponents-client-4-api.hpi",
     "http://updates.jenkins.io/latest/jsch.hpi",
-    "http://updates.jenkins.io/download/plugins/trilead-api/1.0.3/"
+    "http://updates.jenkins.io/download/plugins/trilead-api/1.0.5/"
     "trilead-api.hpi",
     "http://updates.jenkins.io/latest/workflow-api.hpi",
     "http://updates.jenkins.io/latest/display-url-api.hpi",
