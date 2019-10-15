@@ -206,7 +206,7 @@ def test_get_single_plugin_depth_2(jenkins):
 
 
 def test_install_delete_single_plugin_string(jenkins):
-    plugin_name = 'antisamy-markup-formatter'
+    plugin_name = 'simple-theme-plugin'
     plugin_version = 'latest'
     plugin = ('%s@%s') % (plugin_name, plugin_version)
 
@@ -223,7 +223,7 @@ def test_install_delete_single_plugin_string(jenkins):
 
 
 def test_install_delete_single_plugin_object(jenkins):
-    plugin_name = 'antisamy-markup-formatter'
+    plugin_name = 'simple-theme-plugin'
     plugin_version = 'latest'
     plugin = Plugin(('%s@%s') % (plugin_name, plugin_version))
 
@@ -240,7 +240,7 @@ def test_install_delete_single_plugin_object(jenkins):
 
 
 def test_install_delete_multiple_plugins_mix_string_object(jenkins):
-    plugin_one_name = 'antisamy-markup-formatter'
+    plugin_one_name = 'simple-theme-plugin'
     plugin_one_version = 'latest'
     plugin_one = ('%s@%s') % (plugin_one_name, plugin_one_version)
     plugin_two_name = 'docker-commons'
@@ -264,4 +264,4 @@ def test_install_delete_multiple_plugins_mix_string_object(jenkins):
 def test_run_groovy_script(jenkins):
     expected_result = 'Hello world!'
     result = jenkins.run_groovy_script('print "%s"' % expected_result)
-    assert result == 'Hello world!'
+    assert result.strip() == 'Hello world!'

@@ -3,6 +3,7 @@ This module implements the Jobs class, which is intended to be a container-like
 interface for all of the jobs defined on a single Jenkins server.
 """
 import logging
+import time
 from jenkinsapi.job import Job
 from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob
 
@@ -161,6 +162,60 @@ class Jobs(object):
         self._data = []
 
         return self[job_name]
+
+    def create_multibranch_pipeline(self, job_name, config, block=True, delay=60):
+        """
+        Create a multibranch pipeline job
+
+        :param str jobname: Name of new job
+        :param str config: XML configuration of new job
+        :param block: block until scan is finished?
+        :param delay: max delay to wait for scan to finish (seconds)
+        :returns list of new Jobs after scan
+        """
+        if not config:
+            raise JenkinsAPIException('Job XML config cannot be empty')
+
+        params = {'name': job_name}
+        try:
+            if isinstance(config, unicode):  # pylint: disable=undefined-variable
+                config = str(config)
+        except NameError:
+            # Python2 already a str
+            pass
+        self.jenkins.requester.post_xml_and_confirm_status(
+            self.jenkins.get_create_url(),
+            data=config,
+            params=params
+        )
+        # Reset to get it refreshed from Jenkins
+        self._data = []
+
+        # Launch a first scan / indexing to discover the branches...
+        self.jenkins.requester.post_and_confirm_status(
+            '{}/job/{}/build'.format(self.jenkins.baseurl, job_name),
+            data='',
+            valid=[200, 302],  # expect 302 without redirects
+            allow_redirects=False)
+
+        start_time = time.time()
+        # redirect-url does not work with indexing;
+        # so the only workaround found is to parse the console output untill scan has finished.
+        scan_finished = False
+        while not scan_finished and block and time.time() < start_time + delay:
+            indexing_console_text = self.jenkins.requester.get_url(
+                '{}/job/{}/indexing/consoleText'.format(self.jenkins.baseurl, job_name))
+            if indexing_console_text.text.strip().split('\n')[-1].startswith('Finished:'):
+                scan_finished = True
+            time.sleep(1)
+
+        # now search for all jobs created; those who start with job_name + '/'
+        jobs = []
+        for name in self.jenkins.get_jobs_list():
+            if name.startswith(job_name + '/'):
+                jobs.append(self[name])
+
+        return jobs
 
     def copy(self, job_name, new_job_name):
         """

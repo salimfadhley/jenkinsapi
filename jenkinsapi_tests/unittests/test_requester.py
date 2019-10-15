@@ -255,7 +255,7 @@ def test_get_url_get(monkeypatch):
     def fake_get(*args, **kwargs):  # pylint: disable=unused-argument
         return 'SUCCESS'
 
-    monkeypatch.setattr(requests, 'get', fake_get)
+    monkeypatch.setattr(requests.Session, 'get', fake_get)
 
     req = Requester('foo', 'bar')
     response = req.get_url(
@@ -270,7 +270,7 @@ def test_get_url_post(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return 'SUCCESS'
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     response = req.post_url(
@@ -285,7 +285,7 @@ def test_post_xml_empty_xml(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return 'SUCCESS'
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     with pytest.raises(AssertionError):
@@ -304,7 +304,7 @@ def test_post_xml_and_confirm_status_some_xml(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return FakeResponse()
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     ret = req.post_xml_and_confirm_status(
@@ -319,7 +319,7 @@ def test_post_and_confirm_status_empty_data(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return 'SUCCESS'
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     with pytest.raises(AssertionError):
@@ -338,7 +338,7 @@ def test_post_and_confirm_status_some_data(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return FakeResponse()
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     ret = req.post_and_confirm_status(
@@ -359,7 +359,7 @@ def test_post_and_confirm_status_bad_result(monkeypatch):
     def fake_post(*args, **kwargs):  # pylint: disable=unused-argument
         return FakeResponse()
 
-    monkeypatch.setattr(requests, 'post', fake_post)
+    monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
     with pytest.raises(JenkinsAPIException):
@@ -378,7 +378,7 @@ def test_get_and_confirm_status(monkeypatch):
     def fake_get(*args, **kwargs):  # pylint: disable=unused-argument
         return FakeResponse()
 
-    monkeypatch.setattr(requests, 'get', fake_get)
+    monkeypatch.setattr(requests.Session, 'get', fake_get)
 
     req = Requester('foo', 'bar')
     ret = req.get_and_confirm_status(
@@ -398,7 +398,7 @@ def test_get_and_confirm_status_bad_result(monkeypatch):
     def fake_get(*args, **kwargs):  # pylint: disable=unused-argument
         return FakeResponse()
 
-    monkeypatch.setattr(requests, 'get', fake_get)
+    monkeypatch.setattr(requests.Session, 'get', fake_get)
 
     req = Requester('foo', 'bar', baseurl='http://dummy')
     with pytest.raises(JenkinsAPIException):
