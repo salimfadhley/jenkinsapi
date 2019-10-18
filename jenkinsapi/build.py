@@ -83,25 +83,25 @@ class Build(JenkinsBase):
 
     def get_revision(self):
         vcs = 'git'
-        if 'changeSet' in self._data:
+        if 'changeSet' in self._data and 'kind' in self._data['changeSet']:
             vcs = self._data['changeSet']['kind'] or 'git'
-        elif 'changeSets' in self._data:
+        elif 'changeSets' in self._data and 'kind' in self._data['changeSets']:
             vcs = self._data['changeSets']['kind'] or 'git'
         return getattr(self, '_get_%s_rev' % vcs, lambda: None)()
 
     def get_revision_branch(self):
         vcs = 'git'
-        if 'changeSet' in self._data:
+        if 'changeSet' in self._data and 'kind' in self._data['changeSet']:
             vcs = self._data['changeSet']['kind'] or 'git'
-        elif 'changeSets' in self._data:
+        elif 'changeSets' in self._data and 'kind' in self._data['changeSets']:
             vcs = self._data['changeSets']['kind'] or 'git'
         return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
 
     def get_repo_url(self):
         vcs = 'git'
-        if 'changeSet' in self._data:
+        if 'changeSet' in self._data and 'kind' in self._data['changeSet']:
             vcs = self._data['changeSet']['kind'] or 'git'
-        elif 'changeSets' in self._data:
+        elif 'changeSets' in self._data and 'kind' in self._data['changeSets']:
             vcs = self._data['changeSets']['kind'] or 'git'
         return getattr(self, '_get_%s_repo_url' % vcs, lambda: None)()
 
