@@ -82,16 +82,13 @@ class Build(JenkinsBase):
         return self._data["builtOn"]
 
     def get_revision(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_rev' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_rev' % self._get_vcs(), lambda: None)()
 
     def get_revision_branch(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_rev_branch' % self._get_vcs(), lambda: None)()
 
     def get_repo_url(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_repo_url' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_repo_url' % self._get_vcs(), lambda: None)()
 
     def get_params(self):
         """
@@ -146,6 +143,18 @@ class Build(JenkinsBase):
             if 'items' in self._data['changeSets']:
                 return self._data['changeSets']['items']
         return []
+
+    def _get_vcs(self):
+        """
+        Returns a string VCS.
+        By default, 'git' will be used.
+        """
+        vcs = 'git'
+        if 'changeSet' in self._data and 'kind' in self._data['changeSet']:
+            vcs = self._data['changeSet']['kind'] or 'git'
+        elif 'changeSets' in self._data and 'kind' in self._data['changeSets']:
+            vcs = self._data['changeSets']['kind'] or 'git'
+        return vcs
 
     def _get_svn_rev(self):
         warnings.warn(
