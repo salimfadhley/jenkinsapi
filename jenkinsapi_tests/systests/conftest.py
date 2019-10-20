@@ -37,7 +37,8 @@ PLUGIN_DEPENDENCIES = [
     "https://updates.jenkins.io/latest/structs.hpi",
     "http://updates.jenkins.io/latest/plain-credentials.hpi",
     "http://updates.jenkins.io/latest/envinject.hpi",
-    "http://updates.jenkins.io/latest/envinject-api.hpi"
+    "http://updates.jenkins.io/latest/envinject-api.hpi",
+    "http://updates.jenkins.io/latest/jdk-tool.hpi"
 ]
 
 
