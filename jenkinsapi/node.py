@@ -486,12 +486,10 @@ class Node(JenkinsBase):
             time.sleep(poll_time)
 
         if not self.is_idle():
-            raise TimeOut("The node has not become idle after {} minutes.".format(timeout/60))
             raise TimeOut(
                 "The node has not become idle after {} minutes."
                 .format(timeout/60)
             )
-            raise TimeOut("The node has not become idle after {} minutes.".format(timeout/60))
 
     def get_response_time(self):
         """
