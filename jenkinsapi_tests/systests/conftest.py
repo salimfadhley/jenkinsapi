@@ -124,7 +124,7 @@ def launched_jenkins():
 def jenkins(launched_jenkins):
     url = launched_jenkins.jenkins_url
 
-    jenkins_instance = Jenkins(url)
+    jenkins_instance = Jenkins(url, timeout=30)
 
     _delete_all_jobs(jenkins_instance)
     _delete_all_views(jenkins_instance)
