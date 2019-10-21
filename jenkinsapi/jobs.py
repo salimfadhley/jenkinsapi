@@ -93,9 +93,10 @@ class Jobs(object):
         Iterate over the names & objects for all jobs
         """
         for job in self.itervalues():
-            yield job.name, job
             if job.name != job.get_full_name():
                 yield job.get_full_name(), job
+            else:
+                yield job.name, job
 
     def __contains__(self, job_name):
         """
@@ -110,12 +111,13 @@ class Jobs(object):
         if not self._data:
             self._data = self.poll().get('jobs', [])
         for row in self._data:
-            yield row['name']
             if row['name'] != \
                 Job.get_full_name_from_url_and_baseurl(row['url'],
                                                        self.jenkins.baseurl):
                 yield Job.get_full_name_from_url_and_baseurl(
                     row['url'], self.jenkins.baseurl)
+            else:
+                yield row['name']
 
     def itervalues(self):
         """
