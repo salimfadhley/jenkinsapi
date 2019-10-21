@@ -6,8 +6,9 @@ import logging
 
 import xml.etree.ElementTree as ET
 
+import time
 from jenkinsapi.jenkinsbase import JenkinsBase
-from jenkinsapi.custom_exceptions import PostRequired
+from jenkinsapi.custom_exceptions import PostRequired, TimeOut
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 from six.moves.urllib.parse import quote as urlquote
 
@@ -201,7 +202,7 @@ class Node(JenkinsBase):
         return self._data['jnlpAgent']
 
     def is_idle(self):
-        return self._data['idle']
+        return self.poll(tree='idle')['idle']
 
     def set_online(self):
         """
@@ -468,6 +469,27 @@ class Node(JenkinsBase):
         """
         # no need to poll as the architecture will never change
         return self.get_monitor('ArchitectureMonitor', poll_monitor=False)
+
+    def block_until_idle(self, timeout, poll_time=5):
+        """
+        Blocks until the node become idle.
+        :param timeout: Time in second when the wait is aborted.
+        :param poll_time: Interval in seconds between each check.
+        :@raise TimeOut
+        """
+        start_time = time.time()
+        while not self.is_idle() and (time.time() - start_time) < timeout:
+            log.debug(
+                "Waiting for the node to become idle. Elapsed time: %s",
+                (time.time() - start_time)
+            )
+            time.sleep(poll_time)
+
+        if not self.is_idle():
+            raise TimeOut(
+                "The node has not become idle after {} minutes."
+                .format(timeout/60)
+            )
 
     def get_response_time(self):
         """
