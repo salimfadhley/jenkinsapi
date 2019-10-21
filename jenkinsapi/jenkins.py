@@ -40,12 +40,13 @@ class Jenkins(JenkinsBase):
     Represents a jenkins environment.
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(
             self, baseurl,
             username=None, password=None,
             requester=None, lazy=False,
             ssl_verify=True, cert=None,
-            timeout=10, use_crumb=False):
+            timeout=10, use_crumb=False, max_retries=None):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -66,7 +67,8 @@ class Jenkins(JenkinsBase):
                 baseurl=baseurl,
                 ssl_verify=ssl_verify,
                 cert=cert,
-                timeout=timeout
+                timeout=timeout,
+                max_retries=max_retries,
             )
         else:
             self.requester = requester

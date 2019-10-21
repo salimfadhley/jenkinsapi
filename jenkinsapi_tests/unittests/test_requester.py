@@ -362,12 +362,13 @@ def test_post_and_confirm_status_bad_result(monkeypatch):
     monkeypatch.setattr(requests.Session, 'post', fake_post)
 
     req = Requester('foo', 'bar')
-    with pytest.raises(JenkinsAPIException):
+    with pytest.raises(JenkinsAPIException) as error:
         req.post_and_confirm_status(
             url='http://dummy',
             params={'param': 'value'},
             data='some data'
         )
+    assert 'status=500' in str(error)
 
 
 def test_get_and_confirm_status(monkeypatch):
@@ -401,8 +402,15 @@ def test_get_and_confirm_status_bad_result(monkeypatch):
     monkeypatch.setattr(requests.Session, 'get', fake_get)
 
     req = Requester('foo', 'bar', baseurl='http://dummy')
-    with pytest.raises(JenkinsAPIException):
+    with pytest.raises(JenkinsAPIException) as error:
         req.get_and_confirm_status(
             url='http://dummy',
             params={'param': 'value'}
         )
+    assert 'status=500' in str(error)
+
+
+def test_configure_max_retries():
+    req = Requester('username', 'password', baseurl='http://dummy', max_retries=3)
+    for adapter in req.session.adapters.values():
+        assert adapter.max_retries.total == 3

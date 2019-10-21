@@ -18,7 +18,6 @@ class JenkinsBase(object):
     This appears to be the base object that all other jenkins objects are
     inherited from
     """
-    RETRY_ATTEMPTS = 1
 
     def __repr__(self):
         return """<%s.%s %s>""" % (self.__class__.__module__,
