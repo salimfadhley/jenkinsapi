@@ -171,7 +171,7 @@ class Node(JenkinsBase):
             'type': 'hudson.slaves.DumbSlave$DescriptorImpl',
             'json': json.dumps({
                 'name': self.name,
-                'nodeDescription': na['node_description'],
+                'nodeDescription': na.get('node_description', ''),
                 'numExecutors': na['num_executors'],
                 'remoteFS': na['remote_fs'],
                 'labelString': na['labels'],
