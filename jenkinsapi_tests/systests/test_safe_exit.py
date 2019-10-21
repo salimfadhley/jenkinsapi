@@ -27,7 +27,7 @@ def test_safe_exit(jenkins):
 
     # A job is now running and safe_exit should await running jobs
     # Call, but wait only for 5 seconds then cancel exit
-    jenkins.safe_exit()
+    jenkins.safe_exit(wait_for_exit=False)
     time.sleep(5)
 
     jenkins.cancel_quiet_down()  # leave quietDown mode
