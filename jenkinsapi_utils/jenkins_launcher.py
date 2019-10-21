@@ -65,10 +65,10 @@ class JenkinsLancher(object):
     Launch jenkins
     """
     JENKINS_WEEKLY_WAR_URL = (
-        "http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
+        "http://updates.jenkins.io/latest/jenkins.war"
     )
     JENKINS_LTS_WAR_URL = (
-        "http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war"
+        "https://updates.jenkins.io/stable/latest/jenkins.war"
     )
 
     def __init__(self, local_orig_dir, systests_dir, war_name, plugin_urls=None,

@@ -621,9 +621,9 @@ class Jenkins(JenkinsBase):
 
     @property
     def is_quieting_down(self):
-        url = '%s/api/python' % (self.baseurl,)
+        url = '%s/api/python?tree=quietingDown' % (self.baseurl,)
         data = self.get_data(url=url)
-        return data['quietingDown']
+        return data.get('quietingDown', False)
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl
