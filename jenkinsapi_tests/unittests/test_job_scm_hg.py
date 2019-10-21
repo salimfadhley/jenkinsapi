@@ -95,6 +95,85 @@ class TestHgJob(unittest.TestCase):
         '''
         return config_node
 
+    def configtree_multibranch_git(self):
+        config_node = '''
+<flow-definition plugin="workflow-job@2.35">
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+            <triggers>
+                <hudson.triggers.TimerTrigger>
+                    <spec>H H * * H(6-7)</spec>
+                </hudson.triggers.TimerTrigger>
+                <jenkins.triggers.ReverseBuildTrigger>
+                    <spec></spec>
+                    <upstreamProjects></upstreamProjects>
+                    <threshold>
+                        <name>SUCCESS</name>
+                        <ordinal>0</ordinal>
+                        <color>BLUE</color>
+                        <completeBuild>true</completeBuild>
+                    </threshold>
+                </jenkins.triggers.ReverseBuildTrigger>
+            </triggers>
+        </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>5</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>5</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+        <org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty
+                plugin="workflow-multibranch@2.21">
+            <branch plugin="branch-api@2.5.4">
+                <sourceId>a2d4bcda-6141-4af2-8088-39139a147902</sourceId>
+                <head class="com.cloudbees.jenkins.plugins.bitbucket.BranchSCMHead"
+                        plugin="cloudbees-bitbucket-branch-source@2.5.0">
+                    <name>master</name>
+                    <repositoryType>GIT</repositoryType>
+                </head>
+                <scm class="hudson.plugins.git.GitSCM" plugin="git@3.12.1">
+                    <configVersion>2</configVersion>
+                    <userRemoteConfigs>
+                        <hudson.plugins.git.UserRemoteConfig>
+                            <name>origin</name>
+                            <refspec>+refs/heads/master:refs/remotes/origin/master</refspec>
+                            <url>ssh://git@bitbucket.site/project-name/reponame.git</url>
+                            <credentialsId>jenkins-stash</credentialsId>
+                        </hudson.plugins.git.UserRemoteConfig>
+                    </userRemoteConfigs>
+                    <branches class="singleton-list">
+                        <hudson.plugins.git.BranchSpec>
+                            <name>master</name>
+                        </hudson.plugins.git.BranchSpec>
+                    </branches>
+                    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+                    <browser class="hudson.plugins.git.browser.BitbucketWeb">
+                        <url>https://bitbucket.site/projects/project-name/repos/reponame</url>
+                    </browser>
+                    <submoduleCfg class="empty-list"/>
+                    <extensions>
+                        <jenkins.plugins.git.GitSCMSourceDefaults>
+                            <includeTags>false</includeTags>
+                        </jenkins.plugins.git.GitSCMSourceDefaults>
+                    </extensions>
+                </scm>
+                <properties/>
+            </branch>
+        </org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty>
+    </properties>
+    <definition class="org.jenkinsci.plugins.workflow.multibranch.SCMBinder"
+            plugin="workflow-multibranch@2.21">
+        <scriptPath>Jenkinsfile</scriptPath>
+    </definition>
+    <triggers/>
+    <disabled>false</disabled>
+</flow-definition>
+        '''
+        return config_node
+
     @mock.patch.object(Job, 'get_config', configtree_with_branch)
     def test_hg_attributes(self):
         expected_url = ['http://cm5/hg/sandbox/v01.0/int']
@@ -105,6 +184,13 @@ class TestHgJob(unittest.TestCase):
     @mock.patch.object(Job, 'get_config', configtree_with_default_branch)
     def test_hg_attributes_default_branch(self):
         self.assertEqual(self.j.get_scm_branch(), ['default'])
+
+    @mock.patch.object(Job, 'get_config', configtree_multibranch_git)
+    def test_git_attributes_multibranch(self):
+        expected_url = ['ssh://git@bitbucket.site/project-name/reponame.git']
+        self.assertEqual(self.j.get_scm_type(), 'git')
+        self.assertEqual(self.j.get_scm_url(), expected_url)
+        self.assertEqual(self.j.get_scm_branch(), ['master'])
 
 
 if __name__ == '__main__':
