@@ -146,7 +146,11 @@ class QueueItem(JenkinsBase):
             try:
                 self.poll()
                 return self.get_build()
-            except (NotBuiltYet, HTTPError):
+            except NotBuiltYet:
+                time.sleep(delay)
+                continue
+            except HTTPError as http_error:
+                log.debug(str(http_error))
                 time.sleep(delay)
                 continue
 
