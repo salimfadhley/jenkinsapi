@@ -353,6 +353,17 @@ class Jenkins(JenkinsBase):
         }
         return self.nodes.create_node(name, node_dict)
 
+    def create_node_with_config(self, name, config):
+        """
+        Create a new slave node with specific configuration.
+        Config should be resemble the output of node.get_node_attributes()
+        :param str name: name of slave
+        :param dict config: Node attributes for Jenkins API request to create node
+            (See function output Node.get_node_attributes())
+        :return: node obj
+        """
+        return self.nodes.create_node_with_config(name=name, config=config)
+
     def get_plugins_url(self, depth):
         # This only ever needs to work on the base object
         return '%s/pluginManager/api/python?depth=%i' % (self.baseurl, depth)
@@ -610,9 +621,9 @@ class Jenkins(JenkinsBase):
 
     @property
     def is_quieting_down(self):
-        url = '%s/api/python' % (self.baseurl,)
+        url = '%s/api/python?tree=quietingDown' % (self.baseurl,)
         data = self.get_data(url=url)
-        return data['quietingDown']
+        return data.get('quietingDown', False)
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl

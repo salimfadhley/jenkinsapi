@@ -154,3 +154,25 @@ class Nodes(JenkinsBase):
         self.jenkins.requester.post_and_confirm_status(url, data=data)
         self.poll()
         return self[name]
+
+    def create_node_with_config(self, name, config):
+        """
+        Create a new slave node with specific configuration.
+        Config should be resemble the output of node.get_node_attributes()
+        :param str name: name of slave
+        :param dict config: Node attributes for Jenkins API request to create node
+            (See function output Node.get_node_attributes())
+        :return: node obj
+        """
+        if name in self:
+            return self[name]
+
+        if not isinstance(config, dict):
+            return None
+        url = ('%s/computer/doCreateItem?%s'
+               % (self.jenkins.baseurl,
+                  urlencode(config)))
+        data = {'json': urlencode(config)}
+        self.jenkins.requester.post_and_confirm_status(url, data=data)
+        self.poll()
+        return self[name]

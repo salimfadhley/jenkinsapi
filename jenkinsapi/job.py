@@ -46,6 +46,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         self._revmap = None
         self._config = None
         self._element_tree = None
+        self._scm_prefix = ""
         self._scm_map = {
             'hudson.scm.SubversionSCM': 'svn',
             'hudson.plugins.git.GitSCM': 'git',
@@ -54,13 +55,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
         }
         self._scmurlmap = {
             'svn': lambda element_tree: list(element_tree.findall(SVN_URL)),
-            'git': lambda element_tree: list(element_tree.findall(GIT_URL)),
+            'git': lambda element_tree: list(element_tree.findall(self._scm_prefix + GIT_URL)),
             'hg': lambda element_tree: list(element_tree.findall(HG_URL)),
             None: lambda element_tree: []
         }
         self._scmbranchmap = {
             'svn': lambda element_tree: [],
-            'git': lambda element_tree: list(element_tree.findall(GIT_BRANCH)),
+            'git': lambda element_tree: list(element_tree.findall(self._scm_prefix + GIT_BRANCH)),
             'hg': self._get_hg_branch,
             None: lambda element_tree: []
         }
@@ -500,7 +501,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_scm_type(self):
         element_tree = self._get_config_element_tree()
-        scm_class = element_tree.find('scm').get('class')
+        scm_element = element_tree.find('scm')
+        if not scm_element:
+            multibranch_scm_prefix = \
+                "properties/org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty/branch/"
+            multibranch_path = multibranch_scm_prefix + "scm"
+            scm_element = element_tree.find(multibranch_path)
+            if scm_element:
+                # multibranch pipeline.
+                self._scm_prefix = multibranch_scm_prefix
+        scm_class = scm_element.get('class') if scm_element else None
         scm = self._scm_map.get(scm_class)
         if not scm:
             raise NotSupportSCM(

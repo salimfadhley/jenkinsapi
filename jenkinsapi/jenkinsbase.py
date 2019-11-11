@@ -9,6 +9,8 @@ from six.moves.urllib.parse import quote as urlquote
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
+logger = logging.getLogger(__name__)
+
 
 class JenkinsBase(object):
 
@@ -77,13 +79,13 @@ class JenkinsBase(object):
 
         response = requester.get_url(url, params)
         if response.status_code != 200:
-            logging.error('Failed request at %s with params: %s %s',
-                          url, params, tree if tree else '')
+            logger.error('Failed request at %s with params: %s %s',
+                         url, params, tree if tree else '')
             response.raise_for_status()
         try:
             return ast.literal_eval(response.text)
         except Exception:
-            logging.exception('Inappropriate content found at %s', url)
+            logger.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % response.content)
 
     def pprint(self):
@@ -101,6 +103,7 @@ class JenkinsBase(object):
         return jobs
 
     def process_job_folder(self, folder, folder_path):
+        logger.debug('Processing folder %s in %s', folder['name'], folder_path)
         folder_path += '/job/%s' % urlquote(folder['name'])
         data = self.get_data(self.python_api_url(folder_path),
                              tree='jobs[name,color]')

@@ -82,16 +82,13 @@ class Build(JenkinsBase):
         return self._data["builtOn"]
 
     def get_revision(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_rev' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_rev' % self._get_vcs(), lambda: None)()
 
     def get_revision_branch(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_rev_branch' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_rev_branch' % self._get_vcs(), lambda: None)()
 
     def get_repo_url(self):
-        vcs = self._data['changeSet']['kind'] or 'git'
-        return getattr(self, '_get_%s_repo_url' % vcs, lambda: None)()
+        return getattr(self, '_get_%s_repo_url' % self._get_vcs(), lambda: None)()
 
     def get_params(self):
         """
@@ -146,6 +143,18 @@ class Build(JenkinsBase):
             if 'items' in self._data['changeSets']:
                 return self._data['changeSets']['items']
         return []
+
+    def _get_vcs(self):
+        """
+        Returns a string VCS.
+        By default, 'git' will be used.
+        """
+        vcs = 'git'
+        if 'changeSet' in self._data and 'kind' in self._data['changeSet']:
+            vcs = self._data['changeSet']['kind'] or 'git'
+        elif 'changeSets' in self._data and 'kind' in self._data['changeSets']:
+            vcs = self._data['changeSets']['kind'] or 'git'
+        return vcs
 
     def _get_svn_rev(self):
         warnings.warn(
@@ -494,6 +503,27 @@ class Build(JenkinsBase):
             return content.decode('ISO-8859-1')
         else:
             raise JenkinsAPIException('Unknown content type for console')
+
+    def stream_logs(self, interval=0):
+        """
+        Return generator which streams parts of text console.
+        """
+        url = "%s/logText/progressiveText" % self.baseurl
+        size = 0
+        more_data = True
+        while more_data:
+            resp = self.job.jenkins.requester.get_url(url, params={'start': size})
+            content = resp.content
+            if content:
+                if isinstance(content, str):
+                    yield content
+                elif isinstance(content, bytes):
+                    yield content.decode('ISO-8859-1')
+                else:
+                    raise JenkinsAPIException('Unknown content type for console')
+            size = resp.headers['X-Text-Size']
+            more_data = resp.headers.get('X-More-Data')
+            sleep(interval)
 
     def get_estimated_duration(self):
         """

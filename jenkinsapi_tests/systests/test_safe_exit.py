@@ -26,8 +26,9 @@ def test_safe_exit(jenkins):
     assert build.is_running()
 
     # A job is now running and safe_exit should await running jobs
-    # Call, but wait only for 10 seconds then cancel exit
-    jenkins.safe_exit(max_wait=10)
+    # Call, but wait only for 5 seconds then cancel exit
+    jenkins.safe_exit(wait_for_exit=False)
+    time.sleep(5)
 
     jenkins.cancel_quiet_down()  # leave quietDown mode
     assert jenkins.is_quieting_down is False
@@ -35,7 +36,8 @@ def test_safe_exit(jenkins):
     build.stop()
     # if we call next line right away - Jenkins have no time to stop job
     # so we wait a bit
-    time.sleep(5)
+    while build.is_running():
+        time.sleep(0.5)
 
     console = build.get_console()
     assert isinstance(console, str)
