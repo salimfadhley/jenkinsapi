@@ -28,3 +28,4 @@ coverage.xml
 .venv/
 .vscode/
 *.war
+venv/
