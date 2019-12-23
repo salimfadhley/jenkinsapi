@@ -190,7 +190,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build_params else {}  # Via POSTed JSON
 
         url = self.get_build_triggerurl()
-        # If quiet period is set, the buil will have {quiet_period} seconds
+        # If quiet period is set, the build will have {quiet_period} seconds
         # quiet peroid before start.
         if quiet_period is not None:
             url += "?delay={0}sec".format(quiet_period)
