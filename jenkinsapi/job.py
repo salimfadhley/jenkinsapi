@@ -174,7 +174,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return json.dumps(json_structure)
 
     def invoke(self, securitytoken=None, block=False,
-               build_params=None, cause=None, files=None, delay=5):
+               build_params=None, cause=None, files=None, delay=5,
+               quiet_period=None):
         assert isinstance(block, bool)
         if build_params and (not self.has_params()):
             raise BadParams("This job does not support parameters")
@@ -189,6 +190,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
             if build_params else {}  # Via POSTed JSON
 
         url = self.get_build_triggerurl()
+        # If quiet period is set, the build will have {quiet_period} seconds
+        # quiet peroid before start.
+        if quiet_period is not None:
+            url += "?delay={0}sec".format(quiet_period)
         if cause:
             build_params['cause'] = cause
 

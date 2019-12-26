@@ -45,7 +45,7 @@ class Jenkins(JenkinsBase):
             username=None, password=None,
             requester=None, lazy=False,
             ssl_verify=True, cert=None,
-            timeout=10, useCrumb=False):
+            timeout=10, use_crumb=False):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -55,7 +55,7 @@ class Jenkins(JenkinsBase):
         self.username = username
         self.password = password
         if requester is None:
-            if useCrumb:
+            if use_crumb:
                 requester = CrumbRequester
             else:
                 requester = Requester
