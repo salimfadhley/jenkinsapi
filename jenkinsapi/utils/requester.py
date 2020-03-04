@@ -78,6 +78,11 @@ class Requester(object):
         self.cert = kwargs.get('cert', cert)
         self.timeout = kwargs.get('timeout', timeout)
         self.session = requests.Session()
+        self.max_retries = kwargs.get('max_retries')
+        if self.max_retries is not None:
+            retry_adapter = requests.adapters.HTTPAdapter(max_retries=self.max_retries)
+            self.session.mount('http://', retry_adapter)
+            self.session.mount('https://', retry_adapter)
 
     def get_request_dict(
             self, params=None, data=None, files=None, headers=None, **kwargs):
