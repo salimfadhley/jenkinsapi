@@ -84,6 +84,9 @@ class Build(JenkinsBase):
     def get_revision(self):
         return getattr(self, '_get_%s_rev' % self._get_vcs(), lambda: None)()
 
+    def get_revisions(self):
+        return getattr(self, '_get_%s_revs' % self._get_vcs(), lambda: None)()
+
     def get_revision_branch(self):
         return getattr(self, '_get_%s_rev_branch' % self._get_vcs(), lambda: None)()
 
@@ -165,6 +168,32 @@ class Build(JenkinsBase):
             maxRevision = max(repoPathSet["revision"], maxRevision)
         return maxRevision
 
+    def _get_svn_revs(self):
+        warnings.warn(
+            "This untested function may soon be removed from Jenkinsapi "
+            "(get_svn_rev).")
+        revs = []
+        maxRevision = 0
+        for repoPathSet in self._data["changeSet"]["revisions"]:
+            revs.appends(max(repoPathSet["revision"], maxRevision))
+        return revs
+
+
+    def _get_git_revs(self):
+        # Sometimes we have None as part of actions. Filter those actions
+        # which have lastBuiltRevision in them
+        revs = []
+        _actions = [x for x in self._data['actions']
+                    if x and "lastBuiltRevision" in x]
+
+        if _actions:
+            for act in _actions:
+                revs.append(act["lastBuiltRevision"]["SHA1"])
+            return revs
+
+        return None
+
+
     def _get_git_rev(self):
         # Sometimes we have None as part of actions. Filter those actions
         # which have lastBuiltRevision in them
@@ -175,6 +204,15 @@ class Build(JenkinsBase):
             return _actions[0]["lastBuiltRevision"]["SHA1"]
 
         return None
+
+
+    def _get_hg_revs(self):
+        warnings.warn(
+            "This untested function may soon be removed from Jenkinsapi "
+            "(_get_hg_rev).")
+        return [x['mercurialNodeName']
+                for x in self._data['actions'] if 'mercurialNodeName' in x]
+
 
     def _get_hg_rev(self):
         warnings.warn(
