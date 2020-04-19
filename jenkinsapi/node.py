@@ -409,8 +409,7 @@ class Node(JenkinsBase):
 
     def get_monitor_data(self, monitor_name, item):
         """
-        Polls the node returning one of the monitors in the monitorData branch of the
-        returned node api tree.
+        Polls the tree returning full data to get monitor item data.
         """
         monitor_data_key = 'monitorData'
         monitor_data = self.poll()[monitor_data_key]
