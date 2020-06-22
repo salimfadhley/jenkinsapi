@@ -21,7 +21,6 @@ from jenkinsapi.result_set import ResultSet
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.constants import STATUS_SUCCESS
 from jenkinsapi.custom_exceptions import NoResults
-from jenkinsapi.custom_exceptions import JenkinsAPIException
 
 from six.moves.urllib.parse import quote
 from requests import HTTPError
@@ -492,16 +491,7 @@ class Build(JenkinsBase):
         Return the current state of the text console.
         """
         url = "%s/consoleText" % self.baseurl
-        content = self.job.jenkins.requester.get_url(url).content
-        # This check was made for Python 3.x
-        # In this version content is a bytes string
-        # By contract this function must return string
-        if isinstance(content, str):
-            return content
-        elif isinstance(content, bytes):
-            return content.decode('ISO-8859-1')
-        else:
-            raise JenkinsAPIException('Unknown content type for console')
+        return self.job.jenkins.requester.get_url(url).text
 
     def stream_logs(self, interval=0):
         """
@@ -512,14 +502,9 @@ class Build(JenkinsBase):
         more_data = True
         while more_data:
             resp = self.job.jenkins.requester.get_url(url, params={'start': size})
-            content = resp.content
-            if content:
-                if isinstance(content, str):
-                    yield content
-                elif isinstance(content, bytes):
-                    yield content.decode('ISO-8859-1')
-                else:
-                    raise JenkinsAPIException('Unknown content type for console')
+            text = resp.text
+            if text:
+                yield text
             size = resp.headers['X-Text-Size']
             more_data = resp.headers.get('X-More-Data')
             sleep(interval)
