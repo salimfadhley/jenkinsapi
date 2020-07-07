@@ -48,7 +48,6 @@ class Build(JenkinsBase):
         depth=0 is sufficient for you, don't go up to 1. For more
         information, see
         https://www.jenkins.io/doc/book/using/remote-access-api/#RemoteaccessAPI-Depthcontrol
-        
         """
         assert isinstance(buildno, int)
         self.buildno = buildno
