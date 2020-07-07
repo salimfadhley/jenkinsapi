@@ -1,11 +1,11 @@
 """
-A jenkins build represents a single execution of a Jenkins Job.
+A Jenkins build represents a single execution of a Jenkins Job.
 
-Builds can be thought of as the second level of the jenkins heirarchy
+Builds can be thought of as the second level of the Jenkins hierarchy
 beneath Jobs. Builds can have state, such as whether they are running or
-not. They can also have outcomes, such as wether they passed or failed.
+not. They can also have outcomes, such as whether they passed or failed.
 
-Build objects can be associated with Results and Artifacts.g
+Build objects can be associated with Results and Artifacts.
 """
 
 import time
@@ -33,7 +33,7 @@ log = logging.getLogger(__name__)
 class Build(JenkinsBase):
 
     """
-    Represents a jenkins build, executed in context of a job.
+    Represents a Jenkins build, executed in context of a job.
     """
 
     STR_TOTALCOUNT = "totalCount"
@@ -45,9 +45,10 @@ class Build(JenkinsBase):
         depth=1 is for backward compatibility consideration
 
         About depth, the deeper it is, the more build data you get back. If
-        depth=0 is sufficient for you, don't go up to 1. See section 'Depth
-        control' of
-        https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API
+        depth=0 is sufficient for you, don't go up to 1. For more
+        information, see
+        https://www.jenkins.io/doc/book/using/remote-access-api/#RemoteaccessAPI-Depthcontrol
+        
         """
         assert isinstance(buildno, int)
         self.buildno = buildno
@@ -56,7 +57,7 @@ class Build(JenkinsBase):
         JenkinsBase.__init__(self, url)
 
     def _poll(self, tree=None):
-        # For build's we need more information for downstream and
+        # For builds we need more information for downstream and
         # upstream builds so we override the poll to get at the extra
         # data for build objects
         url = self.python_api_url(self.baseurl)
@@ -92,8 +93,8 @@ class Build(JenkinsBase):
 
     def get_params(self):
         """
-        Return a dictionary of params names and their values or None
-        if no parameters present
+        Return a dictionary of params names and their values, or an
+        empty dictionary if no parameters are returned.
         """
         # This is what a parameter action looks like:
         # {'_class': 'hudson.model.ParametersAction', 'parameters': [
