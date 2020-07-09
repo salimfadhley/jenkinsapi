@@ -98,6 +98,8 @@ class JenkinsBase(object):
             if 'color' not in job.keys():
                 jobs.remove(job)
                 jobs += self.process_job_folder(job, self.baseurl)
+            else:
+                job["url"] = '%s/job/%s' % (self.baseurl, urlquote(job['name']))
 
         return jobs
 
