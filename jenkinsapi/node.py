@@ -328,7 +328,7 @@ class Node(JenkinsBase):
         if self.name == 'master':
             raise JenkinsAPIException('master node does not have config.xml')
 
-        self.jenkins.requester.post_and_confirm_status(
+        self.jenkins.requester.post_xml_and_confirm_status(
             "%(baseurl)s/config.xml" % self.__dict__,
             data=config_xml)
 
