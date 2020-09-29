@@ -21,7 +21,6 @@ class Fingerprint(JenkinsBase):
     RE_MD5 = re.compile("^([0-9a-z]{32})$")
 
     def __init__(self, baseurl, id_, jenkins_obj):
-        logging.basicConfig()
         self.jenkins_obj = jenkins_obj
         assert self.RE_MD5.search(id_), ("%s does not look like "
                                          "a valid id" % id_)
@@ -56,7 +55,7 @@ class Fingerprint(JenkinsBase):
             # extract the status code from it
             response_obj = err.response
             if response_obj.status_code == 404:
-                logging.warning(
+                log.warning(
                     "MD5 cannot be checked if fingerprints are not "
                     "enabled")
                 self.unknown = True
