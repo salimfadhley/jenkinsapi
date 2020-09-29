@@ -507,15 +507,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_scm_type(self):
         element_tree = self._get_config_element_tree()
         scm_element = element_tree.find('scm')
-        if not scm_element:
+        if scm_element is None:
             multibranch_scm_prefix = \
                 "properties/org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty/branch/"
             multibranch_path = multibranch_scm_prefix + "scm"
             scm_element = element_tree.find(multibranch_path)
-            if scm_element:
+            if scm_element is not None:
                 # multibranch pipeline.
                 self._scm_prefix = multibranch_scm_prefix
-        scm_class = scm_element.get('class') if scm_element else None
+        scm_class = scm_element.get('class') if scm_element is not None else None
         scm = self._scm_map.get(scm_class)
         if not scm:
             raise NotSupportSCM(
