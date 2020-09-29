@@ -19,7 +19,7 @@ About this library
 
 Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi.
 
-Jenkins (and It's predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make many Jenkins oriented tasks easier to automate.
+Jenkins (and its predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make many Jenkins oriented tasks easier to automate.
 
 This library allows you to automate most common Jenkins operations using Python, such as:
 
@@ -47,10 +47,10 @@ Python versions
 The project has been tested against Python versions:
 
 * 2.7
-* 3.4
 * 3.5
 * 3.6
 * 3.7
+* 3.8
 
 Jenkins versions
 ----------------
