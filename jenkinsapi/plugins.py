@@ -15,6 +15,7 @@ except ImportError:
     from urllib.parse import urlencode
 import json
 import requests
+from six import raise_from
 from jenkinsapi.plugin import Plugin
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownPlugin
@@ -82,8 +83,8 @@ class Plugins(JenkinsBase):
     def __getitem__(self, plugin_name):
         try:
             return self.get_plugins_dict()[plugin_name]
-        except KeyError:
-            raise UnknownPlugin(plugin_name)
+        except KeyError as exc:
+            raise_from(UnknownPlugin(plugin_name), exc)
 
     def __setitem__(self, shortName, plugin):
         """

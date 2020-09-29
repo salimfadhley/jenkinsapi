@@ -5,6 +5,7 @@ Jenkins node.
 """
 import logging
 
+from six import raise_from
 from six.moves.urllib.parse import urlencode
 from jenkinsapi.credential import Credential
 from jenkinsapi.credential import UsernamePasswordCredential
@@ -98,10 +99,11 @@ class Credentials(JenkinsBase):
                     url, params={}, data=urlencode(params)
                 )
             except JenkinsAPIException as jae:
-                raise JenkinsAPIException('Latest version of Credentials '
-                                          'plugin is required to be able '
-                                          'to create credentials. '
-                                          'Original exception: %s' % str(jae))
+                raise_from(JenkinsAPIException('Latest version of Credentials '
+                                               'plugin is required to be able '
+                                               'to create credentials. '
+                                               'Original exception: %s' % str(jae)),
+                           jae)
         else:
             cred_id = self[description].credential_id
             credential.credential_id = cred_id
@@ -115,10 +117,11 @@ class Credentials(JenkinsBase):
                     url, params={}, data=params
                 )
             except JenkinsAPIException as jae:
-                raise JenkinsAPIException('Latest version of Credentials '
-                                          'plugin is required to be able '
-                                          'to update credentials. '
-                                          'Original exception: %s' % str(jae))
+                raise_from(JenkinsAPIException('Latest version of Credentials '
+                                               'plugin is required to be able '
+                                               'to update credentials. '
+                                               'Original exception: %s' % str(jae)),
+                           jae)
 
         self.poll()
         self.credentials = self._data['credentials']
@@ -143,10 +146,11 @@ class Credentials(JenkinsBase):
                 url, params={}, data=urlencode(params)
             )
         except JenkinsAPIException as jae:
-            raise JenkinsAPIException('Latest version of Credentials '
-                                      'required to be able to create '
-                                      'credentials. Original exception: %s'
-                                      % str(jae))
+            raise_from(JenkinsAPIException('Latest version of Credentials '
+                                           'required to be able to create '
+                                           'credentials. Original exception: %s'
+                                           % str(jae)),
+                       jae)
         self.poll()
         self.credentials = self._data['credentials']
         if description in self:

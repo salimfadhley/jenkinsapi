@@ -6,6 +6,7 @@ import time
 from requests import HTTPError
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import UnknownQueueItem, NotBuiltYet
+from six import raise_from
 
 log = logging.getLogger(__name__)
 
@@ -174,11 +175,11 @@ class QueueItem(JenkinsBase):
     def get_build_number(self):
         try:
             return self._data['executable']['number']
-        except (KeyError, TypeError):
-            raise NotBuiltYet()
+        except (KeyError, TypeError) as exc:
+            raise_from(NotBuiltYet(), exc)
 
     def get_job_name(self):
         try:
             return self._data['task']['name']
-        except KeyError:
-            raise NotBuiltYet()
+        except KeyError as exc:
+            raise_from(NotBuiltYet(), exc)

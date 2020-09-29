@@ -5,7 +5,7 @@ import json
 import logging
 
 import xml.etree.ElementTree as ET
-
+from six import raise_from
 import time
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import PostRequired, TimeOut
@@ -118,10 +118,11 @@ class Node(JenkinsBase):
                 credential = self.jenkins.credentials[
                     na['credential_description']
                 ]
-            except KeyError:
-                raise JenkinsAPIException('Credential with description "%s"'
-                                          ' not found'
-                                          % na['credential_description'])
+            except KeyError as exc:
+                raise_from(JenkinsAPIException('Credential with description "%s"'
+                                               ' not found'
+                                               % na['credential_description']),
+                           exc)
 
             retries = na['max_num_retries'] if 'max_num_retries' in na else ''
             re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''

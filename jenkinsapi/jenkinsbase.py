@@ -5,6 +5,7 @@ Module for JenkinsBase class
 import ast
 import pprint
 import logging
+from six import raise_from
 from six.moves.urllib.parse import quote as urlquote
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
@@ -83,9 +84,9 @@ class JenkinsBase(object):
             response.raise_for_status()
         try:
             return ast.literal_eval(response.text)
-        except Exception:
+        except Exception as exc:
             logger.exception('Inappropriate content found at %s', url)
-            raise JenkinsAPIException('Cannot parse %s' % response.content)
+            raise_from(JenkinsAPIException('Cannot parse %s' % response.content), exc)
 
     def pprint(self):
         """

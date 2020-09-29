@@ -3,6 +3,7 @@ Module for jenkinsapi nodes
 """
 import logging
 
+from six import raise_from
 from six.moves.urllib.parse import urlencode
 from jenkinsapi.node import Node
 from jenkinsapi.jenkinsbase import JenkinsBase
@@ -75,8 +76,8 @@ class Nodes(JenkinsBase):
             nodename = item['displayName']
             try:
                 yield nodename, self._make_node(nodename)
-            except Exception:
-                raise JenkinsAPIException('Unable to iterate nodes')
+            except Exception as exc:
+                raise_from(JenkinsAPIException('Unable to iterate nodes'), exc)
 
     def items(self):
         """
@@ -94,8 +95,8 @@ class Nodes(JenkinsBase):
         for item in self._data['computer']:
             try:
                 yield self._make_node(item['displayName'])
-            except Exception:
-                raise JenkinsAPIException('Unable to iterate nodes')
+            except Exception as exc:
+                raise_from(JenkinsAPIException('Unable to iterate nodes'), exc)
 
     def values(self):
         """

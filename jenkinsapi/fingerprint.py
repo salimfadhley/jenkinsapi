@@ -7,6 +7,7 @@ from jenkinsapi.custom_exceptions import ArtifactBroken
 
 import re
 import requests
+from six import raise_from
 
 import logging
 
@@ -96,14 +97,16 @@ class Fingerprint(JenkinsBase):
     def validate(self):
         try:
             assert self.valid()
-        except AssertionError:
-            raise ArtifactBroken(
+        except AssertionError as exc:
+            raise_from(ArtifactBroken(
                 "Artifact %s seems to be broken, check %s" %
-                (self.id_, self.baseurl))
-        except requests.exceptions.HTTPError:
-            raise ArtifactBroken(
+                (self.id_, self.baseurl)),
+                       exc)
+        except requests.exceptions.HTTPError as exc:
+            raise_from(ArtifactBroken(
                 "Unable to validate artifact id %s using %s" %
-                (self.id_, self.baseurl))
+                (self.id_, self.baseurl)),
+                       exc)
         return True
 
     def get_info(self):

@@ -5,7 +5,7 @@ import json
 import logging
 import xml.etree.ElementTree as ET
 import six.moves.urllib.parse as urlparse
-
+from six import raise_from
 from collections import defaultdict
 from jenkinsapi.build import Build
 from jenkinsapi.custom_exceptions import (
@@ -411,16 +411,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
             self._revmap = self.get_revision_dict()
         try:
             return self._revmap[revision]
-        except KeyError:
-            raise NotFound("Couldn't find a build with that revision")
+        except KeyError as exc:
+            raise_from(NotFound("Couldn't find a build with that revision"), exc)
 
     def get_build(self, buildnumber):
         assert isinstance(buildnumber, int)
         try:
             url = self.get_build_dict()[buildnumber]
             return Build(url, buildnumber, job=self)
-        except KeyError:
-            raise NotFound('Build #%s not found' % buildnumber)
+        except KeyError as exc:
+            raise_from(NotFound('Build #%s not found' % buildnumber), exc)
 
     def delete_build(self, build_number):
         """
@@ -434,8 +434,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             url = "%s/doDelete" % url
             self.jenkins.requester.post_and_confirm_status(url, data='')
             self.jenkins.poll()
-        except KeyError:
-            raise NotFound('Build #%s not found' % build_number)
+        except KeyError as exc:
+            raise_from(NotFound('Build #%s not found' % build_number), exc)
 
     def get_build_metadata(self, buildnumber):
         """
@@ -449,8 +449,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         try:
             url = self.get_build_dict()[buildnumber]
             return Build(url, buildnumber, job=self, depth=0)
-        except KeyError:
-            raise NotFound('Build #%s not found' % buildnumber)
+        except KeyError as exc:
+            raise_from(NotFound('Build #%s not found' % buildnumber), exc)
 
     def __delitem__(self, build_number):
         self.delete_build(build_number)

@@ -5,6 +5,7 @@ https://chromium.googlesource.com/external/googleappengine/python/+/master
 /google/appengine/tools/jarfile.py
 """
 
+from six import raise_from
 import zipfile
 
 _MANIFEST_NAME = 'META-INF/MANIFEST.MF'
@@ -69,9 +70,9 @@ def _parse_manifest(manifest_string):
     try:
         for entry in parsed_sections[1:]:
             sections[entry['Name']] = entry
-    except KeyError:
-        raise InvalidJarError(
-            'Manifest entry has no Name attribute: %s' % entry)
+    except KeyError as exc:
+        raise_from(InvalidJarError(
+            'Manifest entry has no Name attribute: %s' % entry), exc)
     return Manifest(main_section, sections)
 
 
@@ -93,5 +94,5 @@ def _parse_manifest_section(section):
     section = section.replace('\n ', '')
     try:
         return dict(line.split(': ', 1) for line in section.split('\n'))
-    except ValueError:
-        raise InvalidJarError('Invalid manifest %r' % section)
+    except ValueError as exc:
+        raise_from(InvalidJarError('Invalid manifest %r' % section), exc)
