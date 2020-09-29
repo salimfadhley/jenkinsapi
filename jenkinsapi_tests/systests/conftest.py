@@ -16,14 +16,14 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/"
     "apache-httpcomponents-client-4-api.hpi",
     "http://updates.jenkins.io/latest/jsch.hpi",
-    "http://updates.jenkins.io/download/plugins/trilead-api/1.0.5/"
+    "http://updates.jenkins.io/download/plugins/trilead-api/1.0.8/"
     "trilead-api.hpi",
     "http://updates.jenkins.io/latest/workflow-api.hpi",
     "http://updates.jenkins.io/latest/display-url-api.hpi",
     "http://updates.jenkins.io/latest/workflow-step-api.hpi",
     "http://updates.jenkins.io/latest/workflow-scm-step.hpi",
     "http://updates.jenkins.io/latest/icon-shim.hpi",
-    "http://updates.jenkins.io/download/plugins/junit/1.28/junit.hpi",
+    "http://updates.jenkins.io/download/plugins/junit/1.29/junit.hpi",
     "http://updates.jenkins.io/latest/script-security.hpi",
     "http://updates.jenkins.io/latest/matrix-project.hpi",
     "http://updates.jenkins.io/latest/credentials.hpi",
