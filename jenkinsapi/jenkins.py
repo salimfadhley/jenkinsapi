@@ -46,7 +46,7 @@ class Jenkins(JenkinsBase):
             username=None, password=None,
             requester=None, lazy=False,
             ssl_verify=True, cert=None,
-            timeout=10, use_crumb=False, max_retries=None):
+            timeout=10, use_crumb=True, max_retries=None):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -700,4 +700,4 @@ class Jenkins(JenkinsBase):
         request = Request(jenkins_url, data)
         opener = build_opener(SmartRedirectHandler())
         res = opener.open(request)
-        Requester.AUTH_COOKIE = res.cookie
+        self.requester.__class__.AUTH_COOKIE = res.cookie

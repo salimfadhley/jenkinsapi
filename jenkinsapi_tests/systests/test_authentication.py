@@ -9,8 +9,8 @@ from requests import HTTPError as REQHTTPError
 from jenkinsapi.jenkins import Jenkins
 
 
-def test_normal_uthentication(jenkins_admin_admin):
-    # No problem with the righ user/pass
+def test_normal_authentication(jenkins_admin_admin):
+    # No problem with the right user/pass
     jenkins_user = Jenkins(jenkins_admin_admin.baseurl,
                            jenkins_admin_admin.username,
                            jenkins_admin_admin.password)
@@ -21,24 +21,24 @@ def test_normal_uthentication(jenkins_admin_admin):
     with pytest.raises(REQHTTPError) as http_excep:
         Jenkins(jenkins_admin_admin.baseurl)
 
-    assert Requester.AUTH_COOKIE is None
+    assert jenkins_user.requester.__class__.AUTH_COOKIE is None
     assert http_excep.value.response.status_code == 403
 
 
 def test_auth_cookie(jenkins_admin_admin):
     initial_cookie_value = None
     final_cookie_value = "JSESSIONID"
-    assert initial_cookie_value == Requester.AUTH_COOKIE
+    assert initial_cookie_value == jenkins_admin_admin.requester.__class__.AUTH_COOKIE
 
     jenkins_admin_admin.use_auth_cookie()
-    result = Requester.AUTH_COOKIE
+    result = jenkins_admin_admin.requester.__class__.AUTH_COOKIE
     assert result is not None
     assert final_cookie_value in result
 
 
 def test_wrongauth_cookie(jenkins_admin_admin):
     initial_cookie_value = None
-    assert initial_cookie_value == Requester.AUTH_COOKIE
+    assert initial_cookie_value == jenkins_admin_admin.requester.__class__.AUTH_COOKIE
 
     jenkins_admin_admin.username = "fakeuser"
     jenkins_admin_admin.password = "fakepass"
@@ -46,14 +46,14 @@ def test_wrongauth_cookie(jenkins_admin_admin):
     with pytest.raises(HTTPError) as http_excep:
         jenkins_admin_admin.use_auth_cookie()
 
-    assert Requester.AUTH_COOKIE is None
+    assert jenkins_admin_admin.requester.__class__.AUTH_COOKIE is None
     assert http_excep.value.code == 401
 
 
 def test_verify_cookie_isworking(jenkins_admin_admin):
     initial_cookie_value = None
     final_cookie_value = "JSESSIONID"
-    assert initial_cookie_value == Requester.AUTH_COOKIE
+    assert initial_cookie_value == jenkins_admin_admin.requester.__class__.AUTH_COOKIE
 
     # Remove requester user/pass
     jenkins_admin_admin.requester.username = None
@@ -63,7 +63,7 @@ def test_verify_cookie_isworking(jenkins_admin_admin):
     with pytest.raises(REQHTTPError) as http_excep:
         jenkins_admin_admin.poll()
 
-    assert Requester.AUTH_COOKIE is None
+    assert jenkins_admin_admin.requester.__class__.AUTH_COOKIE is None
     assert http_excep.value.response.status_code == 403
 
     # Retrieve the auth cookie, we can because we
@@ -71,7 +71,7 @@ def test_verify_cookie_isworking(jenkins_admin_admin):
     # and jenkins_admin_admin.password
     jenkins_admin_admin.use_auth_cookie()
 
-    result = Requester.AUTH_COOKIE
+    result = jenkins_admin_admin.requester.__class__.AUTH_COOKIE
     assert result is not None
     assert final_cookie_value in result
 

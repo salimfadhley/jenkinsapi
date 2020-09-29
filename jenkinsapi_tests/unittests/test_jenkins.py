@@ -356,7 +356,8 @@ def test_get_use_auth_cookie(mocker, monkeypatch):
     monkeypatch.setattr(jenkinsapi.jenkins, 'build_opener', fake_opener)
 
     jenkins = Jenkins('http://localhost:8080',
-                      username='foouser', password='foopassword')
+                      username='foouser', password='foopassword',
+                      use_crumb=False)
 
     jenkins.use_auth_cookie()
     assert Requester.AUTH_COOKIE == COOKIE_VALUE
