@@ -9,6 +9,8 @@ import requests
 import threading
 import subprocess
 from pkg_resources import resource_stream
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from tarfile import TarFile
 from six.moves import queue
 from six.moves.urllib.parse import urlparse
@@ -144,13 +146,22 @@ class JenkinsLancher(object):
             os.mkdir(plugin_orig_dir)
         plugin_orig_path = os.path.join(plugin_orig_dir, filename)
         plugin_dest_path = os.path.join(plugin_dest_dir, filename)
+        retry_strategy = Retry(
+            total=5,
+            status_forcelist=[429, 500, 502, 503, 504],
+            method_whitelist=["HEAD", "GET", "OPTIONS"],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        http = requests.Session()
+        http.mount("https://", adapter)
+        http.mount("http://", adapter)
         if os.path.exists(plugin_orig_path):
             log.info("%s already locally present, delete the file to redownload"
                      " and update", filename)
         else:
             log.info("Downloading %s from %s", filename, hpi_url)
             with open(plugin_orig_path, 'wb') as hpi:
-                request = requests.get(hpi_url)
+                request = http.get(hpi_url)
                 hpi.write(request.content)
         log.info("Installing %s", filename)
         shutil.copy(plugin_orig_path, plugin_dest_path)
