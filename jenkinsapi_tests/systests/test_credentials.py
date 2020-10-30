@@ -27,22 +27,22 @@ def test_delete_inexistant_credential(jenkins):
 def test_create_user_pass_credential(jenkins):
     creds = jenkins.credentials
 
-    cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
+        'description': 'description',
         'userName': 'userName',
         'password': 'password'
     }
-    creds[cred_descr] = UsernamePasswordCredential(cred_dict)
+    creds['expected_id'] = UsernamePasswordCredential(cred_dict)
 
-    assert cred_descr in creds
+    assert 'expected_id' in creds
+    assert creds['expected_id'].credential_id == 'expected_id'
 
-    cred = creds[cred_descr]
+    cred = creds['expected_id']
     assert isinstance(cred, UsernamePasswordCredential) is True
     assert cred.password is None
-    assert cred.description == cred_descr
+    assert cred.description == 'description'
 
-    del creds[cred_descr]
+    del creds['expected_id']
 
 
 def test_update_user_pass_credential(jenkins):

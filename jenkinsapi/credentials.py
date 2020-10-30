@@ -49,10 +49,10 @@ class Credentials(JenkinsBase):
 
     def __iter__(self):
         for cred in self.credentials.values():
-            yield cred.description
+            yield cred.credential_id
 
-    def __contains__(self, description):
-        return description in self.keys()
+    def __contains__(self, credential_id):
+        return credential_id in self.keys()
 
     def iterkeys(self):
         return self.__iter__()
@@ -62,32 +62,32 @@ class Credentials(JenkinsBase):
 
     def iteritems(self):
         for cred in self.credentials.values():
-            yield cred.description, cred
+            yield cred.credential_id, cred
 
-    def __getitem__(self, description):
+    def __getitem__(self, credential_id):
         for cred in self.credentials.values():
-            if cred.description == description:
+            if cred.credential_id == credential_id:
                 return cred
 
-        raise KeyError('Credential with description "%s" not found'
-                       % description)
+        raise KeyError('Credential with id "%s" not found'
+                       % credential_id)
 
     def __len__(self):
         return len(self.keys())
 
-    def __setitem__(self, description, credential):
+    def __setitem__(self, credential_id, credential):
         """
         Creates Credential in Jenkins using username, password and description
-        Description must be unique in Jenkins instance
-        because it is used to find Credential later.
+        Credential ID must be unique in Jenkins instance.
 
-        If description already exists - this method is going to update
+        If credential_id already exists - this method is going to update
         existing Credential
 
-        :param str description: Credential description
+        :param str credential_id: Credential ID
         :param tuple credential_tuple: (username, password, description) tuple.
         """
-        if description not in self:
+        credential.credential_id = credential_id
+        if credential_id not in self:
             params = credential.get_attributes()
             url = (
                 '%s/createCredentials'
@@ -97,47 +97,49 @@ class Credentials(JenkinsBase):
                 self.jenkins.requester.post_and_confirm_status(
                     url, params={}, data=urlencode(params)
                 )
+                self.update()
             except JenkinsAPIException as jae:
                 raise JenkinsAPIException('Latest version of Credentials '
-                                          'plugin is required to be able '
-                                          'to create credentials. '
-                                          'Original exception: %s' % str(jae))
+                                            'plugin is required to be able '
+                                            'to create credentials. '
+                                            'Original exception: %s' % str(jae))
         else:
-            cred_id = self[description].credential_id
-            credential.credential_id = cred_id
             params = credential.get_attributes_xml()
             url = (
                 '%s/credential/%s/config.xml'
-                % (self.baseurl, cred_id)
+                % (self.baseurl, credential_id)
             )
             try:
                 self.jenkins.requester.post_xml_and_confirm_status(
                     url, params={}, data=params
                 )
+                self.update()
             except JenkinsAPIException as jae:
                 raise JenkinsAPIException('Latest version of Credentials '
                                           'plugin is required to be able '
                                           'to update credentials. '
                                           'Original exception: %s' % str(jae))
+            else:
+                if credential_id not in self:
+                    raise JenkinsAPIException('Problem updating credential.')
 
+    def update(self):
         self.poll()
         self.credentials = self._data['credentials']
-        if description not in self:
-            raise JenkinsAPIException('Problem creating/updating credential.')
 
     def get(self, item, default):
         return self[item] if item in self else default
 
-    def __delitem__(self, description):
-        if description not in self:
+    def __delitem__(self, credential_id):
+        if credential_id not in self:
             raise KeyError(
-                'Credential with description "%s" not found' % description)
+                'Credential with ID "%s" not found' % credential_id)
         params = {
             'Submit': 'OK',
             'json': {}
         }
         url = ('%s/credential/%s/doDelete'
-               % (self.baseurl, self[description].credential_id))
+               % (self.baseurl, credential_id))
         try:
             self.jenkins.requester.post_and_confirm_status(
                 url, params={}, data=urlencode(params)
@@ -149,7 +151,7 @@ class Credentials(JenkinsBase):
                                       % str(jae))
         self.poll()
         self.credentials = self._data['credentials']
-        if description in self:
+        if credential_id in self:
             raise JenkinsAPIException('Problem deleting credential.')
 
     def _make_credential(self, cred_dict):
