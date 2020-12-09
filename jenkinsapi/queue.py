@@ -87,6 +87,8 @@ class QueueItem(JenkinsBase):
     """An individual item in the queue
     """
 
+    MAX_RETRIES = 100  # if set, abort after this number of HTTPError
+
     def __init__(self, baseurl, jenkins_obj):
         self.jenkins = jenkins_obj
         JenkinsBase.__init__(self, baseurl)
@@ -142,6 +144,7 @@ class QueueItem(JenkinsBase):
         return build.block_until_complete(delay=delay)
 
     def block_until_building(self, delay=5):
+        retries = 0
         while True:
             try:
                 self.poll()
@@ -150,7 +153,10 @@ class QueueItem(JenkinsBase):
                 time.sleep(delay)
                 continue
             except HTTPError as http_error:
+                if self.MAX_RETRIES and retries >= self.MAX_RETRIES:
+                    raise http_error
                 log.debug(str(http_error))
+                retries += 1
                 time.sleep(delay)
                 continue
 
