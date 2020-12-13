@@ -4,8 +4,12 @@ interface for all of the jobs defined on a single Jenkins server.
 """
 import logging
 import time
+from typing import Any, Dict, Iterator, List, Optional, Tuple, TYPE_CHECKING
 from jenkinsapi.job import Job
 from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob
+
+if TYPE_CHECKING:
+    from jenkinsapi.jenkins import Jenkins
 
 log = logging.getLogger(__name__)
 
@@ -20,10 +24,12 @@ class Jobs(object):
     """
 
     def __init__(self, jenkins):
+        # type: (Jenkins) -> None
         self.jenkins = jenkins
-        self._data = []
+        self._data = []     # type: List[Job]
 
     def _del_data(self, job_name):
+        # type: (str) -> None
         if not self._data:
             return
         for num, job_data in enumerate(self._data):
@@ -35,9 +41,11 @@ class Jobs(object):
         return len(self.keys())
 
     def poll(self, tree='jobs[name,color,url]'):
+        # type: (str) -> Dict[str, Any]
         return self.jenkins.poll(tree=tree)
 
     def __delitem__(self, job_name):
+        # type: (str) -> None
         """
         Delete a job by name
         :param str job_name: name of a existing job
@@ -89,6 +97,7 @@ class Jobs(object):
             raise UnknownJob(job_name)
 
     def iteritems(self):
+        # type: () -> Iterator[Tuple[str, Job]]
         """
         Iterate over the names & objects for all jobs
         """
@@ -99,12 +108,14 @@ class Jobs(object):
                 yield job.name, job
 
     def __contains__(self, job_name):
+        # type: (str) -> bool
         """
         True if job_name exists in Jenkins
         """
         return job_name in self.keys()
 
     def iterkeys(self):
+        # type: () -> Iterator[str]
         """
         Iterate over the names of all available jobs
         """
@@ -120,6 +131,7 @@ class Jobs(object):
                 yield row['name']
 
     def itervalues(self):
+        # type: () -> Iterator[Job]
         """
         Iterate over all available jobs
         """
@@ -129,6 +141,7 @@ class Jobs(object):
             yield Job(row['url'], row['name'], self.jenkins)
 
     def keys(self):
+        # type: () -> List[str]
         """
         Return a list of the names of all jobs
         """

@@ -2,7 +2,7 @@
 Kerberos aware Requester
 """
 from jenkinsapi.utils.requester import Requester
-from requests_kerberos import HTTPKerberosAuth, OPTIONAL
+from requests_kerberos import HTTPKerberosAuth, OPTIONAL    # type: ignore
 
 
 # pylint: disable=W0222

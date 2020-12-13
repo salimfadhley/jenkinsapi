@@ -7,12 +7,12 @@ import logging
 import time
 import re
 try:
-    from StringIO import StringIO
+    from StringIO import StringIO   # type: ignore
     from urllib import urlencode
 except ImportError:
     # Python3
-    from io import BytesIO as StringIO
-    from urllib.parse import urlencode
+    from io import BytesIO as StringIO  # type: ignore
+    from urllib.parse import urlencode  # type: ignore
 import json
 import requests
 from jenkinsapi.plugin import Plugin

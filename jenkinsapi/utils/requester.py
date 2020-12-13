@@ -3,6 +3,7 @@ Module for jenkinsapi requester (which is a wrapper around python-requests)
 """
 import requests
 import six.moves.urllib.parse as urlparse
+from typing import Optional
 
 from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired
 # import logging
@@ -41,8 +42,8 @@ class Requester(object):
 
     def __init__(self, *args, **kwargs):
 
-        username = None
-        password = None
+        username = None     # type: Optional[str]
+        password = None     # type: Optional[str]
         ssl_verify = True
         cert = None
         baseurl = None

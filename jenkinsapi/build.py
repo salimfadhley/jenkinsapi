@@ -15,6 +15,9 @@ import datetime
 
 from time import sleep
 import pytz
+
+from typing import TYPE_CHECKING
+
 from jenkinsapi import config
 from jenkinsapi.artifact import Artifact
 from jenkinsapi.result_set import ResultSet
@@ -26,6 +29,9 @@ from jenkinsapi.custom_exceptions import JenkinsAPIException
 from six.moves.urllib.parse import quote
 from requests import HTTPError
 
+if TYPE_CHECKING:
+    from jenkinsapi.job import Job
+    from jenkinsapi.jenkins import Jenkins
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +47,7 @@ class Build(JenkinsBase):
                            "any test results")
 
     def __init__(self, url, buildno, job, depth=1):
+        # type: (str, int, Job, int) -> None
         """
         depth=1 is for backward compatibility consideration
 
@@ -423,6 +430,7 @@ class Build(JenkinsBase):
             count += 1
 
     def get_jenkins_obj(self):
+        # type: () -> Jenkins
         return self.job.get_jenkins_obj()
 
     def get_result_url(self):

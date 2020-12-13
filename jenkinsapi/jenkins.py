@@ -10,6 +10,8 @@ from six.moves.urllib.request import Request, HTTPRedirectHandler, build_opener
 from six.moves.urllib.parse import quote as urlquote
 from six.moves.urllib.parse import urlencode
 from requests import HTTPError, ConnectionError
+from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
+
 from jenkinsapi import config
 from jenkinsapi.credentials import Credentials
 from jenkinsapi.credentials import Credentials2x
@@ -30,6 +32,9 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 from jenkinsapi.utils.crumb_requester import CrumbRequester
 
+if TYPE_CHECKING:
+    from jenkinsapi.node import Node
+
 
 log = logging.getLogger(__name__)
 
@@ -42,11 +47,17 @@ class Jenkins(JenkinsBase):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, baseurl,
-            username=None, password=None,
-            requester=None, lazy=False,
-            ssl_verify=True, cert=None,
-            timeout=10, use_crumb=False, max_retries=None):
+            self,
+            baseurl,    # type: str
+            username=None,  # type: Optional[str]
+            password=None,  # type: Optional[str]
+            requester=None,     # type: Optional[Requester]
+            lazy=False,     # type: bool
+            ssl_verify=True,    # type: bool
+            cert=None,
+            timeout=10,     # type: int
+            use_crumb=False,    # type: bool
+            max_retries=None):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -56,12 +67,13 @@ class Jenkins(JenkinsBase):
         self.username = username
         self.password = password
         if requester is None:
-            if use_crumb:
-                requester = CrumbRequester
-            else:
-                requester = Requester
 
-            self.requester = requester(
+            if use_crumb:
+                requester = CrumbRequester  # type: ignore
+            else:
+                requester = Requester  # type: ignore
+
+            self.requester = requester(     # type: ignore
                 username,
                 password,
                 baseurl=baseurl,
@@ -79,6 +91,7 @@ class Jenkins(JenkinsBase):
         JenkinsBase.__init__(self, baseurl, poll=not lazy)
 
     def _poll(self, tree=None):
+        # type: (Optional[str]) -> Dict[str, Any]
         url = self.python_api_url(self.baseurl)
         return self.get_data(url, tree='jobs[name,color,url]'
                              if not tree else tree)
@@ -88,16 +101,20 @@ class Jenkins(JenkinsBase):
             self.poll()
 
     def _clone(self):
+        # type: () -> Jenkins
         return Jenkins(self.baseurl, username=self.username,
                        password=self.password, requester=self.requester)
 
     def base_server_url(self):
+        # type: () -> str
         if config.JENKINS_API in self.baseurl:
             return self.baseurl[:-(len(config.JENKINS_API))]
         return self.baseurl
 
     def validate_fingerprint(self, id_):
-        obj_fingerprint = Fingerprint(self.baseurl, id_, jenkins_obj=self)
+        # type: (str) -> None
+        obj_fingerprint = Fingerprint(
+            self.baseurl, id_, jenkins_obj=self)    # type: ignore
         obj_fingerprint.validate()
         log.info(msg="Jenkins says %s is valid" % id_)
 
@@ -106,7 +123,9 @@ class Jenkins(JenkinsBase):
     #     self.requester.get_url("%(baseurl)s/reload" % self.__dict__)
 
     def get_artifact_data(self, id_):
-        obj_fingerprint = Fingerprint(self.baseurl, id_, jenkins_obj=self)
+        # type: (str) -> Tuple[str, int, str]
+        obj_fingerprint = Fingerprint(
+            self.baseurl, id_, jenkins_obj=self)    # type: ignore
         obj_fingerprint.validate()
         return obj_fingerprint.get_info()
 
@@ -301,17 +320,21 @@ class Jenkins(JenkinsBase):
         return url
 
     def get_queue(self):
+        # type: () -> Queue
         queue_url = self.get_queue_url()
         return Queue(queue_url, self)
 
     def get_nodes(self):
+        # type: () -> Nodes
         return Nodes(self.baseurl, self)
 
     @property
     def nodes(self):
+        # type: () -> Nodes
         return self.get_nodes()
 
     def has_node(self, nodename):
+        # type: (str) -> bool
         """
         Does a node by the name specified exist
         :param nodename: string, hostname
@@ -321,6 +344,7 @@ class Jenkins(JenkinsBase):
         return nodename in self.nodes
 
     def delete_node(self, nodename):
+        # type: (str) -> None
         """
         Remove a node from the managed slave list
         Please note that you cannot remove the master node
@@ -333,6 +357,7 @@ class Jenkins(JenkinsBase):
     def create_node(self, name, num_executors=2, node_description=None,
                     remote_fs='/var/lib/jenkins',
                     labels=None, exclusive=False):
+        # type: (str, int, str, str, str, bool) -> Node
         """
         Create a new JNLP slave node by name.
 
@@ -356,6 +381,7 @@ class Jenkins(JenkinsBase):
         return self.nodes.create_node(name, node_dict)
 
     def create_node_with_config(self, name, config):
+        # type: (str, Dict) -> Node
         """
         Create a new slave node with specific configuration.
         Config should be resemble the output of node.get_node_attributes()

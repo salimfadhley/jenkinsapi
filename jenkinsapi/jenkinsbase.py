@@ -6,8 +6,13 @@ import ast
 import pprint
 import logging
 from six.moves.urllib.parse import quote as urlquote
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
+
+if TYPE_CHECKING:
+    from jenkinsapi.job import Job
+
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +33,11 @@ class JenkinsBase(object):
         raise NotImplementedError
 
     def __init__(self, baseurl, poll=True):
+        # type: (str, bool) -> None
         """
         Initialize a jenkins connection
         """
-        self._data = None
+        self._data = None   # type: Optional[Dict[str, Any]]
         self.baseurl = self.strip_trailing_slash(baseurl)
         if poll:
             self.poll()
@@ -51,11 +57,13 @@ class JenkinsBase(object):
 
     @classmethod
     def strip_trailing_slash(cls, url):
+        # type: (str) -> str
         while url.endswith('/'):
             url = url[:-1]
         return url
 
     def poll(self, tree=None):
+        # type: (Optional[str]) -> Dict[str, Any]
         data = self._poll(tree=tree)
         if 'jobs' in data:
             data['jobs'] = self.resolve_job_folders(data['jobs'])
@@ -65,10 +73,12 @@ class JenkinsBase(object):
         return data
 
     def _poll(self, tree=None):
+        # type: (Optional[str]) -> Dict[str, Any]
         url = self.python_api_url(self.baseurl)
         return self.get_data(url, tree=tree)
 
     def get_data(self, url, params=None, tree=None):
+        # type: (str, Optional[Dict[str, Any]], Optional[str]) -> Dict[str, Any]
         requester = self.get_jenkins_obj().requester
         if tree:
             if not params:
@@ -82,7 +92,7 @@ class JenkinsBase(object):
                          url, params, tree if tree else '')
             response.raise_for_status()
         try:
-            return ast.literal_eval(response.text)
+            return ast.literal_eval(response.text)  # type: ignore
         except Exception:
             logger.exception('Inappropriate content found at %s', url)
             raise JenkinsAPIException('Cannot parse %s' % response.content)
@@ -102,6 +112,7 @@ class JenkinsBase(object):
         return jobs
 
     def process_job_folder(self, folder, folder_path):
+        # type: (Job, str) -> List[Job]
         logger.debug('Processing folder %s in %s', folder['name'], folder_path)
         folder_path += '/job/%s' % urlquote(folder['name'])
         data = self.get_data(self.python_api_url(folder_path),

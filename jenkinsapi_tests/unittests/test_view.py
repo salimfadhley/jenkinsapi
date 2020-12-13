@@ -1,6 +1,6 @@
 import mock
 
-import pytest
+import pytest   # type: ignore
 
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.view import View

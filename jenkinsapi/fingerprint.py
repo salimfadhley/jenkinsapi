@@ -2,6 +2,7 @@
 Module for jenkinsapi Fingerprint
 """
 
+from typing import Tuple, TYPE_CHECKING
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import ArtifactBroken
 
@@ -9,6 +10,10 @@ import re
 import requests
 
 import logging
+
+if TYPE_CHECKING:
+    from jenkinsapi.jenkins import Jenkins
+
 
 log = logging.getLogger(__name__)
 
@@ -21,6 +26,7 @@ class Fingerprint(JenkinsBase):
     RE_MD5 = re.compile("^([0-9a-z]{32})$")
 
     def __init__(self, baseurl, id_, jenkins_obj):
+        # type: (str, str, Jenkins) -> None
         logging.basicConfig()
         self.jenkins_obj = jenkins_obj
         assert self.RE_MD5.search(id_), ("%s does not look like "
@@ -37,6 +43,7 @@ class Fingerprint(JenkinsBase):
         return self.id_
 
     def valid(self):
+        # type: () -> bool
         """
         Return True / False if valid. If returns True, self.unknown is
         set to either True or False, and can be checked if we have
@@ -67,12 +74,14 @@ class Fingerprint(JenkinsBase):
         return True
 
     def validate_for_build(self, filename, job, build):
+        # type: (str, str, int) -> bool
         if not self.valid():
             log.info("Unknown to jenkins.")
             return False
         if self.unknown:
             # not request error, but unknown to jenkins
             return True
+        assert self._data is not None
         if self._data["original"] is not None:
             if self._data["original"]["name"] == job:
                 if self._data["original"]["number"] == build:
@@ -94,6 +103,7 @@ class Fingerprint(JenkinsBase):
         return False
 
     def validate(self):
+        # type: () -> bool
         try:
             assert self.valid()
         except AssertionError:
@@ -107,10 +117,12 @@ class Fingerprint(JenkinsBase):
         return True
 
     def get_info(self):
+        # type: () -> Tuple[str, int, str]
         """
         Returns a tuple of build-name, build# and artifact filename
         for a good build.
         """
         self.poll()
+        assert self._data is not None
         return self._data["original"]["name"], \
             self._data["original"]["number"], self._data["fileName"]

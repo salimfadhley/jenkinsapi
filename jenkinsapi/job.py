@@ -7,6 +7,8 @@ import xml.etree.ElementTree as ET
 import six.moves.urllib.parse as urlparse
 
 from collections import defaultdict
+from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING
+
 from jenkinsapi.build import Build
 from jenkinsapi.custom_exceptions import (
     NoBuildData,
@@ -21,6 +23,10 @@ from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
 from jenkinsapi_utils.compat import to_string
+
+if TYPE_CHECKING:
+    # imports to enable type annotation to work
+    from jenkinsapi.jenkins import Jenkins
 
 
 SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
@@ -41,9 +47,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
     """
 
     def __init__(self, url, name, jenkins_obj):
+        # type: (str, str, Jenkins) -> None
         self.name = name
         self.jenkins = jenkins_obj
-        self._revmap = None
+        self._revmap = None     # type: Optional[defaultdict]
         self._config = None
         self._element_tree = None
         self._scm_prefix = ""
@@ -72,9 +79,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.name
 
     def get_description(self):
+        # type: () -> str
+        assert self._data is not None
         return self._data["description"]
 
     def get_jenkins_obj(self):
+        # type: () -> Jenkins
         return self.jenkins
 
     # When the name of the hg branch used in the job is default hg branch (i.e.
@@ -90,15 +100,17 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return branches
 
     def poll(self, tree=None):
+        # type: (Optional[str]) -> Dict[str, Any]
         data = super(Job, self).poll(tree=tree)
         if not tree and not self.jenkins.lazy:
-            self._data = self._add_missing_builds(self._data)
+            self._data = self._add_missing_builds(self._data)   # type: ignore
 
         return data
 
     # pylint: disable=E1123
     # Unexpected keyword arg 'params'
     def _add_missing_builds(self, data):
+        # type: (Dict[str, Any]) -> Dict[str, Any]
         """
         Query Jenkins to get all builds of the job in the data object.
 
@@ -111,6 +123,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # do not call _buildid_for_type here: it would poll and do an infinite
         # loop
         oldest_loaded_build_number = data["builds"][-1]["number"]
+        assert self._data is not None
         if 'firstBuild' not in self._data or not self._data['firstBuild']:
             first_build_number = oldest_loaded_build_number
         else:
@@ -135,6 +148,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._element_tree
 
     def get_build_triggerurl(self):
+        # type: () -> str
         if not self.has_params():
             return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
@@ -265,57 +279,65 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return data[buildtype]["number"]
 
     def get_first_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the first build.
         """
         return self._buildid_for_type("firstBuild")
 
     def get_last_stable_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the last stable build.
         """
         return self._buildid_for_type("lastStableBuild")
 
     def get_last_good_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the last good build.
         """
         return self._buildid_for_type("lastSuccessfulBuild")
 
     def get_last_failed_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the last failed build.
         """
         return self._buildid_for_type(buildtype="lastFailedBuild")
 
     def get_last_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the last build.
         """
         return self._buildid_for_type("lastBuild")
 
     def get_last_completed_buildnumber(self):
+        # type: () -> int
         """
         Get the numerical ID of the last complete build.
         """
         return self._buildid_for_type("lastCompletedBuild")
 
     def get_build_dict(self):
-        builds = self.poll(tree='builds[number,url]')
+        # type: () -> Dict[int, Any]
+        builds = self.poll(tree='builds[number,url]')   # type: ignore
         if not builds:
             raise NoBuildData(repr(self))
         builds = self._add_missing_builds(builds)
-        builds = builds['builds']
+        builds = builds['builds']   # type: ignore
         last_build = self.poll(tree='lastBuild[number,url]')['lastBuild']
         if builds and last_build and \
-                builds[0]['number'] != last_build['number']:
-            builds = [last_build] + builds
+                builds[0]['number'] != last_build['number']:    # type: ignore
+            builds = [last_build] + builds  # type: ignore
         # FIXME SO how is this supposed to work if build is false-y?
         # I don't think that builds *can* be false here, so I don't
         # understand the test above.
-        return dict((build["number"], build["url"]) for build in builds)
+        return dict((build["number"], build["url"]) for build in builds)    # type: ignore
 
     def get_build_by_params(self, build_params, order=1):
+        # type: (Dict[str, Any], int) -> Build
         first_build_number = self.get_first_buildnumber()
         last_build_number = self.get_last_buildnumber()
         if order != 1 and order != -1:
@@ -332,11 +354,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
             'No build with such params {params}'.format(params=build_params))
 
     def get_revision_dict(self):
+        # type: () -> defaultdict
         """
         Get dictionary of all revisions with a list of buildnumbers (int)
         that used that particular revision
         """
         revs = defaultdict(list)
+        assert self._data is not None
         if 'builds' not in self._data:
             raise NoBuildData(repr(self))
         for buildnumber in self.get_build_ids():
@@ -345,18 +369,23 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return revs
 
     def get_build_ids(self):
+        # type: () -> Iterable[int]
         """
         Return a sorted list of all good builds as ints.
         """
+        # FIXME: reversed() returns an iterator in python 3
         return reversed(sorted(self.get_build_dict().keys()))
 
     def get_next_build_number(self):
+        # type: () -> int
         """
         Return the next build number that Jenkins will assign.
         """
+        assert self._data is not None
         return self._data.get('nextBuildNumber', 0)
 
     def get_last_stable_build(self):
+        # type: () -> Build
         """
         Get the last stable build
         """
@@ -364,6 +393,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.get_build(bn)
 
     def get_last_good_build(self):
+        # type: () -> Build
         """
         Get the last good build
         """
@@ -371,6 +401,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.get_build(bn)
 
     def get_last_build(self):
+        # type: () -> Build
         """
         Get the last build
         """
@@ -378,10 +409,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.get_build(bn)
 
     def get_first_build(self):
+        # type: () -> Build
         bn = self.get_first_buildnumber()
         return self.get_build(bn)
 
     def get_last_build_or_none(self):
+        # type: () -> Optional[Build]
         """
         Get the last build or None if there is no builds
         """
@@ -391,6 +424,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             return None
 
     def get_last_completed_build(self):
+        # type: () -> Build
         """
         Get the last build regardless of status
         """
@@ -398,6 +432,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.get_build(bn)
 
     def get_buildnumber_for_revision(self, revision, refresh=False):
+        # type: (int, bool) -> List[int]
         """
 
         :param revision: subversion revision to look for, int
@@ -415,6 +450,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotFound("Couldn't find a build with that revision")
 
     def get_build(self, buildnumber):
+        # type: (int) -> Build
         assert isinstance(buildnumber, int)
         try:
             url = self.get_build_dict()[buildnumber]
@@ -423,6 +459,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotFound('Build #%s not found' % buildnumber)
 
     def delete_build(self, build_number):
+        # type: (int) -> None
         """
         Remove build
 
@@ -438,6 +475,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise NotFound('Build #%s not found' % build_number)
 
     def get_build_metadata(self, buildnumber):
+        # type: (int) -> Build
         """
         Get the build metadata for a given build number. For large builds with
         tons of tests, this method is faster than get_build by returning less
@@ -462,6 +500,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return len(self.get_build_dict())
 
     def is_queued_or_running(self):
+        # type: () -> bool
         return self.is_queued() or self.is_running()
 
     def is_queued(self):

@@ -3,12 +3,12 @@ from __future__ import print_function
 try:
     from SimpleHTTPServer import SimpleHTTPRequestHandler
 except ImportError:
-    from http.server import SimpleHTTPRequestHandler
+    from http.server import SimpleHTTPRequestHandler    # type: ignore
 
 try:
     import SocketServer as socketserver
 except ImportError:
-    import socketserver
+    import socketserver     # type: ignore
 
 import logging
 import cgi
@@ -20,6 +20,7 @@ class ServerHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         logging.error(self.headers)
+        # FIXME: This super() call is incompatible with Python 2.7
         super().do_GET()
 
     def do_POST(self):
@@ -32,6 +33,7 @@ class ServerHandler(SimpleHTTPRequestHandler):
                      })
         for item in form.list:
             logging.error(item)
+        # FIXME: This super() call is incompatible with Python 2.7
         super().do_GET()
 
 

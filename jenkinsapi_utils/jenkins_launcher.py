@@ -8,7 +8,7 @@ import posixpath
 import requests
 import threading
 import subprocess
-from pkg_resources import resource_stream
+from pkg_resources import resource_stream   # type: ignore
 from tarfile import TarFile
 from six.moves import queue
 from six.moves.urllib.parse import urlparse
@@ -58,7 +58,7 @@ class StreamThread(threading.Thread):
 
         self.queue.put((self.name, None))
 
-
+# FIXME: typo in word 'launcher'.
 class JenkinsLancher(object):
 
     """
@@ -254,7 +254,10 @@ if __name__ == '__main__':
 
     log.info("Hello!")
 
-    jl = JenkinsLancher(
+    # FIXME: Too few arguments... is the comma missing after the first str?
+    # Python will implicitly join strings if not careful.
+    # Bug introduced in commit: fa69632822411901971a97a2acc0e26b3e335451
+    jl = JenkinsLancher(    # type: ignore
         '/home/sal/workspace/jenkinsapi/src/'
         'jenkinsapi_tests/systests/',
         'jenkins.war'

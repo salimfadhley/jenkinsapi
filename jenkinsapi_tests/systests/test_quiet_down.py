@@ -2,7 +2,7 @@
 """
 System tests for setting jenkins in quietDown mode
 """
-import pytest
+import pytest   # type: ignore
 import logging
 
 

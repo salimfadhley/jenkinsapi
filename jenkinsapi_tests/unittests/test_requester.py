@@ -1,5 +1,5 @@
 from __future__ import print_function
-import pytest
+import pytest   # type: ignore
 import requests
 from jenkinsapi.jenkins import Requester
 from jenkinsapi.custom_exceptions import JenkinsAPIException

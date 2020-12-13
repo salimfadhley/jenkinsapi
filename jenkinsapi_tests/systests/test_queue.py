@@ -3,7 +3,7 @@ All kinds of testing on Jenkins Queues
 """
 import time
 import logging
-import pytest
+import pytest   # type: ignore
 from jenkinsapi.queue import Queue
 from jenkinsapi.queue import QueueItem
 from jenkinsapi.job import Job

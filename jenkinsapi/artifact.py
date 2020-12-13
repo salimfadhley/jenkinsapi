@@ -12,9 +12,12 @@ import os
 import logging
 import hashlib
 
+from typing import Optional, TYPE_CHECKING
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.custom_exceptions import ArtifactBroken
 
+if TYPE_CHECKING:
+    from jenkinsapi.build import Build
 log = logging.getLogger(__name__)
 
 
@@ -26,12 +29,14 @@ class Artifact(object):
     """
 
     def __init__(self, filename, url, build, relative_path=None):
+        # type: (str, str, Build, Optional[str]) -> None
         self.filename = filename
         self.url = url
         self.build = build
         self.relative_path = relative_path
 
     def save(self, fspath, strict_validation=False):
+        # type: (str, bool) -> str
         """
         Save the artifact to an explicit path. The containing directory must
         exist. Returns a reference to the file which has just been writen to.

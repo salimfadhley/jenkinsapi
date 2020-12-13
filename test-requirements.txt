@@ -8,3 +8,4 @@ tox>=2.3.1
 mock
 codecov
 requests_kerberos
+mypy>=0.790; python_full_version > '3.2'
