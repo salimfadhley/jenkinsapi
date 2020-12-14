@@ -13,6 +13,9 @@ env:
 - JENKINS_VERSION=stable
 - JENKINS_VERSION=latest
 install:
+- pip install -q -r requirements.txt
+- pip install -q -r test-requirements.txt
+- pip install wheel
 - pip install tox-travis
 - python setup.py -q sdist bdist_wheel
 script:

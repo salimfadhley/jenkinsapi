@@ -1,3 +1,6 @@
+# Newer pip no longer support working with python 2.7
+pip>=20.2,<20.3;python_full_version<'3.0'
+wheel
 pytest==3.7.0
 pytest-mock
 pytest-cov

@@ -29,3 +29,5 @@ coverage.xml
 .vscode/
 *.war
 venv/
+.mypy_cache
+.python-version

@@ -202,6 +202,7 @@ class JenkinsLancher(object):
                                '-Djenkins.install.runSetupWizard=false',
                                '-Dhudson.DNSMultiCast.disabled=true',
                                '-jar', self.war_filename,
+                               '--enable-future-java',
                                '--httpPort=%d' % self.http_port]
 
             log.info("About to start Jenkins...")
