@@ -137,11 +137,11 @@ class Build(JenkinsBase):
         }
         """
         if 'changeSet' in self._data:
-            if 'items' in self._data['changeSet']:
-                return self._data['changeSet']['items']
+            if 'items' in self._data['changeSet'][0].keys():
+                return self._data['changeSet'][0]['items']
         elif 'changeSets' in self._data:
-            if 'items' in self._data['changeSets']:
-                return self._data['changeSets']['items']
+            if 'items' in self._data['changeSets'][0].keys():
+                return self._data['changeSets'][0]['items']
         return []
 
     def _get_vcs(self):
