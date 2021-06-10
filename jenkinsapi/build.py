@@ -137,8 +137,8 @@ class Build(JenkinsBase):
         }
         """
         if 'changeSet' in self._data:
-            if 'items' in self._data['changeSet'][0].keys():
-                return self._data['changeSet'][0]['items']
+            if 'items' in self._data['changeSet'].keys():
+                return self._data['changeSet']['items']
         elif 'changeSets' in self._data:
             if 'items' in self._data['changeSets'][0].keys():
                 return self._data['changeSets'][0]['items']
