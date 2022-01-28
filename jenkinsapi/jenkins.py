@@ -606,7 +606,7 @@ class Jenkins(JenkinsBase):
         if 'credentials' not in self.plugins:
             raise JenkinsAPIException('Credentials plugin not installed')
 
-        if int(self.plugins['credentials'].version[0:1]) == 1:
+        if int(self.plugins['credentials'].version.split('.')) == 1:
             url = '%s/credential-store/domain/_/' % self.baseurl
             return Credentials(url, self)
 
