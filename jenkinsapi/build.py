@@ -487,7 +487,7 @@ class Build(JenkinsBase):
             *time.gmtime(self._data['timestamp'] / 1000.0)[:6])
         return pytz.utc.localize(naive_timestamp)
 
-    def get_console(self):
+    def get_console(self, encoding='ISO-8859-1'):
         """
         Return the current state of the text console.
         """
@@ -499,11 +499,11 @@ class Build(JenkinsBase):
         if isinstance(content, str):
             return content
         elif isinstance(content, bytes):
-            return content.decode('ISO-8859-1')
+            return content.decode(encoding)
         else:
             raise JenkinsAPIException('Unknown content type for console')
 
-    def stream_logs(self, interval=0):
+    def stream_logs(self, interval=0, encoding='ISO-8859-1'):
         """
         Return generator which streams parts of text console.
         """
@@ -517,7 +517,7 @@ class Build(JenkinsBase):
                 if isinstance(content, str):
                     yield content
                 elif isinstance(content, bytes):
-                    yield content.decode('ISO-8859-1')
+                    yield content.decode(encoding)
                 else:
                     raise JenkinsAPIException('Unknown content type for console')
             size = resp.headers['X-Text-Size']
