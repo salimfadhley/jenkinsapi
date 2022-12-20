@@ -6,8 +6,8 @@ The JenkinsAPI project welcomes contributions via GitHub. Please bear in mind th
 Python compatibility
 --------------------
 
-The project currently targets Python 2.6 and Python 2.7. Support for Python 3.x will be introduced soon. Please do not add any features which
-will break our supported Python 2.x versions or make it harder for us to migrate to Python 3.x
+The project currently targets Python 2.7, and Python 3.4 to 3.6. Please do not add any features which
+will break our Python 2.7 version or are not Python 2.7 *and* 3+ compatible. 
 
 Test Driven Development
 -----------------------
