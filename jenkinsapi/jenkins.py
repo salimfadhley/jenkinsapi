@@ -42,11 +42,18 @@ class Jenkins(JenkinsBase):
 
     # pylint: disable=too-many-arguments
     def __init__(
-            self, baseurl,
-            username=None, password=None,
-            requester=None, lazy=False,
-            ssl_verify=True, cert=None,
-            timeout=10, use_crumb=False, max_retries=None):
+        self,
+        baseurl,
+        username=None,
+        password=None,
+        requester=None,
+        lazy=False,
+        ssl_verify=True,
+        cert=None,
+        timeout=10,
+        use_crumb=False,
+        max_retries=None,
+    ):
         """
         :param baseurl: baseurl for jenkins instance including port, str
         :param username: username for jenkins auth, str
@@ -80,20 +87,25 @@ class Jenkins(JenkinsBase):
 
     def _poll(self, tree=None):
         url = self.python_api_url(self.baseurl)
-        return self.get_data(url, tree='jobs[name,color,url]'
-                             if not tree else tree)
+        return self.get_data(
+            url, tree="jobs[name,color,url]" if not tree else tree
+        )
 
     def _poll_if_needed(self):
         if self.lazy and self._data is None:
             self.poll()
 
     def _clone(self):
-        return Jenkins(self.baseurl, username=self.username,
-                       password=self.password, requester=self.requester)
+        return Jenkins(
+            self.baseurl,
+            username=self.username,
+            password=self.password,
+            requester=self.requester,
+        )
 
     def base_server_url(self):
         if config.JENKINS_API in self.baseurl:
-            return self.baseurl[:-(len(config.JENKINS_API))]
+            return self.baseurl[: -(len(config.JENKINS_API))]
         return self.baseurl
 
     def validate_fingerprint(self, id_):
@@ -122,7 +134,7 @@ class Jenkins(JenkinsBase):
 
     def get_create_url(self):
         # This only ever needs to work on the base object
-        return '%s/createItem' % self.baseurl
+        return "%s/createItem" % self.baseurl
 
     def get_nodes_url(self):
         # This only ever needs to work on the base object
@@ -186,11 +198,15 @@ class Jenkins(JenkinsBase):
         """
         return self.jobs.create(jobname, xml)
 
-    def create_multibranch_pipeline_job(self, jobname, xml, block=True, delay=60):
+    def create_multibranch_pipeline_job(
+        self, jobname, xml, block=True, delay=60
+    ):
         """
         :return: list of new Job objects
         """
-        return self.jobs.create_multibranch_pipeline(jobname, xml, block, delay)
+        return self.jobs.create_multibranch_pipeline(
+            jobname, xml, block, delay
+        )
 
     def copy_job(self, jobname, newjobname):
         return self.jobs.copy(jobname, newjobname)
@@ -249,17 +265,17 @@ class Jenkins(JenkinsBase):
 
     def get_view_by_url(self, str_view_url):
         # for nested view
-        str_view_name = str_view_url.split('/view/')[-1].replace('/', '')
+        str_view_name = str_view_url.split("/view/")[-1].replace("/", "")
         return View(str_view_url, str_view_name, jenkins_obj=self)
 
     def delete_view_by_url(self, str_url):
         url = "%s/doDelete" % str_url
-        self.requester.post_and_confirm_status(url, data='')
+        self.requester.post_and_confirm_status(url, data="")
         self.poll()
         return self
 
     def get_label(self, label_name):
-        label_url = '%s/label/%s' % (self.baseurl, label_name)
+        label_url = "%s/label/%s" % (self.baseurl, label_name)
         return Label(label_url, label_name, jenkins_obj=self)
 
     def __getitem__(self, jobname):
@@ -291,13 +307,12 @@ class Jenkins(JenkinsBase):
     def get_node_url(self, nodename=""):
         """Return the url for nodes"""
         url = urlparse.urljoin(
-            self.base_server_url(),
-            'computer/%s' %
-            urlquote(nodename))
+            self.base_server_url(), "computer/%s" % urlquote(nodename)
+        )
         return url
 
     def get_queue_url(self):
-        url = "%s/%s" % (self.base_server_url(), 'queue')
+        url = "%s/%s" % (self.base_server_url(), "queue")
         return url
 
     def get_queue(self):
@@ -330,9 +345,15 @@ class Jenkins(JenkinsBase):
         """
         del self.nodes[nodename]
 
-    def create_node(self, name, num_executors=2, node_description=None,
-                    remote_fs='/var/lib/jenkins',
-                    labels=None, exclusive=False):
+    def create_node(
+        self,
+        name,
+        num_executors=2,
+        node_description=None,
+        remote_fs="/var/lib/jenkins",
+        labels=None,
+        exclusive=False,
+    ):
         """
         Create a new JNLP slave node by name.
 
@@ -347,11 +368,11 @@ class Jenkins(JenkinsBase):
         :return: node obj
         """
         node_dict = {
-            'num_executors': num_executors,
-            'node_description': node_description,
-            'remote_fs': remote_fs,
-            'labels': labels,
-            'exclusive': exclusive
+            "num_executors": num_executors,
+            "node_description": node_description,
+            "remote_fs": remote_fs,
+            "labels": labels,
+            "exclusive": exclusive,
         }
         return self.nodes.create_node(name, node_dict)
 
@@ -368,10 +389,16 @@ class Jenkins(JenkinsBase):
 
     def get_plugins_url(self, depth):
         # This only ever needs to work on the base object
-        return '%s/pluginManager/api/python?depth=%i' % (self.baseurl, depth)
+        return "%s/pluginManager/api/python?depth=%i" % (self.baseurl, depth)
 
-    def install_plugin(self, plugin, restart=True, force_restart=False,
-                       wait_for_reboot=True, no_reboot_warning=False):
+    def install_plugin(
+        self,
+        plugin,
+        restart=True,
+        force_restart=False,
+        wait_for_reboot=True,
+        no_reboot_warning=False,
+    ):
         """
         Install a plugin and optionally restart jenkins.
         @param plugin: Plugin (string or Plugin object) to be installed
@@ -390,10 +417,16 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
-    def install_plugins(self, plugin_list, restart=True, force_restart=False,
-                        wait_for_reboot=True, no_reboot_warning=False):
+    def install_plugins(
+        self,
+        plugin_list,
+        restart=True,
+        force_restart=False,
+        wait_for_reboot=True,
+        no_reboot_warning=False,
+    ):
         """
         Install a list of plugins and optionally restart jenkins.
         @param plugin_list: List of plugins (strings, Plugin objects or a mix of
@@ -402,8 +435,9 @@ class Jenkins(JenkinsBase):
         @param force_restart: Boolean, force Jenkins to restart, ignoring plugin
         preferences
         """
-        plugins = [p if isinstance(p, Plugin) else Plugin(p)
-                   for p in plugin_list]
+        plugins = [
+            p if isinstance(p, Plugin) else Plugin(p) for p in plugin_list
+        ]
         for plugin in plugins:
             self.install_plugin(plugin, restart=False, no_reboot_warning=True)
         if force_restart or (restart and self.plugins.restart_required):
@@ -412,10 +446,16 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
-    def delete_plugin(self, plugin, restart=True, force_restart=False,
-                      wait_for_reboot=True, no_reboot_warning=False):
+    def delete_plugin(
+        self,
+        plugin,
+        restart=True,
+        force_restart=False,
+        wait_for_reboot=True,
+        no_reboot_warning=False,
+    ):
         """
         Delete a plugin and optionally restart jenkins. Will not delete
         dependencies.
@@ -433,10 +473,16 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
-    def delete_plugins(self, plugin_list, restart=True, force_restart=False,
-                       wait_for_reboot=True, no_reboot_warning=False):
+    def delete_plugins(
+        self,
+        plugin_list,
+        restart=True,
+        force_restart=False,
+        wait_for_reboot=True,
+        no_reboot_warning=False,
+    ):
         """
         Delete a list of plugins and optionally restart jenkins. Will not delete
         dependencies.
@@ -454,16 +500,17 @@ class Jenkins(JenkinsBase):
             warnings.warn(
                 "System reboot is required, but automatic reboot is disabled. "
                 "Please reboot manually."
-                )
+            )
 
     def safe_restart(self, wait_for_reboot=True):
-        """ restarts jenkins when no jobs are running """
+        """restarts jenkins when no jobs are running"""
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
-        url = '%s/safeRestart' % (self.baseurl,)
+        url = "%s/safeRestart" % (self.baseurl,)
         valid = self.requester.VALID_STATUS_CODES + [503, 500]
-        resp = self.requester.post_and_confirm_status(url, data='',
-                                                      valid=valid)
+        resp = self.requester.post_and_confirm_status(
+            url, data="", valid=valid
+        )
         if wait_for_reboot:
             self._wait_for_reboot()
         return resp
@@ -483,22 +530,27 @@ class Jenkins(JenkinsBase):
                 len(self.plugins)  # Make sure jenkins is fully started
                 return  # By this time jenkins is back online
             except (HTTPError, ConnectionError):
-                msg = ("Jenkins has not restarted yet!  (This is"
-                       " try {0} of {1}, waited {2} seconds so far)"
-                       "  Sleeping and trying again..")
+                msg = (
+                    "Jenkins has not restarted yet!  (This is"
+                    " try {0} of {1}, waited {2} seconds so far)"
+                    "  Sleeping and trying again.."
+                )
                 msg = msg.format(count, max_count, count * wait)
                 log.debug(msg)
             count += 1
-        msg = ("Jenkins did not come back from safe restart! "
-               "Waited %s seconds altogether.  This "
-               "failure may cause other failures.")
+        msg = (
+            "Jenkins did not come back from safe restart! "
+            "Waited %s seconds altogether.  This "
+            "failure may cause other failures."
+        )
         log.critical(msg, count * wait)
 
     def __jenkins_is_unavailable(self):
         while True:
             try:
                 self.requester.get_and_confirm_status(
-                    self.baseurl, valid=[503, 500])
+                    self.baseurl, valid=[503, 500]
+                )
                 return True
             except ConnectionError:
                 # This is also a possibility while Jenkins is restarting
@@ -509,13 +561,14 @@ class Jenkins(JenkinsBase):
                 time.sleep(1)
 
     def safe_exit(self, wait_for_exit=True, max_wait=360):
-        """ restarts jenkins when no jobs are running, except for pipeline jobs """
+        """restarts jenkins when no jobs are running, except for pipeline jobs"""
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
-        url = '%s/safeExit' % (self.baseurl,)
+        url = "%s/safeExit" % (self.baseurl,)
         valid = self.requester.VALID_STATUS_CODES + [503, 500]
-        resp = self.requester.post_and_confirm_status(url, data='',
-                                                      valid=valid)
+        resp = self.requester.post_and_confirm_status(
+            url, data="", valid=valid
+        )
         if wait_for_exit:
             self._wait_for_exit(max_wait=max_wait)
         return resp
@@ -533,7 +586,8 @@ class Jenkins(JenkinsBase):
         while is_alive and wait < max_wait:
             try:
                 self.requester.get_and_confirm_status(
-                    self.baseurl, valid=[200])
+                    self.baseurl, valid=[200]
+                )
                 time.sleep(1)
                 wait += 1
                 is_alive = True
@@ -549,25 +603,27 @@ class Jenkins(JenkinsBase):
                 is_alive = True
 
     def quiet_down(self):
-        """ Put Jenkins in a Quiet mode, preparation for restart. no new builds  started"""
+        """Put Jenkins in a Quiet mode, preparation for restart. no new builds  started"""
         # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
-        url = '%s/quietDown' % (self.baseurl,)
+        url = "%s/quietDown" % (self.baseurl,)
         valid = self.requester.VALID_STATUS_CODES + [503, 500]
-        resp = self.requester.post_and_confirm_status(url, data='',
-                                                      valid=valid)
+        resp = self.requester.post_and_confirm_status(
+            url, data="", valid=valid
+        )
         return resp
 
     def cancel_quiet_down(self):
-        """  Cancel the effect of the quiet-down command """
+        """Cancel the effect of the quiet-down command"""
         # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
-        url = '%s/cancelQuietDown' % (self.baseurl,)
+        url = "%s/cancelQuietDown" % (self.baseurl,)
         valid = self.requester.VALID_STATUS_CODES + [503, 500]
-        resp = self.requester.post_and_confirm_status(url, data='',
-                                                      valid=valid)
+        resp = self.requester.post_and_confirm_status(
+            url, data="", valid=valid
+        )
         return resp
 
     @property
@@ -582,11 +638,11 @@ class Jenkins(JenkinsBase):
         return plugin_name in self.plugins
 
     def get_executors(self, nodename):
-        url = '%s/computer/%s' % (self.baseurl, nodename)
+        url = "%s/computer/%s" % (self.baseurl, nodename)
         return Executors(url, nodename, self)
 
     def get_master_data(self):
-        url = '%s/computer/api/python' % self.baseurl
+        url = "%s/computer/api/python" % self.baseurl
         return self.get_data(url)
 
     @property
@@ -595,22 +651,22 @@ class Jenkins(JenkinsBase):
         Return version number of Jenkins
         """
         response = self.requester.get_and_confirm_status(self.baseurl)
-        version_key = 'X-Jenkins'
-        return response.headers.get(version_key, '0.0')
+        version_key = "X-Jenkins"
+        return response.headers.get(version_key, "0.0")
 
     def get_credentials(self, cred_class=Credentials2x):
         """
         Return credentials
         """
 
-        if 'credentials' not in self.plugins:
-            raise JenkinsAPIException('Credentials plugin not installed')
+        if "credentials" not in self.plugins:
+            raise JenkinsAPIException("Credentials plugin not installed")
 
-        if int(self.plugins['credentials'].version[0:1]) == 1:
-            url = '%s/credential-store/domain/_/' % self.baseurl
+        if int(self.plugins["credentials"].version[0:1]) == 1:
+            url = "%s/credential-store/domain/_/" % self.baseurl
             return Credentials(url, self)
 
-        url = '%s/credentials/store/system/domain/_/' % self.baseurl
+        url = "%s/credentials/store/system/domain/_/" % self.baseurl
         return cred_class(url, self)
 
     @property
@@ -623,20 +679,22 @@ class Jenkins(JenkinsBase):
 
     @property
     def is_quieting_down(self):
-        url = '%s/api/python?tree=quietingDown' % (self.baseurl,)
+        url = "%s/api/python?tree=quietingDown" % (self.baseurl,)
         data = self.get_data(url=url)
-        return data.get('quietingDown', False)
+        return data.get("quietingDown", False)
 
     def shutdown(self):
         url = "%s/exit" % self.baseurl
-        self.requester.post_and_confirm_status(url, data='')
+        self.requester.post_and_confirm_status(url, data="")
 
-    def generate_new_api_token(self, new_token_name='Token By jenkinsapi python'):
-        subUrl = '/me/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken'
-        url = '%s%s' % (self.baseurl, subUrl)
-        data = urlencode({'newTokenName': new_token_name})
+    def generate_new_api_token(
+        self, new_token_name="Token By jenkinsapi python"
+    ):
+        subUrl = "/me/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken"
+        url = "%s%s" % (self.baseurl, subUrl)
+        data = urlencode({"newTokenName": new_token_name})
         response = self.requester.post_and_confirm_status(url, data=data)
-        token = response.json()['data']['tokenValue']
+        token = response.json()["data"]["tokenValue"]
         return token
 
     def run_groovy_script(self, script):
@@ -654,44 +712,47 @@ class Jenkins(JenkinsBase):
             print(result) # will print "Hello world!"
         """
         url = "%s/scriptText" % self.baseurl
-        data = urlencode({'script': script})
+        data = urlencode({"script": script})
 
         response = self.requester.post_and_confirm_status(url, data=data)
         if response.status_code != 200:
-            raise JenkinsAPIException('Unexpected response %d.' % response.status_code)
+            raise JenkinsAPIException(
+                "Unexpected response %d." % response.status_code
+            )
 
         return response.text
 
     def use_auth_cookie(self):
-        assert (self.username and
-                self.baseurl), 'Please provide jenkins url, username '\
-                               'and password to get the session ID cookie.'
+        assert self.username and self.baseurl, (
+            "Please provide jenkins url, username "
+            "and password to get the session ID cookie."
+        )
 
-        login_url = 'j_acegi_security_check'
-        jenkins_url = '{0}/{1}'.format(self.baseurl, login_url)
-        data = urlencode({'j_username': self.username,
-                          'j_password': self.password}).encode("utf-8")
+        login_url = "j_acegi_security_check"
+        jenkins_url = "{0}/{1}".format(self.baseurl, login_url)
+        data = urlencode(
+            {"j_username": self.username, "j_password": self.password}
+        ).encode("utf-8")
 
         class SmartRedirectHandler(HTTPRedirectHandler):
-
             def extract_cookie(self, setcookie):
                 # Extracts the last cookie.
                 # Example of set-cookie value for python2
                 # ('set-cookie', 'JSESSIONID.30blah=blahblahblah;Path=/;
                 #   HttpOnly, JSESSIONID.30ablah=blahblah;Path=/;HttpOnly'),
-                return setcookie.split(',')[-1].split(';')[0].strip('\n\r ')
+                return setcookie.split(",")[-1].split(";")[0].strip("\n\r ")
 
             def http_error_302(self, req, fp, code, msg, headers):
                 # Jenkins can send several Set-Cookie values sometimes
                 #  The valid one is the last one
                 for header, value in headers.items():
-                    if header.lower() == 'set-cookie':
+                    if header.lower() == "set-cookie":
                         cookie = self.extract_cookie(value)
 
-                req.headers['Cookie'] = cookie
-                result = HTTPRedirectHandler.http_error_302(self, req, fp,
-                                                            code, msg,
-                                                            headers)
+                req.headers["Cookie"] = cookie
+                result = HTTPRedirectHandler.http_error_302(
+                    self, req, fp, code, msg, headers
+                )
                 result.orig_status = code
                 result.orig_headers = headers
                 result.cookie = cookie

@@ -52,24 +52,51 @@ from jenkinsapi import (
     # Modules
     command_line,
     utils,
-
     # Files
-    api, artifact, build, config, constants, custom_exceptions,
-    fingerprint, executors, executor,
-    jenkins, jenkinsbase, job, node, result_set, result, view
+    api,
+    artifact,
+    build,
+    config,
+    constants,
+    custom_exceptions,
+    fingerprint,
+    executors,
+    executor,
+    jenkins,
+    jenkinsbase,
+    job,
+    node,
+    result_set,
+    result,
+    view,
 )
 
 __all__ = [
-    "command_line", "utils",
-    "api", "artifact", "build", "config", "constants", "custom_exceptions",
-    "executors", "executor", "fingerprint", "jenkins", "jenkinsbase",
-    "job", "node", "result_set", "result", "view"
+    "command_line",
+    "utils",
+    "api",
+    "artifact",
+    "build",
+    "config",
+    "constants",
+    "custom_exceptions",
+    "executors",
+    "executor",
+    "fingerprint",
+    "jenkins",
+    "jenkinsbase",
+    "job",
+    "node",
+    "result_set",
+    "result",
+    "view",
 ]
 __docformat__ = "epytext"
 # In case of jenkinsapi is not installed in 'develop' mode
-__version__ = '99.99.99'
+__version__ = "99.99.99"
 try:
     import pkg_resources
-    __version__ = pkg_resources.working_set.by_key['jenkinsapi'].version
+
+    __version__ = pkg_resources.working_set.by_key["jenkinsapi"].version
 except (ImportError, KeyError):
     pass

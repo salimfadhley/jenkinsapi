@@ -27,14 +27,14 @@ class Jobs(object):
         if not self._data:
             return
         for num, job_data in enumerate(self._data):
-            if job_data['name'] == job_name:
+            if job_data["name"] == job_name:
                 del self._data[num]
                 return
 
     def __len__(self):
         return len(self.keys())
 
-    def poll(self, tree='jobs[name,color,url]'):
+    def poll(self, tree="jobs[name,color,url]"):
         return self.jenkins.poll(tree=tree)
 
     def __delitem__(self, job_name):
@@ -47,8 +47,7 @@ class Jobs(object):
             try:
                 delete_job_url = self[job_name].get_delete_url()
                 self.jenkins.requester.post_and_confirm_status(
-                    delete_job_url,
-                    data='some random bytes...'
+                    delete_job_url, data="some random bytes..."
                 )
 
                 self._del_data(job_name)
@@ -59,8 +58,7 @@ class Jobs(object):
                 if job_name in self:
                     delete_job_url = self[job_name].get_delete_url()
                     self.jenkins.requester.post_and_confirm_status(
-                        delete_job_url,
-                        data='some random bytes...'
+                        delete_job_url, data="some random bytes..."
                     )
                     self._del_data(job_name)
 
@@ -79,12 +77,16 @@ class Jobs(object):
 
     def __getitem__(self, job_name):
         if job_name in self:
-            job_data = [job_row for job_row in self._data
-                        if job_row['name'] == job_name or
-                        Job.get_full_name_from_url_and_baseurl(
-                            job_row['url'],
-                            self.jenkins.baseurl) == job_name][0]
-            return Job(job_data['url'], job_data['name'], self.jenkins)
+            job_data = [
+                job_row
+                for job_row in self._data
+                if job_row["name"] == job_name
+                or Job.get_full_name_from_url_and_baseurl(
+                    job_row["url"], self.jenkins.baseurl
+                )
+                == job_name
+            ][0]
+            return Job(job_data["url"], job_data["name"], self.jenkins)
         else:
             raise UnknownJob(job_name)
 
@@ -109,24 +111,25 @@ class Jobs(object):
         Iterate over the names of all available jobs
         """
         if not self._data:
-            self._data = self.poll().get('jobs', [])
+            self._data = self.poll().get("jobs", [])
         for row in self._data:
-            if row['name'] != \
-                Job.get_full_name_from_url_and_baseurl(row['url'],
-                                                       self.jenkins.baseurl):
+            if row["name"] != Job.get_full_name_from_url_and_baseurl(
+                row["url"], self.jenkins.baseurl
+            ):
                 yield Job.get_full_name_from_url_and_baseurl(
-                    row['url'], self.jenkins.baseurl)
+                    row["url"], self.jenkins.baseurl
+                )
             else:
-                yield row['name']
+                yield row["name"]
 
     def itervalues(self):
         """
         Iterate over all available jobs
         """
         if not self._data:
-            self._data = self.poll().get('jobs', [])
+            self._data = self.poll().get("jobs", [])
         for row in self._data:
-            yield Job(row['url'], row['name'], self.jenkins)
+            yield Job(row["url"], row["name"], self.jenkins)
 
     def keys(self):
         """
@@ -146,26 +149,28 @@ class Jobs(object):
             return self[job_name]
 
         if not config:
-            raise JenkinsAPIException('Job XML config cannot be empty')
+            raise JenkinsAPIException("Job XML config cannot be empty")
 
-        params = {'name': job_name}
+        params = {"name": job_name}
         try:
-            if isinstance(config, unicode):  # pylint: disable=undefined-variable
+            if isinstance(
+                config, unicode
+            ):  # pylint: disable=undefined-variable
                 config = str(config)
         except NameError:
             # Python2 already a str
             pass
         self.jenkins.requester.post_xml_and_confirm_status(
-            self.jenkins.get_create_url(),
-            data=config,
-            params=params
+            self.jenkins.get_create_url(), data=config, params=params
         )
         # Reset to get it refreshed from Jenkins
         self._data = []
 
         return self[job_name]
 
-    def create_multibranch_pipeline(self, job_name, config, block=True, delay=60):
+    def create_multibranch_pipeline(
+        self, job_name, config, block=True, delay=60
+    ):
         """
         Create a multibranch pipeline job
 
@@ -176,29 +181,30 @@ class Jobs(object):
         :returns list of new Jobs after scan
         """
         if not config:
-            raise JenkinsAPIException('Job XML config cannot be empty')
+            raise JenkinsAPIException("Job XML config cannot be empty")
 
-        params = {'name': job_name}
+        params = {"name": job_name}
         try:
-            if isinstance(config, unicode):  # pylint: disable=undefined-variable
+            if isinstance(
+                config, unicode
+            ):  # pylint: disable=undefined-variable
                 config = str(config)
         except NameError:
             # Python2 already a str
             pass
         self.jenkins.requester.post_xml_and_confirm_status(
-            self.jenkins.get_create_url(),
-            data=config,
-            params=params
+            self.jenkins.get_create_url(), data=config, params=params
         )
         # Reset to get it refreshed from Jenkins
         self._data = []
 
         # Launch a first scan / indexing to discover the branches...
         self.jenkins.requester.post_and_confirm_status(
-            '{}/job/{}/build'.format(self.jenkins.baseurl, job_name),
-            data='',
+            "{}/job/{}/build".format(self.jenkins.baseurl, job_name),
+            data="",
             valid=[200, 302],  # expect 302 without redirects
-            allow_redirects=False)
+            allow_redirects=False,
+        )
 
         start_time = time.time()
         # redirect-url does not work with indexing;
@@ -206,15 +212,22 @@ class Jobs(object):
         scan_finished = False
         while not scan_finished and block and time.time() < start_time + delay:
             indexing_console_text = self.jenkins.requester.get_url(
-                '{}/job/{}/indexing/consoleText'.format(self.jenkins.baseurl, job_name))
-            if indexing_console_text.text.strip().split('\n')[-1].startswith('Finished:'):
+                "{}/job/{}/indexing/consoleText".format(
+                    self.jenkins.baseurl, job_name
+                )
+            )
+            if (
+                indexing_console_text.text.strip()
+                .split("\n")[-1]
+                .startswith("Finished:")
+            ):
                 scan_finished = True
             time.sleep(1)
 
         # now search for all jobs created; those who start with job_name + '/'
         jobs = []
         for name in self.jenkins.get_jobs_list():
-            if name.startswith(job_name + '/'):
+            if name.startswith(job_name + "/"):
                 jobs.append(self[name])
 
         return jobs
@@ -226,14 +239,11 @@ class Jobs(object):
         :param new_job_name: Name of new job
         :returns Job: new Job object
         """
-        params = {'name': new_job_name,
-                  'mode': 'copy',
-                  'from': job_name}
+        params = {"name": new_job_name, "mode": "copy", "from": job_name}
 
         self.jenkins.requester.post_and_confirm_status(
-            self.jenkins.get_create_url(),
-            params=params,
-            data='')
+            self.jenkins.get_create_url(), params=params, data=""
+        )
 
         self._data = []
 
@@ -247,10 +257,11 @@ class Jobs(object):
         :param str new_job_name: Name of new job
         :returns Job: new Job object
         """
-        params = {'newName': new_job_name}
+        params = {"newName": new_job_name}
         rename_job_url = self[job_name].get_rename_url()
         self.jenkins.requester.post_and_confirm_status(
-            rename_job_url, params=params, data='')
+            rename_job_url, params=params, data=""
+        )
 
         self._data = []
 

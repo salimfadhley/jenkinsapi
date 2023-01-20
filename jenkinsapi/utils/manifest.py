@@ -7,13 +7,14 @@ https://chromium.googlesource.com/external/googleappengine/python/+/master
 
 import zipfile
 
-_MANIFEST_NAME = 'META-INF/MANIFEST.MF'
+_MANIFEST_NAME = "META-INF/MANIFEST.MF"
 
 
 class InvalidJarError(Exception):
     """
     InvalidJar exception class
     """
+
     pass
 
 
@@ -30,6 +31,7 @@ class Manifest(object):
         the section, and the corresponding value is a dict like the
         main_section one, for the other attributes.
     """
+
     def __init__(self, main_section, sections):
         self.main_section = main_section
         self.sections = sections
@@ -46,7 +48,7 @@ def read_manifest(jar_file_name):
     """
     with zipfile.ZipFile(jar_file_name) as jar:
         try:
-            manifest_string = jar.read(_MANIFEST_NAME).decode('UTF-8')
+            manifest_string = jar.read(_MANIFEST_NAME).decode("UTF-8")
         except KeyError:
             return None
         return _parse_manifest(manifest_string)
@@ -61,17 +63,18 @@ def _parse_manifest(manifest_string):
     Raises:
       InvalidJarError: if the manifest is not well-formed.
     """
-    manifest_string = '\n'.join(manifest_string.splitlines()).rstrip('\n')
-    section_strings = manifest_string.split('\n\n')
+    manifest_string = "\n".join(manifest_string.splitlines()).rstrip("\n")
+    section_strings = manifest_string.split("\n\n")
     parsed_sections = [_parse_manifest_section(s) for s in section_strings]
     main_section = parsed_sections[0]
     sections = dict()
     try:
         for entry in parsed_sections[1:]:
-            sections[entry['Name']] = entry
+            sections[entry["Name"]] = entry
     except KeyError:
         raise InvalidJarError(
-            'Manifest entry has no Name attribute: %s' % entry)
+            "Manifest entry has no Name attribute: %s" % entry
+        )
     return Manifest(main_section, sections)
 
 
@@ -90,8 +93,8 @@ def _parse_manifest_section(section):
     Raises:
       InvalidJarError: if the manifest section is not well-formed.
     """
-    section = section.replace('\n ', '')
+    section = section.replace("\n ", "")
     try:
-        return dict(line.split(': ', 1) for line in section.split('\n'))
+        return dict(line.split(": ", 1) for line in section.split("\n"))
     except ValueError:
-        raise InvalidJarError('Invalid manifest %r' % section)
+        raise InvalidJarError("Invalid manifest %r" % section)

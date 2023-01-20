@@ -1,6 +1,6 @@
-'''
+"""
 System tests for `jenkinsapi.plugins` module.
-'''
+"""
 import logging
 import pytest
 from jenkinsapi_tests.test_utils.random_strings import random_string
@@ -16,7 +16,7 @@ def test_plugin_data(jenkins):
     jenkins.plugins.check_updates_server()
     jenkins.requester.timeout = timeout
 
-    assert 'mailer' in jenkins.plugins
+    assert "mailer" in jenkins.plugins
 
 
 def test_get_missing_plugin(jenkins):
@@ -46,11 +46,11 @@ def test_delete_inexistant_plugin(jenkins):
 
 
 def test_install_uninstall_plugin(jenkins):
-    plugin_name = 'suppress-stack-trace'
+    plugin_name = "suppress-stack-trace"
 
     plugin_dict = {
-        'shortName': plugin_name,
-        'version': 'latest',
+        "shortName": plugin_name,
+        "version": "latest",
     }
     jenkins.plugins[plugin_name] = Plugin(plugin_dict)
 
@@ -65,10 +65,12 @@ def test_install_uninstall_plugin(jenkins):
 
 
 def test_install_multiple_plugins(jenkins):
-    plugin_one_name = 'keyboard-shortcuts-plugin'
-    plugin_one_version = 'latest'
+    plugin_one_name = "keyboard-shortcuts-plugin"
+    plugin_one_version = "latest"
     plugin_one = "@".join((plugin_one_name, plugin_one_version))
-    plugin_two = Plugin({'shortName': 'emotional-jenkins-plugin', 'version': 'latest'})
+    plugin_two = Plugin(
+        {"shortName": "emotional-jenkins-plugin", "version": "latest"}
+    )
 
     assert isinstance(plugin_two, Plugin)
 
@@ -79,14 +81,14 @@ def test_install_multiple_plugins(jenkins):
     assert plugin_one_name in jenkins.plugins
     assert plugin_two.shortName in jenkins.plugins
 
-    del jenkins.plugins['keyboard-shortcuts-plugin']
-    del jenkins.plugins['emotional-jenkins-plugin']
+    del jenkins.plugins["keyboard-shortcuts-plugin"]
+    del jenkins.plugins["emotional-jenkins-plugin"]
 
 
 def test_downgrade_plugin(jenkins):
-    plugin_name = 'console-badge'
-    plugin_version = 'latest'
-    plugin = Plugin({'shortName': plugin_name, 'version': plugin_version})
+    plugin_name = "console-badge"
+    plugin_version = "latest"
+    plugin = Plugin({"shortName": plugin_name, "version": plugin_version})
 
     assert isinstance(plugin, Plugin)
 
@@ -95,12 +97,12 @@ def test_downgrade_plugin(jenkins):
 
     installed_plugin = jenkins.plugins[plugin_name]
 
-    assert installed_plugin.version == '1.1'
+    assert installed_plugin.version == "1.1"
 
-    older_plugin = Plugin({'shortName': plugin_name, 'version': '1.0'})
+    older_plugin = Plugin({"shortName": plugin_name, "version": "1.0"})
     jenkins.install_plugins([older_plugin], restart=True, wait_for_reboot=True)
     installed_older_plugin = jenkins.plugins[plugin_name]
 
-    assert installed_older_plugin.version == '1.0'
+    assert installed_older_plugin.version == "1.0"
 
     del jenkins.plugins[plugin_name]

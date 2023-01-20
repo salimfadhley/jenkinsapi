@@ -5,7 +5,7 @@ from __future__ import print_function
 from jenkinsapi.jenkins import Jenkins
 
 
-jenkins = Jenkins('http://localhost:8080')
+jenkins = Jenkins("http://localhost:8080")
 # Print all jobs in Jenkins
 print(jenkins.items())
 

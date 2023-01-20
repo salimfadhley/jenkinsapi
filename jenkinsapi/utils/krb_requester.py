@@ -23,23 +23,21 @@ class KrbRequester(Requester):
         """
 
         super(KrbRequester, self).__init__(*args, **kwargs)
-        self.mutual_auth = kwargs['mutual_auth'] \
-            if 'mutual_auth' in kwargs else OPTIONAL
+        self.mutual_auth = (
+            kwargs["mutual_auth"] if "mutual_auth" in kwargs else OPTIONAL
+        )
 
     def get_request_dict(
-            self, params=None, data=None, files=None, headers=None, **kwargs):
+        self, params=None, data=None, files=None, headers=None, **kwargs
+    ):
 
         req_dict = super(KrbRequester, self).get_request_dict(
-            params=params,
-            data=data,
-            files=files,
-            headers=headers,
-            **kwargs
+            params=params, data=data, files=files, headers=headers, **kwargs
         )
         if self.mutual_auth:
             auth = HTTPKerberosAuth(self.mutual_auth)
         else:
             auth = HTTPKerberosAuth()
 
-        req_dict['auth'] = auth
+        req_dict["auth"] = auth
         return req_dict

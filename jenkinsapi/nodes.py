@@ -24,15 +24,18 @@ class Nodes(JenkinsBase):
         Handy access to all of the nodes on your Jenkins server
         """
         self.jenkins = jenkins_obj
-        JenkinsBase.__init__(self, baseurl.rstrip('/')
-                             if '/computer' in baseurl
-                             else baseurl.rstrip('/') + '/computer')
+        JenkinsBase.__init__(
+            self,
+            baseurl.rstrip("/")
+            if "/computer" in baseurl
+            else baseurl.rstrip("/") + "/computer",
+        )
 
     def get_jenkins_obj(self):
         return self.jenkins
 
     def __str__(self):
-        return 'Nodes @ %s' % self.baseurl
+        return "Nodes @ %s" % self.baseurl
 
     def __contains__(self, node_name):
         return node_name in self.keys()
@@ -44,8 +47,8 @@ class Nodes(JenkinsBase):
         Using iterkeys() while creating nodes may raise a RuntimeError or fail to iterate over all
         entries.
         """
-        for item in self._data['computer']:
-            yield item['displayName']
+        for item in self._data["computer"]:
+            yield item["displayName"]
 
     def keys(self):
         """
@@ -58,10 +61,10 @@ class Nodes(JenkinsBase):
         Creates an instance of Node for the given nodename.
         This function assumes the returned node exists.
         """
-        if nodename.lower() == 'master':
-            nodeurl = '%s/(%s)' % (self.baseurl, nodename)
+        if nodename.lower() == "master":
+            nodeurl = "%s/(%s)" % (self.baseurl, nodename)
         else:
-            nodeurl = '%s/%s' % (self.baseurl, nodename)
+            nodeurl = "%s/%s" % (self.baseurl, nodename)
         return Node(self.jenkins, nodeurl, nodename, node_dict={})
 
     def iteritems(self):
@@ -71,12 +74,12 @@ class Nodes(JenkinsBase):
         Using iteritems() while creating nodes may raise a RuntimeError or fail to iterate over all
         entries.
         """
-        for item in self._data['computer']:
-            nodename = item['displayName']
+        for item in self._data["computer"]:
+            nodename = item["displayName"]
             try:
                 yield nodename, self._make_node(nodename)
             except Exception:
-                raise JenkinsAPIException('Unable to iterate nodes')
+                raise JenkinsAPIException("Unable to iterate nodes")
 
     def items(self):
         """
@@ -91,11 +94,11 @@ class Nodes(JenkinsBase):
         Using itervalues() while creating nodes may raise a RuntimeError or fail to iterate over
         all entries.
         """
-        for item in self._data['computer']:
+        for item in self._data["computer"]:
             try:
-                yield self._make_node(item['displayName'])
+                yield self._make_node(item["displayName"])
             except Exception:
-                raise JenkinsAPIException('Unable to iterate nodes')
+                raise JenkinsAPIException("Unable to iterate nodes")
 
     def values(self):
         """
@@ -112,7 +115,7 @@ class Nodes(JenkinsBase):
         return len(self.keys())
 
     def __delitem__(self, item):
-        if item in self and item != 'master':
+        if item in self and item != "master":
             url = "%s/doDelete" % self[item].baseurl
             try:
                 self.jenkins.requester.get_and_confirm_status(url)
@@ -121,10 +124,10 @@ class Nodes(JenkinsBase):
                 self.jenkins.requester.post_and_confirm_status(url, data={})
             self.poll()
         else:
-            if item != 'master':
-                raise UnknownNode('Node %s does not exist' % item)
+            if item != "master":
+                raise UnknownNode("Node %s does not exist" % item)
 
-            log.info('Requests to remove master node ignored')
+            log.info("Requests to remove master node ignored")
 
     def __setitem__(self, name, node_dict):
         if not isinstance(node_dict, dict):
@@ -144,13 +147,19 @@ class Nodes(JenkinsBase):
         if name in self:
             return self[name]
 
-        node = Node(jenkins_obj=self.jenkins, baseurl=None, nodename=name,
-                    node_dict=node_dict, poll=False)
+        node = Node(
+            jenkins_obj=self.jenkins,
+            baseurl=None,
+            nodename=name,
+            node_dict=node_dict,
+            poll=False,
+        )
 
-        url = ('%s/computer/doCreateItem?%s'
-               % (self.jenkins.baseurl,
-                  urlencode(node.get_node_attributes())))
-        data = {'json': urlencode(node.get_node_attributes())}
+        url = "%s/computer/doCreateItem?%s" % (
+            self.jenkins.baseurl,
+            urlencode(node.get_node_attributes()),
+        )
+        data = {"json": urlencode(node.get_node_attributes())}
         self.jenkins.requester.post_and_confirm_status(url, data=data)
         self.poll()
         return self[name]
@@ -169,10 +178,11 @@ class Nodes(JenkinsBase):
 
         if not isinstance(config, dict):
             return None
-        url = ('%s/computer/doCreateItem?%s'
-               % (self.jenkins.baseurl,
-                  urlencode(config)))
-        data = {'json': urlencode(config)}
+        url = "%s/computer/doCreateItem?%s" % (
+            self.jenkins.baseurl,
+            urlencode(config),
+        )
+        data = {"json": urlencode(config)}
         self.jenkins.requester.post_and_confirm_status(url, data=data)
         self.poll()
         return self[name]

@@ -49,7 +49,7 @@ class View(JenkinsBase):
         Remove this view object
         """
         url = "%s/doDelete" % self.baseurl
-        self.jenkins_obj.requester.post_and_confirm_status(url, data='')
+        self.jenkins_obj.requester.post_and_confirm_status(url, data="")
         self.jenkins_obj.poll()
         self.deleted = True
 
@@ -69,7 +69,7 @@ class View(JenkinsBase):
         return [a for a in self.iteritems()]
 
     def _get_jobs(self):
-        if 'jobs' in self._data:
+        if "jobs" in self._data:
             for viewdict in self._data["jobs"]:
                 yield viewdict["name"], viewdict["url"]
 
@@ -82,8 +82,10 @@ class View(JenkinsBase):
         else:
             # noinspection PyUnboundLocalVariable
             views_jobs = ", ".join(self.get_job_dict().keys())
-            raise NotFound("Job %s is not known, available jobs"
-                           " in view are: %s" % (str_job_name, views_jobs))
+            raise NotFound(
+                "Job %s is not known, available jobs"
+                " in view are: %s" % (str_job_name, views_jobs)
+            )
 
     def get_jenkins_obj(self):
         return self.jenkins_obj
@@ -100,8 +102,8 @@ class View(JenkinsBase):
         if not job:
             if job_name in self.get_job_dict():
                 log.warning(
-                    'Job %s is already in the view %s',
-                    job_name, self.name)
+                    "Job %s is already in the view %s", job_name, self.name
+                )
                 return False
             else:
                 # Since this call can be made from nested view,
@@ -109,27 +111,29 @@ class View(JenkinsBase):
                 # Thus let's create top level Jenkins and ask him
                 # http://jenkins:8080/view/CRT/view/CRT-FB/view/CRT-SCRT-1301/
                 top_jenkins = self.get_jenkins_obj().get_jenkins_obj_from_url(
-                    self.baseurl.split('view/')[0])
+                    self.baseurl.split("view/")[0]
+                )
                 if not top_jenkins.has_job(job_name):
                     log.error(
-                        msg='Job "%s" is not known to Jenkins' %
-                        job_name)
+                        msg='Job "%s" is not known to Jenkins' % job_name
+                    )
                     return False
                 else:
                     job = top_jenkins.get_job(job_name)
 
-        log.info(msg='Creating job %s in view %s' % (job_name, self.name))
+        log.info(msg="Creating job %s in view %s" % (job_name, self.name))
 
-        url = '%s/addJobToView' % self.baseurl
-        params = {'name': job_name}
+        url = "%s/addJobToView" % self.baseurl
+        params = {"name": job_name}
 
         self.get_jenkins_obj().requester.post_and_confirm_status(
-            url,
-            data={},
-            params=params)
+            url, data={}, params=params
+        )
         self.poll()
-        log.debug(msg='Job "%s" has been added to a view "%s"' %
-                  (job.name, self.name))
+        log.debug(
+            msg='Job "%s" has been added to a view "%s"'
+            % (job.name, self.name)
+        )
         return True
 
     def remove_job(self, job_name):
@@ -143,13 +147,12 @@ class View(JenkinsBase):
         if job_name not in self:
             return False
 
-        url = '%s/removeJobFromView' % self.baseurl
-        params = {'name': job_name}
+        url = "%s/removeJobFromView" % self.baseurl
+        params = {"name": job_name}
 
         self.get_jenkins_obj().requester.post_and_confirm_status(
-            url,
-            data={},
-            params=params)
+            url, data={}, params=params
+        )
         self.poll()
         log.debug(
             msg='Job "%s" has been added to a view "%s"'
@@ -165,7 +168,7 @@ class View(JenkinsBase):
         return dict(self._get_nested_views())
 
     def get_config_xml_url(self):
-        return '%s/config.xml' % self.baseurl
+        return "%s/config.xml" % self.baseurl
 
     def get_config(self):
         """
@@ -183,10 +186,12 @@ class View(JenkinsBase):
         config = str(config)  # cast unicode in case of Python 2
 
         response = self.get_jenkins_obj().requester.post_url(
-            url, params={}, data=config)
+            url, params={}, data=config
+        )
         return response.text
 
     @property
     def views(self):
-        return self.get_jenkins_obj().get_jenkins_obj_from_url(
-            self.baseurl).views
+        return (
+            self.get_jenkins_obj().get_jenkins_obj_from_url(self.baseurl).views
+        )

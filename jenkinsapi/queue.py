@@ -32,18 +32,19 @@ class Queue(JenkinsBase):
         return self.jenkins
 
     def iteritems(self):
-        for item in self._data['items']:
-            queue_id = item['id']
+        for item in self._data["items"]:
+            queue_id = item["id"]
             item_baseurl = "%s/item/%i" % (self.baseurl, queue_id)
-            yield item['id'], QueueItem(baseurl=item_baseurl,
-                                        jenkins_obj=self.jenkins)
+            yield item["id"], QueueItem(
+                baseurl=item_baseurl, jenkins_obj=self.jenkins
+            )
 
     def iterkeys(self):
-        for item in self._data['items']:
-            yield item['id']
+        for item in self._data["items"]:
+            yield item["id"]
 
     def itervalues(self):
-        for item in self._data['items']:
+        for item in self._data["items"]:
             yield QueueItem(self.jenkins, **item)
 
     def keys(self):
@@ -53,7 +54,7 @@ class Queue(JenkinsBase):
         return list(self.itervalues())
 
     def __len__(self):
-        return len(self._data['items'])
+        return len(self._data["items"])
 
     def __getitem__(self, item_id):
         self_as_dict = dict(self.iteritems())
@@ -64,9 +65,10 @@ class Queue(JenkinsBase):
 
     def _get_queue_items_for_job(self, job_name):
         for item in self._data["items"]:
-            if 'name' in item['task'] and item['task']['name'] == job_name:
-                yield QueueItem(self.get_queue_item_url(item),
-                                jenkins_obj=self.jenkins)
+            if "name" in item["task"] and item["task"]["name"] == job_name:
+                yield QueueItem(
+                    self.get_queue_item_url(item), jenkins_obj=self.jenkins
+                )
 
     def get_queue_items_for_job(self, job_name):
         return list(self._get_queue_items_for_job(job_name))
@@ -78,14 +80,13 @@ class Queue(JenkinsBase):
         self.delete_item_by_id(queue_item.queue_id)
 
     def delete_item_by_id(self, item_id):
-        deleteurl = '%s/cancelItem?id=%s' % (self.baseurl, item_id)
+        deleteurl = "%s/cancelItem?id=%s" % (self.baseurl, item_id)
         self.get_jenkins_obj().requester.post_url(deleteurl)
 
 
 class QueueItem(JenkinsBase):
 
-    """An individual item in the queue
-    """
+    """An individual item in the queue"""
 
     def __init__(self, baseurl, jenkins_obj):
         self.jenkins = jenkins_obj
@@ -93,15 +94,15 @@ class QueueItem(JenkinsBase):
 
     @property
     def queue_id(self):
-        return self._data['id']
+        return self._data["id"]
 
     @property
     def name(self):
-        return self._data['task']['name']
+        return self._data["task"]["name"]
 
     @property
     def why(self):
-        return self._data.get('why')
+        return self._data.get("why")
 
     def get_jenkins_obj(self):
         return self.jenkins
@@ -111,23 +112,27 @@ class QueueItem(JenkinsBase):
         Return the job associated with this queue item
         """
         return self.jenkins.get_job_by_url(
-            self._data['task']['url'],
-            self._data['task']['name'],
+            self._data["task"]["url"],
+            self._data["task"]["name"],
         )
 
     def get_parameters(self):
         """returns parameters of queue item"""
-        actions = self._data.get('actions', [])
+        actions = self._data.get("actions", [])
         for action in actions:
-            if isinstance(action, dict) and 'parameters' in action:
-                parameters = action['parameters']
-                return dict([(x['name'], x.get('value', None))
-                             for x in parameters])
+            if isinstance(action, dict) and "parameters" in action:
+                parameters = action["parameters"]
+                return dict(
+                    [(x["name"], x.get("value", None)) for x in parameters]
+                )
         return []
 
     def __repr__(self):
-        return "<%s.%s %s>" % (self.__class__.__module__,
-                               self.__class__.__name__, str(self))
+        return "<%s.%s %s>" % (
+            self.__class__.__module__,
+            self.__class__.__name__,
+            str(self),
+        )
 
     def __str__(self):
         return "%s Queue #%i" % (self.name, self.queue_id)
@@ -155,16 +160,14 @@ class QueueItem(JenkinsBase):
                 continue
 
     def is_running(self):
-        """Return True if this queued item is running.
-        """
+        """Return True if this queued item is running."""
         try:
             return self.get_build().is_running()
         except NotBuiltYet:
             return False
 
     def is_queued(self):
-        """Return True if this queued item is queued.
-        """
+        """Return True if this queued item is queued."""
         try:
             self.get_build()
             return False
@@ -173,12 +176,12 @@ class QueueItem(JenkinsBase):
 
     def get_build_number(self):
         try:
-            return self._data['executable']['number']
+            return self._data["executable"]["number"]
         except (KeyError, TypeError):
             raise NotBuiltYet()
 
     def get_job_name(self):
         try:
-            return self._data['task']['name']
+            return self._data["task"]["name"]
         except KeyError:
             raise NotBuiltYet()

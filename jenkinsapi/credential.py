@@ -20,9 +20,10 @@ class Credential(object):
 
     Each class expects specific credential dict, see below.
     """
+
     # pylint: disable=unused-argument
 
-    def __init__(self, cred_dict, jenkins_class=''):
+    def __init__(self, cred_dict, jenkins_class=""):
         """
         Create credential
 
@@ -32,10 +33,10 @@ class Credential(object):
             this field is used to distinguish between credentials
         :param dict cred_dict: dict containing credential information
         """
-        self.credential_id = cred_dict.get('credential_id', '')
-        self.description = cred_dict['description']
-        self.fullname = cred_dict.get('fullName', '')
-        self.displayname = cred_dict.get('displayName', '')
+        self.credential_id = cred_dict.get("credential_id", "")
+        self.description = cred_dict["description"]
+        self.fullname = cred_dict.get("fullName", "")
+        self.displayname = cred_dict.get("displayName", "")
         self.jenkins_class = jenkins_class
 
     def __str__(self):
@@ -53,8 +54,8 @@ class Credential(object):
             value = data[key]
             if isinstance(value, dict):
                 node = ET.SubElement(root, key)
-                if 'stapler-class' in value:
-                    node.attrib['class'] = value['stapler-class']
+                if "stapler-class" in value:
+                    node.attrib["class"] = value["stapler-class"]
                 for sub_key in value:
                     ET.SubElement(node, sub_key).text = value[sub_key]
             else:
@@ -82,48 +83,52 @@ class UsernamePasswordCredential(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = 'com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl'
-        super(UsernamePasswordCredential, self).__init__(cred_dict, jenkins_class)
-        if 'typeName' in cred_dict:
-            username = cred_dict['displayName'].split('/')[0]
+        jenkins_class = "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+        super(UsernamePasswordCredential, self).__init__(
+            cred_dict, jenkins_class
+        )
+        if "typeName" in cred_dict:
+            username = cred_dict["displayName"].split("/")[0]
         else:
-            username = cred_dict['userName']
+            username = cred_dict["userName"]
 
         self.username = username
-        self.password = cred_dict.get('password', None)
+        self.password = cred_dict.get("password", None)
 
     def get_attributes(self):
         """
         Used by Credentials object to create credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         return {
-            'stapler-class': self.jenkins_class,
-            'Submit': 'OK',
-            'json': {
-                '': '1',
-                'credentials': {
-                    'stapler-class': self.jenkins_class,
-                    'id': c_id,
-                    'username': self.username,
-                    'password': self.password,
-                    'description': self.description
-                }
-            }
+            "stapler-class": self.jenkins_class,
+            "Submit": "OK",
+            "json": {
+                "": "1",
+                "credentials": {
+                    "stapler-class": self.jenkins_class,
+                    "id": c_id,
+                    "username": self.username,
+                    "password": self.password,
+                    "description": self.description,
+                },
+            },
         }
 
     def get_attributes_xml(self):
         """
         Used by Credentials object to update a credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         data = {
-            'id': c_id,
-            'username': self.username,
-            'password': self.password,
-            'description': self.description
+            "id": c_id,
+            "username": self.username,
+            "password": self.password,
+            "description": self.description,
         }
-        return super(UsernamePasswordCredential, self)._get_attributes_xml(data)
+        return super(UsernamePasswordCredential, self)._get_attributes_xml(
+            data
+        )
 
 
 class SecretTextCredential(Credential):
@@ -145,39 +150,41 @@ class SecretTextCredential(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl'
+        jenkins_class = (
+            "org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl"
+        )
         super(SecretTextCredential, self).__init__(cred_dict, jenkins_class)
-        self.secret = cred_dict.get('secret', None)
+        self.secret = cred_dict.get("secret", None)
 
     def get_attributes(self):
         """
         Used by Credentials object to create credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         return {
-            'stapler-class': self.jenkins_class,
-            'Submit': 'OK',
-            'json': {
-                '': '1',
-                'credentials': {
-                    'stapler-class': self.jenkins_class,
-                    '$class': self.jenkins_class,
-                    'id': c_id,
-                    'secret': self.secret,
-                    'description': self.description
-                }
-            }
+            "stapler-class": self.jenkins_class,
+            "Submit": "OK",
+            "json": {
+                "": "1",
+                "credentials": {
+                    "stapler-class": self.jenkins_class,
+                    "$class": self.jenkins_class,
+                    "id": c_id,
+                    "secret": self.secret,
+                    "description": self.description,
+                },
+            },
         }
 
     def get_attributes_xml(self):
         """
         Used by Credentials object to update a credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         data = {
-            'id': c_id,
-            'secret': self.secret,
-            'description': self.description
+            "id": c_id,
+            "secret": self.secret,
+            "description": self.description,
         }
         return super(SecretTextCredential, self)._get_attributes_xml(data)
 
@@ -213,44 +220,44 @@ class SSHKeyCredential(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = 'com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey'
+        jenkins_class = "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"
         super(SSHKeyCredential, self).__init__(cred_dict, jenkins_class)
-        if 'typeName' in cred_dict:
-            username = cred_dict['displayName'].split(' ')[0]
+        if "typeName" in cred_dict:
+            username = cred_dict["displayName"].split(" ")[0]
         else:
-            username = cred_dict['userName']
+            username = cred_dict["userName"]
 
         self.username = username
-        self.passphrase = cred_dict.get('passphrase', '')
+        self.passphrase = cred_dict.get("passphrase", "")
 
-        if 'private_key' not in cred_dict or cred_dict['private_key'] is None:
+        if "private_key" not in cred_dict or cred_dict["private_key"] is None:
             self.key_type = -1
             self.key_value = None
-        elif cred_dict['private_key'].startswith('-'):
+        elif cred_dict["private_key"].startswith("-"):
             self.key_type = 0
-            self.key_value = cred_dict['private_key']
+            self.key_value = cred_dict["private_key"]
         else:
-            raise ValueError('Invalid private_key value')
+            raise ValueError("Invalid private_key value")
 
     @property
     def attrs(self):
         if self.key_type == 0:
-            c_class = self.jenkins_class + '$DirectEntryPrivateKeySource'
+            c_class = self.jenkins_class + "$DirectEntryPrivateKeySource"
         elif self.key_type == 1:
-            c_class = self.jenkins_class + '$FileOnMasterPrivateKeySource'
+            c_class = self.jenkins_class + "$FileOnMasterPrivateKeySource"
         elif self.key_type == 2:
-            c_class = self.jenkins_class + '$UsersPrivateKeySource'
+            c_class = self.jenkins_class + "$UsersPrivateKeySource"
         else:
             c_class = None
 
         attrs = {
-            'value': self.key_type,
-            'privateKey': self.key_value,
-            'stapler-class': c_class
+            "value": self.key_type,
+            "privateKey": self.key_value,
+            "stapler-class": c_class,
         }
         # We need one more attr when using the key file on master.
         if self.key_type == 1:
-            attrs['privateKeyFile'] = self.key_value
+            attrs["privateKeyFile"] = self.key_value
 
         return attrs
 
@@ -259,37 +266,37 @@ class SSHKeyCredential(Credential):
         Used by Credentials object to create credential in Jenkins
         """
 
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
 
         return {
-            'stapler-class': self.attrs['stapler-class'],
-            'Submit': 'OK',
-            'json': {
-                '': '1',
-                'credentials': {
-                    'scope': 'GLOBAL',
-                    'id': c_id,
-                    'username': self.username,
-                    'description': self.description,
-                    'privateKeySource': self.attrs,
-                    'passphrase': self.passphrase,
-                    'stapler-class': self.jenkins_class,
-                    '$class': self.jenkins_class
-                }
-            }
+            "stapler-class": self.attrs["stapler-class"],
+            "Submit": "OK",
+            "json": {
+                "": "1",
+                "credentials": {
+                    "scope": "GLOBAL",
+                    "id": c_id,
+                    "username": self.username,
+                    "description": self.description,
+                    "privateKeySource": self.attrs,
+                    "passphrase": self.passphrase,
+                    "stapler-class": self.jenkins_class,
+                    "$class": self.jenkins_class,
+                },
+            },
         }
 
     def get_attributes_xml(self):
         """
         Used by Credentials object to update a credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         data = {
-            'id': c_id,
-            'username': self.username,
-            'description': self.description,
-            'privateKeySource': self.attrs,
-            'passphrase': self.passphrase,
+            "id": c_id,
+            "username": self.username,
+            "description": self.description,
+            "privateKeySource": self.attrs,
+            "passphrase": self.passphrase,
         }
         return super(SSHKeyCredential, self)._get_attributes_xml(data)
 
@@ -316,48 +323,54 @@ class AmazonWebServicesCredentials(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = 'com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl'
-        super(AmazonWebServicesCredentials, self).__init__(cred_dict, jenkins_class)
+        jenkins_class = (
+            "com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl"
+        )
+        super(AmazonWebServicesCredentials, self).__init__(
+            cred_dict, jenkins_class
+        )
 
-        self.access_key = cred_dict['accessKey']
-        self.secret_key = cred_dict['secretKey']
-        self.iam_role_arn = cred_dict.get('iamRoleArn', '')
-        self.iam_mfa_serial_number = cred_dict.get('iamMfaSerialNumber', '')
+        self.access_key = cred_dict["accessKey"]
+        self.secret_key = cred_dict["secretKey"]
+        self.iam_role_arn = cred_dict.get("iamRoleArn", "")
+        self.iam_mfa_serial_number = cred_dict.get("iamMfaSerialNumber", "")
 
     def get_attributes(self):
         """
         Used by Credentials object to create credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         return {
-            'stapler-class': self.jenkins_class,
-            'Submit': 'OK',
-            'json': {
-                '': '1',
-                'credentials': {
-                    'stapler-class': self.jenkins_class,
-                    '$class': self.jenkins_class,
-                    'id': c_id,
-                    'accessKey': self.access_key,
-                    'secretKey': self.secret_key,
-                    'iamRoleArn': self.iam_role_arn,
-                    'iamMfaSerialNumber': self.iam_mfa_serial_number,
-                    'description': self.description
-                }
-            }
+            "stapler-class": self.jenkins_class,
+            "Submit": "OK",
+            "json": {
+                "": "1",
+                "credentials": {
+                    "stapler-class": self.jenkins_class,
+                    "$class": self.jenkins_class,
+                    "id": c_id,
+                    "accessKey": self.access_key,
+                    "secretKey": self.secret_key,
+                    "iamRoleArn": self.iam_role_arn,
+                    "iamMfaSerialNumber": self.iam_mfa_serial_number,
+                    "description": self.description,
+                },
+            },
         }
 
     def get_attributes_xml(self):
         """
         Used by Credentials object to update a credential in Jenkins
         """
-        c_id = '' if self.credential_id is None else self.credential_id
+        c_id = "" if self.credential_id is None else self.credential_id
         data = {
-            'id': c_id,
-            'accessKey': self.access_key,
-            'secretKey': self.secret_key,
-            'iamRoleArn': self.iam_role_arn,
-            'iamMfaSerialNumber': self.iam_mfa_serial_number,
-            'description': self.description
+            "id": c_id,
+            "accessKey": self.access_key,
+            "secretKey": self.secret_key,
+            "iamRoleArn": self.iam_role_arn,
+            "iamMfaSerialNumber": self.iam_mfa_serial_number,
+            "description": self.description,
         }
-        return super(AmazonWebServicesCredentials, self)._get_attributes_xml(data)
+        return super(AmazonWebServicesCredentials, self)._get_attributes_xml(
+            data
+        )

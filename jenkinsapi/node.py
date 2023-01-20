@@ -93,7 +93,7 @@ class Node(JenkinsBase):
         self.jenkins = jenkins_obj
         if not baseurl:
             poll = False
-            baseurl = '%s/computer/%s' % (self.jenkins.baseurl, self.name)
+            baseurl = "%s/computer/%s" % (self.jenkins.baseurl, self.name)
         JenkinsBase.__init__(self, baseurl, poll=poll)
         self.node_attributes = node_dict
         self._element_tree = None
@@ -109,79 +109,84 @@ class Node(JenkinsBase):
             to create node
         """
         na = self.node_attributes
-        if not na.get('credential_description', False):
+        if not na.get("credential_description", False):
             # If credentials description is not present - we will create
             # JNLP node
-            launcher = {'stapler-class': 'hudson.slaves.JNLPLauncher'}
+            launcher = {"stapler-class": "hudson.slaves.JNLPLauncher"}
         else:
             try:
                 credential = self.jenkins.credentials[
-                    na['credential_description']
+                    na["credential_description"]
                 ]
             except KeyError:
-                raise JenkinsAPIException('Credential with description "%s"'
-                                          ' not found'
-                                          % na['credential_description'])
+                raise JenkinsAPIException(
+                    'Credential with description "%s"'
+                    " not found" % na["credential_description"]
+                )
 
-            retries = na['max_num_retries'] if 'max_num_retries' in na else ''
-            re_wait = na['retry_wait_time'] if 'retry_wait_time' in na else ''
+            retries = na["max_num_retries"] if "max_num_retries" in na else ""
+            re_wait = na["retry_wait_time"] if "retry_wait_time" in na else ""
             launcher = {
-                'stapler-class': 'hudson.plugins.sshslaves.SSHLauncher',
-                '$class': 'hudson.plugins.sshslaves.SSHLauncher',
-                'host': na['host'],
-                'port': na['port'],
-                'credentialsId': credential.credential_id,
-                'jvmOptions': na['jvm_options'],
-                'javaPath': na['java_path'],
-                'prefixStartSlaveCmd': na['prefix_start_slave_cmd'],
-                'suffixStartSlaveCmd': na['suffix_start_slave_cmd'],
-                'maxNumRetries': retries,
-                'retryWaitTime': re_wait
+                "stapler-class": "hudson.plugins.sshslaves.SSHLauncher",
+                "$class": "hudson.plugins.sshslaves.SSHLauncher",
+                "host": na["host"],
+                "port": na["port"],
+                "credentialsId": credential.credential_id,
+                "jvmOptions": na["jvm_options"],
+                "javaPath": na["java_path"],
+                "prefixStartSlaveCmd": na["prefix_start_slave_cmd"],
+                "suffixStartSlaveCmd": na["suffix_start_slave_cmd"],
+                "maxNumRetries": retries,
+                "retryWaitTime": re_wait,
             }
 
         retention = {
-            'stapler-class': 'hudson.slaves.RetentionStrategy$Always',
-            '$class': 'hudson.slaves.RetentionStrategy$Always'
+            "stapler-class": "hudson.slaves.RetentionStrategy$Always",
+            "$class": "hudson.slaves.RetentionStrategy$Always",
         }
-        if 'retention' in na and na['retention'].lower() == 'ondemand':
+        if "retention" in na and na["retention"].lower() == "ondemand":
             retention = {
-                'stapler-class': 'hudson.slaves.RetentionStrategy$Demand',
-                '$class': 'hudson.slaves.RetentionStrategy$Demand',
-                'inDemandDelay': na['ondemand_delay'],
-                'idleDelay': na['ondemand_idle_delay']
+                "stapler-class": "hudson.slaves.RetentionStrategy$Demand",
+                "$class": "hudson.slaves.RetentionStrategy$Demand",
+                "inDemandDelay": na["ondemand_delay"],
+                "idleDelay": na["ondemand_idle_delay"],
             }
 
-        node_props = {
-            'stapler-class-bag': 'true'
-        }
-        if 'env' in na:
-            node_props.update({
-                'hudson-slaves-EnvironmentVariablesNodeProperty': {
-                    'env': na['env']
+        node_props = {"stapler-class-bag": "true"}
+        if "env" in na:
+            node_props.update(
+                {
+                    "hudson-slaves-EnvironmentVariablesNodeProperty": {
+                        "env": na["env"]
+                    }
                 }
-            })
-        if 'tool_location' in na:
-            node_props.update({
-                "hudson-tools-ToolLocationNodeProperty": {
-                    "locations": na['tool_location']
+            )
+        if "tool_location" in na:
+            node_props.update(
+                {
+                    "hudson-tools-ToolLocationNodeProperty": {
+                        "locations": na["tool_location"]
+                    }
                 }
-            })
+            )
 
         params = {
-            'name': self.name,
-            'type': 'hudson.slaves.DumbSlave$DescriptorImpl',
-            'json': json.dumps({
-                'name': self.name,
-                'nodeDescription': na.get('node_description', ''),
-                'numExecutors': na['num_executors'],
-                'remoteFS': na['remote_fs'],
-                'labelString': na['labels'],
-                'mode': 'EXCLUSIVE' if na['exclusive'] else 'NORMAL',
-                'retentionStrategy': retention,
-                'type': 'hudson.slaves.DumbSlave',
-                'nodeProperties': node_props,
-                'launcher': launcher
-            })
+            "name": self.name,
+            "type": "hudson.slaves.DumbSlave$DescriptorImpl",
+            "json": json.dumps(
+                {
+                    "name": self.name,
+                    "nodeDescription": na.get("node_description", ""),
+                    "numExecutors": na["num_executors"],
+                    "remoteFS": na["remote_fs"],
+                    "labelString": na["labels"],
+                    "mode": "EXCLUSIVE" if na["exclusive"] else "NORMAL",
+                    "retentionStrategy": retention,
+                    "type": "hudson.slaves.DumbSlave",
+                    "nodeProperties": node_props,
+                    "launcher": launcher,
+                }
+            ),
         }
 
         return params
@@ -193,16 +198,16 @@ class Node(JenkinsBase):
         return self.name
 
     def is_online(self):
-        return not self.poll(tree='offline')['offline']
+        return not self.poll(tree="offline")["offline"]
 
     def is_temporarily_offline(self):
-        return self.poll(tree='temporarilyOffline')['temporarilyOffline']
+        return self.poll(tree="temporarilyOffline")["temporarilyOffline"]
 
     def is_jnlpagent(self):
-        return self._data['jnlpAgent']
+        return self._data["jnlpAgent"]
 
     def is_idle(self):
-        return self.poll(tree='idle')['idle']
+        return self.poll(tree="idle")["idle"]
 
     def set_online(self):
         """
@@ -214,23 +219,25 @@ class Node(JenkinsBase):
         """
         self.poll()
         # Before change state check if client is connected
-        if self._data['offline'] and not self._data['temporarilyOffline']:
-            raise AssertionError("Node is offline and not marked as "
-                                 "temporarilyOffline, check client "
-                                 "connection: offline = %s, "
-                                 "temporarilyOffline = %s" %
-                                 (self._data['offline'],
-                                  self._data['temporarilyOffline']))
+        if self._data["offline"] and not self._data["temporarilyOffline"]:
+            raise AssertionError(
+                "Node is offline and not marked as "
+                "temporarilyOffline, check client "
+                "connection: offline = %s, "
+                "temporarilyOffline = %s"
+                % (self._data["offline"], self._data["temporarilyOffline"])
+            )
 
-        if self._data['offline'] and self._data['temporarilyOffline']:
+        if self._data["offline"] and self._data["temporarilyOffline"]:
             self.toggle_temporarily_offline()
-            if self._data['offline']:
-                raise AssertionError("The node state is still offline, "
-                                     "check client connection:"
-                                     " offline = %s, "
-                                     "temporarilyOffline = %s" %
-                                     (self._data['offline'],
-                                      self._data['temporarilyOffline']))
+            if self._data["offline"]:
+                raise AssertionError(
+                    "The node state is still offline, "
+                    "check client connection:"
+                    " offline = %s, "
+                    "temporarilyOffline = %s"
+                    % (self._data["offline"], self._data["temporarilyOffline"])
+                )
 
     def set_offline(self, message="requested from jenkinsapi"):
         """
@@ -239,14 +246,15 @@ class Node(JenkinsBase):
         : param message: optional string explain why you are taking this
             node offline
         """
-        if not self._data['offline']:
+        if not self._data["offline"]:
             self.toggle_temporarily_offline(message)
-            data = self.poll(tree='offline,temporarilyOffline')
-            if not data['offline']:
-                raise AssertionError("The node state is still online:" +
-                                     "offline = %s , temporarilyOffline = %s" %
-                                     (data['offline'],
-                                      data['temporarilyOffline']))
+            data = self.poll(tree="offline,temporarilyOffline")
+            if not data["offline"]:
+                raise AssertionError(
+                    "The node state is still online:"
+                    + "offline = %s , temporarilyOffline = %s"
+                    % (data["offline"], data["temporarilyOffline"])
+                )
 
     def toggle_temporarily_offline(self, message="requested from jenkinsapi"):
         """
@@ -257,22 +265,24 @@ class Node(JenkinsBase):
             are taking this node offline
         """
         initial_state = self.is_temporarily_offline()
-        url = self.baseurl + \
-            "/toggleOffline?offlineMessage=" + urlquote(message)
+        url = (
+            self.baseurl + "/toggleOffline?offlineMessage=" + urlquote(message)
+        )
         try:
             html_result = self.jenkins.requester.get_and_confirm_status(url)
         except PostRequired:
             html_result = self.jenkins.requester.post_and_confirm_status(
-                url,
-                data={})
+                url, data={}
+            )
 
         self.poll()
         log.debug(html_result)
         state = self.is_temporarily_offline()
         if initial_state == state:
             raise AssertionError(
-                "The node state has not changed: temporarilyOffline = %s" %
-                state)
+                "The node state has not changed: temporarilyOffline = %s"
+                % state
+            )
 
     def update_offline_reason(self, reason):
         """
@@ -280,11 +290,15 @@ class Node(JenkinsBase):
         """
 
         if self.is_temporarily_offline():
-            url = self.baseurl + '/changeOfflineCause?offlineMessage=' + urlquote(reason)
+            url = (
+                self.baseurl
+                + "/changeOfflineCause?offlineMessage="
+                + urlquote(reason)
+            )
             self.jenkins.requester.post_and_confirm_status(url, data={})
 
     def offline_reason(self):
-        return self._data['offlineCauseReason']
+        return self._data["offlineCauseReason"]
 
     @property
     def _et(self):
@@ -307,7 +321,8 @@ class Node(JenkinsBase):
         Returns the config.xml from the node.
         """
         response = self.jenkins.requester.get_and_confirm_status(
-            "%(baseurl)s/config.xml" % self.__dict__)
+            "%(baseurl)s/config.xml" % self.__dict__
+        )
         return response.text
 
     def load_config(self):
@@ -315,8 +330,8 @@ class Node(JenkinsBase):
         Loads the config.xml for the node allowing it to be re-queried
         without generating new requests.
         """
-        if self.name == 'master':
-            raise JenkinsAPIException('master node does not have config.xml')
+        if self.name == "master":
+            raise JenkinsAPIException("master node does not have config.xml")
 
         self._config = self.get_config()
         self._get_config_element_tree()
@@ -325,25 +340,25 @@ class Node(JenkinsBase):
         """
         Uploads config_xml to the config.xml for the node.
         """
-        if self.name == 'master':
-            raise JenkinsAPIException('master node does not have config.xml')
+        if self.name == "master":
+            raise JenkinsAPIException("master node does not have config.xml")
 
         self.jenkins.requester.post_and_confirm_status(
-            "%(baseurl)s/config.xml" % self.__dict__,
-            data=config_xml)
+            "%(baseurl)s/config.xml" % self.__dict__, data=config_xml
+        )
 
     def get_labels(self):
         """
         Returns the labels for a slave as a string with each label
         separated by the ' ' character.
         """
-        return self.get_config_element('label')
+        return self.get_config_element("label")
 
     def get_num_executors(self):
         try:
-            return self.get_config_element('numExecutors')
+            return self.get_config_element("numExecutors")
         except JenkinsAPIException:
-            return self._data['numExecutors']
+            return self._data["numExecutors"]
 
     def set_num_executors(self, value):
         """
@@ -354,22 +369,22 @@ class Node(JenkinsBase):
         """
         set_value = value if isinstance(value, str) else str(value)
 
-        if self.name == 'master':
+        if self.name == "master":
             # master node doesn't have config.xml, so we're going to submit
             # form here
-            data = 'json=%s' % urlquote(
-                json.dumps({
-                    "numExecutors": set_value,
-                    "nodeProperties": {
-                        "stapler-class-bag": "true"
+            data = "json=%s" % urlquote(
+                json.dumps(
+                    {
+                        "numExecutors": set_value,
+                        "nodeProperties": {"stapler-class-bag": "true"},
                     }
-                })
+                )
             )
 
-            url = self.baseurl + '/configSubmit'
+            url = self.baseurl + "/configSubmit"
             self.jenkins.requester.post_and_confirm_status(url, data=data)
         else:
-            self.set_config_element('numExecutors', set_value)
+            self.set_config_element("numExecutors", set_value)
 
         self.poll()
 
@@ -394,16 +409,16 @@ class Node(JenkinsBase):
         Polls the node returning one of the monitors in the monitorData branch of the
         returned node api tree.
         """
-        monitor_data_key = 'monitorData'
+        monitor_data_key = "monitorData"
         if poll_monitor:
             # polling as monitors like response time can be updated
             monitor_data = self.poll(tree=monitor_data_key)[monitor_data_key]
         else:
             monitor_data = self._data[monitor_data_key]
 
-        full_monitor_name = 'hudson.node_monitors.{0}'.format(monitor_name)
+        full_monitor_name = "hudson.node_monitors.{0}".format(monitor_name)
         if full_monitor_name not in monitor_data:
-            raise AssertionError('Node monitor %s not found' % monitor_name)
+            raise AssertionError("Node monitor %s not found" % monitor_name)
 
         return monitor_data[full_monitor_name]
 
@@ -411,64 +426,64 @@ class Node(JenkinsBase):
         """
         Returns the node's available physical memory in bytes.
         """
-        monitor_data = self.get_monitor('SwapSpaceMonitor')
-        return monitor_data['availablePhysicalMemory']
+        monitor_data = self.get_monitor("SwapSpaceMonitor")
+        return monitor_data["availablePhysicalMemory"]
 
     def get_available_swap_space(self):
         """
         Returns the node's available swap space in bytes.
         """
-        monitor_data = self.get_monitor('SwapSpaceMonitor')
-        return monitor_data['availableSwapSpace']
+        monitor_data = self.get_monitor("SwapSpaceMonitor")
+        return monitor_data["availableSwapSpace"]
 
     def get_total_physical_memory(self):
         """
         Returns the node's total physical memory in bytes.
         """
-        monitor_data = self.get_monitor('SwapSpaceMonitor')
-        return monitor_data['totalPhysicalMemory']
+        monitor_data = self.get_monitor("SwapSpaceMonitor")
+        return monitor_data["totalPhysicalMemory"]
 
     def get_total_swap_space(self):
         """
         Returns the node's total swap space in bytes.
         """
-        monitor_data = self.get_monitor('SwapSpaceMonitor')
-        return monitor_data['totalSwapSpace']
+        monitor_data = self.get_monitor("SwapSpaceMonitor")
+        return monitor_data["totalSwapSpace"]
 
     def get_workspace_path(self):
         """
         Returns the local path to the node's Jenkins workspace directory.
         """
-        monitor_data = self.get_monitor('DiskSpaceMonitor')
-        return monitor_data['path']
+        monitor_data = self.get_monitor("DiskSpaceMonitor")
+        return monitor_data["path"]
 
     def get_workspace_size(self):
         """
         Returns the size in bytes of the node's Jenkins workspace directory.
         """
-        monitor_data = self.get_monitor('DiskSpaceMonitor')
-        return monitor_data['size']
+        monitor_data = self.get_monitor("DiskSpaceMonitor")
+        return monitor_data["size"]
 
     def get_temp_path(self):
         """
         Returns the local path to the node's temp directory.
         """
-        monitor_data = self.get_monitor('TemporarySpaceMonitor')
-        return monitor_data['path']
+        monitor_data = self.get_monitor("TemporarySpaceMonitor")
+        return monitor_data["path"]
 
     def get_temp_size(self):
         """
         Returns the size in bytes of the node's temp directory.
         """
-        monitor_data = self.get_monitor('TemporarySpaceMonitor')
-        return monitor_data['size']
+        monitor_data = self.get_monitor("TemporarySpaceMonitor")
+        return monitor_data["size"]
 
     def get_architecture(self):
         """
         Returns the system architecture of the node eg. "Linux (amd64)".
         """
         # no need to poll as the architecture will never change
-        return self.get_monitor('ArchitectureMonitor', poll_monitor=False)
+        return self.get_monitor("ArchitectureMonitor", poll_monitor=False)
 
     def block_until_idle(self, timeout, poll_time=5):
         """
@@ -481,27 +496,28 @@ class Node(JenkinsBase):
         while not self.is_idle() and (time.time() - start_time) < timeout:
             log.debug(
                 "Waiting for the node to become idle. Elapsed time: %s",
-                (time.time() - start_time)
+                (time.time() - start_time),
             )
             time.sleep(poll_time)
 
         if not self.is_idle():
             raise TimeOut(
-                "The node has not become idle after {} minutes."
-                .format(timeout/60)
+                "The node has not become idle after {} minutes.".format(
+                    timeout / 60
+                )
             )
 
     def get_response_time(self):
         """
         Returns the node's average response time.
         """
-        monitor_data = self.get_monitor('ResponseTimeMonitor')
-        return monitor_data['average']
+        monitor_data = self.get_monitor("ResponseTimeMonitor")
+        return monitor_data["average"]
 
     def get_clock_difference(self):
         """
         Returns the difference between the node's clock and the master Jenkins clock.
         Used to detect out of sync clocks.
         """
-        monitor_data = self.get_monitor('ClockMonitor')
-        return monitor_data['diff']
+        monitor_data = self.get_monitor("ClockMonitor")
+        return monitor_data["diff"]

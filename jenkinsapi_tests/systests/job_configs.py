@@ -2,7 +2,7 @@
 A selection of job objects used in testing.
 """
 
-EMPTY_JOB = '''\
+EMPTY_JOB = """\
 <?xml version="1.0" encoding="UTF-8"?><project>
   <actions/>
   <description/>
@@ -19,7 +19,7 @@ EMPTY_JOB = '''\
   <publishers/>
   <buildWrappers/>
 </project>
-'''.strip()
+""".strip()
 
 LONG_RUNNING_JOB = """
 <?xml version='1.0' encoding='UTF-8'?>
@@ -312,7 +312,7 @@ JOB_WITH_FILE_AND_PARAMS = """
   <buildWrappers/>
 </project>""".strip()
 
-JOB_WITH_ENV_VARS = '''\
+JOB_WITH_ENV_VARS = """\
 <?xml version="1.0" encoding="UTF-8"?><project>
   <actions/>
   <description/>
@@ -338,4 +338,4 @@ JOB_WITH_ENV_VARS = '''\
     </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>
-'''.strip()
+""".strip()

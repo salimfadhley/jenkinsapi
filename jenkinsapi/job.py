@@ -23,12 +23,12 @@ from jenkinsapi.queue import QueueItem
 from jenkinsapi_utils.compat import to_string
 
 
-SVN_URL = './scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote'
-GIT_URL = './scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url'
-HG_URL = './scm/source'
-GIT_BRANCH = './scm/branches/hudson.plugins.git.BranchSpec/name'
-HG_BRANCH = './scm/branch'
-DEFAULT_HG_BRANCH_NAME = 'default'
+SVN_URL = "./scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote"
+GIT_URL = "./scm/userRemoteConfigs/hudson.plugins.git.UserRemoteConfig/url"
+HG_URL = "./scm/source"
+GIT_BRANCH = "./scm/branches/hudson.plugins.git.BranchSpec/name"
+HG_BRANCH = "./scm/branch"
+DEFAULT_HG_BRANCH_NAME = "default"
 
 log = logging.getLogger(__name__)
 
@@ -48,22 +48,26 @@ class Job(JenkinsBase, MutableJenkinsThing):
         self._element_tree = None
         self._scm_prefix = ""
         self._scm_map = {
-            'hudson.scm.SubversionSCM': 'svn',
-            'hudson.plugins.git.GitSCM': 'git',
-            'hudson.plugins.mercurial.MercurialSCM': 'hg',
-            'hudson.scm.NullSCM': 'NullSCM'
+            "hudson.scm.SubversionSCM": "svn",
+            "hudson.plugins.git.GitSCM": "git",
+            "hudson.plugins.mercurial.MercurialSCM": "hg",
+            "hudson.scm.NullSCM": "NullSCM",
         }
         self._scmurlmap = {
-            'svn': lambda element_tree: list(element_tree.findall(SVN_URL)),
-            'git': lambda element_tree: list(element_tree.findall(self._scm_prefix + GIT_URL)),
-            'hg': lambda element_tree: list(element_tree.findall(HG_URL)),
-            None: lambda element_tree: []
+            "svn": lambda element_tree: list(element_tree.findall(SVN_URL)),
+            "git": lambda element_tree: list(
+                element_tree.findall(self._scm_prefix + GIT_URL)
+            ),
+            "hg": lambda element_tree: list(element_tree.findall(HG_URL)),
+            None: lambda element_tree: [],
         }
         self._scmbranchmap = {
-            'svn': lambda element_tree: [],
-            'git': lambda element_tree: list(element_tree.findall(self._scm_prefix + GIT_BRANCH)),
-            'hg': self._get_hg_branch,
-            None: lambda element_tree: []
+            "svn": lambda element_tree: [],
+            "git": lambda element_tree: list(
+                element_tree.findall(self._scm_prefix + GIT_BRANCH)
+            ),
+            "hg": self._get_hg_branch,
+            None: lambda element_tree: [],
         }
         self.url = url
         JenkinsBase.__init__(self, self.url)
@@ -84,7 +88,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def _get_hg_branch(self, element_tree):
         branches = element_tree.findall(HG_BRANCH)
         if not branches:
-            hg_default_branch = ET.Element('branch')
+            hg_default_branch = ET.Element("branch")
             hg_default_branch.text = DEFAULT_HG_BRANCH_NAME
             branches.append(hg_default_branch)
         return branches
@@ -111,15 +115,15 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # do not call _buildid_for_type here: it would poll and do an infinite
         # loop
         oldest_loaded_build_number = data["builds"][-1]["number"]
-        if 'firstBuild' not in self._data or not self._data['firstBuild']:
+        if "firstBuild" not in self._data or not self._data["firstBuild"]:
             first_build_number = oldest_loaded_build_number
         else:
             first_build_number = self._data["firstBuild"]["number"]
-        all_builds_loaded = (oldest_loaded_build_number == first_build_number)
+        all_builds_loaded = oldest_loaded_build_number == first_build_number
         if all_builds_loaded:
             return data
-        response = self.poll(tree='allBuilds[number,url]')
-        data['builds'] = response['allBuilds']
+        response = self.poll(tree="allBuilds[number,url]")
+        data["builds"] = response["allBuilds"]
         return data
 
     def _get_config_element_tree(self):
@@ -147,35 +151,42 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Watch and read on and behold!
         """
         if not isinstance(build_params, dict):
-            raise ValueError('Build parameters must be a dict')
+            raise ValueError("Build parameters must be a dict")
 
-        build_p = [{'name': k, 'value': to_string(v)}
-                   for k, v in sorted(build_params.items())]
+        build_p = [
+            {"name": k, "value": to_string(v)}
+            for k, v in sorted(build_params.items())
+        ]
 
-        out = {'parameter': build_p}
+        out = {"parameter": build_p}
         if file_params:
-            file_p = [{'name': k, 'file': k}
-                      for k in file_params.keys()]
-            out['parameter'].extend(file_p)
+            file_p = [{"name": k, "file": k} for k in file_params.keys()]
+            out["parameter"].extend(file_p)
 
-        if len(out['parameter']) == 1:
-            out['parameter'] = out['parameter'][0]
+        if len(out["parameter"]) == 1:
+            out["parameter"] = out["parameter"][0]
 
         return out
 
     @staticmethod
     def mk_json_from_build_parameters(build_params, file_params=None):
         json_structure = Job._mk_json_from_build_parameters(
-            build_params,
-            file_params
+            build_params, file_params
         )
-        json_structure['statusCode'] = "303"
-        json_structure['redirectTo'] = "."
+        json_structure["statusCode"] = "303"
+        json_structure["redirectTo"] = "."
         return json.dumps(json_structure)
 
-    def invoke(self, securitytoken=None, block=False,
-               build_params=None, cause=None, files=None, delay=5,
-               quiet_period=None):
+    def invoke(
+        self,
+        securitytoken=None,
+        block=False,
+        build_params=None,
+        cause=None,
+        files=None,
+        delay=5,
+        quiet_period=None,
+    ):
         assert isinstance(block, bool)
         if build_params and (not self.has_params()):
             raise BadParams("This job does not support parameters")
@@ -183,11 +194,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         params = {}  # Via Get string
 
         if securitytoken:
-            params['token'] = securitytoken
+            params["token"] = securitytoken
 
         # Either copy the params dict or make a new one.
-        build_params = dict(build_params.items()) \
-            if build_params else {}  # Via POSTed JSON
+        build_params = (
+            dict(build_params.items()) if build_params else {}
+        )  # Via POSTed JSON
 
         url = self.get_build_triggerurl()
         # If quiet period is set, the build will have {quiet_period} seconds
@@ -195,14 +207,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         if quiet_period is not None:
             url += "?delay={0}sec".format(quiet_period)
         if cause:
-            build_params['cause'] = cause
+            build_params["cause"] = cause
 
         # Build require params as form fields
         # and as Json.
         data = {
-            'json': self.mk_json_from_build_parameters(
-                build_params,
-                files)
+            "json": self.mk_json_from_build_parameters(build_params, files)
         }
         data.update(build_params)
 
@@ -212,10 +222,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
             params=params,
             files=files,
             valid=[200, 201, 303],
-            allow_redirects=False
+            allow_redirects=False,
         )
 
-        redirect_url = response.headers['location']
+        redirect_url = response.headers["location"]
 
         #
         # Enterprise Jenkins implementations such as CloudBees locate their
@@ -224,16 +234,19 @@ class Job(JenkinsBase, MutableJenkinsThing):
         # https://server.domain.com/jenkins/job/my_team/api/
         #
         queue_baseurl_candidates = [self.jenkins.baseurl]
-        scheme, netloc, path, _, query, frag = \
-            urlparse.urlparse(self.jenkins.baseurl)
+        scheme, netloc, path, _, query, frag = urlparse.urlparse(
+            self.jenkins.baseurl
+        )
         while path:
-            path = '/'.join(path.rstrip('/').split('/')[:-1])
+            path = "/".join(path.rstrip("/").split("/")[:-1])
             queue_baseurl_candidates.append(
-                urlparse.urlunsplit([scheme, netloc, path, query, frag]))
+                urlparse.urlunsplit([scheme, netloc, path, query, frag])
+            )
         redirect_url_valid = False
         for queue_baseurl_candidate in queue_baseurl_candidates:
             redirect_url_valid = redirect_url.startswith(
-                "%s/queue/item" % queue_baseurl_candidate)
+                "%s/queue/item" % queue_baseurl_candidate
+            )
             if redirect_url_valid:
                 break
         if not redirect_url_valid:
@@ -254,11 +267,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
             "lastBuild",
             "lastCompletedBuild",
             "firstBuild",
-            "lastFailedBuild"]
-        assert buildtype in KNOWNBUILDTYPES, ('Unknown build info type: %s'
-                                              % buildtype)
+            "lastFailedBuild",
+        ]
+        assert buildtype in KNOWNBUILDTYPES, (
+            "Unknown build info type: %s" % buildtype
+        )
 
-        data = self.poll(tree='%s[number]' % buildtype)
+        data = self.poll(tree="%s[number]" % buildtype)
 
         if not data.get(buildtype):
             raise NoBuildData(buildtype)
@@ -301,14 +316,17 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self._buildid_for_type("lastCompletedBuild")
 
     def get_build_dict(self):
-        builds = self.poll(tree='builds[number,url]')
+        builds = self.poll(tree="builds[number,url]")
         if not builds:
             raise NoBuildData(repr(self))
         builds = self._add_missing_builds(builds)
-        builds = builds['builds']
-        last_build = self.poll(tree='lastBuild[number,url]')['lastBuild']
-        if builds and last_build and \
-                builds[0]['number'] != last_build['number']:
+        builds = builds["builds"]
+        last_build = self.poll(tree="lastBuild[number,url]")["lastBuild"]
+        if (
+            builds
+            and last_build
+            and builds[0]["number"] != last_build["number"]
+        ):
             builds = [last_build] + builds
         # FIXME SO how is this supposed to work if build is false-y?
         # I don't think that builds *can* be false here, so I don't
@@ -320,16 +338,19 @@ class Job(JenkinsBase, MutableJenkinsThing):
         last_build_number = self.get_last_buildnumber()
         if order != 1 and order != -1:
             raise ValueError(
-                'Direction should be ascending or descending (1/-1)')
+                "Direction should be ascending or descending (1/-1)"
+            )
 
-        for number in range(first_build_number,
-                            last_build_number + 1)[::order]:
+        for number in range(first_build_number, last_build_number + 1)[
+            ::order
+        ]:
             build = self.get_build(number)
             if build.get_params() == build_params:
                 return build
 
         raise NoBuildData(
-            'No build with such params {params}'.format(params=build_params))
+            "No build with such params {params}".format(params=build_params)
+        )
 
     def get_revision_dict(self):
         """
@@ -337,11 +358,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         that used that particular revision
         """
         revs = defaultdict(list)
-        if 'builds' not in self._data:
+        if "builds" not in self._data:
             raise NoBuildData(repr(self))
         for buildnumber in self.get_build_ids():
-            revs[self.get_build(buildnumber)
-                 .get_revision()].append(buildnumber)
+            revs[self.get_build(buildnumber).get_revision()].append(
+                buildnumber
+            )
         return revs
 
     def get_build_ids(self):
@@ -354,7 +376,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         Return the next build number that Jenkins will assign.
         """
-        return self._data.get('nextBuildNumber', 0)
+        return self._data.get("nextBuildNumber", 0)
 
     def get_last_stable_build(self):
         """
@@ -405,7 +427,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             revision -> buildnumber map
         :return: list of buildnumbers, [int]
         """
-        if self.get_scm_type() == 'svn' and not isinstance(revision, int):
+        if self.get_scm_type() == "svn" and not isinstance(revision, int):
             revision = int(revision)
         if self._revmap is None or refresh:
             self._revmap = self.get_revision_dict()
@@ -420,7 +442,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             url = self.get_build_dict()[buildnumber]
             return Build(url, buildnumber, job=self)
         except KeyError:
-            raise NotFound('Build #%s not found' % buildnumber)
+            raise NotFound("Build #%s not found" % buildnumber)
 
     def delete_build(self, build_number):
         """
@@ -432,10 +454,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         try:
             url = self.get_build_dict()[build_number]
             url = "%s/doDelete" % url
-            self.jenkins.requester.post_and_confirm_status(url, data='')
+            self.jenkins.requester.post_and_confirm_status(url, data="")
             self.jenkins.poll()
         except KeyError:
-            raise NotFound('Build #%s not found' % build_number)
+            raise NotFound("Build #%s not found" % build_number)
 
     def get_build_metadata(self, buildnumber):
         """
@@ -450,7 +472,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             url = self.get_build_dict()[buildnumber]
             return Build(url, buildnumber, job=self, depth=0)
         except KeyError:
-            raise NotFound('Build #%s not found' % buildnumber)
+            raise NotFound("Build #%s not found" % buildnumber)
 
     def __delitem__(self, build_number):
         self.delete_build(build_number)
@@ -465,8 +487,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         return self.is_queued() or self.is_running()
 
     def is_queued(self):
-        data = self.poll(tree='inQueue')
-        return data.get('inQueue', False)
+        data = self.poll(tree="inQueue")
+        return data.get("inQueue", False)
 
     def get_queue_item(self):
         """
@@ -475,9 +497,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         if not self.is_queued():
             raise UnknownQueueItem()
-        q_item = self.poll(tree='queueItem[url]')
+        q_item = self.poll(tree="queueItem[url]")
         qi_url = urlparse.urljoin(
-            self.jenkins.baseurl, q_item['queueItem']['url']
+            self.jenkins.baseurl, q_item["queueItem"]["url"]
         )
         return QueueItem(qi_url, self.jenkins)
 
@@ -490,7 +512,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         except NoBuildData:
             log.info(
                 "No build info available for %s, assuming not running.",
-                str(self))
+                str(self),
+            )
         return False
 
     def get_config(self):
@@ -498,7 +521,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Returns the config.xml from the job
         """
         response = self.jenkins.requester.get_and_confirm_status(
-            "%(baseurl)s/config.xml" % self.__dict__)
+            "%(baseurl)s/config.xml" % self.__dict__
+        )
         return response.text
 
     def load_config(self):
@@ -506,24 +530,25 @@ class Job(JenkinsBase, MutableJenkinsThing):
 
     def get_scm_type(self):
         element_tree = self._get_config_element_tree()
-        scm_element = element_tree.find('scm')
+        scm_element = element_tree.find("scm")
         if not scm_element:
-            multibranch_scm_prefix = \
-                "properties/org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty/branch/"
+            multibranch_scm_prefix = "properties/org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty/branch/"
             multibranch_path = multibranch_scm_prefix + "scm"
             scm_element = element_tree.find(multibranch_path)
             if scm_element:
                 # multibranch pipeline.
                 self._scm_prefix = multibranch_scm_prefix
-        scm_class = scm_element.get('class') if scm_element else None
+        scm_class = scm_element.get("class") if scm_element else None
         scm = self._scm_map.get(scm_class)
         if not scm:
             raise NotSupportSCM(
                 'SCM class "%s" not supported by API for job "%s"'
-                % (scm_class, self.name))
-        if scm == 'NullSCM':
+                % (scm_class, self.name)
+            )
+        if scm == "NullSCM":
             raise NotConfiguredSCM(
-                'SCM is not configured for job "%s"' % self.name)
+                'SCM is not configured for job "%s"' % self.name
+            )
         return scm
 
     def get_scm_url(self):
@@ -534,8 +559,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         element_tree = self._get_config_element_tree()
         scm = self.get_scm_type()
-        scm_url_list = [scm_url.text for scm_url in self._scmurlmap[
-            scm](element_tree)]
+        scm_url_list = [
+            scm_url.text for scm_url in self._scmurlmap[scm](element_tree)
+        ]
         return scm_url_list
 
     def get_scm_branch(self):
@@ -545,8 +571,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         element_tree = self._get_config_element_tree()
         scm = self.get_scm_type()
-        return [scm_branch.text
-                for scm_branch in self._scmbranchmap[scm](element_tree)]
+        return [
+            scm_branch.text
+            for scm_branch in self._scmbranchmap[scm](element_tree)
+        ]
 
     def modify_scm_branch(self, new_branch, old_branch=None):
         """
@@ -596,7 +624,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                     self.update_config(ET.tostring(element_tree))
 
     def get_config_xml_url(self):
-        return '%s/config.xml' % self.baseurl
+        return "%s/config.xml" % self.baseurl
 
     def update_config(self, config, full_response=False):
         """
@@ -623,9 +651,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         downstream_jobs = []
         try:
-            for j in self._data['downstreamProjects']:
-                downstream_jobs.append(
-                    self.get_jenkins_obj()[j['name']])
+            for j in self._data["downstreamProjects"]:
+                downstream_jobs.append(self.get_jenkins_obj()[j["name"]])
         except KeyError:
             return []
         return downstream_jobs
@@ -637,8 +664,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         downstream_jobs = []
         try:
-            for j in self._data['downstreamProjects']:
-                downstream_jobs.append(j['name'])
+            for j in self._data["downstreamProjects"]:
+                downstream_jobs.append(j["name"])
         except KeyError:
             return []
         return downstream_jobs
@@ -650,8 +677,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         upstream_jobs = []
         try:
-            for j in self._data['upstreamProjects']:
-                upstream_jobs.append(j['name'])
+            for j in self._data["upstreamProjects"]:
+                upstream_jobs.append(j["name"])
         except KeyError:
             return []
         return upstream_jobs
@@ -663,29 +690,29 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         upstream_jobs = []
         try:
-            for j in self._data['upstreamProjects']:
-                upstream_jobs.append(self.get_jenkins_obj().get_job(j['name']))
+            for j in self._data["upstreamProjects"]:
+                upstream_jobs.append(self.get_jenkins_obj().get_job(j["name"]))
         except KeyError:
             return []
         return upstream_jobs
 
     def is_enabled(self):
-        data = self.poll(tree='color')
-        return 'disabled' not in data.get('color', '')
+        data = self.poll(tree="color")
+        return "disabled" not in data.get("color", "")
 
     def disable(self):
         """
         Disable job
         """
         url = "%s/disable" % self.baseurl
-        return self.get_jenkins_obj().requester.post_url(url, data='')
+        return self.get_jenkins_obj().requester.post_url(url, data="")
 
     def enable(self):
         """
         Enable job
         """
         url = "%s/enable" % self.baseurl
-        return self.get_jenkins_obj().requester.post_url(url, data='')
+        return self.get_jenkins_obj().requester.post_url(url, data="")
 
     def delete_from_queue(self):
         """
@@ -694,10 +721,12 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         if not self.is_queued():
             raise NotInQueue()
-        queue_id = self._data['queueItem']['id']
-        url = urlparse.urljoin(self.get_jenkins_obj().get_queue().baseurl,
-                               'queue/cancelItem?id=%s' % queue_id)
-        self.get_jenkins_obj().requester.post_and_confirm_status(url, data='')
+        queue_id = self._data["queueItem"]["id"]
+        url = urlparse.urljoin(
+            self.get_jenkins_obj().get_queue().baseurl,
+            "queue/cancelItem?id=%s" % queue_id,
+        )
+        self.get_jenkins_obj().requester.post_and_confirm_status(url, data="")
         return True
 
     def get_params(self):
@@ -711,7 +740,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                 'name': 'FOO_BAR'
             }
         """
-        places = ['actions', 'property']
+        places = ["actions", "property"]
         found_definitions = False
 
         for place in places:
@@ -720,7 +749,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             actions = (x for x in self._data[place] if x is not None)
             for action in actions:
                 try:
-                    for param in action['parameterDefinitions']:
+                    for param in action["parameterDefinitions"]:
                         found_definitions = True
                         yield param
                 except KeyError:
@@ -730,17 +759,19 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         Gets the list of parameter names for this job.
         """
-        return [param['name'] for param in self.get_params()]
+        return [param["name"] for param in self.get_params()]
 
     def has_params(self):
         """
         If job has parameters, returns True, else False
         """
-        if any("parameterDefinitions" in a for a in (self._data["actions"])
-               if a):
+        if any(
+            "parameterDefinitions" in a for a in (self._data["actions"]) if a
+        ):
             return True
-        if any("parameterDefinitions" in a for a in (self._data["property"])
-               if a):
+        if any(
+            "parameterDefinitions" in a for a in (self._data["property"]) if a
+        ):
             return True
         return False
 
@@ -761,10 +792,10 @@ class Job(JenkinsBase, MutableJenkinsThing):
         Get the full name for a job (including parent folders) from the
         job URL.
         """
-        path = url.replace(baseurl, '')
-        split = path.split('/')
+        path = url.replace(baseurl, "")
+        split = path.split("/")
         split = [urlparse.unquote(part) for part in split[::2] if part]
-        return '/'.join(split)
+        return "/".join(split)
 
     def get_full_name(self):
         """
@@ -772,7 +803,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         from the job URL.
         """
         return Job.get_full_name_from_url_and_baseurl(
-            self.url, self.jenkins.baseurl)
+            self.url, self.jenkins.baseurl
+        )
 
     def toggle_keep_build(self, build_number):
         self.get_build(build_number).toggle_keep()

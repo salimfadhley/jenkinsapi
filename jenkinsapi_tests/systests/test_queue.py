@@ -13,9 +13,9 @@ from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
 log = logging.getLogger(__name__)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def no_executors(jenkins, request):
-    master = jenkins.nodes['master']
+    master = jenkins.nodes["master"]
     num_executors = master.get_num_executors()
     master.set_num_executors(0)
 
@@ -37,7 +37,7 @@ def test_invoke_many_jobs(jenkins, no_executors):
     jobs = []
 
     while len(jenkins.get_queue()) != 0:
-        log.info('Sleeping to get queue empty...')
+        log.info("Sleeping to get queue empty...")
         time.sleep(1)
 
     for job_name in job_names:

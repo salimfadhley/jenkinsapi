@@ -16,7 +16,7 @@ def test_online_offline(jenkins):
     """
     # Master node name should be case insensitive
     # mn0 = jenkins.get_node('MaStEr')
-    mn = jenkins.get_node('master')
+    mn = jenkins.get_node("master")
     # self.assertEqual(mn, mn0)
 
     mn.set_online()  # It should already be online, hence no-op
@@ -33,17 +33,17 @@ def test_online_offline(jenkins):
 def test_create_jnlp_node(jenkins):
     node_name = random_string()
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test JNLP Node',
-        'remote_fs': '/tmp',
-        'labels': 'systest_jnlp',
-        'exclusive': True,
-        'tool_location': [
+        "num_executors": 1,
+        "node_description": "Test JNLP Node",
+        "remote_fs": "/tmp",
+        "labels": "systest_jnlp",
+        "exclusive": True,
+        "tool_location": [
             {
                 "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
-                "home": "/home/apache-maven-3.0.5/"
+                "home": "/home/apache-maven-3.0.5/",
             },
-        ]
+        ],
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
     assert isinstance(node, Node) is True
@@ -57,34 +57,34 @@ def test_create_ssh_node(jenkins):
 
     cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'username',
-        'passphrase': '',
-        'private_key': '-----BEGIN RSA PRIVATE KEY-----'
+        "description": cred_descr,
+        "userName": "username",
+        "passphrase": "",
+        "private_key": "-----BEGIN RSA PRIVATE KEY-----",
     }
     creds[cred_descr] = SSHKeyCredential(cred_dict)
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Description %s' % node_name,
-        'remote_fs': '/tmp',
-        'labels': node_name,
-        'exclusive': False,
-        'host': '127.0.0.1',
-        'port': 22,
-        'credential_description': cred_descr,
-        'jvm_options': '',
-        'java_path': '',
-        'prefix_start_slave_cmd': '',
-        'suffix_start_slave_cmd': '',
-        'retention': 'ondemand',
-        'ondemand_delay': 0,
-        'ondemand_idle_delay': 5,
-        'tool_location': [
+        "num_executors": 1,
+        "node_description": "Description %s" % node_name,
+        "remote_fs": "/tmp",
+        "labels": node_name,
+        "exclusive": False,
+        "host": "127.0.0.1",
+        "port": 22,
+        "credential_description": cred_descr,
+        "jvm_options": "",
+        "java_path": "",
+        "prefix_start_slave_cmd": "",
+        "suffix_start_slave_cmd": "",
+        "retention": "ondemand",
+        "ondemand_delay": 0,
+        "ondemand_idle_delay": 5,
+        "tool_location": [
             {
                 "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
-                "home": "/home/apache-maven-3.0.5/"
+                "home": "/home/apache-maven-3.0.5/",
             },
-        ]
+        ],
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
     assert isinstance(node, Node) is True
@@ -98,11 +98,11 @@ def test_create_ssh_node(jenkins):
 def test_delete_node(jenkins):
     node_name = random_string()
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test JNLP Node',
-        'remote_fs': '/tmp',
-        'labels': 'systest_jnlp',
-        'exclusive': True
+        "num_executors": 1,
+        "node_description": "Test JNLP Node",
+        "remote_fs": "/tmp",
+        "labels": "systest_jnlp",
+        "exclusive": True,
     }
     jenkins.nodes.create_node(node_name, node_dict)
     del jenkins.nodes[node_name]
@@ -111,7 +111,7 @@ def test_delete_node(jenkins):
         jenkins.nodes[node_name]
 
     with pytest.raises(KeyError):
-        del jenkins.nodes['not_exist']
+        del jenkins.nodes["not_exist"]
 
 
 def test_delete_all_nodes(jenkins):
@@ -125,13 +125,13 @@ def test_delete_all_nodes(jenkins):
 
 def test_get_node_labels(jenkins):
     node_name = random_string()
-    node_labels = 'LABEL1 LABEL2'
+    node_labels = "LABEL1 LABEL2"
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test Node with Labels',
-        'remote_fs': '/tmp',
-        'labels': node_labels,
-        'exclusive': True
+        "num_executors": 1,
+        "node_description": "Test Node with Labels",
+        "remote_fs": "/tmp",
+        "labels": node_labels,
+        "exclusive": True,
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
     assert node.get_labels() == node_labels
@@ -141,45 +141,45 @@ def test_get_node_labels(jenkins):
 
 def test_get_executors(jenkins):
     node_name = random_string()
-    node_labels = 'LABEL1 LABEL2'
+    node_labels = "LABEL1 LABEL2"
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test Node with Labels',
-        'remote_fs': '/tmp',
-        'labels': node_labels,
-        'exclusive': True
+        "num_executors": 1,
+        "node_description": "Test Node with Labels",
+        "remote_fs": "/tmp",
+        "labels": node_labels,
+        "exclusive": True,
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
 
     with pytest.raises(AttributeError):
-        assert node.get_config_element('executors') == '1'
+        assert node.get_config_element("executors") == "1"
 
-    assert node.get_config_element('numExecutors') == '1'
+    assert node.get_config_element("numExecutors") == "1"
 
     del jenkins.nodes[node_name]
 
 
 def test_set_executors(jenkins):
     node_name = random_string()
-    node_labels = 'LABEL1 LABEL2'
+    node_labels = "LABEL1 LABEL2"
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test Node with Labels',
-        'remote_fs': '/tmp',
-        'labels': node_labels,
-        'exclusive': True
+        "num_executors": 1,
+        "node_description": "Test Node with Labels",
+        "remote_fs": "/tmp",
+        "labels": node_labels,
+        "exclusive": True,
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
 
-    assert node.set_config_element('numExecutors', '5') is None
+    assert node.set_config_element("numExecutors", "5") is None
 
-    assert node.get_config_element('numExecutors') == '5'
+    assert node.get_config_element("numExecutors") == "5"
 
     del jenkins.nodes[node_name]
 
 
 def test_set_master_executors(jenkins):
-    node = jenkins.nodes['master']
+    node = jenkins.nodes["master"]
 
     assert node.get_num_executors() == 2
 
@@ -191,22 +191,22 @@ def test_set_master_executors(jenkins):
 
 def test_offline_reason(jenkins):
     node_name = random_string()
-    node_labels = 'LABEL1 LABEL2'
+    node_labels = "LABEL1 LABEL2"
     node_dict = {
-        'num_executors': 1,
-        'node_description': 'Test Node with Labels',
-        'remote_fs': '/tmp',
-        'labels': node_labels,
-        'exclusive': True
+        "num_executors": 1,
+        "node_description": "Test Node with Labels",
+        "remote_fs": "/tmp",
+        "labels": node_labels,
+        "exclusive": True,
     }
     node = jenkins.nodes.create_node(node_name, node_dict)
 
-    node.toggle_temporarily_offline('test1')
+    node.toggle_temporarily_offline("test1")
     node.poll()
-    assert node.offline_reason() == 'test1'
+    assert node.offline_reason() == "test1"
 
-    node.update_offline_reason('test2')
+    node.update_offline_reason("test2")
     node.poll()
-    assert node.offline_reason() == 'test2'
+    assert node.offline_reason() == "test2"
 
     del jenkins.nodes[node_name]

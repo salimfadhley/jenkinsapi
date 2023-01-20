@@ -26,7 +26,6 @@ INTERFACE = "localhost"
 
 
 class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-
     def do_GET(self):
         logging.warning("======= GET STARTED =======")
         logging.warning(self.headers)
@@ -38,9 +37,11 @@ class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
-            environ={'REQUEST_METHOD': 'POST',
-                     'CONTENT_TYPE': self.headers['Content-Type'],
-                     })
+            environ={
+                "REQUEST_METHOD": "POST",
+                "CONTENT_TYPE": self.headers["Content-Type"],
+            },
+        )
         logging.warning("======= POST VALUES =======")
         for item in form.list:
             logging.warning(item)
@@ -53,8 +54,7 @@ Handler = ServerHandler
 httpd = socketserver.TCPServer(("", PORT), Handler)
 
 print(
-    "Serving at: http://%(interface)s:%(port)s" %
-    dict(
-        interface=INTERFACE or "localhost",
-        port=PORT))
+    "Serving at: http://%(interface)s:%(port)s"
+    % dict(interface=INTERFACE or "localhost", port=PORT)
+)
 httpd.serve_forever()

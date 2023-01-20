@@ -14,7 +14,7 @@ def needs_encoding(data):
     return False
 
 
-def to_string(data, encoding='utf-8'):
+def to_string(data, encoding="utf-8"):
     """
     Return string representation for the data. In case of Python 2 and unicode
     do additional encoding before

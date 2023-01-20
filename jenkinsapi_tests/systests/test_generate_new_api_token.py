@@ -1,4 +1,3 @@
-
 """
 System tests for generation new api token for logged in user
 """
@@ -15,10 +14,12 @@ def test_generate_new_api_token(jenkins_admin_admin):
     jenkins_admin_admin.requester = CrumbRequester(
         baseurl=jenkins_admin_admin.baseurl,
         username=jenkins_admin_admin.username,
-        password=jenkins_admin_admin.password
+        password=jenkins_admin_admin.password,
     )
     jenkins_admin_admin.poll()
 
-    new_token = jenkins_admin_admin.generate_new_api_token()  # generate new token
-    log.info('newly generated token: %s', new_token)
+    new_token = (
+        jenkins_admin_admin.generate_new_api_token()
+    )  # generate new token
+    log.info("newly generated token: %s", new_token)
     assert new_token is not None
