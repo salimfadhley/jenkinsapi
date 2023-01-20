@@ -1,6 +1,8 @@
 """
 System tests for `jenkinsapi.jenkins` module.
 """
+import time
+
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_ENV_VARS
 from jenkinsapi_tests.test_utils.random_strings import random_string
 

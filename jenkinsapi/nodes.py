@@ -44,8 +44,8 @@ class Nodes(JenkinsBase):
         """
         Return an iterator over the container's node names.
 
-        Using iterkeys() while creating nodes may raise a RuntimeError or fail to iterate over all
-        entries.
+        Using iterkeys() while creating nodes may raise a RuntimeError
+        or fail to iterate over all entries.
         """
         for item in self._data["computer"]:
             yield item["displayName"]
@@ -71,8 +71,8 @@ class Nodes(JenkinsBase):
         """
         Return an iterator over the container's (name, node) pairs.
 
-        Using iteritems() while creating nodes may raise a RuntimeError or fail to iterate over all
-        entries.
+        Using iteritems() while creating nodes may raise a RuntimeError or
+        fail to iterate over all entries.
         """
         for item in self._data["computer"]:
             nodename = item["displayName"]
@@ -91,8 +91,8 @@ class Nodes(JenkinsBase):
         """
         Return an iterator over the container's nodes.
 
-        Using itervalues() while creating nodes may raise a RuntimeError or fail to iterate over
-        all entries.
+        Using itervalues() while creating nodes may raise a RuntimeError
+        or fail to iterate over all entries.
         """
         for item in self._data["computer"]:
             try:
@@ -169,7 +169,8 @@ class Nodes(JenkinsBase):
         Create a new slave node with specific configuration.
         Config should be resemble the output of node.get_node_attributes()
         :param str name: name of slave
-        :param dict config: Node attributes for Jenkins API request to create node
+        :param dict config: Node attributes for Jenkins API request
+            to create node
             (See function output Node.get_node_attributes())
         :return: node obj
         """

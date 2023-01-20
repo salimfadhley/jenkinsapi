@@ -1,3 +1,4 @@
+# flake8: noqa
 from jenkinsapi import config
 
 JOB_DATA = {

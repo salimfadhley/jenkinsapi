@@ -532,7 +532,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
         element_tree = self._get_config_element_tree()
         scm_element = element_tree.find("scm")
         if not scm_element:
-            multibranch_scm_prefix = "properties/org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty/branch/"
+            multibranch_scm_prefix = "properties/org.jenkinsci.plugins.\
+                    workflow.multibranch.BranchJobProperty/branch/"
             multibranch_path = multibranch_scm_prefix + "scm"
             scm_element = element_tree.find(multibranch_path)
             if scm_element:

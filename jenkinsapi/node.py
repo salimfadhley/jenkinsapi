@@ -76,7 +76,7 @@ class Node(JenkinsBase):
             ],
             'tool_location': [
                 {
-                    "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
+                    "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",  # noqa
                     "home": "/home/apache-maven-3.0.5/"
                 },
                 {
@@ -406,8 +406,8 @@ class Node(JenkinsBase):
 
     def get_monitor(self, monitor_name, poll_monitor=True):
         """
-        Polls the node returning one of the monitors in the monitorData branch of the
-        returned node api tree.
+        Polls the node returning one of the monitors in the monitorData
+        branch of the returned node api tree.
         """
         monitor_data_key = "monitorData"
         if poll_monitor:
@@ -516,7 +516,8 @@ class Node(JenkinsBase):
 
     def get_clock_difference(self):
         """
-        Returns the difference between the node's clock and the master Jenkins clock.
+        Returns the difference between the node's clock and
+        the master Jenkins clock.
         Used to detect out of sync clocks.
         """
         monitor_data = self.get_monitor("ClockMonitor")

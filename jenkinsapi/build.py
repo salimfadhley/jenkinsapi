@@ -215,7 +215,8 @@ class Build(JenkinsBase):
         _actions = [
             x for x in self._data["actions"] if x and "lastBuiltRevision" in x
         ]
-        # old Jenkins version have key remoteUrl v/s the new version has a list remoteUrls
+        # old Jenkins version have key remoteUrl v/s the new version
+        # has a list remoteUrls
         result = _actions[0].get("remoteUrls", _actions[0].get("remoteUrl"))
         if isinstance(result, list):
             result = ",".join(result)

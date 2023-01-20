@@ -9,13 +9,14 @@ from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 class KrbRequester(Requester):
 
     """
-    A class which carries out HTTP requests with Kerberos/GSSAPI authentication.
+    A class which carries out HTTP requests with Kerberos/GSSAPI
+    authentication.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        :param ssl_verify: flag indicating if server certificate in HTTPS requests should be
-                           verified
+        :param ssl_verify: flag indicating if server certificate
+                           in HTTPS requests should be verified
         :param baseurl: Jenkins' base URL
         :param mutual_auth: type of mutual authentication, use one of
                             REQUIRED, OPTIONAL or DISABLED

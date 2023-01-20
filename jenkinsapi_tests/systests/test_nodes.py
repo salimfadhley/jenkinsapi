@@ -9,6 +9,8 @@ from jenkinsapi_tests.test_utils.random_strings import random_string
 
 log = logging.getLogger(__name__)
 
+TOOL_KEY = "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5"
+
 
 def test_online_offline(jenkins):
     """
@@ -40,7 +42,7 @@ def test_create_jnlp_node(jenkins):
         "exclusive": True,
         "tool_location": [
             {
-                "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
+                "key": TOOL_KEY,
                 "home": "/home/apache-maven-3.0.5/",
             },
         ],
@@ -81,7 +83,7 @@ def test_create_ssh_node(jenkins):
         "ondemand_idle_delay": 5,
         "tool_location": [
             {
-                "key": "hudson.tasks.Maven$MavenInstallation$DescriptorImpl@Maven 3.0.5",
+                "key": TOOL_KEY,
                 "home": "/home/apache-maven-3.0.5/",
             },
         ],

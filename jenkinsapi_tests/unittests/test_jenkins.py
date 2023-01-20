@@ -160,7 +160,8 @@ def test_create_new_job_fail(mocker, monkeypatch):
 def test_create_multibranch_pipeline_job(mocker, monkeypatch):
     def fake_jenkins_poll(cls, tree=None):  # pylint: disable=unused-argument
         # return multibranch jobs and other jobs.
-        # create_multibranch_pipeline_job is supposed to filter out the MULTIBRANCH jobs
+        # create_multibranch_pipeline_job is supposed to filter out
+        # the MULTIBRANCH jobs
         return {"jobs": TWO_JOBS_DATA["jobs"] + MULTIBRANCH_JOBS_DATA["jobs"]}
 
     def fake_job_poll(cls, tree=None):  # pylint: disable=unused-argument

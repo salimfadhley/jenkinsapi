@@ -1,5 +1,4 @@
 import requests
-import warnings
 import pytest
 import pytz
 from . import configs

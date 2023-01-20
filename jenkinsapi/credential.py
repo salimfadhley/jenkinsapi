@@ -83,7 +83,7 @@ class UsernamePasswordCredential(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"
+        jenkins_class = "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"  # noqa
         super(UsernamePasswordCredential, self).__init__(
             cred_dict, jenkins_class
         )
@@ -220,7 +220,7 @@ class SSHKeyCredential(Credential):
     """
 
     def __init__(self, cred_dict):
-        jenkins_class = "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"
+        jenkins_class = "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"  # noqa
         super(SSHKeyCredential, self).__init__(cred_dict, jenkins_class)
         if "typeName" in cred_dict:
             username = cred_dict["displayName"].split(" ")[0]
@@ -304,7 +304,8 @@ class SSHKeyCredential(Credential):
 class AmazonWebServicesCredentials(Credential):
     """
     AWS credential using the CloudBees AWS Credentials Plugin
-    See https://wiki.jenkins.io/display/JENKINS/CloudBees+AWS+Credentials+Plugin
+    See
+    https://wiki.jenkins.io/display/JENKINS/CloudBees+AWS+Credentials+Plugin
 
     Constructor expects following dict:
         {

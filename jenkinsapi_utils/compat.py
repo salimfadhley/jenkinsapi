@@ -2,6 +2,11 @@
 Module for Python 2 and Python 3 compatibility
 """
 import six
+import sys
+
+
+if sys.version_info[0] >= 3:
+    unicode = str
 
 
 def needs_encoding(data):

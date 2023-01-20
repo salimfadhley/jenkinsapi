@@ -208,7 +208,8 @@ class Jobs(object):
 
         start_time = time.time()
         # redirect-url does not work with indexing;
-        # so the only workaround found is to parse the console output untill scan has finished.
+        # so the only workaround found is to parse the console output
+        # until scan has finished.
         scan_finished = False
         while not scan_finished and block and time.time() < start_time + delay:
             indexing_console_text = self.jenkins.requester.get_url(

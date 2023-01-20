@@ -381,7 +381,8 @@ class Jenkins(JenkinsBase):
         Create a new slave node with specific configuration.
         Config should be resemble the output of node.get_node_attributes()
         :param str name: name of slave
-        :param dict config: Node attributes for Jenkins API request to create node
+        :param dict config: Node attributes for Jenkins API request
+            to create node
             (See function output Node.get_node_attributes())
         :return: node obj
         """
@@ -403,8 +404,8 @@ class Jenkins(JenkinsBase):
         Install a plugin and optionally restart jenkins.
         @param plugin: Plugin (string or Plugin object) to be installed
         @param restart: Boolean, restart Jenkins when required by plugin
-        @param force_restart: Boolean, force Jenkins to restart, ignoring plugin
-        preferences
+        @param force_restart: Boolean, force Jenkins to restart,
+            ignoring plugin preferences
         @param no_warning: Don't show warning when restart is needed and
         restart parameters are set to False
         """
@@ -429,11 +430,11 @@ class Jenkins(JenkinsBase):
     ):
         """
         Install a list of plugins and optionally restart jenkins.
-        @param plugin_list: List of plugins (strings, Plugin objects or a mix of
-        the two) to be installed
+        @param plugin_list: List of plugins (strings, Plugin objects or
+            a mix of the two) to be installed
         @param restart: Boolean, restart Jenkins when required by plugin
-        @param force_restart: Boolean, force Jenkins to restart, ignoring plugin
-        preferences
+        @param force_restart: Boolean, force Jenkins to restart,
+            ignoring plugin preferences
         """
         plugins = [
             p if isinstance(p, Plugin) else Plugin(p) for p in plugin_list
@@ -461,8 +462,8 @@ class Jenkins(JenkinsBase):
         dependencies.
         @param plugin: Plugin (string or Plugin object) to be deleted
         @param restart: Boolean, restart Jenkins when required by plugin
-        @param force_restart: Boolean, force Jenkins to restart, ignoring plugin
-        preferences
+        @param force_restart: Boolean, force Jenkins to restart,
+            ignoring plugin preferences
         """
         if isinstance(plugin, Plugin):
             plugin = plugin.shortName
@@ -484,13 +485,13 @@ class Jenkins(JenkinsBase):
         no_reboot_warning=False,
     ):
         """
-        Delete a list of plugins and optionally restart jenkins. Will not delete
-        dependencies.
-        @param plugin_list: List of plugins (strings, Plugin objects or a mix of
-        the two) to be deleted
+        Delete a list of plugins and optionally restart jenkins. Will not
+        delete dependencies.
+        @param plugin_list: List of plugins (strings, Plugin objects or
+            a mix of the two) to be deleted
         @param restart: Boolean, restart Jenkins when required by plugin
-        @param force_restart: Boolean, force Jenkins to restart, ignoring plugin
-        preferences
+        @param force_restart: Boolean, force Jenkins to restart,
+            ignoring plugin preferences
         """
         for plugin in plugin_list:
             self.delete_plugin(plugin, restart=False, no_reboot_warning=True)
@@ -561,7 +562,9 @@ class Jenkins(JenkinsBase):
                 time.sleep(1)
 
     def safe_exit(self, wait_for_exit=True, max_wait=360):
-        """restarts jenkins when no jobs are running, except for pipeline jobs"""
+        """
+        Restarts jenkins when no jobs are running, except for pipeline jobs
+        """
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
         url = "%s/safeExit" % (self.baseurl,)
@@ -603,8 +606,10 @@ class Jenkins(JenkinsBase):
                 is_alive = True
 
     def quiet_down(self):
-        """Put Jenkins in a Quiet mode, preparation for restart. no new builds  started"""
-        # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
+        """
+        Put Jenkins in a Quiet mode, preparation for restart.
+        No new builds started
+        """
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
         url = "%s/quietDown" % (self.baseurl,)
@@ -616,7 +621,6 @@ class Jenkins(JenkinsBase):
 
     def cancel_quiet_down(self):
         """Cancel the effect of the quiet-down command"""
-        # https://support.cloudbees.com/hc/en-us/articles/216118748-How-to-Start-Stop-or-Restart-your-Instance-
         # NB: unlike other methods, the value of resp.status_code
         # here can be 503 even when everything is normal
         url = "%s/cancelQuietDown" % (self.baseurl,)
@@ -690,7 +694,8 @@ class Jenkins(JenkinsBase):
     def generate_new_api_token(
         self, new_token_name="Token By jenkinsapi python"
     ):
-        subUrl = "/me/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken"
+        subUrl = "/me/descriptorByName/jenkins.security.\
+                ApiTokenProperty/generateNewToken"
         url = "%s%s" % (self.baseurl, subUrl)
         data = urlencode({"newTokenName": new_token_name})
         response = self.requester.post_and_confirm_status(url, data=data)

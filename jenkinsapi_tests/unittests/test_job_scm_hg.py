@@ -1,3 +1,4 @@
+# flake8: noqa
 import mock
 
 # To run unittests on python 2.6 please use unittest2 library
@@ -10,6 +11,19 @@ from jenkinsapi import config
 from jenkinsapi.job import Job
 from jenkinsapi.jenkinsbase import JenkinsBase
 
+
+CFG_NODE = """
+<project>
+<scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.42">
+<source>http://cm5/hg/sandbox/v01.0/int</source>
+<modules/>
+<clean>false</clean>
+<browser class="hudson.plugins.mercurial.browser.HgWeb">
+<url>http://cm5/hg/sandbox/v01.0/int/</url>
+</browser>
+</scm>
+</project>
+"""
 
 # TODO: Make JOB_DATA to be one coming from Hg job
 class TestHgJob(unittest.TestCase):
@@ -77,34 +91,11 @@ class TestHgJob(unittest.TestCase):
         self.j = Job("http://halob:8080/job/foo/", "foo", self.J)
 
     def configtree_with_branch(self):
-        config_node = """
-        <project>
-        <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.42">
-        <source>http://cm5/hg/sandbox/v01.0/int</source>
-        <modules/>
-        <branch>testme</branch>
-        <clean>false</clean>
-        <browser class="hudson.plugins.mercurial.browser.HgWeb">
-        <url>http://cm5/hg/sandbox/v01.0/int/</url>
-        </browser>
-        </scm>
-        </project>
-        """
+        config_node = CFG_NODE
         return config_node
 
     def configtree_with_default_branch(self):
-        config_node = """
-        <project>
-        <scm class="hudson.plugins.mercurial.MercurialSCM" plugin="mercurial@1.42">
-        <source>http://cm5/hg/sandbox/v01.0/int</source>
-        <modules/>
-        <clean>false</clean>
-        <browser class="hudson.plugins.mercurial.browser.HgWeb">
-        <url>http://cm5/hg/sandbox/v01.0/int/</url>
-        </browser>
-        </scm>
-        </project>
-        """
+        config_node = CFG_NODE
         return config_node
 
     def configtree_multibranch_git(self):

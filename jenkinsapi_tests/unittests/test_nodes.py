@@ -206,7 +206,8 @@ def nodes(monkeypatch):
 
 def fake_node_poll(self, tree=None):  # pylint: disable=unused-argument
     """
-    Fakes a poll of data by returning the correct section of the DATA1 test block.
+    Fakes a poll of data by returning the correct section of
+    the DATA1 test block.
     """
     for node_poll in DATA1["computer"]:
         if node_poll["displayName"] == self.name:
