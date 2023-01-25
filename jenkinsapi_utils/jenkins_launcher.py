@@ -6,6 +6,8 @@ import datetime
 import tempfile
 import posixpath
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 import threading
 import subprocess
 from pkg_resources import resource_stream
@@ -151,6 +153,17 @@ class JenkinsLancher(object):
             self.install_plugin(url, plugin_dest_dir)
 
     def install_plugin(self, hpi_url, plugin_dest_dir):
+        sess = requests.Session()
+        adapter = HTTPAdapter(
+            max_retries=Retry(
+                total=5,
+                backoff_factor=1,
+                allowed_methods=None
+            )
+        )
+        sess.mount("http://", adapter)
+        sess.mount("https://", adapter)
+
         path = urlparse(hpi_url).path
         filename = posixpath.basename(path)
         plugin_orig_dir = os.path.join(self.local_orig_dir, "plugins")
@@ -166,9 +179,11 @@ class JenkinsLancher(object):
             )
         else:
             log.info("Downloading %s from %s", filename, hpi_url)
-            with open(plugin_orig_path, "wb") as hpi:
-                request = requests.get(hpi_url)
-                hpi.write(request.content)
+            with sess.get(hpi_url, stream=True) as hget:
+                hget.raise_for_status()
+                with open(plugin_orig_path, "wb") as hpi:
+                    for chunk in hget.iter_content(chunk_size=8192):
+                        hpi.write(chunk)
         log.info("Installing %s", filename)
         if not shutil.copy(plugin_orig_path, plugin_dest_path):
             raise Exception("Cannot copy plugin to %" % plugin_dest_path)
