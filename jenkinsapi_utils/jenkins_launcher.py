@@ -155,11 +155,7 @@ class JenkinsLancher(object):
     def install_plugin(self, hpi_url, plugin_dest_dir):
         sess = requests.Session()
         adapter = HTTPAdapter(
-            max_retries=Retry(
-                total=5,
-                backoff_factor=1,
-                allowed_methods=None
-            )
+            max_retries=Retry(total=5, backoff_factor=1, allowed_methods=None)
         )
         sess.mount("http://", adapter)
         sess.mount("https://", adapter)
