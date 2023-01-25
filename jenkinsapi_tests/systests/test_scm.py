@@ -13,7 +13,8 @@
 # # Maybe have a base class for all SCM test activites?
 # class TestSCMGit(BaseSystemTest):
 #     # Maybe it makes sense to move plugin dependencies outside the code.
-#     # Have a config to dependencies mapping from the launcher can use to install plugins.
+#     # Have a config to dependencies mapping from the launcher can use
+#     # to install plugins.
 #     def test_get_revision(self):
 #         job_name = 'git_%s' % random_string()
 #         job = self.jenkins.create_job(job_name, SCM_GIT_JOB)

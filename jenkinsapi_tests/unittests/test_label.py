@@ -16,23 +16,26 @@ DATA = {
         {
             "name": "test_job1",
             "url": "http://jtest:8080/job/test_job1/",
-            "color": "blue"
-        }, {
+            "color": "blue",
+        },
+        {
             "name": "test_job2",
             "url": "http://jtest:8080/job/test_job2/",
-            "color": "blue"
-        }, {
+            "color": "blue",
+        },
+        {
             "name": "test_job3",
             "url": "http://jtest:8080/job/test_job3/",
-            "color": "blue"
-        }, {
+            "color": "blue",
+        },
+        {
             "name": "test_job4",
             "url": "http://jtest:8080/job/test_job4/",
-            "color": "blue"
-        }
+            "color": "blue",
+        },
     ],
     "totalExecutors": 0,
-    "propertiesList": []
+    "propertiesList": [],
 }
 
 DATA_JOB_NAMES = {
@@ -40,7 +43,7 @@ DATA_JOB_NAMES = {
         {"name": "test_job1"},
         {"name": "test_job2"},
         {"name": "test_job3"},
-        {"name": "test_job4"}
+        {"name": "test_job4"},
     ]
 }
 
@@ -48,32 +51,35 @@ DATA_JOBS = [
     {
         "url": "http://jtest:8080/job/test_job1/",
         "color": "blue",
-        "name": "test_job1"
-    }, {
+        "name": "test_job1",
+    },
+    {
         "url": "http://jtest:8080/job/test_job2/",
         "color": "blue",
-        "name": "test_job2"
-    }, {
+        "name": "test_job2",
+    },
+    {
         "url": "http://jtest:8080/job/test_job3/",
         "color": "blue",
-        "name": "test_job3"
-    }, {
+        "name": "test_job3",
+    },
+    {
         "url": "http://jtest:8080/job/test_job4/",
         "color": "blue",
-        "name": "test_job4"
-    }
+        "name": "test_job4",
+    },
 ]
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def label(monkeypatch, mocker):
     def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
         return DATA
 
-    monkeypatch.setattr(Label, '_poll', fake_poll)
+    monkeypatch.setattr(Label, "_poll", fake_poll)
     jenkins = mocker.MagicMock()
 
-    return Label('http://foo:8080', 'jenkins-slave', jenkins)
+    return Label("http://foo:8080", "jenkins-slave", jenkins)
 
 
 def test_repr(label):
@@ -84,7 +90,7 @@ def test_repr(label):
 def test_name(label):
     with pytest.raises(AttributeError):
         label.id()
-    assert label.labelname == 'jenkins-slave'
+    assert label.labelname == "jenkins-slave"
 
 
 def test_get_tied_job_names(label):

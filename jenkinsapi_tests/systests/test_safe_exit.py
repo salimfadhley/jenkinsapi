@@ -3,7 +3,6 @@ System tests for `jenkinsapi.jenkins` module.
 """
 import time
 import logging
-import pytest
 from jenkinsapi.build import Build
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
@@ -12,9 +11,8 @@ from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
 log = logging.getLogger(__name__)
 
 
-@pytest.mark.run_these_please
 def test_safe_exit(jenkins):
-    job_name = 'Bcreate_%s' % random_string()
+    job_name = "Bcreate_%s" % random_string()
     job = jenkins.create_job(job_name, LONG_RUNNING_JOB)
     qq = job.invoke()
     time.sleep(3)
@@ -41,4 +39,4 @@ def test_safe_exit(jenkins):
 
     console = build.get_console()
     assert isinstance(console, str)
-    assert 'Started by user' in console
+    assert "Started by user" in console

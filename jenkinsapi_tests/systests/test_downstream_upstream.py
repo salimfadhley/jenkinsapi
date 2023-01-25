@@ -1,6 +1,6 @@
-'''
+"""
 System tests for `jenkinsapi.jenkins` module.
-'''
+"""
 import time
 import logging
 import pytest
@@ -9,7 +9,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 log = logging.getLogger(__name__)
 
 JOB_CONFIGS = {
-    'A': """<?xml version='1.0' encoding='UTF-8'?>
+    "A": """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -35,8 +35,7 @@ JOB_CONFIGS = {
   </publishers>
   <buildWrappers/>
 </project>""",
-
-    'B': """<?xml version='1.0' encoding='UTF-8'?>
+    "B": """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -62,8 +61,7 @@ JOB_CONFIGS = {
   </publishers>
   <buildWrappers/>
 </project>""",
-
-    'C': """<?xml version='1.0' encoding='UTF-8'?>
+    "C": """<?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
   <description></description>
@@ -79,8 +77,7 @@ JOB_CONFIGS = {
   <builders/>
   <publishers/>
   <buildWrappers/>
-</project>"""
-
+</project>""",
 }
 
 DELAY = 10
@@ -95,23 +92,23 @@ def test_stream_relationship(jenkins):
 
     time.sleep(1)
 
-    jenkins['A'].invoke()
+    jenkins["A"].invoke()
 
     for _ in range(10):
         try:
-            jenkins['C'].get_last_completed_buildnumber() > 0
+            jenkins["C"].get_last_completed_buildnumber() > 0
         except NoBuildData:
             log.info(
-                "Waiting %i seconds for until the final job has run",
-                DELAY)
+                "Waiting %i seconds for until the final job has run", DELAY
+            )
             time.sleep(DELAY)
         else:
             break
     else:
-        pytest.fail('Jenkins took too long to run these jobs')
+        pytest.fail("Jenkins took too long to run these jobs")
 
-    assert jenkins['C'].get_upstream_jobs() == [jenkins['B']]
-    assert jenkins['B'].get_upstream_jobs() == [jenkins['A']]
+    assert jenkins["C"].get_upstream_jobs() == [jenkins["B"]]
+    assert jenkins["B"].get_upstream_jobs() == [jenkins["A"]]
 
-    assert jenkins['A'].get_downstream_jobs() == [jenkins['B']]
-    assert jenkins['B'].get_downstream_jobs() == [jenkins['C']]
+    assert jenkins["A"].get_downstream_jobs() == [jenkins["B"]]
+    assert jenkins["B"].get_downstream_jobs() == [jenkins["C"]]

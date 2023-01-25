@@ -43,20 +43,24 @@ class Artifact(object):
         if not fspath.endswith(self.filename):
             log.warning(
                 "Attempt to change the filename of artifact %s on save.",
-                self.filename)
+                self.filename,
+            )
         if os.path.exists(fspath):
             if self.build:
                 try:
                     if self._verify_download(fspath, strict_validation):
                         log.info(
                             "Local copy of %s is already up to date.",
-                            self.filename)
+                            self.filename,
+                        )
                         return fspath
                 except ArtifactBroken:
                     log.warning("Jenkins artifact could not be identified.")
             else:
-                log.info("This file did not originate from Jenkins, "
-                         "so cannot check.")
+                log.info(
+                    "This file did not originate from Jenkins, "
+                    "so cannot check."
+                )
         else:
             log.info("Local file is missing, downloading new.")
         filepath = self._do_download(fspath)
@@ -71,7 +75,8 @@ class Artifact(object):
         Grab the text of the artifact
         """
         response = self.get_jenkins_obj().requester.get_and_confirm_status(
-            self.url)
+            self.url
+        )
         return response.content
 
     def _do_download(self, fspath):
@@ -79,7 +84,8 @@ class Artifact(object):
         Download the the artifact to a path.
         """
         data = self.get_jenkins_obj().requester.get_and_confirm_status(
-            self.url, stream=True)
+            self.url, stream=True
+        )
         with open(fspath, "wb") as out:
             for chunk in data.iter_content(chunk_size=1024):
                 out.write(chunk)
@@ -91,12 +97,10 @@ class Artifact(object):
         """
         local_md5 = self._md5sum(fspath)
         baseurl = self.build.job.jenkins.baseurl
-        fp = Fingerprint(
-            baseurl,
-            local_md5,
-            self.build.job.jenkins)
+        fp = Fingerprint(baseurl, local_md5, self.build.job.jenkins)
         valid = fp.validate_for_build(
-            self.filename, self.build.job.get_full_name(), self.build.buildno)
+            self.filename, self.build.job.get_full_name(), self.build.buildno
+        )
         if not valid or (fp.unknown and strict_validation):
             # strict = 404 as invalid
             raise ArtifactBroken(
@@ -105,14 +109,14 @@ class Artifact(object):
             )
         return True
 
-    def _md5sum(self, fspath, chunksize=2 ** 20):
+    def _md5sum(self, fspath, chunksize=2**20):
         """
         A MD5 hashing function intended to produce the same results as that
         used by Jenkins.
         """
         md5 = hashlib.md5()
-        with open(fspath, 'rb') as f:
-            for chunk in iter(lambda: f.read(chunksize), ''):
+        with open(fspath, "rb") as f:
+            for chunk in iter(lambda: f.read(chunksize), ""):
                 if chunk:
                     md5.update(chunk)
                 else:
@@ -133,5 +137,8 @@ class Artifact(object):
         """
         Produce a handy repr-string.
         """
-        return """<%s.%s %s>""" % (self.__class__.__module__,
-                                   self.__class__.__name__, self.url)
+        return """<%s.%s %s>""" % (
+            self.__class__.__module__,
+            self.__class__.__name__,
+            self.url,
+        )

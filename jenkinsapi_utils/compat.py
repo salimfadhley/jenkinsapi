@@ -2,6 +2,11 @@
 Module for Python 2 and Python 3 compatibility
 """
 import six
+import sys
+
+
+if sys.version_info[0] >= 3:
+    unicode = str
 
 
 def needs_encoding(data):
@@ -14,7 +19,7 @@ def needs_encoding(data):
     return False
 
 
-def to_string(data, encoding='utf-8'):
+def to_string(data, encoding="utf-8"):
     """
     Return string representation for the data. In case of Python 2 and unicode
     do additional encoding before
