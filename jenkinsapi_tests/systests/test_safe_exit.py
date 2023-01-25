@@ -3,7 +3,6 @@ System tests for `jenkinsapi.jenkins` module.
 """
 import time
 import logging
-import pytest
 from jenkinsapi.build import Build
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB

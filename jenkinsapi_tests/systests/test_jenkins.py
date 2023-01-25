@@ -4,7 +4,6 @@ System tests for `jenkinsapi.jenkins` module.
 import pytest
 from jenkinsapi.job import Job
 from jenkinsapi.jobs import Jobs
-from jenkinsapi.plugin import Plugin
 from jenkinsapi.build import Build
 from jenkinsapi.queue import QueueItem
 from jenkinsapi_tests.systests.job_configs import EMPTY_JOB

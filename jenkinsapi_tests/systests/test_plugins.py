@@ -100,7 +100,8 @@ def test_delete_inexistant_plugin(jenkins):
 #        assert installed_plugin.version == "1.1"
 #
 #        older_plugin = Plugin({"shortName": plugin_name, "version": "1.0"})
-#        jenkins.install_plugins([older_plugin], restart=True, wait_for_reboot=True)
+#        jenkins.install_plugins(
+#            [older_plugin], restart=True, wait_for_reboot=True)
 #        installed_older_plugin = jenkins.plugins[plugin_name]
 #
 #        assert installed_older_plugin.version == "1.0"

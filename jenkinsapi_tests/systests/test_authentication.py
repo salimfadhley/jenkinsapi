@@ -4,7 +4,6 @@ System tests for authentication functionality
 
 import pytest
 from jenkinsapi.utils.requester import Requester
-from six.moves.urllib.error import HTTPError
 from requests import HTTPError as REQHTTPError
 from jenkinsapi.jenkins import Jenkins
 

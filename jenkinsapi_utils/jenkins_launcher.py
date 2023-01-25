@@ -181,8 +181,7 @@ class JenkinsLancher(object):
                     for chunk in hget.iter_content(chunk_size=8192):
                         hpi.write(chunk)
         log.info("Installing %s", filename)
-        if not shutil.copy(plugin_orig_path, plugin_dest_path):
-            raise Exception("Cannot copy plugin to %" % plugin_dest_path)
+        shutil.copy(plugin_orig_path, plugin_dest_path)
         # Create an empty .pinned file, so that the downloaded plugin
         # will be used, instead of the version bundled in jenkins.war
         # See https://wiki.jenkins-ci.org/display/JENKINS/Pinned+Plugins
