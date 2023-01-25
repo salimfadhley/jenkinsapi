@@ -194,6 +194,7 @@ class TestPlugins(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.J.delete_plugin("test@latest")
 
+    @mock.patch.object(Plugins, "update_center_dict")
     @mock.patch.object(Plugins, "_poll")
     @mock.patch.object(Plugins, "plugin_version_already_installed")
     @mock.patch.object(Plugins, "restart_required")
@@ -208,6 +209,7 @@ class TestPlugins(unittest.TestCase):
         _restart_required,
         already_installed,
         _poll_plugins,
+        _center_dict,
     ):
         _poll_plugins.return_value = self.DATA
         already_installed.return_value = False
@@ -220,6 +222,7 @@ class TestPlugins(unittest.TestCase):
             data=expected_data,
         )
 
+    @mock.patch.object(Plugins, "update_center_dict")
     @mock.patch.object(Plugins, "_poll")
     @mock.patch.object(Plugins, "plugin_version_already_installed")
     @mock.patch.object(
@@ -236,6 +239,7 @@ class TestPlugins(unittest.TestCase):
         restart_required,
         already_installed,
         _poll_plugins,
+        _center_dict,
     ):
         _poll_plugins.return_value = self.DATA
         restart_required.return_value = False
@@ -244,6 +248,7 @@ class TestPlugins(unittest.TestCase):
         self.assertEqual(_post.call_count, 2)
         self.assertEqual(_restart.call_count, 0)
 
+    @mock.patch.object(Plugins, "update_center_dict")
     @mock.patch.object(Plugins, "_poll")
     @mock.patch.object(Plugins, "plugin_version_already_installed")
     @mock.patch.object(
@@ -260,6 +265,7 @@ class TestPlugins(unittest.TestCase):
         restart_required,
         already_installed,
         _poll_plugins,
+        _center_dict,
     ):
         _poll_plugins.return_value = self.DATA
         restart_required.return_value = True
@@ -287,8 +293,9 @@ class TestPlugins(unittest.TestCase):
         for dep in dependencies:
             self.assertIsInstance(dep, Plugin)
 
+    @mock.patch.object(Plugins, "update_center_dict")
     @mock.patch.object(Plugins, "_poll")
-    def test_plugin_version_already_installed(self, _poll_plugins):
+    def test_plugin_version_already_installed(self, _poll_plugins, _update):
         _poll_plugins.return_value = self.DATA
         already_installed = Plugin(
             {"shortName": "subversion", "version": "1.45"}
