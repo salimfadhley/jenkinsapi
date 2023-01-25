@@ -170,7 +170,8 @@ class JenkinsLancher(object):
                 request = requests.get(hpi_url)
                 hpi.write(request.content)
         log.info("Installing %s", filename)
-        shutil.copy(plugin_orig_path, plugin_dest_path)
+        if not shutil.copy(plugin_orig_path, plugin_dest_path):
+            raise Exception("Cannot copy plugin to %" % plugin_dest_path)
         # Create an empty .pinned file, so that the downloaded plugin
         # will be used, instead of the version bundled in jenkins.war
         # See https://wiki.jenkins-ci.org/display/JENKINS/Pinned+Plugins
@@ -282,13 +283,16 @@ if __name__ == "__main__":
     log.info("Hello!")
 
     jl = JenkinsLancher(
-        "/home/sal/workspace/jenkinsapi/src/" "jenkinsapi_tests/systests/",
+        "/home/aleksey/src/jenkinsapi_lechat/jenkinsapi_tests"
+        "/systests/localinstance_files",
+        "/home/aleksey/src/jenkinsapi_lechat/jenkinsapi_tests/systests",
         "jenkins.war",
     )
+
     jl.start()
     log.info("Jenkins was launched...")
 
-    time.sleep(30)
+    time.sleep(10)
 
     log.info("...now to shut it down!")
     jl.stop()

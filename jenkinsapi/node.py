@@ -330,8 +330,8 @@ class Node(JenkinsBase):
         Loads the config.xml for the node allowing it to be re-queried
         without generating new requests.
         """
-        if self.name == "master":
-            raise JenkinsAPIException("master node does not have config.xml")
+        if self.name == "Built-In Node":
+            raise JenkinsAPIException("Built-In node does not have config.xml")
 
         self._config = self.get_config()
         self._get_config_element_tree()
@@ -340,8 +340,8 @@ class Node(JenkinsBase):
         """
         Uploads config_xml to the config.xml for the node.
         """
-        if self.name == "master":
-            raise JenkinsAPIException("master node does not have config.xml")
+        if self.name == "Built-In Node":
+            raise JenkinsAPIException("Built-In node does not have config.xml")
 
         self.jenkins.requester.post_and_confirm_status(
             "%(baseurl)s/config.xml" % self.__dict__, data=config_xml
@@ -369,7 +369,7 @@ class Node(JenkinsBase):
         """
         set_value = value if isinstance(value, str) else str(value)
 
-        if self.name == "master":
+        if self.name == "Built-In Node":
             # master node doesn't have config.xml, so we're going to submit
             # form here
             data = "json=%s" % urlquote(

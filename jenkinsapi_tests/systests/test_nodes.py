@@ -18,7 +18,7 @@ def test_online_offline(jenkins):
     """
     # Master node name should be case insensitive
     # mn0 = jenkins.get_node('MaStEr')
-    mn = jenkins.get_node("master")
+    mn = jenkins.get_node("Built-In Node")
     # self.assertEqual(mn, mn0)
 
     mn.set_online()  # It should already be online, hence no-op
@@ -181,7 +181,7 @@ def test_set_executors(jenkins):
 
 
 def test_set_master_executors(jenkins):
-    node = jenkins.nodes["master"]
+    node = jenkins.nodes["Built-In Node"]
 
     assert node.get_num_executors() == 2
 

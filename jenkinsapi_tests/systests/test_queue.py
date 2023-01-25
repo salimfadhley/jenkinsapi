@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 @pytest.fixture(scope="function")
 def no_executors(jenkins, request):
-    master = jenkins.nodes["master"]
+    master = jenkins.nodes["Built-In Node"]
     num_executors = master.get_num_executors()
     master.set_num_executors(0)
 

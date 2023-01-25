@@ -61,8 +61,8 @@ class Nodes(JenkinsBase):
         Creates an instance of Node for the given nodename.
         This function assumes the returned node exists.
         """
-        if nodename.lower() == "master":
-            nodeurl = "%s/(%s)" % (self.baseurl, nodename)
+        if nodename.lower() == "built-in node":
+            nodeurl = "%s/(%s)" % (self.baseurl, "built-in")
         else:
             nodeurl = "%s/%s" % (self.baseurl, nodename)
         return Node(self.jenkins, nodeurl, nodename, node_dict={})
@@ -115,7 +115,7 @@ class Nodes(JenkinsBase):
         return len(self.keys())
 
     def __delitem__(self, item):
-        if item in self and item != "master":
+        if item in self and item != "Built-In Node":
             url = "%s/doDelete" % self[item].baseurl
             try:
                 self.jenkins.requester.get_and_confirm_status(url)
@@ -124,10 +124,10 @@ class Nodes(JenkinsBase):
                 self.jenkins.requester.post_and_confirm_status(url, data={})
             self.poll()
         else:
-            if item != "master":
+            if item != "Built-In Node":
                 raise UnknownNode("Node %s does not exist" % item)
 
-            log.info("Requests to remove master node ignored")
+            log.info("Requests to remove built-in node ignored")
 
     def __setitem__(self, name, node_dict):
         if not isinstance(node_dict, dict):

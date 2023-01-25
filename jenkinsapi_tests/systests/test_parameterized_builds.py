@@ -56,7 +56,7 @@ def test_parameterized_job_build_queuing(jenkins):
 
     # Latest Jenkins schedules builds to run right away, so remove all
     # executors from master node to investigate queue
-    master = jenkins.nodes["master"]
+    master = jenkins.nodes["Built-In Node"]
     num_executors = master.get_num_executors()
     master.set_num_executors(0)
 
@@ -94,7 +94,7 @@ def test_parameterized_multiple_builds_get_the_same_queue_item(jenkins):
 
     # Latest Jenkins schedules builds to run right away, so remove all
     # executors from master node to investigate queue
-    master = jenkins.nodes["master"]
+    master = jenkins.nodes["Built-In Node"]
     num_executors = master.get_num_executors()
     master.set_num_executors(0)
 

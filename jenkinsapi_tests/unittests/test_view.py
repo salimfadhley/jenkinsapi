@@ -1,4 +1,4 @@
-import mock
+import unittest.mock as mock
 
 import pytest
 
@@ -68,14 +68,14 @@ JOB_DATA = {
 
 @pytest.fixture
 def jenkins():
-    jenkins = mock.MagicMock(auto_spec=True)
+    jenkins = mock.MagicMock(autospec=True)
     jenkins.has_job.return_value = False
     return jenkins
 
 
-@mock.patch.object(Job, "_poll", auto_spec=True)
-@mock.patch.object(View, "_poll", auto_spec=True)
 @pytest.fixture
+@mock.patch.object(Job, "_poll", autospec=True)
+@mock.patch.object(View, "_poll", autospec=True)
 def view(_view_poll, _job_poll, jenkins):
     _view_poll.return_value = DATA
     _job_poll.return_value = JOB_DATA

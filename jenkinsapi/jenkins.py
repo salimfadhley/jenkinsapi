@@ -51,7 +51,7 @@ class Jenkins(JenkinsBase):
         ssl_verify=True,
         cert=None,
         timeout=10,
-        use_crumb=False,
+        use_crumb=True,
         max_retries=None,
     ):
         """
@@ -666,7 +666,7 @@ class Jenkins(JenkinsBase):
         if "credentials" not in self.plugins:
             raise JenkinsAPIException("Credentials plugin not installed")
 
-        if int(self.plugins["credentials"].version[0:1]) == 1:
+        if self.plugins["credentials"].version.startswith("1."):
             url = "%s/credential-store/domain/_/" % self.baseurl
             return Credentials(url, self)
 
@@ -694,8 +694,10 @@ class Jenkins(JenkinsBase):
     def generate_new_api_token(
         self, new_token_name="Token By jenkinsapi python"
     ):
-        subUrl = "/me/descriptorByName/jenkins.security.\
-                ApiTokenProperty/generateNewToken"
+        subUrl = (
+            "/me/descriptorByName/jenkins.security."
+            "ApiTokenProperty/generateNewToken"
+        )
         url = "%s%s" % (self.baseurl, subUrl)
         data = urlencode({"newTokenName": new_token_name})
         response = self.requester.post_and_confirm_status(url, data=data)

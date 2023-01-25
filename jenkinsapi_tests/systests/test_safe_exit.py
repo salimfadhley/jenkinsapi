@@ -12,7 +12,6 @@ from jenkinsapi_tests.systests.job_configs import LONG_RUNNING_JOB
 log = logging.getLogger(__name__)
 
 
-@pytest.mark.run_these_please
 def test_safe_exit(jenkins):
     job_name = "Bcreate_%s" % random_string()
     job = jenkins.create_job(job_name, LONG_RUNNING_JOB)
