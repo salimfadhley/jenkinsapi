@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import six
-from jenkinsapi_utils.compat import (
+from jenkinsapi.utils.compat import (
     to_string,
     needs_encoding,
 )

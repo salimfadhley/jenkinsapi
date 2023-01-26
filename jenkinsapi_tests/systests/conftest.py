@@ -2,7 +2,7 @@ import os
 import logging
 import pytest
 from jenkinsapi.jenkins import Jenkins
-from jenkinsapi_utils.jenkins_launcher import JenkinsLancher
+from jenkinsapi.utils.jenkins_launcher import JenkinsLancher
 
 log = logging.getLogger(__name__)
 state = {}

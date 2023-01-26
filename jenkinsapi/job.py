@@ -20,7 +20,7 @@ from jenkinsapi.custom_exceptions import (
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
-from jenkinsapi_utils.compat import to_string
+from jenkinsapi.utils.compat import to_string
 
 
 SVN_URL = "./scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote"
