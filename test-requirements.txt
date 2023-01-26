@@ -1,4 +1,4 @@
-pytest==3.7.0
+pytest
 pytest-mock
 pytest-cov
 pycodestyle>=2.3.1
@@ -8,3 +8,4 @@ tox>=2.3.1
 mock
 codecov
 requests_kerberos
+flake8

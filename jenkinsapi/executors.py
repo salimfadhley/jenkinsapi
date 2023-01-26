@@ -23,20 +23,15 @@ class Executors(JenkinsBase):
         self.nodename = nodename
         self.jenkins = jenkins
         JenkinsBase.__init__(self, baseurl)
-        self.count = self._data['numExecutors']
+        self.count = self._data["numExecutors"]
 
     def __str__(self):
-        return 'Executors @ %s' % self.baseurl
+        return "Executors @ %s" % self.baseurl
 
     def get_jenkins_obj(self):
         return self.jenkins
 
     def __iter__(self):
         for index in range(self.count):
-            executor_url = '%s/executors/%s' % (self.baseurl, index)
-            yield Executor(
-                executor_url,
-                self.nodename,
-                self.jenkins,
-                index
-            )
+            executor_url = "%s/executors/%s" % (self.baseurl, index)
+            yield Executor(executor_url, self.nodename, self.jenkins, index)

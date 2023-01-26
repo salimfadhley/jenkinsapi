@@ -13,7 +13,7 @@ from jenkinsapi_tests.test_utils.random_strings import random_string
 log = logging.getLogger(__name__)
 
 
-def create_job(jenkins, job_name='whatever'):
+def create_job(jenkins, job_name="whatever"):
     job = jenkins.create_job(job_name, EMPTY_JOB)
     return job
 
@@ -65,7 +65,7 @@ def test_add_job_to_view(jenkins):
     assert isinstance(jobs[0], tuple) is True
 
     assert new_view.add_job(job_name) is False
-    assert new_view.add_job('unknown') is False
+    assert new_view.add_job("unknown") is False
 
     del jenkins.views[view_name]
 
@@ -162,9 +162,9 @@ def test_get_job_config(jenkins):
 
     assert new_view.add_job(job.name) is True
 
-    assert '<?xml' in jenkins.get_job(job.name).get_config()
+    assert "<?xml" in jenkins.get_job(job.name).get_config()
     for _, job in jenkins.views[view_name].items():
-        assert '<?xml' in job.get_config()
+        assert "<?xml" in job.get_config()
 
 
 def test_remove_job_from_view(jenkins):

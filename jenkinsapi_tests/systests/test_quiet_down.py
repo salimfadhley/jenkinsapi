@@ -1,15 +1,12 @@
-
 """
 System tests for setting jenkins in quietDown mode
 """
-import pytest
 import logging
 
 
 log = logging.getLogger(__name__)
 
 
-@pytest.mark.run_these_please
 def test_quiet_down_and_cancel_quiet_down(jenkins):
     jenkins.poll()  # jenkins should be alive
 
