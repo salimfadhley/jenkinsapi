@@ -344,8 +344,8 @@ class Node(JenkinsBase):
             raise JenkinsAPIException("Built-In node does not have config.xml")
 
         self.jenkins.requester.post_xml_and_confirm_status(
-            "%(baseurl)s/config.xml" % self.__dict__,
-            data=config_xml)
+            "%(baseurl)s/config.xml" % self.__dict__, data=config_xml
+        )
 
     def get_labels(self):
         """
