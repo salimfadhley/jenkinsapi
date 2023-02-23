@@ -5,9 +5,9 @@ from __future__ import print_function
 from pkg_resources import resource_string
 from jenkinsapi.jenkins import Jenkins
 
-jenkins = Jenkins('http://localhost:8080')
-job_name = 'foo_job2'
-xml = resource_string('examples', 'addjob.xml')
+jenkins = Jenkins("http://localhost:8080")
+job_name = "foo_job2"
+xml = resource_string("examples", "addjob.xml")
 
 print(xml)
 

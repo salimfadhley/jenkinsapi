@@ -21,20 +21,52 @@ class JenkinsInvoke(object):
     def mkparser(cls):
         parser = optparse.OptionParser()
         DEFAULT_BASEURL = os.environ.get(
-            "JENKINS_URL", "http://localhost/jenkins")
-        parser.help_text = "Execute a number of jenkins jobs on the server of your choice." + \
-            " Optionally block until the jobs are complete."
-        parser.add_option("-J", "--jenkinsbase", dest="baseurl",
-                          help="Base URL for the Jenkins server, default is %s" % DEFAULT_BASEURL,
-                          type="str", default=DEFAULT_BASEURL)
-        parser.add_option('--username', '-u', dest='username',
-                          help="Username for jenkins authentification", type='str', default=None)
-        parser.add_option('--password', '-p', dest='password',
-                          help="password for jenkins user auth", type='str', default=None)
-        parser.add_option("-b", "--block", dest="block", action="store_true", default=False,
-                          help="Block until each of the jobs is complete.")
-        parser.add_option("-t", "--token", dest="token", help="Optional security token.",
-                          default=None)
+            "JENKINS_URL", "http://localhost/jenkins"
+        )
+        parser.help_text = (
+            "Execute a number of jenkins jobs on the server of your choice."
+            + " Optionally block until the jobs are complete."
+        )
+        parser.add_option(
+            "-J",
+            "--jenkinsbase",
+            dest="baseurl",
+            help="Base URL for the Jenkins server, default is %s"
+            % DEFAULT_BASEURL,
+            type="str",
+            default=DEFAULT_BASEURL,
+        )
+        parser.add_option(
+            "--username",
+            "-u",
+            dest="username",
+            help="Username for jenkins authentification",
+            type="str",
+            default=None,
+        )
+        parser.add_option(
+            "--password",
+            "-p",
+            dest="password",
+            help="password for jenkins user auth",
+            type="str",
+            default=None,
+        )
+        parser.add_option(
+            "-b",
+            "--block",
+            dest="block",
+            action="store_true",
+            default=False,
+            help="Block until each of the jobs is complete.",
+        )
+        parser.add_option(
+            "-t",
+            "--token",
+            dest="token",
+            help="Optional security token.",
+            default=None,
+        )
         return parser
 
     @classmethod
@@ -54,7 +86,10 @@ class JenkinsInvoke(object):
         self.options = options
         self.jobs = jobs
         self.api = self._get_api(
-            baseurl=options.baseurl, username=options.username, password=options.password)
+            baseurl=options.baseurl,
+            username=options.username,
+            password=options.password,
+        )
 
     def _get_api(self, baseurl, username, password):
         return jenkins.Jenkins(baseurl, username, password)
@@ -62,7 +97,8 @@ class JenkinsInvoke(object):
     def __call__(self):
         for job in self.jobs:
             self.invokejob(
-                job, block=self.options.block, token=self.options.token)
+                job, block=self.options.block, token=self.options.token
+            )
 
     def invokejob(self, jobname, block, token):
         assert isinstance(block, bool)

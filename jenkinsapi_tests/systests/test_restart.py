@@ -18,16 +18,16 @@ def wait_for_restart(jenkins):
     max_count = 30
     success = False
     msg = (
-        'Jenkins has not restarted yet! (This is try %s of %s, '
-        'waited %s seconds so far) '
-        'Sleeping %s seconds and trying again...'
+        "Jenkins has not restarted yet! (This is try %s of %s, "
+        "waited %s seconds so far) "
+        "Sleeping %s seconds and trying again..."
     )
 
     while count < max_count or not success:
         time.sleep(wait)
         try:
             jenkins.poll()
-            log.info('Jenkins restarted successfully.')
+            log.info("Jenkins restarted successfully.")
             success = True
             break
         except HTTPError as ex:
@@ -39,10 +39,12 @@ def wait_for_restart(jenkins):
         count += 1
 
     if not success:
-        msg = ('Jenkins did not come back from safe restart! '
-               'Waited {0} seconds altogether.  This '
-               'failure may cause other failures.')
-        log.critical(msg.format(count*wait))
+        msg = (
+            "Jenkins did not come back from safe restart! "
+            "Waited {0} seconds altogether.  This "
+            "failure may cause other failures."
+        )
+        log.critical(msg.format(count * wait))
         pytest.fail(msg)
 
 

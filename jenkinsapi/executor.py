@@ -30,35 +30,35 @@ class Executor(JenkinsBase):
         JenkinsBase.__init__(self, baseurl)
 
     def __str__(self):
-        return '%s %s' % (self.nodename, self.number)
+        return "%s %s" % (self.nodename, self.number)
 
     def get_jenkins_obj(self):
         return self.jenkins
 
     def get_progress(self):
         """Returns percentage"""
-        return self.poll(tree='progress')['progress']
+        return self.poll(tree="progress")["progress"]
 
     def get_number(self):
         """
         Get Executor number.
         """
-        return self.poll(tree='number')['number']
+        return self.poll(tree="number")["number"]
 
     def is_idle(self):
         """
         Returns Boolean: whether Executor is idle or not.
         """
-        return self.poll(tree='idle')['idle']
+        return self.poll(tree="idle")["idle"]
 
     def likely_stuck(self):
         """
         Returns Boolean: whether Executor is likely stuck or not.
         """
-        return self.poll(tree='likelyStuck')['likelyStuck']
+        return self.poll(tree="likelyStuck")["likelyStuck"]
 
     def get_current_executable(self):
         """
         Returns the current Queue.Task this executor is running.
         """
-        return self.poll(tree='currentExecutable')['currentExecutable']
+        return self.poll(tree="currentExecutable")["currentExecutable"]

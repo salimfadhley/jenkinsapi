@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 def test_invocation_object(jenkins):
-    job_name = 'Acreate_%s' % random_string()
+    job_name = "Acreate_%s" % random_string()
     job = jenkins.create_job(job_name, SHORTISH_JOB)
     qq = job.invoke()
     assert isinstance(qq, QueueItem)
@@ -26,7 +26,7 @@ def test_invocation_object(jenkins):
 
 
 def test_get_block_until_build_running(jenkins):
-    job_name = 'Bcreate_%s' % random_string()
+    job_name = "Bcreate_%s" % random_string()
     job = jenkins.create_job(job_name, LONG_RUNNING_JOB)
     qq = job.invoke()
     time.sleep(3)
@@ -43,11 +43,11 @@ def test_get_block_until_build_running(jenkins):
     assert not build.is_running()
     console = build.get_console()
     assert isinstance(console, str)
-    assert 'Started by user' in console
+    assert "Started by user" in console
 
 
 def test_get_block_until_build_complete(jenkins):
-    job_name = 'Ccreate_%s' % random_string()
+    job_name = "Ccreate_%s" % random_string()
     job = jenkins.create_job(job_name, SHORTISH_JOB)
     qq = job.invoke()
     qq.block_until_complete()
@@ -55,7 +55,7 @@ def test_get_block_until_build_complete(jenkins):
 
 
 def test_mi_and_get_last_build(jenkins):
-    job_name = 'Dcreate_%s' % random_string()
+    job_name = "Dcreate_%s" % random_string()
 
     job = jenkins.create_job(job_name, SHORTISH_JOB)
 
@@ -74,7 +74,7 @@ def test_mi_and_get_last_build(jenkins):
 
 
 def test_mi_and_get_build_number(jenkins):
-    job_name = 'Ecreate_%s' % random_string()
+    job_name = "Ecreate_%s" % random_string()
 
     job = jenkins.create_job(job_name, EMPTY_JOB)
 
@@ -86,7 +86,7 @@ def test_mi_and_get_build_number(jenkins):
 
 
 def test_mi_and_delete_build(jenkins):
-    job_name = 'Ecreate_%s' % random_string()
+    job_name = "Ecreate_%s" % random_string()
 
     job = jenkins.create_job(job_name, EMPTY_JOB)
 
@@ -114,14 +114,14 @@ def test_mi_and_delete_build(jenkins):
 
 
 def test_give_params_on_non_parameterized_job(jenkins):
-    job_name = 'Ecreate_%s' % random_string()
+    job_name = "Ecreate_%s" % random_string()
     job = jenkins.create_job(job_name, EMPTY_JOB)
     with pytest.raises(BadParams):
-        job.invoke(build_params={'foo': 'bar', 'baz': 99})
+        job.invoke(build_params={"foo": "bar", "baz": 99})
 
 
 def test_keep_build_toggle(jenkins):
-    job_name = 'Ecreate_%s' % random_string()
+    job_name = "Ecreate_%s" % random_string()
 
     job = jenkins.create_job(job_name, EMPTY_JOB)
 

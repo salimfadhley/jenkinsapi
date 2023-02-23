@@ -29,9 +29,9 @@ def test_create_user_pass_credential(jenkins):
 
     cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'password': 'password'
+        "description": cred_descr,
+        "userName": "userName",
+        "password": "password",
     }
     creds[cred_descr] = UsernamePasswordCredential(cred_dict)
 
@@ -50,20 +50,20 @@ def test_update_user_pass_credential(jenkins):
 
     cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'password': 'password'
+        "description": cred_descr,
+        "userName": "userName",
+        "password": "password",
     }
     creds[cred_descr] = UsernamePasswordCredential(cred_dict)
 
     cred = creds[cred_descr]
-    cred.userName = 'anotheruser'
-    cred.password = 'password2'
+    cred.userName = "anotheruser"
+    cred.password = "password2"
 
     cred = creds[cred_descr]
     assert isinstance(cred, UsernamePasswordCredential) is True
-    assert cred.userName == 'anotheruser'
-    assert cred.password == 'password2'
+    assert cred.userName == "anotheruser"
+    assert cred.password == "password2"
 
 
 def test_create_ssh_credential(jenkins):
@@ -71,10 +71,10 @@ def test_create_ssh_credential(jenkins):
 
     cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'passphrase': '',
-        'private_key': '-----BEGIN RSA PRIVATE KEY-----'
+        "description": cred_descr,
+        "userName": "userName",
+        "passphrase": "",
+        "private_key": "-----BEGIN RSA PRIVATE KEY-----",
     }
     creds[cred_descr] = SSHKeyCredential(cred_dict)
 
@@ -87,28 +87,28 @@ def test_create_ssh_credential(jenkins):
     del creds[cred_descr]
 
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'passphrase': '',
-        'private_key': '/tmp/key'
+        "description": cred_descr,
+        "userName": "userName",
+        "passphrase": "",
+        "private_key": "/tmp/key",
     }
     with pytest.raises(ValueError):
         creds[cred_descr] = SSHKeyCredential(cred_dict)
 
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'passphrase': '',
-        'private_key': '~/.ssh/key'
+        "description": cred_descr,
+        "userName": "userName",
+        "passphrase": "",
+        "private_key": "~/.ssh/key",
     }
     with pytest.raises(ValueError):
         creds[cred_descr] = SSHKeyCredential(cred_dict)
 
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'passphrase': '',
-        'private_key': 'invalid'
+        "description": cred_descr,
+        "userName": "userName",
+        "passphrase": "",
+        "private_key": "invalid",
     }
     with pytest.raises(ValueError):
         creds[cred_descr] = SSHKeyCredential(cred_dict)
@@ -119,9 +119,9 @@ def test_delete_credential(jenkins):
 
     cred_descr = random_string()
     cred_dict = {
-        'description': cred_descr,
-        'userName': 'userName',
-        'password': 'password'
+        "description": cred_descr,
+        "userName": "userName",
+        "password": "password",
     }
     creds[cred_descr] = UsernamePasswordCredential(cred_dict)
 
@@ -137,10 +137,7 @@ def test_create_secret_text_credential(jenkins):
     creds = jenkins.credentials
 
     cred_descr = random_string()
-    cred_dict = {
-        'description': cred_descr,
-        'secret': 'newsecret'
-    }
+    cred_dict = {"description": cred_descr, "secret": "newsecret"}
     creds[cred_descr] = SecretTextCredential(cred_dict)
 
     assert cred_descr in creds

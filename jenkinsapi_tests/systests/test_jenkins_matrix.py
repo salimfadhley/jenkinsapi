@@ -8,7 +8,7 @@ from jenkinsapi_tests.test_utils.random_strings import random_string
 
 
 def test_invoke_matrix_job(jenkins):
-    job_name = 'create_%s' % random_string()
+    job_name = "create_%s" % random_string()
     job = jenkins.create_job(job_name, MATRIX_JOB)
     queueItem = job.invoke()
     queueItem.block_until_complete()
@@ -22,9 +22,9 @@ def test_invoke_matrix_job(jenkins):
     for run in build.get_matrix_runs():
         assert run.get_number() == build.get_number()
         assert run.get_upstream_build() == build
-        match_result = re.search(u'\xbb (.*) #\\d+$', run.name)
+        match_result = re.search("\xbb (.*) #\\d+$", run.name)
         assert match_result is not None
         set_of_groups.add(match_result.group(1))
         build.get_master_job_name()
 
-    assert set_of_groups == set(['one', 'two', 'three'])
+    assert set_of_groups == set(["one", "two", "three"])

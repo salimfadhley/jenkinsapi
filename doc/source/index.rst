@@ -110,7 +110,7 @@ This package supports PEP-396 by implementing a __version__ attribute. This cont
 	>>> import jenkinsapi
 	>>> print(jenkinsapi.__version__)
 	0.2.23
-	
+
 There is also a command-line tool for use in the shell:
 
 .. code-block:: bash
@@ -133,30 +133,30 @@ Extending and Improving JenkinsAPI
 JenkinsAPI is a pure-Python project and can be improved with almost any programmer's text-editor or IDE. I'd recommend the following project layout which has been shown to work with both SublimeText2 and Eclipse/PyDev
 
  * Make sure that pip and virtualenv are installed on your computer. On most Linux systems these can be installed directly by the OS package-manager.
- 
+
  * Create a new virtualenv for the project::
- 
+
  	virtualenv jenkinsapi
- 
+
  * Change to the new directory and check out the project code into the **src** subdirectory::
- 
+
  	cd jenkinsapi
  	git clone https://github.com/salimfadhley/jenkinsapi.git src
-	
+
  * Activate your jenkinsapi virtual environment::
- 
+
  	cd bin
  	source activate
- 
+
  * Install the jenkinsapi project in 'developer mode' - this step will automatically download all of the project's dependancies::
- 
+
  	cd ../src
  	python setup.py develop
- 
+
  * Test the project - this step will automatically download and install the project's test-only dependencies. Having these installed will be helpful during development::
- 
+
  	python setup.py test
-	
+
  * Set up your IDE/Editor configuration - the **misc** folder contains configuration for Sublime Text 2. I hope in time that other developers will contribute useful configurations for their favorite development tools.
 
 Testing
@@ -174,4 +174,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

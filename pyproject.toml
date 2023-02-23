@@ -1,0 +1,77 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "jenkinsapi"
+authors = [
+    {name = "Salim Fadhley", email = "salimfadhley@gmail.com"},
+    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"},
+]
+maintainers = [
+    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"}
+]
+description = "A Python API for accessing resources on a Jenkins continuous-integration server."
+readme = "README.rst"
+license = {text = "MIT license"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Utilities",
+]
+requires_python = ">=2.7"
+dynamic = ["version"]
+dependencies = [
+    "pytz>=2014.4",
+    "requests>=2.3.0",
+    "six>=1.10.0"
+]
+
+[tool.files]
+packages = """
+jenkinsapi
+jenkinsapi_utils
+jenkinsapi_tests"""
+
+[tool.pbr]
+warnerrors = "True"
+
+[project.entry_points.cli]
+console_scripts = """
+jenkins_invoke=jenkinsapi.command_line.jenkins_invoke:main
+jenkinsapi_version=jenkinsapi.command_line.jenkinsapi_version:main"""
+
+[tool.build_sphinx]
+source-dir = "doc/source"
+build-dir = "doc/build"
+all_files = "1"
+
+[tool.upload_sphinx]
+upload-dir = "doc/build/html"
+
+[tool.distutils.bdist_wheel]
+universal = 1
+
+[tool.pycodestyle]
+exclude = ".tox,doc/source/conf.py,build,.venv,.eggs"
+max-line-length = "99"
+
+[tool.setuptools]
+include-package-data = false

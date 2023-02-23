@@ -17,7 +17,6 @@ PORT = 8080
 
 
 class ServerHandler(SimpleHTTPRequestHandler):
-
     def do_GET(self):
         logging.error(self.headers)
         super().do_GET()
@@ -27,9 +26,11 @@ class ServerHandler(SimpleHTTPRequestHandler):
         form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
-            environ={'REQUEST_METHOD': 'POST',
-                     'CONTENT_TYPE': self.headers['Content-Type'],
-                     })
+            environ={
+                "REQUEST_METHOD": "POST",
+                "CONTENT_TYPE": self.headers["Content-Type"],
+            },
+        )
         for item in form.list:
             logging.error(item)
         super().do_GET()
