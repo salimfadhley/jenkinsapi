@@ -6,14 +6,15 @@ import datetime
 import tempfile
 import posixpath
 import requests
-from requests.adapters import HTTPAdapter
-from urllib3 import Retry
+import queue
 import threading
 import subprocess
 from pkg_resources import resource_stream
+from urllib3 import Retry
+from urllib.parse import urlparse
 from tarfile import TarFile
-from six.moves import queue
-from six.moves.urllib.parse import urlparse
+
+from requests.adapters import HTTPAdapter
 
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.custom_exceptions import JenkinsAPIException

@@ -2,8 +2,12 @@
 This module implements the Jobs class, which is intended to be a container-like
 interface for all of the jobs defined on a single Jenkins server.
 """
+from __future__ import annotations
+
+from typing import Iterator
 import logging
 import time
+
 from jenkinsapi.job import Job
 from jenkinsapi.custom_exceptions import JenkinsAPIException, UnknownJob
 
@@ -19,11 +23,11 @@ class Jobs(object):
     jenkinsapi.Job objects.
     """
 
-    def __init__(self, jenkins):
+    def __init__(self, jenkins: "Jenkins") -> None:
         self.jenkins = jenkins
         self._data = []
 
-    def _del_data(self, job_name):
+    def _del_data(self, job_name: str) -> None:
         if not self._data:
             return
         for num, job_data in enumerate(self._data):
@@ -31,13 +35,13 @@ class Jobs(object):
                 del self._data[num]
                 return
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.keys())
 
     def poll(self, tree="jobs[name,color,url]"):
         return self.jenkins.poll(tree=tree)
 
-    def __delitem__(self, job_name):
+    def __delitem__(self, job_name: str) -> None:
         """
         Delete a job by name
         :param str job_name: name of a existing job
@@ -62,7 +66,7 @@ class Jobs(object):
                     )
                     self._del_data(job_name)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: str) -> "Job":
         """
         Create Job
 
@@ -75,7 +79,7 @@ class Jobs(object):
         """
         return self.create(key, value)
 
-    def __getitem__(self, job_name):
+    def __getitem__(self, job_name: str) -> "Job":
         if job_name in self:
             job_data = [
                 job_row
@@ -90,7 +94,7 @@ class Jobs(object):
         else:
             raise UnknownJob(job_name)
 
-    def iteritems(self):
+    def iteritems(self) -> Iterator[str, "Job"]:
         """
         Iterate over the names & objects for all jobs
         """
@@ -100,13 +104,13 @@ class Jobs(object):
             else:
                 yield job.name, job
 
-    def __contains__(self, job_name):
+    def __contains__(self, job_name: str) -> bool:
         """
         True if job_name exists in Jenkins
         """
         return job_name in self.keys()
 
-    def iterkeys(self):
+    def iterkeys(self) -> Iterator[str]:
         """
         Iterate over the names of all available jobs
         """
@@ -122,7 +126,7 @@ class Jobs(object):
             else:
                 yield row["name"]
 
-    def itervalues(self):
+    def itervalues(self) -> Iterator["Job"]:
         """
         Iterate over all available jobs
         """
@@ -131,13 +135,13 @@ class Jobs(object):
         for row in self._data:
             yield Job(row["url"], row["name"], self.jenkins)
 
-    def keys(self):
+    def keys(self) -> list[str]:
         """
         Return a list of the names of all jobs
         """
         return list(self.iterkeys())
 
-    def create(self, job_name, config):
+    def create(self, job_name: str, config: str | bytes) -> "Job":
         """
         Create a job
 
@@ -152,14 +156,9 @@ class Jobs(object):
             raise JenkinsAPIException("Job XML config cannot be empty")
 
         params = {"name": job_name}
-        try:
-            if isinstance(
-                config, unicode
-            ):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python2 already a str
-            pass
+        if isinstance(config, bytes):
+            config = config.decode("utf-8")
+
         self.jenkins.requester.post_xml_and_confirm_status(
             self.jenkins.get_create_url(), data=config, params=params
         )
@@ -169,8 +168,8 @@ class Jobs(object):
         return self[job_name]
 
     def create_multibranch_pipeline(
-        self, job_name, config, block=True, delay=60
-    ):
+        self, job_name: str, config: str, block: bool = True, delay: int = 60
+    ) -> list["Job"]:
         """
         Create a multibranch pipeline job
 
@@ -184,14 +183,9 @@ class Jobs(object):
             raise JenkinsAPIException("Job XML config cannot be empty")
 
         params = {"name": job_name}
-        try:
-            if isinstance(
-                config, unicode
-            ):  # pylint: disable=undefined-variable
-                config = str(config)
-        except NameError:
-            # Python2 already a str
-            pass
+        if isinstance(config, bytes):
+            config = config.decode("utf-8")
+
         self.jenkins.requester.post_xml_and_confirm_status(
             self.jenkins.get_create_url(), data=config, params=params
         )
@@ -233,7 +227,7 @@ class Jobs(object):
 
         return jobs
 
-    def copy(self, job_name, new_job_name):
+    def copy(self, job_name: str, new_job_name: str) -> "Job":
         """
         Copy a job
         :param str job_name: Name of an existing job
@@ -250,7 +244,7 @@ class Jobs(object):
 
         return self[new_job_name]
 
-    def rename(self, job_name, new_job_name):
+    def rename(self, job_name: str, new_job_name: str) -> "Job":
         """
         Rename a job
 
@@ -268,7 +262,7 @@ class Jobs(object):
 
         return self[new_job_name]
 
-    def build(self, job_name, params=None, **kwargs):
+    def build(self, job_name: str, params=None, **kwargs) -> "QueueItem":
         """
         Executes build of a job
 

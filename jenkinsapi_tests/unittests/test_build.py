@@ -3,8 +3,10 @@ import pytest
 import pytz
 from . import configs
 import datetime
+from typing import List
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
+from jenkinsapi.artifact import Artifact
 
 
 @pytest.fixture(scope="function")
@@ -13,18 +15,18 @@ def jenkins(mocker):
 
 
 @pytest.fixture(scope="function")
-def job(monkeypatch, jenkins):
+def job(monkeypatch, jenkins) -> Job:
     def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
         return configs.JOB_DATA
 
     monkeypatch.setattr(Job, "_poll", fake_poll)
 
-    fake_job = Job("http://", "Fake_Job", jenkins)
+    fake_job: Job = Job("http://", "Fake_Job", jenkins)
     return fake_job
 
 
 @pytest.fixture(scope="function")
-def build(job, monkeypatch):
+def build(job, monkeypatch) -> Build:
     def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
         return configs.BUILD_DATA
 
@@ -34,7 +36,7 @@ def build(job, monkeypatch):
 
 
 @pytest.fixture(scope="function")
-def build_pipeline(job, monkeypatch):
+def build_pipeline(job, monkeypatch) -> Build:
     def fake_poll(cls, tree=None):  # pylint: disable=unused-argument
         return configs.BUILD_DATA_PIPELINE
 
@@ -43,21 +45,23 @@ def build_pipeline(job, monkeypatch):
     return Build("http://", 97, job)
 
 
-def test_timestamp(build):
+def test_timestamp(build) -> None:
     assert isinstance(build.get_timestamp(), datetime.datetime)
 
-    expected = pytz.utc.localize(datetime.datetime(2013, 5, 31, 23, 15, 40))
+    expected: datetime.datetime = pytz.utc.localize(
+        datetime.datetime(2013, 5, 31, 23, 15, 40)
+    )
 
     assert build.get_timestamp() == expected
 
 
-def test_name(build):
+def test_name(build) -> None:
     with pytest.raises(AttributeError):
         build.id()
     assert build.name == "foo #1"
 
 
-def test_duration(build):
+def test_duration(build) -> None:
     expected = datetime.timedelta(milliseconds=5782)
     assert build.get_duration() == expected
     assert build.get_duration().seconds == 5
@@ -65,12 +69,14 @@ def test_duration(build):
     assert str(build.get_duration()) == "0:00:05.782000"
 
 
-def test_get_causes(build):
+def test_get_causes(build) -> None:
     assert build.get_causes() == [
         {
             "shortDescription": "Started by user anonymous",
             "userId": None,
             "userName": "anonymous",
+            "upstreamProject": "parentBuild",
+            "upstreamBuild": 1,
         }
     ]
 
@@ -273,3 +279,51 @@ def test_build_env_vars_other_exception(monkeypatch, build):
             build.get_env_vars()
     assert "" == str(excinfo.value)
     assert len(record) == 0
+
+
+def test_build_get_status(build) -> None:
+    assert build.get_status() == "SUCCESS"
+
+
+def test_build_get_params_return_empty_dict(build) -> None:
+    build._data = {"actions": []}
+    assert build.get_params() == {}
+
+
+def test_build_get_changeset_empty(build) -> None:
+    build._data = {"changeSet": {}}
+    assert build.get_changeset_items() == []
+
+
+def test_build_get_changesets_vcs(build) -> None:
+    # This test shall test lines 162-164 in build.py
+    build._data = {"changeSets": {"kind": "git"}}
+    assert build._get_vcs() == "git"
+
+
+def test_build_get_number(build) -> None:
+    assert build.get_number() == 1
+
+
+def test_build_get_artifacts(build) -> None:
+    afs: List[Artifact] = list(build.get_artifacts())
+    assert len(afs) == 1
+    assert isinstance(afs[0], Artifact)
+    assert list(afs)[0].filename == "foo.txt"
+
+
+def test_build_get_upstream_job_name(build) -> None:
+    assert build.get_upstream_job_name() == "parentBuild"
+
+
+def test_build_get_ustream_job_name_none(build) -> None:
+    build._data = {"actions": []}
+    assert build.get_upstream_job_name() is None
+
+
+def test_build_get_master_job_name(build) -> None:
+    assert build.get_master_job_name() == "masterBuild"
+
+
+def test_build_get_master_build_number(build) -> None:
+    assert build.get_master_build_number() == 1

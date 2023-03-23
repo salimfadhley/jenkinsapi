@@ -39,7 +39,7 @@ def test_create_user_pass_credential(jenkins):
 
     cred = creds[cred_descr]
     assert isinstance(cred, UsernamePasswordCredential) is True
-    assert cred.password is None
+    assert cred.password == ""
     assert cred.description == cred_descr
 
     del creds[cred_descr]

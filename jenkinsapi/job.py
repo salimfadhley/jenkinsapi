@@ -1,10 +1,12 @@
 """
 Module for jenkinsapi Job
 """
+from __future__ import annotations
+
 import json
 import logging
 import xml.etree.ElementTree as ET
-import six.moves.urllib.parse as urlparse
+import urllib.parse as urlparse
 
 from collections import defaultdict
 from jenkinsapi.build import Build
@@ -20,7 +22,6 @@ from jenkinsapi.custom_exceptions import (
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.mutable_jenkins_thing import MutableJenkinsThing
 from jenkinsapi.queue import QueueItem
-from jenkinsapi.utils.compat import to_string
 
 
 SVN_URL = "./scm/locations/hudson.scm.SubversionSCM_-ModuleLocation/remote"
@@ -40,9 +41,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
     A job can hold N builds which are the actual execution environments
     """
 
-    def __init__(self, url, name, jenkins_obj):
-        self.name = name
-        self.jenkins = jenkins_obj
+    def __init__(self, url: str, name: str, jenkins_obj: "Jenkins") -> None:
+        self.name: str = name
+        self.jenkins: "Jenkins" = jenkins_obj
         self._revmap = None
         self._config = None
         self._element_tree = None
@@ -69,16 +70,16 @@ class Job(JenkinsBase, MutableJenkinsThing):
             "hg": self._get_hg_branch,
             None: lambda element_tree: [],
         }
-        self.url = url
+        self.url: str = url
         JenkinsBase.__init__(self, self.url)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def get_description(self):
+    def get_description(self) -> str:
         return self._data["description"]
 
-    def get_jenkins_obj(self):
+    def get_jenkins_obj(self) -> "Jenkins":
         return self.jenkins
 
     # When the name of the hg branch used in the job is default hg branch (i.e.
@@ -138,7 +139,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_build_triggerurl(self):
+    def get_build_triggerurl(self) -> str:
         if not self.has_params():
             return "%s/build" % self.baseurl
         return "%s/buildWithParameters" % self.baseurl
@@ -154,8 +155,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
             raise ValueError("Build parameters must be a dict")
 
         build_p = [
-            {"name": k, "value": to_string(v)}
-            for k, v in sorted(build_params.items())
+            {"name": k, "value": v} for k, v in sorted(build_params.items())
         ]
 
         out = {"parameter": build_p}
@@ -180,13 +180,13 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def invoke(
         self,
         securitytoken=None,
-        block=False,
+        block: bool = False,
         build_params=None,
         cause=None,
         files=None,
-        delay=5,
+        delay: int = 5,
         quiet_period=None,
-    ):
+    ) -> QueueItem:
         assert isinstance(block, bool)
         if build_params and (not self.has_params()):
             raise BadParams("This job does not support parameters")

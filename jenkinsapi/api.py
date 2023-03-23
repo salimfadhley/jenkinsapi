@@ -5,74 +5,90 @@ Many of these functions were designed to be exposed to the command-line,
 hence they have simple string arguments.
 """
 import os
+import re
 import time
 import logging
-import six
+from typing import List, Dict
 
-import six.moves.urllib.parse as urlparse
+from urllib.parse import urlparse
 
 from jenkinsapi import constants
-from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.artifact import Artifact
+from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.view import View
+from jenkinsapi.job import Job
+from jenkinsapi.build import Build
 from jenkinsapi.custom_exceptions import ArtifactsMissing, TimeOut, BadURL
+from jenkinsapi.result_set import ResultSet
 
-log = logging.getLogger(__name__)
+log: logging.Logger = logging.getLogger(__name__)
 
 
 def get_latest_test_results(
-    jenkinsurl, jobname, username=None, password=None, ssl_verify=True
-):
+    jenkinsurl: str,
+    jobname: str,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> ResultSet:
     """
     A convenience function to fetch down the very latest test results
     from a jenkins job.
     """
-    latestbuild = get_latest_build(
+    latestbuild: Build = get_latest_build(
         jenkinsurl,
         jobname,
         username=username,
         password=password,
         ssl_verify=ssl_verify,
     )
-    res = latestbuild.get_resultset()
-    return res
+    return latestbuild.get_resultset()
 
 
 def get_latest_build(
-    jenkinsurl, jobname, username=None, password=None, ssl_verify=True
-):
+    jenkinsurl: str,
+    jobname: str,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> Build:
     """
     A convenience function to fetch down the very latest test results
     from a jenkins job.
     """
-    jenkinsci = Jenkins(
+    jenkinsci: Jenkins = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    job = jenkinsci[jobname]
+    job: Job = jenkinsci[jobname]
     return job.get_last_build()
 
 
 def get_latest_complete_build(
-    jenkinsurl, jobname, username=None, password=None, ssl_verify=True
-):
+    jenkinsurl: str,
+    jobname: str,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> Build:
     """
     A convenience function to fetch down the very latest test results
     from a jenkins job.
     """
-    jenkinsci = Jenkins(
+    jenkinsci: Jenkins = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    job = jenkinsci[jobname]
+    job: Job = jenkinsci[jobname]
     return job.get_last_completed_build()
 
 
 def get_build(
-    jenkinsurl,
-    jobname,
-    build_no,
-    username=None,
-    password=None,
-    ssl_verify=True,
-):
+    jenkinsurl: str,
+    jobname: str,
+    build_no: int,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> Build:
     """
     A convenience function to fetch down the test results
     from a jenkins job by build number.
@@ -85,12 +101,12 @@ def get_build(
 
 
 def get_artifacts(
-    jenkinsurl,
-    jobid=None,
-    build_no=None,
-    username=None,
-    password=None,
-    ssl_verify=True,
+    jenkinsurl: str,
+    jobname: str,
+    build_no: int,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
 ):
     """
     Find all the artifacts for the latest build of a job.
@@ -98,25 +114,26 @@ def get_artifacts(
     jenkinsci = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    job = jenkinsci[jobid]
+    job = jenkinsci[jobname]
     if build_no:
         build = job.get_build(build_no)
     else:
         build = job.get_last_good_build()
     artifacts = build.get_artifact_dict()
     log.info(
-        msg="Found %i artifacts in '%s'" % (len(artifacts.keys()), build_no)
+        msg=f"Found {len(artifacts.keys())} \
+        artifacts in '{jobname}[{build_no}]"
     )
     return artifacts
 
 
 def search_artifacts(
-    jenkinsurl,
-    jobid,
+    jenkinsurl: str,
+    jobname: str,
     artifact_ids=None,
-    username=None,
-    password=None,
-    ssl_verify=True,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
 ):
     """
     Search the entire history of a jenkins job for a list of artifact names.
@@ -129,8 +146,9 @@ def search_artifacts(
     jenkinsci = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    job = jenkinsci[jobid]
+    job = jenkinsci[jobname]
     build_ids = job.get_build_ids()
+    missing_artifacts = set()
     for build_id in build_ids:
         build = job.get_build(build_id)
         artifacts = build.get_artifact_dict()
@@ -139,22 +157,22 @@ def search_artifacts(
         missing_artifacts = set(artifact_ids) - set(artifacts.keys())
         log.debug(
             msg="Artifacts %s missing from %s #%i"
-            % (", ".join(missing_artifacts), jobid, build_id)
+            % (", ".join(missing_artifacts), jobname, build_id)
         )
-    # noinspection PyUnboundLocalVariable
+
     raise ArtifactsMissing(missing_artifacts)
 
 
 def grab_artifact(
-    jenkinsurl,
-    jobid,
+    jenkinsurl: str,
+    jobname: str,
     artifactid,
-    targetdir,
-    username=None,
-    password=None,
-    strict_validation=False,
-    ssl_verify=True,
-):
+    targetdir: str,
+    username: str = "",
+    password: str = "",
+    strict_validation: bool = True,
+    ssl_verify: bool = True,
+) -> None:
     """
     Convenience method to find the latest good version of an artifact and
     save it to a target directory.
@@ -162,7 +180,8 @@ def grab_artifact(
     """
     artifacts = get_artifacts(
         jenkinsurl,
-        jobid,
+        jobname,
+        artifactid,
         username=username,
         password=password,
         ssl_verify=ssl_verify,
@@ -174,15 +193,15 @@ def grab_artifact(
 
 
 def block_until_complete(
-    jenkinsurl,
-    jobs,
-    maxwait=12000,
-    interval=30,
-    raise_on_timeout=True,
-    username=None,
-    password=None,
-    ssl_verify=True,
-):
+    jenkinsurl: str,
+    jobs: List[str],
+    maxwait: int = 12000,
+    interval: int = 30,
+    raise_on_timeout: bool = True,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> None:
     """
     Wait until all of the jobs in the list are complete.
     """
@@ -190,30 +209,32 @@ def block_until_complete(
     assert maxwait > interval
     assert interval > 0
 
-    obj_jenkins = Jenkins(
+    report: str = ""
+    obj_jenkins: Jenkins = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    obj_jobs = [obj_jenkins[jid] for jid in jobs]
+    obj_jobs: List[Job] = [obj_jenkins[jid] for jid in jobs]
     for time_left in range(maxwait, 0, -interval):
         still_running = [j for j in obj_jobs if j.is_queued_or_running()]
         if not still_running:
             return
-        str_still_running = ", ".join('"%s"' % str(a) for a in still_running)
+        report = ", ".join('"%s"' % str(a) for a in still_running)
         log.warning(
             "Waiting for jobs %s to complete. Will wait another %is",
-            str_still_running,
+            report,
             time_left,
         )
         time.sleep(interval)
     if raise_on_timeout:
         # noinspection PyUnboundLocalVariable
         raise TimeOut(
-            "Waited too long for these jobs to complete: %s"
-            % str_still_running
+            "Waited too long for these jobs to complete: %s" % report
         )
 
 
-def get_view_from_url(url, username=None, password=None, ssl_verify=True):
+def get_view_from_url(
+    url: str, username: str = "", password: str = "", ssl_verify: bool = True
+) -> View:
     """
     Factory method
     """
@@ -228,8 +249,8 @@ def get_view_from_url(url, username=None, password=None, ssl_verify=True):
 
 
 def get_nested_view_from_url(
-    url, username=None, password=None, ssl_verify=True
-):
+    url: str, username: str = "", password: str = "", ssl_verify: bool = True
+) -> View:
     """
     Returns View based on provided URL. Convenient for nested views.
     """
@@ -246,7 +267,11 @@ def get_nested_view_from_url(
 
 
 def install_artifacts(
-    artifacts, dirstruct, installdir, basestaticurl, strict_validation=False
+    artifacts,
+    dirstruct: Dict[str, str],
+    installdir: str,
+    basestaticurl: str,
+    strict_validation: bool = False,
 ):
     """
     Install the artifacts.
@@ -276,15 +301,15 @@ def install_artifacts(
 
 
 def search_artifact_by_regexp(
-    jenkinsurl,
-    jobid,
-    artifactRegExp,
-    username=None,
-    password=None,
-    ssl_verify=True,
-):
+    jenkinsurl: str,
+    jobname: str,
+    artifactRegExp: re.Pattern,
+    username: str = "",
+    password: str = "",
+    ssl_verify: bool = True,
+) -> Artifact:
     """
-    Search the entire history of a hudson job for a build which has an
+    Search the entire history of a Jenkins job for a build which has an
     artifact whose name matches a supplied regular expression.
     Return only that artifact.
 
@@ -298,7 +323,7 @@ def search_artifact_by_regexp(
     job = Jenkins(
         jenkinsurl, username=username, password=password, ssl_verify=ssl_verify
     )
-    j = job[jobid]
+    j = job[jobname]
 
     build_ids = j.get_build_ids()
 
@@ -306,9 +331,7 @@ def search_artifact_by_regexp(
         build = j.get_build(build_id)
 
         artifacts = build.get_artifact_dict()
-        it = six.iteritems(artifacts)
-
-        for name, art in it:
+        for name, art in artifacts.items():
             md_match = artifactRegExp.search(name)
 
             if md_match:

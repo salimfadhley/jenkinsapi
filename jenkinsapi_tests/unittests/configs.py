@@ -20,7 +20,7 @@ JOB_DATA = {
                     "name": "param2",
                     "type": "StringParameterDefinition",
                 },
-            ]
+            ],
         }
     ],
     "description": "test job",
@@ -83,11 +83,17 @@ BUILD_DATA = {
                     "shortDescription": "Started by user anonymous",
                     "userId": None,
                     "userName": "anonymous",
+                    "upstreamProject": "parentBuild",
+                    "upstreamBuild": 1,
                 }
-            ]
+            ],
+            "parameters": [
+                {"name": "masterBuild", "value": "masterBuild"},
+                {"name": "lastBuild", "value": 1},
+            ],
         }
     ],
-    "artifacts": [],
+    "artifacts": [{"fileName": "foo.txt", "relativePath": "foo.txt"}],
     "building": False,
     "builtOn": "localhost",
     "changeSet": {

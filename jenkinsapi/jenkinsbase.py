@@ -1,11 +1,12 @@
 """
 Module for JenkinsBase class
 """
+from __future__ import annotations
 
 import ast
 import pprint
 import logging
-from six.moves.urllib.parse import quote as urlquote
+from urllib.parse import quote
 from jenkinsapi import config
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
@@ -29,7 +30,7 @@ class JenkinsBase(object):
     def __str__(self):
         raise NotImplementedError
 
-    def __init__(self, baseurl, poll=True):
+    def __init__(self, baseurl: str, poll: bool = True):
         """
         Initialize a jenkins connection
         """
@@ -43,7 +44,7 @@ class JenkinsBase(object):
             "Please implement this method on %s" % self.__class__.__name__
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return true if the other object represents a connection to the
         same server
@@ -53,7 +54,7 @@ class JenkinsBase(object):
         return other.baseurl == self.baseurl
 
     @classmethod
-    def strip_trailing_slash(cls, url):
+    def strip_trailing_slash(cls, url: str) -> str:
         while url.endswith("/"):
             url = url[:-1]
         return url
@@ -110,23 +111,23 @@ class JenkinsBase(object):
 
     def process_job_folder(self, folder, folder_path):
         logger.debug("Processing folder %s in %s", folder["name"], folder_path)
-        folder_path += "/job/%s" % urlquote(folder["name"])
+        folder_path += "/job/%s" % quote(folder["name"])
         data = self.get_data(
             self.python_api_url(folder_path), tree="jobs[name,color]"
         )
-        result = []
 
+        result = []
         for job in data.get("jobs", []):
             if "color" not in job.keys():
                 result += self.process_job_folder(job, folder_path)
             else:
-                job["url"] = "%s/job/%s" % (folder_path, urlquote(job["name"]))
+                job["url"] = "%s/job/%s" % (folder_path, quote(job["name"]))
                 result.append(job)
 
         return result
 
     @classmethod
-    def python_api_url(cls, url):
+    def python_api_url(cls, url: str) -> str:
         if url.endswith(config.JENKINS_API):
             return url
         else:

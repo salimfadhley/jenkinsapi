@@ -8,9 +8,12 @@ have any number of artifacts associated with it.
 This module provides a class called Artifact which allows you to download
 objects from the server and also access them as a stream.
 """
+from __future__ import annotations
+
 import os
 import logging
 import hashlib
+from typing import Any, Literal
 
 from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.custom_exceptions import ArtifactBroken
@@ -25,13 +28,19 @@ class Artifact(object):
     generated as a by-product of executing a Jenkins build.
     """
 
-    def __init__(self, filename, url, build, relative_path=None):
-        self.filename = filename
-        self.url = url
-        self.build = build
-        self.relative_path = relative_path
+    def __init__(
+        self,
+        filename: str,
+        url: str,
+        build: "Build",
+        relative_path: str | None = None,
+    ) -> None:
+        self.filename: str = filename
+        self.url: str = url
+        self.build: "Build" = build
+        self.relative_path: str | None = relative_path
 
-    def save(self, fspath, strict_validation=False):
+    def save(self, fspath: str, strict_validation: bool = False) -> str:
         """
         Save the artifact to an explicit path. The containing directory must
         exist. Returns a reference to the file which has just been writen to.
@@ -67,10 +76,10 @@ class Artifact(object):
         self._verify_download(filepath, strict_validation)
         return fspath
 
-    def get_jenkins_obj(self):
+    def get_jenkins_obj(self) -> Jenkins:
         return self.build.get_jenkins_obj()
 
-    def get_data(self):
+    def get_data(self) -> Any:
         """
         Grab the text of the artifact
         """
@@ -79,7 +88,7 @@ class Artifact(object):
         )
         return response.content
 
-    def _do_download(self, fspath):
+    def _do_download(self, fspath: str) -> str:
         """
         Download the the artifact to a path.
         """
@@ -91,9 +100,12 @@ class Artifact(object):
                 out.write(chunk)
         return fspath
 
-    def _verify_download(self, fspath, strict_validation):
+    def _verify_download(self, fspath, strict_validation) -> Literal[True]:
         """
         Verify that a downloaded object has a valid fingerprint.
+
+        Returns True if the fingerprint is valid, raises an exception if
+        the fingerprint is invalid.
         """
         local_md5 = self._md5sum(fspath)
         baseurl = self.build.job.jenkins.baseurl
@@ -109,7 +121,7 @@ class Artifact(object):
             )
         return True
 
-    def _md5sum(self, fspath, chunksize=2**20):
+    def _md5sum(self, fspath: str, chunksize: int = 2**20) -> str:
         """
         A MD5 hashing function intended to produce the same results as that
         used by Jenkins.
@@ -123,17 +135,19 @@ class Artifact(object):
                     break
         return md5.hexdigest()
 
-    def save_to_dir(self, dirpath, strict_validation=False):
+    def save_to_dir(
+        self, dirpath: str, strict_validation: bool = False
+    ) -> str:
         """
         Save the artifact to a folder. The containing directory must exist,
         but use the artifact's default filename.
         """
         assert os.path.exists(dirpath)
         assert os.path.isdir(dirpath)
-        outputfilepath = os.path.join(dirpath, self.filename)
+        outputfilepath: str = os.path.join(dirpath, self.filename)
         return self.save(outputfilepath, strict_validation)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Produce a handy repr-string.
         """

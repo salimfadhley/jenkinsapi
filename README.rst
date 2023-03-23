@@ -46,11 +46,8 @@ Python versions
 
 The project has been tested against Python versions:
 
-* 2.7
-* 3.4
-* 3.5
-* 3.6
-* 3.7
+* 2.7 - last version compatible with Python 2.7 is tagged Py2 in repository and available on PyPi as version 0.3.13
+* 3.8 - 3.11
 
 Jenkins versions
 ----------------
@@ -146,25 +143,26 @@ missing test dependencies:
 
     virtualenv
     source .venv/bin/active
-    (venv) python setup.py test
+    (.venv) pip install -r requirements.txt
+    (.venv) python setup.py test
 
 Development
 -----------
 
-* Make sure that you have Java_ installed.
+* Make sure that you have Java_ installed. Jenkins will be automatically
+  downloaded and started during tests.
 * Create virtual environment for development
 * Install package in development mode
 
 .. code-block:: bash
 
-    (venv) pip install -e .
-    (venv) pip install -r test-requirements.txt
+    (.venv) pip install -r test-requirements.txt
 
 * Make your changes, write tests and check your code
 
 .. code-block:: bash
 
-    (venv) tox
+    (.venv) pytest
 
 
 Project Contributors

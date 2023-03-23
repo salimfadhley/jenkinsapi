@@ -6,14 +6,17 @@ The JenkinsAPI project welcomes contributions via GitHub. Please bear in mind th
 Python compatibility
 --------------------
 
-The project currently targets Python 2.6 and Python 2.7. Support for Python 3.x will be introduced soon. Please do not add any features which
-will break our supported Python 2.x versions or make it harder for us to migrate to Python 3.x
+The project currently targets Python 3.8+. Last version compatible with Python 2.7 is tagged as Py2.
+
+Code formatting
+---------------
+
+The project follows strict PEP8 guidelines. Please use a tool like black to format your code before submitting a pull request. Tell black to use 79 characters per line (black -l 79).
 
 Test Driven Development
 -----------------------
 
-Please do not submit pull requests without tests. That's really important. Our project is all about test-driven development. It would be
-embarrasing if our project failed because of a lack of tests!
+Please do not submit pull requests without tests. That's really important. Our project is all about test-driven development. It would be embarrasing if our project failed because of a lack of tests!
 
 You might want to follow a typical test driven development cycle: http://en.wikipedia.org/wiki/Test-driven_development
 
@@ -24,7 +27,7 @@ Features implemented without tests will be removed. Unmaintained features (which
 Check the CI status before comitting
 ------------------------------------
 
-We have a Travis CI account - please verify that your branch works before making a pull request.
+Project uses Github Actions, please verify that your branch passes all tests before making a pull request.
 
 Any problems?
 -------------

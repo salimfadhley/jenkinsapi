@@ -82,18 +82,21 @@ class UsernamePasswordCredential(Credential):
     dict
     """
 
-    def __init__(self, cred_dict):
-        jenkins_class = "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl"  # noqa
+    def __init__(self, cred_dict: dict) -> None:
+        jenkins_class: str = (
+            "com.cloudbees.plugins.credentials.impl."
+            "UsernamePasswordCredentialsImpl"
+        )
         super(UsernamePasswordCredential, self).__init__(
             cred_dict, jenkins_class
         )
         if "typeName" in cred_dict:
-            username = cred_dict["displayName"].split("/")[0]
+            username: str = cred_dict["displayName"].split("/")[0]
         else:
-            username = cred_dict["userName"]
+            username: str = cred_dict["userName"]
 
-        self.username = username
-        self.password = cred_dict.get("password", None)
+        self.username: str = username
+        self.password: str = cred_dict.get("password", "")
 
     def get_attributes(self):
         """
@@ -219,23 +222,26 @@ class SSHKeyCredential(Credential):
     dict
     """
 
-    def __init__(self, cred_dict):
-        jenkins_class = "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"  # noqa
+    def __init__(self, cred_dict: dict) -> None:
+        jenkins_class: str = (
+            "com.cloudbees.jenkins.plugins.sshcredentials.impl."
+            "BasicSSHUserPrivateKey"
+        )
         super(SSHKeyCredential, self).__init__(cred_dict, jenkins_class)
         if "typeName" in cred_dict:
-            username = cred_dict["displayName"].split(" ")[0]
+            username: str = cred_dict["displayName"].split(" ")[0]
         else:
-            username = cred_dict["userName"]
+            username: str = cred_dict["userName"]
 
-        self.username = username
-        self.passphrase = cred_dict.get("passphrase", "")
+        self.username: str = username
+        self.passphrase: str = cred_dict.get("passphrase", "")
 
         if "private_key" not in cred_dict or cred_dict["private_key"] is None:
-            self.key_type = -1
-            self.key_value = None
+            self.key_type: int = -1
+            self.key_value: str = ""
         elif cred_dict["private_key"].startswith("-"):
-            self.key_type = 0
-            self.key_value = cred_dict["private_key"]
+            self.key_type: int = 0
+            self.key_value: str = cred_dict["private_key"]
         else:
             raise ValueError("Invalid private_key value")
 

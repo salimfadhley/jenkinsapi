@@ -1,16 +1,20 @@
 """
 Module for jenkinsapi nodes
 """
+from __future__ import annotations
+
+from typing import Iterator
+
 import logging
 
-from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 from jenkinsapi.node import Node
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 from jenkinsapi.custom_exceptions import UnknownNode
 from jenkinsapi.custom_exceptions import PostRequired
 
-log = logging.getLogger(__name__)
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class Nodes(JenkinsBase):
@@ -19,7 +23,7 @@ class Nodes(JenkinsBase):
     Class to hold information on a collection of nodes
     """
 
-    def __init__(self, baseurl, jenkins_obj):
+    def __init__(self, baseurl: str, jenkins_obj: "Jenkins") -> None:
         """
         Handy access to all of the nodes on your Jenkins server
         """
@@ -31,16 +35,16 @@ class Nodes(JenkinsBase):
             else baseurl.rstrip("/") + "/computer",
         )
 
-    def get_jenkins_obj(self):
+    def get_jenkins_obj(self) -> "Jenkins":
         return self.jenkins
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Nodes @ %s" % self.baseurl
 
-    def __contains__(self, node_name):
+    def __contains__(self, node_name: str) -> bool:
         return node_name in self.keys()
 
-    def iterkeys(self):
+    def iterkeys(self) -> Iterator[str]:
         """
         Return an iterator over the container's node names.
 
@@ -50,13 +54,13 @@ class Nodes(JenkinsBase):
         for item in self._data["computer"]:
             yield item["displayName"]
 
-    def keys(self):
+    def keys(self) -> list[str]:
         """
         Return a copy of the container's list of node names.
         """
         return list(self.iterkeys())
 
-    def _make_node(self, nodename):
+    def _make_node(self, nodename) -> Node:
         """
         Creates an instance of Node for the given nodename.
         This function assumes the returned node exists.
@@ -67,7 +71,7 @@ class Nodes(JenkinsBase):
             nodeurl = "%s/%s" % (self.baseurl, nodename)
         return Node(self.jenkins, nodeurl, nodename, node_dict={})
 
-    def iteritems(self):
+    def iteritems(self) -> Iterator[tuple[str, Node]]:
         """
         Return an iterator over the container's (name, node) pairs.
 
@@ -81,13 +85,13 @@ class Nodes(JenkinsBase):
             except Exception:
                 raise JenkinsAPIException("Unable to iterate nodes")
 
-    def items(self):
+    def items(self) -> list[tuple[str, Node]]:
         """
         Return a copy of the container's list of (name, node) pairs.
         """
         return list(self.iteritems())
 
-    def itervalues(self):
+    def itervalues(self) -> Iterator[Node]:
         """
         Return an iterator over the container's nodes.
 
@@ -100,21 +104,21 @@ class Nodes(JenkinsBase):
             except Exception:
                 raise JenkinsAPIException("Unable to iterate nodes")
 
-    def values(self):
+    def values(self) -> list[Node]:
         """
         Return a copy of the container's list of nodes.
         """
         return list(self.itervalues())
 
-    def __getitem__(self, nodename):
+    def __getitem__(self, nodename: str) -> Node:
         if nodename in self:
             return self._make_node(nodename)
         raise UnknownNode(nodename)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, item):
+    def __delitem__(self, item: str) -> None:
         if item in self and item != "Built-In Node":
             url = "%s/doDelete" % self[item].baseurl
             try:
@@ -129,14 +133,14 @@ class Nodes(JenkinsBase):
 
             log.info("Requests to remove built-in node ignored")
 
-    def __setitem__(self, name, node_dict):
+    def __setitem__(self, name: str, node_dict: dict):
         if not isinstance(node_dict, dict):
             raise ValueError('"node_dict" parameter must be a Node dict')
         if name not in self:
             self.create_node(name, node_dict)
         self.poll()
 
-    def create_node(self, name, node_dict):
+    def create_node(self, name: str, node_dict: dict) -> Node:
         """
         Create a new slave node
 
@@ -149,7 +153,7 @@ class Nodes(JenkinsBase):
 
         node = Node(
             jenkins_obj=self.jenkins,
-            baseurl=None,
+            baseurl="",
             nodename=name,
             node_dict=node_dict,
             poll=False,
@@ -164,7 +168,7 @@ class Nodes(JenkinsBase):
         self.poll()
         return self[name]
 
-    def create_node_with_config(self, name, config):
+    def create_node_with_config(self, name: str, config: dict) -> Node | None:
         """
         Create a new slave node with specific configuration.
         Config should be resemble the output of node.get_node_attributes()

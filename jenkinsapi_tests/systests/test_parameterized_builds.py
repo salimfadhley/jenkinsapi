@@ -1,9 +1,9 @@
 """
 System tests for `jenkinsapi.jenkins` module.
 """
+import io
 import time
 
-from six import StringIO
 from jenkinsapi_tests.test_utils.random_strings import random_string
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE
 from jenkinsapi_tests.systests.job_configs import JOB_WITH_FILE_AND_PARAMS
@@ -12,7 +12,7 @@ from jenkinsapi_tests.systests.job_configs import JOB_WITH_PARAMETERS
 
 def test_invoke_job_with_file(jenkins):
     file_data = random_string()
-    param_file = StringIO(file_data)
+    param_file = io.BytesIO(file_data.encode("utf-8"))
 
     job_name = "create1_%s" % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_FILE)
@@ -111,7 +111,7 @@ def test_parameterized_multiple_builds_get_the_same_queue_item(jenkins):
 def test_invoke_job_with_file_and_params(jenkins):
     file_data = random_string()
     param_data = random_string()
-    param_file = StringIO(file_data)
+    param_file = io.BytesIO(file_data.encode("utf-8"))
 
     job_name = "create_%s" % random_string()
     job = jenkins.create_job(job_name, JOB_WITH_FILE_AND_PARAMS)

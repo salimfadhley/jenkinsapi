@@ -5,8 +5,16 @@ name: CI_TEST
 
 on:
   push:
+    paths:
+      - 'requirements.txt'
+      - '**.py'
+      - '**.yml'
   pull_request:
     branches: [ "master" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -15,11 +23,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         token: ["stable", "latest"]
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@1f99358870fe1c846a3ccba386cc2b2246836776 # v2.2.1
+      with:
+        egress-policy: block
+        allowed-endpoints: >
+          azure.archive.ubuntu.com:80
+          esm.ubuntu.com:443
+          files.pythonhosted.org:443
+          ftp-chi.osuosl.org:443
+          ftp-nyc.osuosl.org:443
+          get.jenkins.io:443
+          github.com:443
+          mirror.xmission.com:443
+          motd.ubuntu.com:443
+          packages.microsoft.com:443
+          ppa.launchpadcontent.net:443
+          pypi.org:443
+          updates.jenkins-ci.org:80
+          updates.jenkins.io:443
+          updates.jenkins.io:80
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -51,9 +82,8 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=79 --statistics
+        flake8 jenkinsapi/ --count --select=E9,F63,F7,F82 --ignore F821,W503,W504 --show-source --statistics
+        flake8 jenkinsapi/ --count --exit-zero --max-complexity=10 --max-line-length=79 --statistics
 
     - name: Test with pytest
       env:
