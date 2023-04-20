@@ -627,7 +627,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
     def get_config_xml_url(self):
         return "%s/config.xml" % self.baseurl
 
-    def update_config(self, config, full_response=False, encoding='utf-8'):
+    def update_config(self, config, full_response=False, encoding="utf-8"):
         """
         Update the config.xml to the job
         Also refresh the ElementTree object since the config has changed
@@ -637,7 +637,9 @@ class Job(JenkinsBase, MutableJenkinsThing):
         """
         url = self.get_config_xml_url()
         config = str(config)  # cast unicode in case of Python 2
-        response = self.jenkins.requester.post_url(url, params={}, data=config.encode(encoding))
+        response = self.jenkins.requester.post_url(
+            url, params={}, data=config.encode(encoding)
+        )
         self._element_tree = ET.fromstring(config)
 
         if full_response:
