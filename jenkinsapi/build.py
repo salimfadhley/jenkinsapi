@@ -477,14 +477,15 @@ class Build(JenkinsBase):
         Return the current state of the text console.
         """
         url: str = "%s/consoleText" % self.baseurl
-        content: Any = self.job.jenkins.requester.get_url(url).content
+        resp = self.job.jenkins.requester.get_url(url)
+        content: Any = resp.content
         # This check was made for Python 3.x
         # In this version content is a bytes string
         # By contract this function must return string
         if isinstance(content, str):
             return content
         elif isinstance(content, bytes):
-            return content.decode("ISO-8859-1")
+            return content.decode(resp.encoding or "ISO-8859-1")
         else:
             raise JenkinsAPIException("Unknown content type for console")
 
@@ -504,7 +505,7 @@ class Build(JenkinsBase):
                 if isinstance(content, str):
                     yield content
                 elif isinstance(content, bytes):
-                    yield content.decode("ISO-8859-1")
+                    yield content.decode(resp.encoding or "ISO-8859-1")
                 else:
                     raise JenkinsAPIException(
                         "Unknown content type for console"
