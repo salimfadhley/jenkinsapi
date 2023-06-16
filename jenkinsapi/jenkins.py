@@ -555,8 +555,11 @@ class Jenkins(JenkinsBase):
                 )
                 # If there is a running job in Jenkins, the system message will
                 # pop up but the Jenkins instance will return 200
-                if res.status_code == 200 and "Jenkins is going to shut down" in \
-                    str(res.content, encoding="utf-8"):
+                if (
+                    res.status_code == 200
+                    and "Jenkins is going to shut down"
+                    in str(res.content, encoding="utf-8")
+                ):
                     time.sleep(1)
                     continue
                 return True
