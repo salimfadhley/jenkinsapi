@@ -550,9 +550,15 @@ class Jenkins(JenkinsBase):
     def __jenkins_is_unavailable(self):
         while True:
             try:
-                self.requester.get_and_confirm_status(
-                    self.baseurl, valid=[503, 500]
+                res = self.requester.get_and_confirm_status(
+                    self.baseurl, valid=[503, 500, 200]
                 )
+                # If there is a running job in Jenkins, the system message will
+                # pop up but the Jenkins instance will return 200
+                if res.status_code == 200 and "Jenkins is going to shut down" in \
+                    str(res.content, encoding="utf-8"):
+                    time.sleep(1)
+                    continue
                 return True
             except ConnectionError:
                 # This is also a possibility while Jenkins is restarting
