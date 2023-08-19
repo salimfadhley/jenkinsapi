@@ -59,6 +59,9 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/workflow-support.hpi",
     "http://updates.jenkins.io/latest/jquery3-api.hpi",
     "http://updates.jenkins.io/latest/checks-api.hpi",
+    "http://updates.jenkins.io/latest/javax-activation-api.hpi",
+    "http://updates.jenkins.io/latest/jaxb.hpi",
+    "http://updates.jenkins.io/latest/instance-identity.hpi",
 ]
 
 
