@@ -85,7 +85,8 @@ class Fingerprint(JenkinsBase):
         if self._data["hash"] != self.id_:
             log.info(
                 "File hash from Jenkins (%s) did not match local hash (%s)",
-                self._data["hash"], self.id_
+                self._data["hash"],
+                self.id_,
             )
             return False
         for usage_item in self._data["usage"]:
