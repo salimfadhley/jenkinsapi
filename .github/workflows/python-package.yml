@@ -11,6 +11,7 @@ on:
       - '**.yml'
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch: # allow manual run
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
