@@ -56,6 +56,12 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: setup java 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
