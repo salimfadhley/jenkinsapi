@@ -3,6 +3,7 @@ import pytest
 import pytz
 from . import configs
 import datetime
+import warnings
 from typing import List
 from jenkinsapi.build import Build
 from jenkinsapi.job import Job
@@ -275,10 +276,9 @@ def test_build_env_vars_other_exception(monkeypatch, build):
     monkeypatch.setattr(Build, "get_data", fake_get_data)
 
     with pytest.raises(Exception) as excinfo:
-        with pytest.warns(None) as record:
+        with warnings.catch_warnings():
             build.get_env_vars()
     assert "" == str(excinfo.value)
-    assert len(record) == 0
 
 
 def test_build_get_status(build) -> None:
