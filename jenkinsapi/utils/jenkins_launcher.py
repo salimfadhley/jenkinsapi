@@ -141,7 +141,7 @@ class JenkinsLancher(object):
             # see https://setuptools.pypa.io/en/latest/pkg_resources.html
 
             fileobj = importlib_resources.files(
-                "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
+                "jenkinsapi_tests.systests").joinpath("jenkins_home.tar.gz"
             )
         except ImportError:
             from pkg_resources import resource_stream  # below python 3.11
