@@ -42,11 +42,9 @@ dependencies = [
     "six>=1.10.0",
 ]
 
-[tool.files]
-packages = """
-jenkinsapi
-jenkinsapi_utils
-jenkinsapi_tests"""
+[tool.setuptools]
+packages = ["jenkinsapi", "jenkinsapi_utils", "jenkinsapi_tests"]
+include-package-data = false
 
 [tool.pbr]
 warnerrors = "True"
@@ -69,9 +67,6 @@ universal = 1
 [tool.pycodestyle]
 exclude = ".tox,doc/source/conf.py,build,.venv,.eggs"
 max-line-length = "99"
-
-[tool.setuptools]
-include-package-data = false
 
 [dependency-groups]
 dev = [
