@@ -11,10 +11,7 @@ on:
       - '**.yml'
   pull_request:
     branches: [ "master" ]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch: # allow manual run
 
 jobs:
   build:
@@ -28,9 +25,9 @@ jobs:
 
     steps:
     - name: Harden Runner
-      uses: step-security/harden-runner@1f99358870fe1c846a3ccba386cc2b2246836776 # v2.2.1
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
       with:
-        egress-policy: block
+        egress-policy: audit
         allowed-endpoints: >
           azure.archive.ubuntu.com:80
           esm.ubuntu.com:443
@@ -39,6 +36,8 @@ jobs:
           ftp-nyc.osuosl.org:443
           get.jenkins.io:443
           github.com:443
+          api.github.com:443
+          int.api.stepsecurity.io:443
           mirror.xmission.com:443
           motd.ubuntu.com:443
           packages.microsoft.com:443
@@ -46,6 +45,7 @@ jobs:
           pypi.org:443
           updates.jenkins-ci.org:80
           updates.jenkins.io:443
+          mirrors.updates.jenkins.io:443
           updates.jenkins.io:80
 
     - name: Checkout
@@ -55,23 +55,13 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip' # caching pip dependencies
 
-    - name: Get pip cache dir
-      id: pip-cache
-      run: |
-        echo "::set-output name=dir::$(pip cache dir)"
-
-    - name: Setup the Pip cache
-      uses: actions/cache@v3
+    - name: setup java 17
+      uses: actions/setup-java@v3
       with:
-        path: ${{ steps.pip-cache.outputs.dir }}
-        key: >-
-          ${{ matrix.python-version }}-pip-${{ hashFiles('setup.cfg') }}-${{
-          hashFiles('setup.py') }}-${{ hashFiles('tox.ini') }}-${{
-          hashFiles('.pre-commit-config.yaml') }}
-        restore-keys: |
-          ${{ matrix.python-version }}-pip-
-          ${{ matrix.python-version }}-
+        java-version: '17'
+        distribution: 'temurin'
 
     - name: Install dependencies
       run: |
