@@ -104,17 +104,17 @@ the testsuite with the following command:
 
 .. code-block:: bash
 
-    python setup.py test
+    uv python sync
+    uv run pytest -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
 
 Otherwise using a virtualenv is recommended. Setuptools will automatically fetch
 missing test dependencies:
 
 .. code-block:: bash
 
-    python -m venv ./.venv/jenkinsapi
-    source .venv/jenkinsapi/bin/activate
-    pip install -r requirements.txt
-    python setup.py test
+    uv venv
+    uv python install
+    uv run pytest -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
 
 Development
 -----------
@@ -126,13 +126,13 @@ Development
 
 .. code-block:: bash
 
-    pip install -r test-requirements.txt
+    uv sync
 
 * Make your changes, write tests and check your code
 
 .. code-block:: bash
 
-    pytest -sv
+    uv run pytest -sv
 
 Python versions
 ---------------
