@@ -9,7 +9,7 @@ import requests
 import queue
 import threading
 import subprocess
-from pkg_resources import resource_stream
+import importlib_resources
 from urllib3 import Retry
 from urllib.parse import urlparse
 from tarfile import TarFile
@@ -137,7 +137,7 @@ class JenkinsLancher(object):
 
     def update_config(self):
         tarball = TarFile.open(
-            fileobj=resource_stream(
+            fileobj=importlib_resources.files(
                 "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
             )
         )
