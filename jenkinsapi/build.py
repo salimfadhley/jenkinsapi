@@ -527,8 +527,7 @@ class Build(JenkinsBase):
     def stop(self) -> bool:
         """
         Stops the build execution if it's running
-        :return boolean True if succeded False otherwise or the build
-            is not running
+        :return: boolean True if succeeded False otherwis
         """
         if self.is_running():
             url: str = "%s/stop" % self.baseurl
