@@ -24,6 +24,7 @@ Sections
    api
    artifact
    build
+   using_jenkinsapi
    contributing
 
 Important Links
