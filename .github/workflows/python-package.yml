@@ -65,6 +65,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-get install libkrb5-dev
         python -m pip install -r test-requirements.txt
         python -m pip install -r requirements.txt
 
