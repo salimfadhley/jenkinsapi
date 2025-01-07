@@ -1,4 +1,3 @@
-importlib_resources<=6.4.5
 pytest
 pytest-mock
 pytest-cov
