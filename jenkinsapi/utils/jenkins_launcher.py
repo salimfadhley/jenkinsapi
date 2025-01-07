@@ -136,14 +136,15 @@ class JenkinsLancher(object):
 
     def update_config(self):
         try:
-            import importlib_resources # if python > 3.11
+            import importlib_resources  # if python > 3.11
+
             # see https://setuptools.pypa.io/en/latest/pkg_resources.html
 
             fileobj = importlib_resources.files(
                 "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
             )
         except ImportError:
-            from pkg_resources import resource_stream # below python 3.11
+            from pkg_resources import resource_stream  # below python 3.11
 
             fileobj = resource_stream(
                 "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
