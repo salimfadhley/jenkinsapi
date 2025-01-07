@@ -8,10 +8,10 @@ import posixpath
 import requests
 import queue
 import threading
+import tarfile
 import subprocess
 from urllib3 import Retry
 from urllib.parse import urlparse
-from tarfile import TarFile
 
 from requests.adapters import HTTPAdapter
 
@@ -135,22 +135,12 @@ class JenkinsLancher(object):
             )
 
     def update_config(self):
-        try:
-            import importlib_resources  # if python > 3.11
-
-            # see https://setuptools.pypa.io/en/latest/pkg_resources.html
-
-            fileobj = importlib_resources.files(
-                "jenkinsapi_tests.systests"
-            ).joinpath("jenkins_home.tar.gz")
-        except ImportError:
-            from pkg_resources import resource_stream  # below python 3.11
-
-            fileobj = resource_stream(
-                "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
-            )
-        tarball = TarFile.open(fileobj=fileobj)
-        tarball.extractall(path=self.jenkins_home)
+        from jenkinsapi_tests import systests
+        file = os.path.join(os.path.dirname(systests.__file__), "jenkins_home.tar.gz")
+        
+        with open(file, "rb") as f:
+            with tarfile.open(fileobj=f, mode="r:gz") as tarball:
+                tarball.extractall(path=self.jenkins_home)
 
     def install_plugins(self):
         plugin_dest_dir = os.path.join(self.jenkins_home, "plugins")
