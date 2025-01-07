@@ -39,7 +39,7 @@ dynamic = ["version"]
 dependencies = [
     "pytz>=2014.4",
     "requests>=2.3.0",
-    "six>=1.10.0"
+    "six>=1.10.0",
 ]
 
 [tool.files]
@@ -72,3 +72,19 @@ max-line-length = "99"
 
 [tool.setuptools]
 include-package-data = false
+
+[dependency-groups]
+dev = [
+    "pytest-mock>=3.14.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "pycodestyle>=2.3.1",
+    "astroid>=1.4.8",
+    "pylint>=1.7.1",
+    "tox>=2.3.1",
+    "mock>=5.1.0",
+    "myst-parser>=4.0.0",
+    "codecov>=2.1.13",
+    "requests-kerberos>=0.15.0",
+    "flake8>=7.1.1",
+]
