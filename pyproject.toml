@@ -7,9 +7,11 @@ name = "jenkinsapi"
 authors = [
     {name = "Salim Fadhley", email = "salimfadhley@gmail.com"},
     {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"},
+    {name = "Clinton Steiner", email = "clintonsteiner@gmail.com"},
 ]
 maintainers = [
-    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"}
+    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"},
+    {name = "Clinton Steiner", email = "clintonsteiner@gmail.com"},
 ]
 description = "A Python API for accessing resources on a Jenkins continuous-integration server."
 readme = "README.rst"
