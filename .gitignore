@@ -29,3 +29,5 @@ coverage.xml
 .vscode/
 *.war
 venv/
+tags
+.pytype/

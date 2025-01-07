@@ -15,29 +15,34 @@ class Views(object):
     """
     An abstraction on a Jenkins object's views
     """
-    LIST_VIEW = 'hudson.model.ListView'
-    NESTED_VIEW = 'hudson.plugins.nested_view.NestedView'
-    CATEGORIZED_VIEW = \
-        'org.jenkinsci.plugins.categorizedview.CategorizedJobsView'
-    MY_VIEW = 'hudson.model.MyView'
-    DASHBOARD_VIEW = 'hudson.plugins.view.dashboard.Dashboard'
-    PIPELINE_VIEW = ('au.com.centrumsystems.hudson.'
-                     'plugin.buildpipeline.BuildPipelineView')
+
+    LIST_VIEW = "hudson.model.ListView"
+    NESTED_VIEW = "hudson.plugins.nested_view.NestedView"
+    CATEGORIZED_VIEW = (
+        "org.jenkinsci.plugins.categorizedview.CategorizedJobsView"
+    )
+    MY_VIEW = "hudson.model.MyView"
+    DASHBOARD_VIEW = "hudson.plugins.view.dashboard.Dashboard"
+    PIPELINE_VIEW = (
+        "au.com.centrumsystems.hudson."
+        "plugin.buildpipeline.BuildPipelineView"
+    )
 
     def __init__(self, jenkins):
         self.jenkins = jenkins
         self._data = None
 
     def poll(self, tree=None):
-        self._data = self.jenkins.poll(tree='views[name,url]'
-                                       if tree is None else tree)
+        self._data = self.jenkins.poll(
+            tree="views[name,url]" if tree is None else tree
+        )
 
     def __len__(self):
         return len(self.keys())
 
     def __delitem__(self, view_name):
-        if view_name == 'All':
-            raise ValueError('Cannot delete this view: %s' % view_name)
+        if view_name == "All":
+            raise ValueError("Cannot delete this view: %s" % view_name)
 
         if view_name in self:
             self[view_name].delete()
@@ -51,24 +56,24 @@ class Views(object):
             if not new_view.add_job(job_name):
                 # Something wrong - delete view
                 del self[new_view]
-                raise TypeError('Job %s does not exist in Jenkins' % job_name)
+                raise TypeError("Job %s does not exist in Jenkins" % job_name)
 
     def __getitem__(self, view_name):
         self.poll()
-        for row in self._data.get('views', []):
-            if row['name'] == view_name:
-                return View(row['url'], row['name'], self.jenkins)
+        for row in self._data.get("views", []):
+            if row["name"] == view_name:
+                return View(row["url"], row["name"], self.jenkins)
 
-        raise KeyError('View %s not found' % view_name)
+        raise KeyError("View %s not found" % view_name)
 
     def iteritems(self):
         """
         Get the names & objects for all views
         """
         self.poll()
-        for row in self._data.get('views', []):
-            name = row['name']
-            url = row['url']
+        for row in self._data.get("views", []):
+            name = row["name"]
+            url = row["url"]
 
             yield name, View(url, name, self.jenkins)
 
@@ -83,8 +88,8 @@ class Views(object):
         Get the names of all available views
         """
         self.poll()
-        for row in self._data.get('views', []):
-            yield row['name']
+        for row in self._data.get("views", []):
+            yield row["name"]
 
     def keys(self):
         """
@@ -106,32 +111,31 @@ class Views(object):
             log.warning('View "%s" already exists', view_name)
             return self[view_name]
 
-        url = '%s/createView' % self.jenkins.baseurl
+        url = "%s/createView" % self.jenkins.baseurl
 
         if view_type == self.CATEGORIZED_VIEW:
             if not config:
                 raise JenkinsAPIException(
-                    'Job XML config cannot be empty for CATEGORIZED_VIEW')
+                    "Job XML config cannot be empty for CATEGORIZED_VIEW"
+                )
 
-            params = {'name': view_name}
+            params = {"name": view_name}
 
             self.jenkins.requester.post_xml_and_confirm_status(
-                url,
-                data=config,
-                params=params)
+                url, data=config, params=params
+            )
         else:
-            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
             data = {
                 "name": view_name,
                 "mode": view_type,
                 "Submit": "OK",
-                "json": json.dumps({"name": view_name, "mode": view_type})
+                "json": json.dumps({"name": view_name, "mode": view_type}),
             }
 
             self.jenkins.requester.post_and_confirm_status(
-                url,
-                data=data,
-                headers=headers)
+                url, data=data, headers=headers
+            )
 
         self.poll()
         return self[view_name]

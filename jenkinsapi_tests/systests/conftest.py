@@ -2,43 +2,70 @@ import os
 import logging
 import pytest
 from jenkinsapi.jenkins import Jenkins
-from jenkinsapi_utils.jenkins_launcher import JenkinsLancher
+from jenkinsapi.utils.jenkins_launcher import JenkinsLancher
 
 log = logging.getLogger(__name__)
 state = {}
 
 # User/password for authentication testcases
-ADMIN_USER = 'admin'
-ADMIN_PASSWORD = 'admin'
+ADMIN_USER = "admin"
+ADMIN_PASSWORD = "admin"
 
 # Extra plugins required by the systests
 PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/"
     "apache-httpcomponents-client-4-api.hpi",
     "http://updates.jenkins.io/latest/jsch.hpi",
-    "http://updates.jenkins.io/download/plugins/trilead-api/1.0.5/"
-    "trilead-api.hpi",
+    "http://updates.jenkins.io/latest/gson-api.hpi",
+    "http://updates.jenkins.io/latest/trilead-api.hpi",
     "http://updates.jenkins.io/latest/workflow-api.hpi",
     "http://updates.jenkins.io/latest/display-url-api.hpi",
     "http://updates.jenkins.io/latest/workflow-step-api.hpi",
     "http://updates.jenkins.io/latest/workflow-scm-step.hpi",
-    "http://updates.jenkins.io/latest/icon-shim.hpi",
-    "http://updates.jenkins.io/download/plugins/junit/1.28/junit.hpi",
+    "http://updates.jenkins.io/latest/junit.hpi",
     "http://updates.jenkins.io/latest/script-security.hpi",
     "http://updates.jenkins.io/latest/matrix-project.hpi",
     "http://updates.jenkins.io/latest/credentials.hpi",
+    "http://updates.jenkins.io/latest/variant.hpi",
     "http://updates.jenkins.io/latest/ssh-credentials.hpi",
+    "http://updates.jenkins.io/latest/asm-api.hpi",
     "http://updates.jenkins.io/latest/scm-api.hpi",
     "http://updates.jenkins.io/latest/mailer.hpi",
     "http://updates.jenkins.io/latest/git.hpi",
     "http://updates.jenkins.io/latest/git-client.hpi",
+    "http://updates.jenkins.io/latest/jakarta-mail-api.hpi",
     "https://updates.jenkins.io/latest/nested-view.hpi",
     "https://updates.jenkins.io/latest/ssh-slaves.hpi",
     "https://updates.jenkins.io/latest/structs.hpi",
     "http://updates.jenkins.io/latest/plain-credentials.hpi",
     "http://updates.jenkins.io/latest/envinject.hpi",
     "http://updates.jenkins.io/latest/envinject-api.hpi",
-    "http://updates.jenkins.io/latest/jdk-tool.hpi"
+    "http://updates.jenkins.io/latest/jdk-tool.hpi",
+    "http://updates.jenkins.io/latest/credentials-binding.hpi",
+    "http://updates.jenkins.io/latest/jakarta-activation-api.hpi",
+    "http://updates.jenkins.io/latest/caffeine-api.hpi",
+    "http://updates.jenkins.io/latest/script-security.hpi",
+    "http://updates.jenkins.io/latest/checks-api.hpi",
+    "http://updates.jenkins.io/latest/json-api.hpi",
+    "http://updates.jenkins.io/latest/jackson2-api.hpi",
+    "http://updates.jenkins.io/latest/bootstrap5-api.hpi",
+    "http://updates.jenkins.io/latest/echarts-api.hpi",
+    "http://updates.jenkins.io/latest/ionicons-api.hpi",
+    "http://updates.jenkins.io/latest/plugin-util-api.hpi",
+    "http://updates.jenkins.io/latest/mina-sshd-api-core.hpi",
+    "http://updates.jenkins.io/latest/mina-sshd-api-common.hpi",
+    "http://updates.jenkins.io/latest/font-awesome-api.hpi",
+    "http://updates.jenkins.io/latest/popper2-api.hpi",
+    "http://updates.jenkins.io/latest/commons-text-api.hpi",
+    "http://updates.jenkins.io/latest/commons-lang3-api.hpi",
+    "http://updates.jenkins.io/latest/plugin-util-api.hpi",
+    "http://updates.jenkins.io/latest/snakeyaml-api.hpi",
+    "http://updates.jenkins.io/latest/workflow-support.hpi",
+    "http://updates.jenkins.io/latest/jquery3-api.hpi",
+    "http://updates.jenkins.io/latest/checks-api.hpi",
+    "http://updates.jenkins.io/latest/javax-activation-api.hpi",
+    "http://updates.jenkins.io/latest/jaxb.hpi",
+    "http://updates.jenkins.io/latest/instance-identity.hpi",
 ]
 
 
@@ -77,7 +104,9 @@ instance.setSecurityRealm(hudsonRealm)
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 strategy.setAllowAnonymousRead(false)
 instance.setAuthorizationStrategy(strategy)
-    """.format(ADMIN_USER, ADMIN_PASSWORD)
+    """.format(
+        ADMIN_USER, ADMIN_PASSWORD
+    )
 
     url = launched_jenkins.jenkins_url
     jenkins_instance = Jenkins(url)
@@ -101,26 +130,29 @@ instance.save()
     jenkins_instance.run_groovy_script(disable_security_groovy)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def launched_jenkins():
     systests_dir, _ = os.path.split(__file__)
-    local_orig_dir = os.path.join(systests_dir, 'localinstance_files')
+    local_orig_dir = os.path.join(systests_dir, "localinstance_files")
     if not os.path.exists(local_orig_dir):
         os.mkdir(local_orig_dir)
-    war_name = 'jenkins.war'
+    war_name = "jenkins.war"
     launcher = JenkinsLancher(
-        local_orig_dir, systests_dir, war_name, PLUGIN_DEPENDENCIES,
-        jenkins_url=os.getenv('JENKINS_URL', None)
+        local_orig_dir,
+        systests_dir,
+        war_name,
+        PLUGIN_DEPENDENCIES,
+        jenkins_url=os.getenv("JENKINS_URL", None),
     )
     launcher.start()
 
     yield launcher
 
-    log.info('All tests finished')
+    log.info("All tests finished")
     launcher.stop()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def jenkins(launched_jenkins):
     url = launched_jenkins.jenkins_url
 
@@ -133,7 +165,7 @@ def jenkins(launched_jenkins):
     return jenkins_instance
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def lazy_jenkins(launched_jenkins):
     url = launched_jenkins.jenkins_url
 
@@ -146,8 +178,10 @@ def lazy_jenkins(launched_jenkins):
     return jenkins_instance
 
 
-@pytest.fixture(scope='function')
-def jenkins_admin_admin(launched_jenkins, jenkins):  # pylint: disable=unused-argument
+@pytest.fixture(scope="function")
+def jenkins_admin_admin(
+    launched_jenkins, jenkins
+):  # pylint: disable=unused-argument
     # Using "jenkins" fixture makes sure that jobs/views/credentials are
     # cleaned before security is enabled.
     url = launched_jenkins.jenkins_url

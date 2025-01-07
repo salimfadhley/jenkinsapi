@@ -13,16 +13,16 @@ class Result(object):
         self.__dict__.update(kwargs)
 
     def __str__(self):
-        return "%s %s %s" % (self.className, self.name, self.status)
+        return f"{self.className} {self.name} {self.status}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         module_name = self.__class__.__module__
         class_name = self.__class__.__name__
         self_str = str(self)
         return "<%s.%s %s>" % (module_name, class_name, self_str)
 
-    def identifier(self):
+    def identifier(self) -> str:
         """
         Calculate an ID for this object.
         """
-        return "%s.%s" % (self.className, self.name)
+        return f"{self.className}.{self.name}"

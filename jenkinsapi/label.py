@@ -27,13 +27,13 @@ class Label(JenkinsBase):
         JenkinsBase.__init__(self, baseurl)
 
     def __str__(self):
-        return '%s' % (self.labelname)
+        return "%s" % (self.labelname)
 
     def get_jenkins_obj(self):
         return self.jenkins
 
     def is_online(self):
-        return not self.poll(tree='offline')['offline']
+        return not self.poll(tree="offline")["offline"]
 
     def get_tied_jobs(self):
         """
@@ -41,10 +41,10 @@ class Label(JenkinsBase):
         """
         if self.get_tied_job_names():
             for job in self.get_tied_job_names():
-                yield self.get_jenkins_obj().get_job(job['name'])
+                yield self.get_jenkins_obj().get_job(job["name"])
 
     def get_tied_job_names(self):
         """
         Get a list of the name of tied jobs.
         """
-        return self.poll(tree='tiedJobs[name]')['tiedJobs']
+        return self.poll(tree="tiedJobs[name]")["tiedJobs"]

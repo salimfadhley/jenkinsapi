@@ -1,0 +1,85 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "jenkinsapi"
+authors = [
+    {name = "Salim Fadhley", email = "salimfadhley@gmail.com"},
+    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"},
+]
+maintainers = [
+    {name = "Aleksey Maksimov", email = "ctpeko3a@gmail.com"}
+]
+description = "A Python API for accessing resources on a Jenkins continuous-integration server."
+readme = "README.rst"
+license = {text = "MIT license"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.8"
+dynamic = ["version"]
+dependencies = [
+    "pytz>=2014.4",
+    "requests>=2.3.0",
+    "six>=1.10.0",
+]
+
+[tool.setuptools]
+packages = ["jenkinsapi", "jenkinsapi_utils", "jenkinsapi_tests"]
+include-package-data = false
+
+[tool.pbr]
+warnerrors = "True"
+
+[project.scripts]
+jenkins_invoke = "jenkinsapi.command_line.jenkins_invoke:main"
+jenkinsapi_version = "jenkinsapi.command_line.jenkinsapi_version:main"
+
+[tool.build_sphinx]
+source-dir = "doc/source"
+build-dir = "doc/build"
+all_files = "1"
+
+[tool.upload_sphinx]
+upload-dir = "doc/build/html"
+
+[tool.distutils.bdist_wheel]
+universal = 1
+
+[tool.pycodestyle]
+exclude = ".tox,doc/source/conf.py,build,.venv,.eggs"
+max-line-length = "99"
+
+[dependency-groups]
+dev = [
+    "pytest-mock>=3.14.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=4.0.0",
+    "pycodestyle>=2.3.1",
+    "astroid>=1.4.8",
+    "pylint>=1.7.1",
+    "tox>=2.3.1",
+    "mock>=5.1.0",
+    "myst-parser>=3.0.0",
+    "codecov>=2.1.13",
+    "requests-kerberos>=0.15.0",
+    "flake8>=5.0.0",
+]

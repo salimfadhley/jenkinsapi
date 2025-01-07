@@ -1,0 +1,81 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: CI_TEST
+
+on:
+  push:
+    paths:
+      - '**.py'
+      - '**.yml'
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch: # allow manual run
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        token: ["stable"]
+
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+        allowed-endpoints: >
+          azure.archive.ubuntu.com:80
+          esm.ubuntu.com:443
+          files.pythonhosted.org:443
+          ftp-chi.osuosl.org:443
+          ftp-nyc.osuosl.org:443
+          get.jenkins.io:443
+          github.com:443
+          api.github.com:443
+          int.api.stepsecurity.io:443
+          mirror.xmission.com:443
+          motd.ubuntu.com:443
+          packages.microsoft.com:443
+          ppa.launchpadcontent.net:443
+          pypi.org:443
+          updates.jenkins-ci.org:80
+          updates.jenkins.io:443
+          mirrors.updates.jenkins.io:443
+          updates.jenkins.io:80
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        enable-cache: true
+
+    - name: Install python
+      run: uv python install
+
+    - name: setup java 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libkrb5-dev
+
+    - name: Lint with flake8
+      run: |
+        uv run flake8 jenkinsapi/ --count --select=E9,F63,F7,F82 --ignore F821,W503,W504 --show-source --statistics
+        uv run flake8 jenkinsapi/ --count --exit-zero --max-complexity=10 --max-line-length=79 --statistics
+
+    - name: Test with pytest
+      env:
+        JENKINS_VERSION: ${{ matrix.token }}
+      run: |
+        uv run pytest -sv --cov=jenkinsapi --cov-report=term-missing --cov-report=xml jenkinsapi_tests
