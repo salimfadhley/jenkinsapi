@@ -25,7 +25,7 @@ Sections
    artifact
    build
    using_jenkinsapi
-   rules_for_contributors
+   contributing
 
 Important Links
 ---------------
@@ -53,14 +53,8 @@ Most users can do the following:
 
     pip install jenkinsapi
 
-Or..
-
-.. code-block:: bash
-
-    easy_install jenkinsapi
-
  * In Jenkins > 1.518 you will need to disable "Prevent Cross Site Request Forgery exploits".
- * Remember to set the Jenkins Location in general settings - Jenkins' REST web-interface will not work if this is set incorrectly.
+ * Remember to set the Jenkins Location in general settings - Jenkins REST web-interface will not work if this is set incorrectly.
 
 Examples
 --------
