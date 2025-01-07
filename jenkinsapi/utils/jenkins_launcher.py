@@ -136,8 +136,11 @@ class JenkinsLancher(object):
 
     def update_config(self):
         from jenkinsapi_tests import systests
-        file = os.path.join(os.path.dirname(systests.__file__), "jenkins_home.tar.gz")
-        
+
+        file = os.path.join(
+            os.path.dirname(systests.__file__), "jenkins_home.tar.gz"
+        )
+
         with open(file, "rb") as f:
             with tarfile.open(fileobj=f, mode="r:gz") as tarball:
                 tarball.extractall(path=self.jenkins_home)
