@@ -10,66 +10,45 @@ jenkinsapi
 .. image:: https://codecov.io/gh/pycontribs/jenkinsapi/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/pycontribs/jenkinsapi
 
-.. image:: https://requires.io/github/pycontribs/jenkinsapi/requirements.png?branch=master
-        :target: https://requires.io/github/pycontribs/jenkinsapi/requirements/?branch=master
-        :alt: Requirements Status
-
 About this library
 -------------------
 
 Jenkins is the market leading continuous integration system, originally created by Kohsuke Kawaguchi.
 
-Jenkins (and It's predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric. Thankfully the designers have provided an excellent and complete REST interface. This library wraps up that interface as more conventional python objects in order to make many Jenkins oriented tasks easier to automate.
+Jenkins (and its predecessor Hudson) are useful projects for automating common development tasks (e.g. unit-testing, production batches) - but they are somewhat Java-centric.
+| Jenkinsapi makes scripting Jenkins tasks a breeze by wrapping the REST api into familiar python objects.
+| Here is a list of some of the most commonly used functionality
 
-This library allows you to automate most common Jenkins operations using Python, such as:
-
-* Ability to add/remove/query Jenkins jobs
-* Ability to execute jobs and:
+* Add, remove, and query Jenkins jobs
+* Control pipeline execution
     * Query the results of a completed build
     * Block until jobs are complete or run jobs asyncronously
     * Get objects representing the latest builds of a job
-* Work with build artifacts:
+* Artifact management
     * Search for artifacts by simple criteria
     * Install artifacts to custom-specified directory structures
-* Ability to search for builds by source code revision
-* Ability to add/remove/query:
-    * Slaves (Webstart and SSH slaves)
+* Search for builds by source code revision
+* Create, destroy, and monitor
+    * Build nodes (Webstart and SSH slaves)
     * Views (including nested views using NestedViews Jenkins plugin)
     * Credentials (username/password and ssh key)
-* Username/password auth support for jenkins instances with auth turned on
-* Ability to script jenkins installation including plugins
+* Authentication support for username and password
+* Manage jenkins and plugin installation
 
-For a full documentation spec of what this library supports see: http://jenkinsapi.readthedocs.io/en/latest/index.html
+Full library capabilities are outlined in the `Documentation <http://jenkinsapi.readthedocs.io/en/latest/index.html>`_
 
-Python versions
----------------
-
-The project has been tested against Python versions:
-
-* 2.7 - last version compatible with Python 2.7 is tagged Py2 in repository and available on PyPi as version 0.3.13
-* 3.8 - 3.11
-
-Jenkins versions
-----------------
-
-Project tested on both stable (LTS) and latest Jenkins versions.
 
 Known issues
 ------------
 * Job deletion operations fail unless Cross-Site scripting protection is disabled.
-
-For other issues, please refer to the support URL below.
+| For other issues, please refer to the `support URL <https://github.com/pycontribs/jenkinsapi/issues?direction=desc&sort=comments&state=open>`_
 
 Important Links
 ---------------
-
-Support and bug-reports: https://github.com/pycontribs/jenkinsapi/issues?direction=desc&sort=comments&state=open
-
-Project source code: github: https://github.com/pycontribs/jenkinsapi
-
-Project documentation: https://jenkinsapi.readthedocs.org/en/latest/
-
-Releases: http://pypi.python.org/pypi/jenkinsapi
+* `Support and bug-reports <https://github.com/pycontribs/jenkinsapi/issues?direction=desc&sort=comments&state=open>`_
+* `Source Code <https://github.com/pycontribs/jenkinsapi>`_
+* `Documentation <https://jenkinsapi.readthedocs.org/en/latest/>`_
+* `Releases <http://pypi.python.org/pypi/jenkinsapi>`_
 
 Installation
 -------------
@@ -111,20 +90,14 @@ JenkinsAPI is intended to map the objects in Jenkins (e.g. Builds, Views, Jobs) 
 
 .. code-block:: python
 
-	>>> import jenkinsapi
-	>>> from jenkinsapi.jenkins import Jenkins
-	>>> J = Jenkins('http://localhost:8080')
-	>>> J.version
-	1.542
-	>>> J.keys() # Jenkins objects appear to be dict-like, mapping keys (job-names) to
-	['foo', 'test_jenkinsapi']
-	>>> J['test_jenkinsapi']
-	<jenkinsapi.job.Job test_jenkinsapi>
-	>>> J['test_jenkinsapi'].get_last_good_build()
-	<jenkinsapi.build.Build test_jenkinsapi #77>
-	...
+	from jenkinsapi.jenkins import Jenkins
+	J = Jenkins('http://localhost:8080')
+	print(J.version) # 1.542
+	print(J.keys()) # foo, test_jenkinsapi
+	print(J.get('test_jenkinsapi')) # <jenkinsapi.job.Job test_jenkinsapi>
+	print(J.get('test_jenkinsapi').get_last_good_build()) # <jenkinsapi.build.Build test_jenkinsapi #77>
 
-More examples available on Github: https://github.com/pycontribs/jenkinsapi/tree/master/examples
+More examples available on `Github <https://github.com/pycontribs/jenkinsapi/tree/master/examples>`_
 
 Testing
 -------
@@ -141,10 +114,10 @@ missing test dependencies:
 
 .. code-block:: bash
 
-    virtualenv
-    source .venv/bin/active
-    (.venv) pip install -r requirements.txt
-    (.venv) python setup.py test
+    python -m venv ./.venv/jenkinsapi
+    source .venv/jenkinsapi/bin/activate
+    pip install -r requirements.txt
+    python setup.py test
 
 Development
 -----------
@@ -156,14 +129,26 @@ Development
 
 .. code-block:: bash
 
-    (.venv) pip install -r test-requirements.txt
+    pip install -r test-requirements.txt
 
 * Make your changes, write tests and check your code
 
 .. code-block:: bash
 
-    (.venv) pytest
+    pytest -sv
 
+Python versions
+---------------
+
+The project has been tested against Python versions:
+
+* 3.8 - 3.11
+* 2.7 - last version compatible with Python 2.7 is tagged Py2 in repository and available on PyPi as version 0.3.13
+
+Jenkins versions
+----------------
+
+Project tested on both stable (LTS) and latest Jenkins versions.
 
 Project Contributors
 --------------------
