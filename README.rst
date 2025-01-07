@@ -4,9 +4,6 @@ jenkinsapi
 .. image:: https://badge.fury.io/py/jenkinsapi.png
     :target: http://badge.fury.io/py/jenkinsapi
 
-.. image:: https://travis-ci.com/pycontribs/jenkinsapi.png?branch=master
-        :target: https://travis-ci.com/pycontribs/jenkinsapi
-
 .. image:: https://codecov.io/gh/pycontribs/jenkinsapi/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/pycontribs/jenkinsapi
 
@@ -142,7 +139,7 @@ Python versions
 
 The project has been tested against Python versions:
 
-* 3.8 - 3.11
+* 3.8 - 3.13
 * 2.7 - last version compatible with Python 2.7 is tagged Py2 in repository and available on PyPi as version 0.3.13
 
 Jenkins versions
@@ -177,4 +174,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.. _Java: http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+.. _Java: https://www.oracle.com/java/technologies/downloads/#java17
