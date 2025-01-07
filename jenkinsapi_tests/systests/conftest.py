@@ -2,7 +2,7 @@ import os
 import logging
 import pytest
 from jenkinsapi.jenkins import Jenkins
-from jenkinsapi_utils.jenkins_launcher import JenkinsLancher
+from jenkinsapi.utils.jenkins_launcher import JenkinsLancher
 
 log = logging.getLogger(__name__)
 state = {}
@@ -16,6 +16,7 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/"
     "apache-httpcomponents-client-4-api.hpi",
     "http://updates.jenkins.io/latest/jsch.hpi",
+    "http://updates.jenkins.io/latest/gson-api.hpi",
     "http://updates.jenkins.io/latest/trilead-api.hpi",
     "http://updates.jenkins.io/latest/workflow-api.hpi",
     "http://updates.jenkins.io/latest/display-url-api.hpi",
@@ -25,7 +26,9 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/script-security.hpi",
     "http://updates.jenkins.io/latest/matrix-project.hpi",
     "http://updates.jenkins.io/latest/credentials.hpi",
+    "http://updates.jenkins.io/latest/variant.hpi",
     "http://updates.jenkins.io/latest/ssh-credentials.hpi",
+    "http://updates.jenkins.io/latest/asm-api.hpi",
     "http://updates.jenkins.io/latest/scm-api.hpi",
     "http://updates.jenkins.io/latest/mailer.hpi",
     "http://updates.jenkins.io/latest/git.hpi",
@@ -43,6 +46,7 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/caffeine-api.hpi",
     "http://updates.jenkins.io/latest/script-security.hpi",
     "http://updates.jenkins.io/latest/checks-api.hpi",
+    "http://updates.jenkins.io/latest/json-api.hpi",
     "http://updates.jenkins.io/latest/jackson2-api.hpi",
     "http://updates.jenkins.io/latest/bootstrap5-api.hpi",
     "http://updates.jenkins.io/latest/echarts-api.hpi",
@@ -59,6 +63,9 @@ PLUGIN_DEPENDENCIES = [
     "http://updates.jenkins.io/latest/workflow-support.hpi",
     "http://updates.jenkins.io/latest/jquery3-api.hpi",
     "http://updates.jenkins.io/latest/checks-api.hpi",
+    "http://updates.jenkins.io/latest/javax-activation-api.hpi",
+    "http://updates.jenkins.io/latest/jaxb.hpi",
+    "http://updates.jenkins.io/latest/instance-identity.hpi",
 ]
 
 

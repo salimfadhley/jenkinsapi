@@ -3,9 +3,13 @@ This module implements the Credentials class, which is intended to be a
 container-like interface for all of the Global credentials defined on a single
 Jenkins node.
 """
-import logging
+from __future__ import annotations
 
-from six.moves.urllib.parse import urlencode
+from typing import Iterator
+
+import logging
+from urllib.parse import urlencode
+
 from jenkinsapi.credential import Credential
 from jenkinsapi.credential import UsernamePasswordCredential
 from jenkinsapi.credential import SecretTextCredential
@@ -13,7 +17,7 @@ from jenkinsapi.credential import SSHKeyCredential
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import JenkinsAPIException
 
-log = logging.getLogger(__name__)
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class Credentials(JenkinsBase):
@@ -24,15 +28,15 @@ class Credentials(JenkinsBase):
     Returns a list of Credential Objects.
     """
 
-    def __init__(self, baseurl, jenkins_obj):
-        self.baseurl = baseurl
-        self.jenkins = jenkins_obj
+    def __init__(self, baseurl: str, jenkins_obj: "Jenkins"):
+        self.baseurl: str = baseurl
+        self.jenkins: "Jenkins" = jenkins_obj
         JenkinsBase.__init__(self, baseurl)
 
         self.credentials = self._data["credentials"]
 
     def _poll(self, tree=None):
-        url = self.python_api_url(self.baseurl) + "?depth=2"
+        url: str = self.python_api_url(self.baseurl) + "?depth=2"
         data = self.get_data(url, tree=tree)
         credentials = data["credentials"]
         for cred_id, cred_dict in credentials.items():
@@ -41,17 +45,17 @@ class Credentials(JenkinsBase):
 
         return data
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Global Credentials @ %s" % self.baseurl
 
-    def get_jenkins_obj(self):
+    def get_jenkins_obj(self) -> "Jenkins":
         return self.jenkins
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Credential]:
         for cred in self.credentials.values():
             yield cred.description
 
-    def __contains__(self, description):
+    def __contains__(self, description: str) -> bool:
         return description in self.keys()
 
     def iterkeys(self):
@@ -60,11 +64,11 @@ class Credentials(JenkinsBase):
     def keys(self):
         return list(self.iterkeys())
 
-    def iteritems(self):
+    def iteritems(self) -> Iterator[str, "Credential"]:
         for cred in self.credentials.values():
             yield cred.description, cred
 
-    def __getitem__(self, description):
+    def __getitem__(self, description: str) -> "Credential":
         for cred in self.credentials.values():
             if cred.description == description:
                 return cred
@@ -73,10 +77,10 @@ class Credentials(JenkinsBase):
             'Credential with description "%s" not found' % description
         )
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.keys())
 
-    def __setitem__(self, description, credential):
+    def __setitem__(self, description: str, credential: "Credential"):
         """
         Creates Credential in Jenkins using username, password and description
         Description must be unique in Jenkins instance
@@ -127,7 +131,7 @@ class Credentials(JenkinsBase):
     def get(self, item, default):
         return self[item] if item in self else default
 
-    def __delitem__(self, description):
+    def __delitem__(self, description: str):
         if description not in self:
             raise KeyError(
                 'Credential with description "%s" not found' % description

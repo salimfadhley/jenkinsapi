@@ -1,6 +1,8 @@
 """
 Module for jenkinsapi Node class
 """
+from __future__ import annotations
+
 import json
 import logging
 
@@ -10,7 +12,7 @@ import time
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import PostRequired, TimeOut
 from jenkinsapi.custom_exceptions import JenkinsAPIException
-from six.moves.urllib.parse import quote as urlquote
+from urllib.parse import quote as urlquote
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +24,14 @@ class Node(JenkinsBase):
     to the master jenkins instance
     """
 
-    def __init__(self, jenkins_obj, baseurl, nodename, node_dict, poll=True):
+    def __init__(
+        self,
+        jenkins_obj: "Jenkins",
+        baseurl: str,
+        nodename: str,
+        node_dict,
+        poll: bool = True,
+    ) -> None:
         """
         Init a node object by providing all relevant pointers to it
         :param jenkins_obj: ref to the jenkins obj
@@ -89,17 +98,17 @@ class Node(JenkinsBase):
         :return: None
         :return: Node obj
         """
-        self.name = nodename
-        self.jenkins = jenkins_obj
+        self.name: str = nodename
+        self.jenkins: "Jenkins" = jenkins_obj
         if not baseurl:
             poll = False
-            baseurl = "%s/computer/%s" % (self.jenkins.baseurl, self.name)
+            baseurl = f"{self.jenkins.baseurl}/computer/{self.name}"
         JenkinsBase.__init__(self, baseurl, poll=poll)
-        self.node_attributes = node_dict
+        self.node_attributes: dict = node_dict
         self._element_tree = None
         self._config = None
 
-    def get_node_attributes(self):
+    def get_node_attributes(self) -> dict:
         """
         Gets node attributes as dict
 
@@ -108,7 +117,7 @@ class Node(JenkinsBase):
         :return: Node attributes dict formatted for Jenkins API request
             to create node
         """
-        na = self.node_attributes
+        na: dict = self.node_attributes
         if not na.get("credential_description", False):
             # If credentials description is not present - we will create
             # JNLP node
@@ -124,8 +133,12 @@ class Node(JenkinsBase):
                     " not found" % na["credential_description"]
                 )
 
-            retries = na["max_num_retries"] if "max_num_retries" in na else ""
-            re_wait = na["retry_wait_time"] if "retry_wait_time" in na else ""
+            retries: int = (
+                na["max_num_retries"] if "max_num_retries" in na else 0
+            )
+            re_wait: int = (
+                na["retry_wait_time"] if "retry_wait_time" in na else 0
+            )
             launcher = {
                 "stapler-class": "hudson.plugins.sshslaves.SSHLauncher",
                 "$class": "hudson.plugins.sshslaves.SSHLauncher",
@@ -152,7 +165,7 @@ class Node(JenkinsBase):
                 "idleDelay": na["ondemand_idle_delay"],
             }
 
-        node_props = {"stapler-class-bag": "true"}
+        node_props: dict = {"stapler-class-bag": "true"}
         if "env" in na:
             node_props.update(
                 {
@@ -191,25 +204,25 @@ class Node(JenkinsBase):
 
         return params
 
-    def get_jenkins_obj(self):
+    def get_jenkins_obj(self) -> "Jenkins":
         return self.jenkins
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def is_online(self):
+    def is_online(self) -> bool:
         return not self.poll(tree="offline")["offline"]
 
-    def is_temporarily_offline(self):
+    def is_temporarily_offline(self) -> bool:
         return self.poll(tree="temporarilyOffline")["temporarilyOffline"]
 
-    def is_jnlpagent(self):
+    def is_jnlpagent(self) -> bool:
         return self._data["jnlpAgent"]
 
-    def is_idle(self):
+    def is_idle(self) -> bool:
         return self.poll(tree="idle")["idle"]
 
-    def set_online(self):
+    def set_online(self) -> None:
         """
         Set node online.
         Before change state verify client state: if node set 'offline'
@@ -239,7 +252,7 @@ class Node(JenkinsBase):
                     % (self._data["offline"], self._data["temporarilyOffline"])
                 )
 
-    def set_offline(self, message="requested from jenkinsapi"):
+    def set_offline(self, message="requested from jenkinsapi") -> None:
         """
         Set node offline.
         If after run node state has not been changed raise AssertionError.
@@ -256,7 +269,9 @@ class Node(JenkinsBase):
                     % (data["offline"], data["temporarilyOffline"])
                 )
 
-    def toggle_temporarily_offline(self, message="requested from jenkinsapi"):
+    def toggle_temporarily_offline(
+        self, message="requested from jenkinsapi"
+    ) -> None:
         """
         Switches state of connected node (online/offline) and
         set 'temporarilyOffline' property (True/False)
@@ -284,7 +299,7 @@ class Node(JenkinsBase):
                 % state
             )
 
-    def update_offline_reason(self, reason):
+    def update_offline_reason(self, reason: str) -> None:
         """
         Update offline reason on a temporary offline clsuter
         """
@@ -297,14 +312,14 @@ class Node(JenkinsBase):
             )
             self.jenkins.requester.post_and_confirm_status(url, data={})
 
-    def offline_reason(self):
+    def offline_reason(self) -> str:
         return self._data["offlineCauseReason"]
 
     @property
     def _et(self):
         return self._get_config_element_tree()
 
-    def _get_config_element_tree(self):
+    def _get_config_element_tree(self) -> ET.Element:
         """
         Returns an xml element tree for the node's config.xml. The
         resulting tree is cached for quick lookup.
@@ -316,7 +331,7 @@ class Node(JenkinsBase):
             self._element_tree = ET.fromstring(self._config)
         return self._element_tree
 
-    def get_config(self):
+    def get_config(self) -> str:
         """
         Returns the config.xml from the node.
         """
@@ -325,7 +340,7 @@ class Node(JenkinsBase):
         )
         return response.text
 
-    def load_config(self):
+    def load_config(self) -> None:
         """
         Loads the config.xml for the node allowing it to be re-queried
         without generating new requests.
@@ -336,7 +351,7 @@ class Node(JenkinsBase):
         self._config = self.get_config()
         self._get_config_element_tree()
 
-    def upload_config(self, config_xml):
+    def upload_config(self, config_xml: str) -> None:
         """
         Uploads config_xml to the config.xml for the node.
         """
@@ -347,20 +362,20 @@ class Node(JenkinsBase):
             "%(baseurl)s/config.xml" % self.__dict__, data=config_xml
         )
 
-    def get_labels(self):
+    def get_labels(self) -> str | None:
         """
         Returns the labels for a slave as a string with each label
         separated by the ' ' character.
         """
         return self.get_config_element("label")
 
-    def get_num_executors(self):
+    def get_num_executors(self) -> str:
         try:
             return self.get_config_element("numExecutors")
         except JenkinsAPIException:
             return self._data["numExecutors"]
 
-    def set_num_executors(self, value):
+    def set_num_executors(self, value: int | str) -> None:
         """
         Sets number of executors for node
 
@@ -388,7 +403,7 @@ class Node(JenkinsBase):
 
         self.poll()
 
-    def get_config_element(self, el_name):
+    def get_config_element(self, el_name: str) -> str:
         """
         Returns simple config element.
 
@@ -396,7 +411,7 @@ class Node(JenkinsBase):
         """
         return self._et.find(el_name).text
 
-    def set_config_element(self, el_name, value):
+    def set_config_element(self, el_name: str, value: str) -> None:
         """
         Sets simple config element
         """
@@ -404,7 +419,7 @@ class Node(JenkinsBase):
         xml_str = ET.tostring(self._et)
         self.upload_config(xml_str)
 
-    def get_monitor(self, monitor_name, poll_monitor=True):
+    def get_monitor(self, monitor_name: str, poll_monitor=True) -> str:
         """
         Polls the node returning one of the monitors in the monitorData
         branch of the returned node api tree.
@@ -422,70 +437,70 @@ class Node(JenkinsBase):
 
         return monitor_data[full_monitor_name]
 
-    def get_available_physical_memory(self):
+    def get_available_physical_memory(self) -> int:
         """
         Returns the node's available physical memory in bytes.
         """
         monitor_data = self.get_monitor("SwapSpaceMonitor")
         return monitor_data["availablePhysicalMemory"]
 
-    def get_available_swap_space(self):
+    def get_available_swap_space(self) -> int:
         """
         Returns the node's available swap space in bytes.
         """
         monitor_data = self.get_monitor("SwapSpaceMonitor")
         return monitor_data["availableSwapSpace"]
 
-    def get_total_physical_memory(self):
+    def get_total_physical_memory(self) -> int:
         """
         Returns the node's total physical memory in bytes.
         """
         monitor_data = self.get_monitor("SwapSpaceMonitor")
         return monitor_data["totalPhysicalMemory"]
 
-    def get_total_swap_space(self):
+    def get_total_swap_space(self) -> int:
         """
         Returns the node's total swap space in bytes.
         """
         monitor_data = self.get_monitor("SwapSpaceMonitor")
         return monitor_data["totalSwapSpace"]
 
-    def get_workspace_path(self):
+    def get_workspace_path(self) -> str:
         """
         Returns the local path to the node's Jenkins workspace directory.
         """
         monitor_data = self.get_monitor("DiskSpaceMonitor")
         return monitor_data["path"]
 
-    def get_workspace_size(self):
+    def get_workspace_size(self) -> int:
         """
         Returns the size in bytes of the node's Jenkins workspace directory.
         """
         monitor_data = self.get_monitor("DiskSpaceMonitor")
         return monitor_data["size"]
 
-    def get_temp_path(self):
+    def get_temp_path(self) -> str:
         """
         Returns the local path to the node's temp directory.
         """
         monitor_data = self.get_monitor("TemporarySpaceMonitor")
         return monitor_data["path"]
 
-    def get_temp_size(self):
+    def get_temp_size(self) -> int:
         """
         Returns the size in bytes of the node's temp directory.
         """
         monitor_data = self.get_monitor("TemporarySpaceMonitor")
         return monitor_data["size"]
 
-    def get_architecture(self):
+    def get_architecture(self) -> str:
         """
         Returns the system architecture of the node eg. "Linux (amd64)".
         """
         # no need to poll as the architecture will never change
         return self.get_monitor("ArchitectureMonitor", poll_monitor=False)
 
-    def block_until_idle(self, timeout, poll_time=5):
+    def block_until_idle(self, timeout: int, poll_time: int = 5) -> None:
         """
         Blocks until the node become idle.
         :param timeout: Time in second when the wait is aborted.
@@ -507,14 +522,14 @@ class Node(JenkinsBase):
                 )
             )
 
-    def get_response_time(self):
+    def get_response_time(self) -> int:
         """
         Returns the node's average response time.
         """
         monitor_data = self.get_monitor("ResponseTimeMonitor")
         return monitor_data["average"]
 
-    def get_clock_difference(self):
+    def get_clock_difference(self) -> int:
         """
         Returns the difference between the node's clock and
         the master Jenkins clock.

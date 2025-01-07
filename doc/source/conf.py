@@ -13,10 +13,8 @@
 # serve to show the default.
 import logging
 import jenkinsapi
-import pkg_resources
 
-dist = pkg_resources.working_set.by_key[jenkinsapi.__name__]
-VERSION = RELEASE = dist.version
+VERSION = RELEASE = jenkinsapi.__version__
 
 if __name__ == "__main__":
     logging.basicConfig()

@@ -274,7 +274,7 @@ def test_get_json_for_many_params():
     expected = (
         '{"parameter": [{"name": "A", "value": "Boo"}, '
         '{"name": "B", "value": "Honey"}, '
-        '{"name": "C", "value": "2"}], '
+        '{"name": "C", "value": 2}], '
         '"statusCode": "303", "redirectTo": "."}'
     )
 

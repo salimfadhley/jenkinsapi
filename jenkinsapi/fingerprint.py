@@ -1,16 +1,18 @@
 """
 Module for jenkinsapi Fingerprint
 """
+from __future__ import annotations
+
+import re
+import logging
+from typing import Any
+
+import requests
 
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.custom_exceptions import ArtifactBroken
 
-import re
-import requests
-
-import logging
-
-log = logging.getLogger(__name__)
+log: logging.Logger = logging.getLogger(__name__)
 
 
 class Fingerprint(JenkinsBase):
@@ -21,24 +23,24 @@ class Fingerprint(JenkinsBase):
 
     RE_MD5 = re.compile("^([0-9a-z]{32})$")
 
-    def __init__(self, baseurl, id_, jenkins_obj):
-        logging.basicConfig()
-        self.jenkins_obj = jenkins_obj
+    def __init__(self, baseurl: str, id_: str, jenkins_obj: "Jenkins") -> None:
+        self.jenkins_obj: "Jenkins" = jenkins_obj
         assert self.RE_MD5.search(id_), (
             "%s does not look like " "a valid id" % id_
         )
-        url = "%s/fingerprint/%s/" % (baseurl, id_)
-        JenkinsBase.__init__(self, url, poll=False)
-        self.id_ = id_
-        self.unknown = False  # Previously uninitialized in ctor
+        url: str = f"{baseurl}/fingerprint/{id_}/"
 
-    def get_jenkins_obj(self):
+        JenkinsBase.__init__(self, url, poll=False)
+        self.id_: str = id_
+        self.unknown: bool = False  # Previously uninitialized in ctor
+
+    def get_jenkins_obj(self) -> "Jenkins":
         return self.jenkins_obj
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.id_
 
-    def valid(self):
+    def valid(self) -> bool:
         """
         Return True / False if valid. If returns True, self.unknown is
         set to either True or False, and can be checked if we have
@@ -56,10 +58,10 @@ class Fingerprint(JenkinsBase):
             # valid or not.
             # The response object is of type: requests.models.Response
             # extract the status code from it
-            response_obj = err.response
+            response_obj: Any = err.response
             if response_obj.status_code == 404:
                 logging.warning(
-                    "MD5 cannot be checked if fingerprints are not " "enabled"
+                    "MD5 cannot be checked if fingerprints are not enabled"
                 )
                 self.unknown = True
                 return True
@@ -68,9 +70,9 @@ class Fingerprint(JenkinsBase):
 
         return True
 
-    def validate_for_build(self, filename, job, build):
+    def validate_for_build(self, filename: str, job: str, build: int) -> bool:
         if not self.valid():
-            log.info("Unknown to jenkins.")
+            log.info("Fingerprint is not known to jenkins.")
             return False
         if self.unknown:
             # not request error, but unknown to jenkins
@@ -98,14 +100,14 @@ class Fingerprint(JenkinsBase):
                         return True
         return False
 
-    def validate(self):
+    def validate(self) -> bool:
         try:
             assert self.valid()
-        except AssertionError:
+        except AssertionError as ae:
             raise ArtifactBroken(
                 "Artifact %s seems to be broken, check %s"
                 % (self.id_, self.baseurl)
-            )
+            ) from ae
         except requests.exceptions.HTTPError:
             raise ArtifactBroken(
                 "Unable to validate artifact id %s using %s"

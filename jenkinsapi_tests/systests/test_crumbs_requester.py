@@ -1,10 +1,10 @@
+import io
 import time
 import json
 import logging
 import pytest
 
-from six import StringIO
-from six.moves.urllib.parse import urljoin
+from urllib.parse import urljoin
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.utils.crumb_requester import CrumbRequester
 from jenkinsapi_tests.test_utils.random_strings import random_string
@@ -91,7 +91,7 @@ def crumbed_jenkins(jenkins):
 
 def test_invoke_job_with_file(crumbed_jenkins):
     file_data = random_string()
-    param_file = StringIO(file_data)
+    param_file = io.BytesIO(file_data.encode("utf-8"))
 
     job_name = "create1_%s" % random_string()
     job = crumbed_jenkins.create_job(job_name, JOB_WITH_FILE)

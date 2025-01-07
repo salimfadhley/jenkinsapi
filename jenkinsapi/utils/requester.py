@@ -2,7 +2,7 @@
 Module for jenkinsapi requester (which is a wrapper around python-requests)
 """
 import requests
-import six.moves.urllib.parse as urlparse
+import urllib.parse as urlparse
 
 from jenkinsapi.custom_exceptions import JenkinsAPIException, PostRequired
 
@@ -43,7 +43,6 @@ class Requester(object):
     AUTH_COOKIE = None
 
     def __init__(self, *args, **kwargs):
-
         username = None
         password = None
         ssl_verify = True
